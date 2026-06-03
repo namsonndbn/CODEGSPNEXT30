@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>GSP NEXT 30 - CEO Dashboard</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    .header {
+      background: #064e3b;
+      color: white;
+      padding: 26px 34px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      font-size: 15px;
+      opacity: 0.92;
+    }
+
+    .container {
+      padding: 24px 32px;
+    }
+
+    .command-bar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(243, 244, 246, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 10px 0 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .command-btn {
+      background: #064e3b;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .command-btn.secondary {
+      background: #374151;
+    }
+
+    .command-btn.warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+    }
+
+    .loading {
+      font-size: 16px;
+      color: #6b7280;
+      padding: 24px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      white-space: pre-wrap;
+    }
+
+    .top-control-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .refresh-btn {
+      background: #064e3b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      min-height: 84px;
+    }
+
+    .six-axis-mini-dashboard {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+
+    .axis-mini-card {
+      background: white;
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border: 2px solid transparent;
+      cursor: pointer;
+      min-height: 84px;
+    }
+
+    .axis-mini-card:hover,
+    .card:hover {
+      border-color: #064e3b;
+      transform: translateY(-1px);
+    }
+
+    .axis-mini-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #064e3b;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .axis-mini-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .axis-mini-number {
+      font-size: 25px;
+      font-weight: 800;
+      color: #1d4ed8;
+    }
+
+    .axis-mini-label {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .axis-mini-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: #374151;
+    }
+
+    .axis-mini-danger {
+      color: #b91c1c;
+      font-weight: 700;
+    }
+
+    .axis-mini-warning {
+      color: #b45309;
+      font-weight: 700;
+    }
+
+    .axis-rag-green { border-left: 5px solid #15803d; }
+    .axis-rag-amber { border-left: 5px solid #b45309; }
+    .axis-rag-red { border-left: 5px solid #b91c1c; }
+
+    .collapsible-section {
+      background: white;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .collapse-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      cursor: pointer;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .collapse-header h2 {
+      margin: 0;
+      color: #064e3b;
+      font-size: 21px;
+    }
+
+    .collapse-toggle {
+      font-weight: bold;
+      color: #064e3b;
+      font-size: 18px;
+    }
+
+    .collapse-content {
+      padding: 20px;
+      display: block;
+      overflow-x: auto;
+    }
+
+    .collapsed .collapse-content {
+      display: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      cursor: pointer;
+      border: 2px solid transparent;
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .card-value {
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .signal {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+    }
+
+    .signal-green { background: #15803d; }
+    .signal-amber { background: #b45309; }
+    .signal-red { background: #b91c1c; }
+    .signal-blue { background: #1d4ed8; }
+
+    .green { color: #15803d; }
+    .amber { color: #b45309; }
+    .red { color: #b91c1c; }
+    .blue { color: #1d4ed8; }
+
+    .executive-summary-box {
+      background: #f0fdf4;
+      border-left: 7px solid #064e3b;
+      border-radius: 16px;
+      padding: 18px;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .executive-status {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .advisor-box {
+      border-left: 6px solid #b91c1c;
+    }
+
+    .advisor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .advisor-header h3 {
+      margin: 0;
+      color: #064e3b;
+      font-size: 20px;
+    }
+
+    .advisor-btn,
+    .comment-btn {
+      background: #064e3b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .advisor-btn.secondary,
+    .comment-btn.secondary {
+      background: #374151;
+    }
+
+    .advisor-content {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #111827;
+    }
+
+    .advisor-section {
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .advisor-title {
+      font-weight: 800;
+      color: #b91c1c;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .advisor-list {
+      margin: 4px 0 0 18px;
+      padding: 0;
+    }
+
+    .advisor-green { color: #15803d; font-weight: bold; }
+    .advisor-amber { color: #b45309; font-weight: bold; }
+    .advisor-red { color: #b91c1c; font-weight: bold; }
+
+    .chart-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .chart-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .chart-card h3 {
+      margin: 0 0 16px;
+      color: #064e3b;
+      font-size: 17px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 50px;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+
+    .bar-bg {
+      height: 14px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .bar-green { background: #15803d; }
+    .bar-amber { background: #b45309; }
+    .bar-red { background: #b91c1c; }
+    .bar-blue { background: #1d4ed8; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 900px;
+    }
+
+    th {
+      background: #eef2f7;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #d1d5db;
+      color: #111827;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: #f9fafb;
+    }
+
+    .critical-row-red td {
+      background: #fff1f2;
+    }
+
+    .critical-row-amber td {
+      background: #fffbeb;
+    }
+
+    a {
+      color: #064e3b;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .badge {
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-gray { background: #e5e7eb; color: #374151; }
+
+    .small-note {
+      color: #6b7280;
+      font-size: 13px;
+      margin-top: -6px;
+      margin-bottom: 12px;
+    }
+
+    .data-quality-wrap {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .data-quality-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: conic-gradient(#064e3b 0deg, #064e3b 0deg, #e5e7eb 0deg);
+      font-size: 32px;
+      font-weight: 900;
+      color: #064e3b;
+    }
+
+    .chat-window {
+      height: 420px;
+      overflow-y: auto;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .chat-message {
+      max-width: 88%;
+      margin-bottom: 8px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border-left: 5px solid #1d4ed8;
+    }
+
+    .chat-reply {
+      margin-left: 42px;
+      max-width: 82%;
+      border-left: 4px solid #9ca3af;
+    }
+
+    .chat-message-ceo {
+      border-left: 5px solid #b91c1c;
+      background: #fff7f7;
+    }
+
+    .chat-message-pmo {
+      border-left: 5px solid #064e3b;
+      background: #f0fdf4;
+    }
+
+    .chat-meta {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .chat-sender {
+      font-weight: 800;
+      color: #064e3b;
+    }
+
+    .chat-text {
+      font-size: 14px;
+      color: #111827;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .chat-image {
+      margin-top: 8px;
+    }
+
+    .chat-image img {
+      max-width: 320px;
+      max-height: 230px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      display: block;
+      margin-top: 6px;
+      object-fit: contain;
+      background: #ffffff;
+    }
+
+    .chat-actions-inline {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .mini-action {
+      border: none;
+      background: #eef2f7;
+      color: #374151;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mini-action:hover {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .danger-action {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .reply-box {
+      margin-left: 42px;
+      margin-bottom: 10px;
+      background: #f8fafc;
+      border: 1px dashed #94a3b8;
+      border-radius: 12px;
+      padding: 10px;
+      display: none;
+    }
+
+    .reply-box textarea {
+      width: 100%;
+      min-height: 60px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    .chat-input-panel {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .chat-row {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .chat-textarea {
+      width: 100%;
+      min-height: 86px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    .comment-input {
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+    }
+
+    .comment-status {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: bold;
+    }
+
+    .pasted-preview {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px dashed #b45309;
+      border-radius: 12px;
+      background: #fffbeb;
+      font-size: 13px;
+      color: #92400e;
+    }
+
+    .pasted-preview img {
+      max-width: 220px;
+      max-height: 160px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      display: block;
+      margin-top: 8px;
+      object-fit: contain;
+    }
+
+    .file-input {
+      max-width: 260px;
+    }
+
+    .footer {
+      color: #6b7280;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+
+    .meeting-mode .hide-in-meeting {
+      display: none !important;
+    }
+
+    @media (max-width: 1300px) {
+      .six-axis-mini-dashboard { grid-template-columns: repeat(3, 1fr); }
+      .chart-wrap { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 1100px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 800px) {
+      .top-control-row { grid-template-columns: 1fr; }
+      .six-axis-mini-dashboard { grid-template-columns: 1fr; }
+      .chat-row { grid-template-columns: 1fr; }
+      .chat-message { max-width: 100%; }
+      .chat-reply { margin-left: 18px; max-width: 96%; }
+      .reply-box { margin-left: 18px; }
+      .data-quality-wrap { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      .container { padding: 16px; }
+      .header { padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>GSP NEXT 30 - CEO Dashboard</h1>
+    <p>Dashboard theo dõi realtime: Workstream / Trục, Action / Hành động, RAG / Đèn báo, Risk/SOS / Rủi ro và việc cần CEO chốt</p>
+  </div>
+
+  <div class="container">
+    <div class="command-bar">
+      <button class="command-btn" onclick="loadDashboard()">Cập nhật dữ liệu</button>
+      <button class="command-btn secondary" onclick="copyCEOBrief()">Copy báo cáo CEO</button>
+      <button class="command-btn warning" onclick="toggleMeetingMode()">Chế độ họp</button>
+      <button class="command-btn secondary" onclick="scrollToSection('sec-critical')">Việc trọng yếu</button>
+      <button class="command-btn secondary" onclick="scrollToSection('sec-decision')">CEO cần chốt</button>
+      <button class="command-btn secondary" onclick="scrollToSection('sec-data-quality')">Chất lượng dữ liệu</button>
+      <button class="command-btn secondary" onclick="openSourceSheet()">Mở Google Sheet</button>
+    </div>
+
+    <div class="top-control-row">
+      <button class="refresh-btn" onclick="loadDashboard()">Refresh / Cập nhật dữ liệu</button>
+      <div id="sixAxisMiniDashboard" class="six-axis-mini-dashboard"></div>
+    </div>
+
+    <div id="loading" class="loading">Đang tải dữ liệu từ Google Sheet...</div>
+    <div id="errorBox"></div>
+
+    <div id="content" style="display:none;">
+
+      <div class="collapsible-section" id="sec-executive">
+        <div class="collapse-header" onclick="toggleSection('sec-executive')">
+          <h2>Executive Summary / Tóm tắt điều hành</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="executiveSummaryBox" class="executive-summary-box"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sec-summary">
+        <div class="collapse-header" onclick="toggleSection('sec-summary')">
+          <h2>Bảng tổng hợp chỉ số Dashboard</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="summaryGrid" class="grid"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section advisor-box" id="sec-advisor">
+        <div class="collapse-header" onclick="toggleSection('sec-advisor')">
+          <h2>PMO Advisor / AI tư vấn xử lý vấn đề</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div class="advisor-header">
+            <h3>Khuyến nghị điều hành từ dữ liệu 6 sheet</h3>
+            <div>
+              <button class="advisor-btn" onclick="event.stopPropagation(); renderAdvisor()">Cập nhật tư vấn</button>
+              <button class="advisor-btn secondary" onclick="event.stopPropagation(); copyCEOBrief()">Copy báo cáo CEO</button>
+            </div>
+          </div>
+          <div class="small-note">
+            Bản tư vấn này đọc trực tiếp dữ liệu 6 sheet, ưu tiên action quá hạn, thiếu dữ liệu, RAG, Risk/SOS, CEO Decision và tải việc theo PIC.
+          </div>
+          <div id="advisorContent" class="advisor-content">Đang chờ dữ liệu dashboard...</div>
+        </div>
+      </div>
+
+      <div class="collapsible-section hide-in-meeting" id="sec-chart">
+        <div class="collapse-header" onclick="toggleSection('sec-chart')">
+          <h2>Biểu đồ tổng quan</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div class="chart-wrap">
+            <div class="chart-card">
+              <h3>Biểu đồ RAG / Đèn báo</h3>
+              <div id="ragChart"></div>
+            </div>
+            <div class="chart-card">
+              <h3>Biểu đồ trạng thái</h3>
+              <div id="statusChart"></div>
+            </div>
+            <div class="chart-card">
+              <h3>Action theo trục</h3>
+              <div id="workstreamChart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sourceSection" style="display:none;">
+        <div class="collapse-header" onclick="toggleSection('sourceSection')">
+          <h2 id="sourceTitle">Nguồn tạo số liệu</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div class="small-note">Bấm “Mở sheet” để mở tab nguồn, hoặc “Mở dòng” để xem đúng dòng dữ liệu tạo ra số này.</div>
+          <div id="sourceTable"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sec-critical">
+        <div class="collapse-header" onclick="toggleSection('sec-critical')">
+          <h2>Top 10 việc trọng yếu cần xử lý</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div class="small-note">
+            Danh sách việc cần PMO đẩy ngay, ưu tiên theo RAG đỏ, quá hạn, bị vướng, Risk/SOS, việc cần CEO chốt và thiếu dữ liệu quan trọng.
+          </div>
+          <div id="criticalActionTable"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sec-workstream">
+        <div class="collapse-header" onclick="toggleSection('sec-workstream')">
+          <h2>1. Tổng quan theo trục / Workstream</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="workstreamTable"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sec-overdue">
+        <div class="collapse-header" onclick="toggleSection('sec-overdue')">
+          <h2>2. Top Action quá hạn / Việc quá hạn</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="overdueTable"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sec-risk">
+        <div class="collapse-header" onclick="toggleSection('sec-risk')">
+          <h2>3. Top Risk / SOS cần chú ý</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="riskTable"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section" id="sec-decision">
+        <div class="collapse-header" onclick="toggleSection('sec-decision')">
+          <h2>4. Việc cần CEO quyết định</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="decisionTable"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section hide-in-meeting" id="sec-data-quality">
+        <div class="collapse-header" onclick="toggleSection('sec-data-quality')">
+          <h2>Data Quality Score / Chất lượng dữ liệu</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+        <div class="collapse-content">
+          <div id="dataQualityBox"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-section hide-in-meeting" id="sec-comment">
+        <div class="collapse-header" onclick="toggleSection('sec-comment')">
+          <h2>CEO Message / Chat & Comment</h2>
+          <span class="collapse-toggle">−</span>
+        </div>
+
+        <div class="collapse-content">
+          <div class="small-note">
+            Comment hiển thị trực tiếp trên dashboard. Có thể Ctrl + V để dán ảnh trực tiếp. Có Like, Trả lời, Copy và Xóa.
+          </div>
+
+          <div id="commentList" class="chat-window">Đang tải comment...</div>
+
+          <div class="chat-input-panel">
+            <div class="chat-row">
+              <input id="commentName" class="comment-input" placeholder="Tên người gửi, ví dụ: Mr. Vinh / Sơn / Lâm / Toản">
+              <select id="commentRole" class="comment-input">
+                <option value="CEO">CEO</option>
+                <option value="PMO">PMO</option>
+                <option value="Co-PMO">Co-PMO</option>
+                <option value="PIC">PIC</option>
+                <option value="GSTT">GSTT</option>
+                <option value="KSNB">KSNB</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+
+            <textarea
+              id="commentMessage"
+              class="chat-textarea"
+              placeholder="Nhập comment tại đây. Có thể Ctrl + V để dán ảnh trực tiếp..."
+            ></textarea>
+
+            <div id="pastedImagePreview" class="pasted-preview" style="display:none;"></div>
+
+            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <input id="commentImage" class="comment-input file-input" type="file" accept="image/*">
+              <button class="comment-btn" onclick="submitDashboardComment()">Gửi comment</button>
+              <button class="comment-btn secondary" onclick="loadDashboardComments(true)">Tải lại</button>
+              <button class="comment-btn secondary" onclick="clearPastedImage()">Xóa ảnh</button>
+              <span id="commentStatus" class="comment-status"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer" id="updatedAt"></div>
+    </div>
+  </div>
+
+  <script>
+    var dashboardCache = null;
+    var advisorBriefText = '';
+    var isSendingComment = false;
+    var pastedCommentImage = null;
+    var commentPasteInitialized = false;
+
+    function loadDashboard() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('loading').innerText = 'Đang tải dữ liệu từ Google Sheet...';
+      document.getElementById('errorBox').innerHTML = '';
+
+      google.script.run
+        .withSuccessHandler(function(data) {
+          try {
+            dashboardCache = data;
+            renderDashboard(data);
+          } catch (e) {
+            showError({ message: 'Lỗi khi render dashboard trên HTML: ' + e.message });
+          }
+        })
+        .withFailureHandler(function(error) {
+          showError(error);
+        })
+        .getDashboardData();
+    }
+
+    window.onload = function() {
+      loadDashboard();
+
+      setInterval(function() {
+        if (!isUserWritingComment() && !isSendingComment) {
+          loadDashboard();
+        }
+      }, 120000);
+
+      setInterval(function() {
+        if (!isUserWritingComment() && !isSendingComment) {
+          loadDashboardComments(false);
+        }
+      }, 20000);
+    };
+
+    function showError(error) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('content').style.display = 'none';
+
+      var msg = error && error.message ? error.message : JSON.stringify(error);
+
+      document.getElementById('errorBox').innerHTML =
+        '<div class="error">Lỗi tải dashboard:\n' + safe(msg) + '</div>';
+    }
+
+    function renderDashboard(data) {
+      document.getElementById('loading').style.display = 'none';
+
+      if (!data || !data.summary) {
+        document.getElementById('content').style.display = 'none';
+        document.getElementById('errorBox').innerHTML =
+          '<div class="error">Không nhận được dữ liệu hợp lệ từ getDashboardData().</div>';
+        return;
+      }
+
+      document.getElementById('content').style.display = 'block';
+
+      renderSixAxisMiniDashboard(data.workstreamSummary || []);
+      renderSummary(data.summary);
+      renderExecutiveSummary(data);
+      renderAdvisor();
+      renderCharts(data);
+      renderCriticalActions(data);
+      renderWorkstream(data.workstreamSummary || []);
+      renderOverdue(data.topOverdue || []);
+      renderRisks(data.topRisks || []);
+      renderDecisions(data.decisionList || []);
+      renderDataQuality(data);
+      initCommentPasteBox();
+      loadDashboardComments(true);
+
+      document.getElementById('updatedAt').innerText =
+        'Cập nhật lần cuối: ' + safe(data.updatedAt || '') + ' | Sheet: ' + safe(data.spreadsheetName || '');
+    }
+
+    function toggleSection(id) {
+      var section = document.getElementById(id);
+      if (!section) return;
+
+      section.classList.toggle('collapsed');
+
+      var toggle = section.querySelector('.collapse-toggle');
+      if (toggle) {
+        toggle.innerText = section.classList.contains('collapsed') ? '+' : '−';
+      }
+    }
+
+    function renderSixAxisMiniDashboard(rows) {
+      var container = document.getElementById('sixAxisMiniDashboard');
+      if (!container) return;
+
+      container.innerHTML = rows.map(function(r) {
+        var ragClass = 'axis-rag-amber';
+
+        if (String(r.RAG || '').toLowerCase().includes('green') || String(r.RAG || '').toLowerCase().includes('xanh')) ragClass = 'axis-rag-green';
+        if (String(r.RAG || '').toLowerCase().includes('red') || String(r.RAG || '').toLowerCase().includes('đỏ')) ragClass = 'axis-rag-red';
+
+        var displayName = r.WorkstreamDisplay || r.Workstream;
+
+        return ''
+          + '<div class="axis-mini-card ' + ragClass + '" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">'
+          + '<div class="axis-mini-title">' + safe(displayName) + '</div>'
+          + '<div class="axis-mini-main">'
+          + '<div class="axis-mini-number">' + safe(r.Total || 0) + '</div>'
+          + '<div class="axis-mini-label">Action</div>'
+          + '</div>'
+          + '<div class="axis-mini-meta">'
+          + '<span>Done: ' + safe(r.Done || 0) + '</span>'
+          + '<span class="axis-mini-danger">QH: ' + safe(r.Overdue || 0) + '</span>'
+          + '<span class="axis-mini-warning">Risk: ' + safe(r.Risks || 0) + '</span>'
+          + '<span>CEO: ' + safe(r.Decisions || 0) + '</span>'
+          + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function renderSummary(s) {
+      var cards = [
+        ['totalActions', 'Tổng Action / Hành động', valueOrZero(s.totalActions), 'blue', 'blue'],
+        ['doneActions', 'Hoàn thành', valueOrZero(s.doneActions) + ' / ' + valueOrZero(s.completionRate) + '%', 'green', 'green'],
+        ['inProgressActions', 'Đang làm', valueOrZero(s.inProgressActions), 'blue', 'blue'],
+        ['overdueActions', 'Quá hạn', valueOrZero(s.overdueActions), 'red', Number(s.overdueActions || 0) > 0 ? 'red' : 'green'],
+        ['blockedActions', 'Blocked / Đang vướng', valueOrZero(s.blockedActions), 'amber', Number(s.blockedActions || 0) > 0 ? 'amber' : 'green'],
+        ['green', 'RAG Xanh', valueOrZero(s.green), 'green', 'green'],
+        ['amber', 'RAG Vàng', valueOrZero(s.amber), 'amber', Number(s.amber || 0) > 0 ? 'amber' : 'green'],
+        ['red', 'RAG Đỏ', valueOrZero(s.red), 'red', Number(s.red || 0) > 0 ? 'red' : 'green'],
+        ['riskCount', 'Risk / Rủi ro', valueOrZero(s.riskCount), 'red', Number(s.riskCount || 0) > 0 ? 'red' : 'green'],
+        ['sosCount', 'SOS / Đỏ cần chú ý', valueOrZero(s.sosCount), 'red', Number(s.sosCount || 0) > 0 ? 'red' : 'green'],
+        ['ceoDecisionCount', 'Việc cần CEO chốt', valueOrZero(s.ceoDecisionCount), 'red', Number(s.ceoDecisionCount || 0) > 0 ? 'amber' : 'green'],
+        ['overallStatus', 'Trạng thái tổng', getOverallStatus(s), getOverallStatusColor(s), getOverallStatusColor(s)]
+      ];
+
+      document.getElementById('summaryGrid').innerHTML = cards.map(function(c) {
+        var metricKey = c[0];
+        var signalClass = 'signal-' + c[4];
+
+        if (metricKey === 'overallStatus') {
+          return ''
+            + '<div class="card">'
+            + '<span class="signal ' + signalClass + '"></span>'
+            + '<div class="card-title">' + safe(c[1]) + '</div>'
+            + '<div class="card-value ' + c[3] + '">' + safe(c[2]) + '</div>'
+            + '</div>';
+        }
+
+        return ''
+          + '<div class="card" onclick="showMetricSources(\'' + metricKey + '\', \'' + safeForJs(c[1]) + '\')">'
+          + '<span class="signal ' + signalClass + '"></span>'
+          + '<div class="card-title">' + safe(c[1]) + '</div>'
+          + '<div class="card-value ' + c[3] + '">' + safe(c[2]) + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function renderExecutiveSummary(data) {
+      var s = data.summary || {};
+      var dq = data.dataQuality || {};
+      var critical = data.topCritical || [];
+
+      var statusText = 'Đúng hướng';
+      var statusClass = 'badge-green';
+
+      if (Number(s.red || 0) > 0 || Number(s.overdueActions || 0) > 0 || Number(s.blockedActions || 0) > 0) {
+        statusText = 'Cần can thiệp';
+        statusClass = 'badge-red';
+      } else if (Number(s.amber || 0) > 0 || Number(s.riskCount || 0) > 0 || Number(s.ceoDecisionCount || 0) > 0) {
+        statusText = 'Cần theo sát';
+        statusClass = 'badge-amber';
+      }
+
+      var topAction = critical.length > 0 ? critical[0] : null;
+
+      var html = '';
+
+      html += '<div class="executive-status">';
+      html += '<span class="badge ' + statusClass + '">' + statusText + '</span>';
+      html += '</div>';
+
+      html += '<div>';
+      html += '<b>Tổng action:</b> ' + valueOrZero(s.totalActions);
+      html += ' | <b>Hoàn thành:</b> ' + valueOrZero(s.doneActions) + ' / ' + valueOrZero(s.completionRate) + '%';
+      html += ' | <b>Quá hạn:</b> ' + valueOrZero(s.overdueActions);
+      html += ' | <b>Blocked:</b> ' + valueOrZero(s.blockedActions);
+      html += ' | <b>RAG đỏ:</b> ' + valueOrZero(s.red);
+      html += ' | <b>CEO cần chốt:</b> ' + valueOrZero(s.ceoDecisionCount);
+      html += ' | <b>Data Quality:</b> ' + valueOrZero(dq.score) + '%';
+      html += '</div>';
+
+      html += '<div style="margin-top:10px;">';
+      html += '<b>PMO nhận định:</b> ';
+
+      if (statusText === 'Cần can thiệp') {
+        html += 'Chương trình đang có điểm nghẽn cần xử lý ngay. PMO nên tập trung vào action quá hạn, RAG đỏ, blocked và việc cần CEO chốt.';
+      } else if (statusText === 'Cần theo sát') {
+        html += 'Chương trình chưa ở trạng thái nguy hiểm nhưng cần làm rõ các đầu việc RAG vàng, Risk/SOS và chất lượng cập nhật dữ liệu.';
+      } else {
+        html += 'Chương trình đang đi đúng hướng. PMO cần duy trì nhịp review và kiểm soát chất lượng dữ liệu.';
+      }
+
+      html += '</div>';
+
+      if (topAction) {
+        html += '<div style="margin-top:10px;">';
+        html += '<b>Việc critical số 1:</b> ';
+        html += safe(topAction.Action || '');
+        html += ' | <b>Owner:</b> ' + safe(topAction.Owner || '');
+        html += ' | <b>Deadline:</b> ' + safe(topAction.Deadline || '');
+        html += '</div>';
+      }
+
+      document.getElementById('executiveSummaryBox').innerHTML = html;
+    }
+
+    function renderAdvisor() {
+      if (!dashboardCache || !dashboardCache.summary) {
+        document.getElementById('advisorContent').innerHTML = 'Chưa có dữ liệu dashboard.';
+        return;
+      }
+
+      var s = dashboardCache.summary || {};
+      var workstreams = dashboardCache.workstreamSummary || [];
+      var allItems = getAllItemsFromWorkstreamSources();
+
+      var missingOwner = allItems.filter(function(x) { return !hasTextClient(x.Owner); });
+      var missingDeadline = allItems.filter(function(x) { return !hasTextClient(x.Deadline); });
+      var missingAction = allItems.filter(function(x) { return !hasTextClient(x.Action); });
+      var missingPIC = allItems.filter(function(x) { return !hasTextClient(x.PIC); });
+
+      var priority = workstreams.slice().sort(function(a, b) {
+        return calcPriorityScore(b) - calcPriorityScore(a);
+      });
+
+      var top = priority[0] || {};
+      var second = priority[1] || {};
+      var topPICs = getTopPICLoad(allItems).slice(0, 5);
+
+      var overall = '';
+      if (Number(s.red || 0) > 0 || Number(s.sosCount || 0) > 0) overall = '<span class="advisor-red">CẦN CAN THIỆP NGAY</span>';
+      else if (Number(s.overdueActions || 0) > 0) overall = '<span class="advisor-red">CẦN XỬ LÝ QUÁ HẠN</span>';
+      else if (Number(s.amber || 0) > 0) overall = '<span class="advisor-amber">CẦN LÀM RÕ RAG VÀ CHẤT LƯỢNG CAM KẾT</span>';
+      else overall = '<span class="advisor-green">ĐANG ĐÚNG HƯỚNG</span>';
+
+      var html = '';
+
+      html += '<div class="advisor-section">';
+      html += '<div class="advisor-title">1. Kết luận nhanh cho CEO</div>';
+      html += 'Trạng thái hiện tại: ' + overall + '. ';
+      html += 'Có <b>' + valueOrZero(s.totalActions) + '</b> action, ';
+      html += '<b>' + valueOrZero(s.overdueActions) + '</b> quá hạn, ';
+      html += '<b>' + valueOrZero(s.riskCount) + '</b> risk, ';
+      html += '<b>' + valueOrZero(s.ceoDecisionCount) + '</b> việc cần CEO chốt.';
+      html += '</div>';
+
+      html += '<div class="advisor-section">';
+      html += '<div class="advisor-title">2. Trục cần đẩy mạnh trước</div>';
+
+      if (top && top.WorkstreamDisplay) {
+        html += 'Ưu tiên số 1: <b>' + safe(top.WorkstreamDisplay) + '</b>';
+        html += ' với <b>' + valueOrZero(top.Total) + '</b> action, ';
+        html += '<b>' + valueOrZero(top.Overdue) + '</b> quá hạn, ';
+        html += '<b>' + valueOrZero(top.Risks) + '</b> risk, ';
+        html += '<b>' + valueOrZero(top.Decisions) + '</b> việc cần CEO chốt.';
+      }
+
+      if (second && second.WorkstreamDisplay) {
+        html += '<br>Ưu tiên tiếp theo: <b>' + safe(second.WorkstreamDisplay) + '</b>.';
+      }
+
+      html += '</div>';
+
+      html += '<div class="advisor-section">';
+      html += '<div class="advisor-title">3. Vấn đề dữ liệu cần xử lý</div>';
+      html += '<ul class="advisor-list">';
+      html += '<li>Thiếu Owner: <b>' + missingOwner.length + '</b> dòng.</li>';
+      html += '<li>Thiếu Deadline: <b>' + missingDeadline.length + '</b> dòng.</li>';
+      html += '<li>Thiếu PIC: <b>' + missingPIC.length + '</b> dòng.</li>';
+      html += '<li>Thiếu Action: <b>' + missingAction.length + '</b> dòng.</li>';
+      html += '</ul>';
+      html += '</div>';
+
+      html += '<div class="advisor-section">';
+      html += '<div class="advisor-title">4. PIC cần theo sát</div>';
+
+      if (topPICs.length === 0) {
+        html += 'Chưa đủ dữ liệu PIC để phân tích.';
+      } else {
+        html += '<ul class="advisor-list">';
+        topPICs.forEach(function(p) {
+          html += '<li><b>' + safe(p.name) + '</b>: ' + p.count + ' action.</li>';
+        });
+        html += '</ul>';
+      }
+
+      html += '</div>';
+
+      document.getElementById('advisorContent').innerHTML = html;
+    }
+
+    function renderCriticalActions(data) {
+      var rows = data.topCritical || [];
+
+      var headers = [
+        'Ưu tiên',
+        'Trục',
+        'Action',
+        'PIC',
+        'Owner',
+        'Deadline',
+        'Status',
+        'RAG',
+        'Risk/SOS',
+        'CEO chốt',
+        'Link'
+      ];
+
+      var body = '';
+
+      if (!rows.length) {
+        body = '<tr><td colspan="11">Chưa có dữ liệu critical.</td></tr>';
+      }
+
+      rows.forEach(function(r) {
+        var trClass = '';
+
+        if (r.RAG === 'Red' || r.Status === 'Blocked' || r.Status === 'Overdue') {
+          trClass = 'critical-row-red';
+        } else if (r.RAG === 'Amber') {
+          trClass = 'critical-row-amber';
+        }
+
+        body += ''
+          + '<tr class="' + trClass + '">'
+          + '<td><b>' + safe(r.PriorityScore || 0) + '</b></td>'
+          + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
+          + '<td>' + safe(r.Action) + '</td>'
+          + '<td>' + safe(r.PIC) + '</td>'
+          + '<td>' + safe(r.Owner) + '</td>'
+          + '<td>' + safe(r.Deadline) + '</td>'
+          + '<td>' + safe(r.Status) + '</td>'
+          + '<td>' + ragBadge(r.RAG) + '</td>'
+          + '<td>' + safe(r.Risk) + '</td>'
+          + '<td>' + safe(r.CEODecision) + '</td>'
+          + '<td>' + sourceLink(r.RowUrl, 'Mở dòng') + '</td>'
+          + '</tr>';
+      });
+
+      renderTable('criticalActionTable', headers, body);
+    }
+
+    function renderDataQuality(data) {
+      var dq = data.dataQuality || {};
+      var score = Number(dq.score || 0);
+      var deg = Math.round(score / 100 * 360);
+
+      var html = '';
+
+      html += '<div class="data-quality-wrap">';
+      html += '<div class="data-quality-circle" style="background:conic-gradient(#064e3b 0deg, #064e3b ' + deg + 'deg, #e5e7eb ' + deg + 'deg);">';
+      html += score + '%';
+      html += '</div>';
+
+      html += '<div>';
+      html += '<p><b>Tổng dòng dữ liệu:</b> ' + valueOrZero(dq.total) + '</p>';
+      html += '<p><b>Thiếu Owner:</b> ' + valueOrZero(dq.missingOwner) + ' dòng</p>';
+      html += '<p><b>Thiếu PIC:</b> ' + valueOrZero(dq.missingPIC) + ' dòng</p>';
+      html += '<p><b>Thiếu Deadline:</b> ' + valueOrZero(dq.missingDeadline) + ' dòng</p>';
+      html += '<p><b>Thiếu Action:</b> ' + valueOrZero(dq.missingAction) + ' dòng</p>';
+      html += '<p><b>Thiếu Status:</b> ' + valueOrZero(dq.missingStatus) + ' dòng</p>';
+      html += '<p><b>Thiếu RAG:</b> ' + valueOrZero(dq.missingRAG) + ' dòng</p>';
+      html += '</div>';
+
+      html += '</div>';
+
+      document.getElementById('dataQualityBox').innerHTML = html;
+    }
+
+    function renderCharts(data) {
+      var s = data.summary || {};
+      var workstreams = data.workstreamSummary || [];
+
+      renderBarChart('ragChart', [
+        ['Xanh / Green', Number(s.green || 0), 'bar-green'],
+        ['Vàng / Amber', Number(s.amber || 0), 'bar-amber'],
+        ['Đỏ / Red', Number(s.red || 0), 'bar-red']
+      ]);
+
+      renderBarChart('statusChart', [
+        ['Hoàn thành', Number(s.doneActions || 0), 'bar-green'],
+        ['Đang làm', Number(s.inProgressActions || 0), 'bar-blue'],
+        ['Quá hạn', Number(s.overdueActions || 0), 'bar-red'],
+        ['Đang vướng', Number(s.blockedActions || 0), 'bar-amber']
+      ]);
+
+      renderBarChart('workstreamChart', workstreams.map(function(r) {
+        return [r.WorkstreamDisplay || r.Workstream, Number(r.Total || 0), 'bar-blue'];
+      }));
+    }
+
+    function renderBarChart(elementId, items) {
+      var max = 1;
+
+      items.forEach(function(item) {
+        if (item[1] > max) max = item[1];
+      });
+
+      document.getElementById(elementId).innerHTML = items.map(function(item) {
+        var label = item[0];
+        var value = item[1];
+        var cls = item[2];
+        var pct = max > 0 ? Math.round(value / max * 100) : 0;
+
+        return ''
+          + '<div class="bar-row">'
+          + '<div>' + safe(label) + '</div>'
+          + '<div class="bar-bg"><div class="bar-fill ' + cls + '" style="width:' + pct + '%"></div></div>'
+          + '<div><b>' + safe(value) + '</b></div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function showWorkstreamSources(workstreamKey) {
+      if (!dashboardCache || !dashboardCache.workstreamSources) {
+        alert('Chưa có dữ liệu nguồn. Hãy bấm Refresh / Cập nhật dữ liệu.');
+        return;
+      }
+
+      var source = dashboardCache.workstreamSources[workstreamKey];
+
+      if (!source) {
+        alert('Không tìm thấy dữ liệu của trục này.');
+        return;
+      }
+
+      document.getElementById('sourceSection').style.display = 'block';
+      document.getElementById('sourceSection').classList.remove('collapsed');
+      document.getElementById('sourceTitle').innerText =
+        'Dashboard chi tiết trục: ' + (source.WorkstreamDisplay || source.Workstream);
+
+      var summary = source.Summary || {};
+      var headers = [
+        'Mã dòng',
+        'Action / Hành động',
+        'Đơn vị / Khối',
+        'PIC',
+        'Owner',
+        'Deadline',
+        'Status',
+        'RAG',
+        'Risk',
+        'CEO chốt',
+        'Mở dòng'
+      ];
+
+      var body = ''
+        + '<tr>'
+        + '<td colspan="11">'
+        + '<b>Tổng action:</b> ' + safe(summary.Total || 0)
+        + ' | <b>Done:</b> ' + safe(summary.Done || 0)
+        + ' | <b>Quá hạn:</b> ' + safe(summary.Overdue || 0)
+        + ' | <b>Blocked:</b> ' + safe(summary.Blocked || 0)
+        + ' | <b>Risk:</b> ' + safe(summary.Risks || 0)
+        + ' | <b>CEO chốt:</b> ' + safe(summary.Decisions || 0)
+        + ' | ' + sourceLink(source.SourceUrl, 'Mở sheet nguồn')
+        + '</td>'
+        + '</tr>';
+
+      (source.Items || []).forEach(function(item) {
+        body += ''
+          + '<tr>'
+          + '<td>' + safe(item.RowId) + '</td>'
+          + '<td>' + safe(item.Action) + '</td>'
+          + '<td>' + safe(item.Unit) + '</td>'
+          + '<td>' + safe(item.PIC) + '</td>'
+          + '<td>' + safe(item.Owner) + '</td>'
+          + '<td>' + safe(item.Deadline) + '</td>'
+          + '<td>' + safe(item.Status) + '</td>'
+          + '<td>' + ragBadge(item.RAG) + '</td>'
+          + '<td>' + safe(item.Risk) + '</td>'
+          + '<td>' + safe(item.CEODecision) + '</td>'
+          + '<td>' + sourceLink(item.RowUrl, 'Mở dòng') + '</td>'
+          + '</tr>';
+      });
+
+      renderTable('sourceTable', headers, body);
+
+      document.getElementById('sourceSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showMetricSources(metricKey, title) {
+      if (!dashboardCache || !dashboardCache.metricSources) {
+        alert('Chưa có dữ liệu nguồn. Hãy bấm Refresh / Cập nhật dữ liệu.');
+        return;
+      }
+
+      var sources = dashboardCache.metricSources[metricKey] || [];
+
+      document.getElementById('sourceSection').style.display = 'block';
+      document.getElementById('sourceSection').classList.remove('collapsed');
+      document.getElementById('sourceTitle').innerText = 'Nguồn tạo số liệu: ' + title;
+
+      var headers = [
+        'Trục / Workstream',
+        'Số dòng',
+        'Mở sheet',
+        'Mã dòng',
+        'Action / Hành động',
+        'PIC',
+        'Owner',
+        'Deadline',
+        'RAG',
+        'Mở dòng'
+      ];
+
+      var body = '';
+
+      if (sources.length === 0) {
+        body = '<tr><td colspan="10">Không có dòng dữ liệu tạo ra số này.</td></tr>';
+      }
+
+      sources.forEach(function(group) {
+        body += ''
+          + '<tr>'
+          + '<td><b>' + safe(group.WorkstreamDisplay || group.Workstream) + '</b></td>'
+          + '<td><b>' + safe(group.Count) + '</b></td>'
+          + '<td>' + sourceLink(group.SourceUrl, 'Mở sheet') + '</td>'
+          + '<td colspan="7"></td>'
+          + '</tr>';
+
+        (group.Items || []).forEach(function(item) {
+          body += ''
+            + '<tr>'
+            + '<td></td>'
+            + '<td></td>'
+            + '<td></td>'
+            + '<td>' + safe(item.RowId) + '</td>'
+            + '<td>' + safe(item.Action) + '</td>'
+            + '<td>' + safe(item.PIC) + '</td>'
+            + '<td>' + safe(item.Owner) + '</td>'
+            + '<td>' + safe(item.Deadline) + '</td>'
+            + '<td>' + ragBadge(item.RAG) + '</td>'
+            + '<td>' + sourceLink(item.RowUrl, 'Mở dòng') + '</td>'
+            + '</tr>';
+        });
+      });
+
+      renderTable('sourceTable', headers, body);
+
+      document.getElementById('sourceSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function getOverallStatus(s) {
+      if (Number(s.red || 0) > 0 || Number(s.sosCount || 0) > 0 || Number(s.overdueActions || 0) > 0) return 'Cần can thiệp';
+      if (Number(s.amber || 0) > 0 || Number(s.blockedActions || 0) > 0) return 'Có rủi ro';
+      return 'Đúng hướng';
+    }
+
+    function getOverallStatusColor(s) {
+      if (Number(s.red || 0) > 0 || Number(s.sosCount || 0) > 0 || Number(s.overdueActions || 0) > 0) return 'red';
+      if (Number(s.amber || 0) > 0 || Number(s.blockedActions || 0) > 0) return 'amber';
+      return 'green';
+    }
+
+    function renderWorkstream(rows) {
+      var headers = [
+        'Trục / Workstream',
+        'Action / Hành động',
+        'Done / Hoàn thành',
+        '% hoàn thành',
+        'Quá hạn',
+        'Blocked / Đang vướng',
+        'Risk / Rủi ro',
+        'CEO chốt',
+        'RAG / Đèn báo'
+      ];
+
+      var body = rows.map(function(r) {
+        return ''
+          + '<tr>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.WorkstreamDisplay || r.Workstream) + '</a></td>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.Total) + '</a></td>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.Done) + '</a></td>'
+          + '<td>' + safe(r.Completion) + '%</td>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.Overdue) + '</a></td>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.Blocked) + '</a></td>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.Risks) + '</a></td>'
+          + '<td><a href="javascript:void(0)" onclick="showWorkstreamSources(\'' + safeForJs(r.Workstream) + '\')">' + safe(r.Decisions) + '</a></td>'
+          + '<td>' + ragBadge(r.RAG) + '</td>'
+          + '</tr>';
+      }).join('');
+
+      renderTable('workstreamTable', headers, body);
+    }
+
+    function renderOverdue(rows) {
+      var headers = [
+        'Mã dòng',
+        'Action / Hành động',
+        'Trục / Workstream',
+        'Đơn vị / Khối',
+        'PIC',
+        'Owner',
+        'Deadline',
+        'RAG',
+        'PMO Comment',
+        'Link dữ liệu'
+      ];
+
+      var body = rows.map(function(r) {
+        return ''
+          + '<tr>'
+          + '<td>' + safe(r.RowId) + '</td>'
+          + '<td>' + safe(r.Action) + '</td>'
+          + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
+          + '<td>' + safe(r.Unit) + '</td>'
+          + '<td>' + safe(r.PIC) + '</td>'
+          + '<td>' + safe(r.Owner) + '</td>'
+          + '<td>' + safe(r.Deadline) + '</td>'
+          + '<td>' + ragBadge(r.RAG) + '</td>'
+          + '<td>' + safe(r.PMOComment) + '</td>'
+          + '<td>' + sourceLink(r.RowUrl, 'Mở dòng') + '</td>'
+          + '</tr>';
+      }).join('');
+
+      if (!body) body = '<tr><td colspan="10">Chưa có action quá hạn.</td></tr>';
+
+      renderTable('overdueTable', headers, body);
+    }
+
+    function renderRisks(rows) {
+      var headers = [
+        'Mã dòng',
+        'Risk / SOS',
+        'Action',
+        'Trục',
+        'PIC',
+        'Owner',
+        'Deadline',
+        'RAG',
+        'CEO chốt',
+        'Link'
+      ];
+
+      var body = rows.map(function(r) {
+        return ''
+          + '<tr>'
+          + '<td>' + safe(r.RowId) + '</td>'
+          + '<td>' + safe(r.Risk) + '</td>'
+          + '<td>' + safe(r.Action) + '</td>'
+          + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
+          + '<td>' + safe(r.PIC) + '</td>'
+          + '<td>' + safe(r.Owner) + '</td>'
+          + '<td>' + safe(r.Deadline) + '</td>'
+          + '<td>' + ragBadge(r.RAG) + '</td>'
+          + '<td>' + safe(r.CEODecision) + '</td>'
+          + '<td>' + sourceLink(r.RowUrl, 'Mở dòng') + '</td>'
+          + '</tr>';
+      }).join('');
+
+      if (!body) body = '<tr><td colspan="10">Chưa có Risk/SOS.</td></tr>';
+
+      renderTable('riskTable', headers, body);
+    }
+
+    function renderDecisions(rows) {
+      var headers = [
+        'Mã dòng',
+        'Việc cần CEO quyết định',
+        'Action',
+        'Trục',
+        'PIC',
+        'Owner',
+        'Deadline',
+        'RAG',
+        'Risk',
+        'Link'
+      ];
+
+      var body = rows.map(function(r) {
+        return ''
+          + '<tr>'
+          + '<td>' + safe(r.RowId) + '</td>'
+          + '<td>' + safe(r.CEODecision) + '</td>'
+          + '<td>' + safe(r.Action) + '</td>'
+          + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
+          + '<td>' + safe(r.PIC) + '</td>'
+          + '<td>' + safe(r.Owner) + '</td>'
+          + '<td>' + safe(r.Deadline) + '</td>'
+          + '<td>' + ragBadge(r.RAG) + '</td>'
+          + '<td>' + safe(r.Risk) + '</td>'
+          + '<td>' + sourceLink(r.RowUrl, 'Mở dòng') + '</td>'
+          + '</tr>';
+      }).join('');
+
+      if (!body) body = '<tr><td colspan="10">Chưa có việc cần CEO quyết định.</td></tr>';
+
+      renderTable('decisionTable', headers, body);
+    }
+
+    function renderTable(elementId, headers, bodyHtml) {
+      var html = '<table><thead><tr>';
+
+      headers.forEach(function(h) {
+        html += '<th>' + safe(h) + '</th>';
+      });
+
+      html += '</tr></thead><tbody>' + bodyHtml + '</tbody></table>';
+
+      document.getElementById(elementId).innerHTML = html;
+    }
+
+    function copyCEOBrief() {
+      if (!dashboardCache || !dashboardCache.summary) {
+        alert('Chưa có dữ liệu dashboard.');
+        return;
+      }
+
+      var s = dashboardCache.summary || {};
+      var dq = dashboardCache.dataQuality || {};
+      var critical = dashboardCache.topCritical || [];
+
+      var text = '';
+
+      text += 'GSP NEXT 30 - PMO CEO BRIEF\n\n';
+
+      text += '1. Tổng quan\n';
+      text += '- Tổng action: ' + valueOrZero(s.totalActions) + '\n';
+      text += '- Hoàn thành: ' + valueOrZero(s.doneActions) + ' / ' + valueOrZero(s.completionRate) + '%\n';
+      text += '- Đang làm: ' + valueOrZero(s.inProgressActions) + '\n';
+      text += '- Quá hạn: ' + valueOrZero(s.overdueActions) + '\n';
+      text += '- Blocked: ' + valueOrZero(s.blockedActions) + '\n';
+      text += '- RAG đỏ: ' + valueOrZero(s.red) + '\n';
+      text += '- Risk/SOS: ' + valueOrZero(s.riskCount) + '\n';
+      text += '- Việc cần CEO chốt: ' + valueOrZero(s.ceoDecisionCount) + '\n';
+      text += '- Data Quality: ' + valueOrZero(dq.score) + '%\n\n';
+
+      text += '2. Top Critical Actions\n';
+
+      critical.slice(0, 5).forEach(function(r, i) {
+        text += (i + 1) + '. [' + (r.WorkstreamDisplay || r.Workstream || '') + '] ';
+        text += (r.Action || '');
+        text += ' | Owner: ' + (r.Owner || '');
+        text += ' | Deadline: ' + (r.Deadline || '');
+        text += ' | RAG: ' + (r.RAG || '');
+        text += '\n';
+      });
+
+      navigator.clipboard.writeText(text).then(function() {
+        alert('Đã copy báo cáo CEO.');
+      }).catch(function() {
+        alert('Không copy tự động được.');
+      });
+    }
+
+    function toggleMeetingMode() {
+      document.body.classList.toggle('meeting-mode');
+    }
+
+    function scrollToSection(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+
+    function openSourceSheet() {
+      if (dashboardCache && dashboardCache.spreadsheetUrl) {
+        window.open(dashboardCache.spreadsheetUrl, '_blank');
+      }
+    }
+
+    /* =====================================================
+       COMMENT FUNCTIONS
+    ===================================================== */
+
+    function initCommentPasteBox() {
+      if (commentPasteInitialized) return;
+
+      var textarea = document.getElementById('commentMessage');
+      if (!textarea) return;
+
+      textarea.addEventListener('paste', function(e) {
+        var items = (e.clipboardData || window.clipboardData).items;
+        if (!items) return;
+
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+
+          if (item.type.indexOf('image') !== -1) {
+            var file = item.getAsFile();
+            readImageFileForComment(file, 'pasted-image.png');
+            e.preventDefault();
+            return;
+          }
+        }
+      });
+
+      var fileInput = document.getElementById('commentImage');
+
+      if (fileInput) {
+        fileInput.addEventListener('change', function() {
+          if (fileInput.files && fileInput.files[0]) {
+            readImageFileForComment(fileInput.files[0], fileInput.files[0].name);
+          }
+        });
+      }
+
+      commentPasteInitialized = true;
+    }
+
+    function readImageFileForComment(file, defaultName) {
+      var reader = new FileReader();
+
+      reader.onload = function(evt) {
+        var originalBase64 = evt.target.result;
+
+        resizeImageForPreview(originalBase64, function(previewBase64) {
+          pastedCommentImage = {
+            name: file.name || defaultName || 'comment-image.png',
+            mimeType: file.type || 'image/png',
+            base64: originalBase64,
+            preview: previewBase64 || originalBase64
+          };
+
+          renderPastedImagePreview();
+        });
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function resizeImageForPreview(base64, callback) {
+      var img = new Image();
+
+      img.onload = function() {
+        var maxW = 600;
+        var maxH = 450;
+
+        var w = img.width;
+        var h = img.height;
+
+        if (w > maxW || h > maxH) {
+          var ratio = Math.min(maxW / w, maxH / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+
+        var data = canvas.toDataURL('image/jpeg', 0.72);
+        callback(data);
+      };
+
+      img.onerror = function() {
+        callback(base64);
+      };
+
+      img.src = base64;
+    }
+
+    function renderPastedImagePreview() {
+      var box = document.getElementById('pastedImagePreview');
+      if (!box) return;
+
+      if (!pastedCommentImage) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        return;
+      }
+
+      box.style.display = 'block';
+      box.innerHTML =
+        '<b>Ảnh đã sẵn sàng gửi:</b> ' + safe(pastedCommentImage.name)
+        + '<img src="' + pastedCommentImage.preview + '">';
+    }
+
+    function clearPastedImage() {
+      pastedCommentImage = null;
+
+      var fileInput = document.getElementById('commentImage');
+      if (fileInput) fileInput.value = '';
+
+      renderPastedImagePreview();
+    }
+
+    function submitDashboardComment(parentId, replyText) {
+      var nameBox = document.getElementById('commentName');
+      var roleBox = document.getElementById('commentRole');
+
+      var name = nameBox ? nameBox.value.trim() : '';
+      var role = roleBox ? roleBox.value.trim() : 'Khác';
+
+      if (!name) name = 'Người dùng';
+
+      var message = '';
+
+      if (parentId) {
+        message = String(replyText || '').trim();
+      } else {
+        var messageBox = document.getElementById('commentMessage');
+        message = messageBox ? messageBox.value.trim() : '';
+      }
+
+      if (!message && !pastedCommentImage) {
+        alert('Anh nhập nội dung comment hoặc dán/tải ảnh trước.');
+        return;
+      }
+
+      var payload = {
+        parentId: parentId || '',
+        name: name,
+        role: role,
+        message: message,
+        imageName: pastedCommentImage ? pastedCommentImage.name : '',
+        imageBase64: pastedCommentImage ? pastedCommentImage.base64 : '',
+        imageMimeType: pastedCommentImage ? pastedCommentImage.mimeType : '',
+        imagePreview: pastedCommentImage ? pastedCommentImage.preview : ''
+      };
+
+      saveCommentPayload(payload);
+    }
+
+    function saveCommentPayload(payload) {
+      var status = document.getElementById('commentStatus');
+
+      isSendingComment = true;
+
+      if (status) status.innerText = 'Đang gửi comment...';
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          isSendingComment = false;
+
+          if (status) {
+            status.innerText = 'Đã gửi comment.';
+          }
+
+          if (!payload.parentId) {
+            var messageBox = document.getElementById('commentMessage');
+            var imageInput = document.getElementById('commentImage');
+
+            if (messageBox) messageBox.value = '';
+            if (imageInput) imageInput.value = '';
+
+            pastedCommentImage = null;
+            renderPastedImagePreview();
+          } else {
+            var replyBox = document.getElementById('reply-box-' + safeAttr(payload.parentId));
+            var replyText = document.getElementById('reply-text-' + safeAttr(payload.parentId));
+
+            if (replyText) replyText.value = '';
+            if (replyBox) replyBox.style.display = 'none';
+          }
+
+          if (res && res.comments) {
+            renderDashboardComments(res.comments, true);
+
+            if (status) {
+              status.innerText = 'Đã gửi và tải ' + res.comments.length + ' comment.';
+            }
+          } else {
+            loadDashboardComments(true);
+          }
+        })
+        .withFailureHandler(function(error) {
+          isSendingComment = false;
+
+          var msg = error && error.message ? error.message : String(error);
+
+          if (status) {
+            status.innerText = 'Lỗi gửi comment: ' + msg;
+          }
+
+          alert('Lỗi gửi comment: ' + msg);
+        })
+        .saveDashboardComment(payload);
+    }
+
+    function loadDashboardComments(scrollToBottom) {
+      google.script.run
+        .withSuccessHandler(function(rows) {
+          var status = document.getElementById('commentStatus');
+
+          if (status) {
+            status.innerText = 'Đã tải ' + ((rows || []).length) + ' comment.';
+          }
+
+          renderDashboardComments(rows || [], scrollToBottom);
+        })
+        .withFailureHandler(function(error) {
+          var box = document.getElementById('commentList');
+          var msg = error && error.message ? error.message : String(error);
+
+          if (box) {
+            box.innerHTML =
+              '<div class="error">Lỗi tải comment: ' + safe(msg) + '</div>';
+          }
+        })
+        .getDashboardComments();
+    }
+
+    function renderDashboardComments(rows, scrollToBottom) {
+      var container = document.getElementById('commentList');
+
+      if (!container) return;
+
+      if (!rows || rows.length === 0) {
+        container.innerHTML =
+          '<div style="padding:12px;color:#6b7280;font-weight:bold;">Chưa có comment nào.</div>';
+        return;
+      }
+
+      var parents = rows.filter(function(r) {
+        return !r.ParentId;
+      });
+
+      var repliesMap = {};
+
+      rows.forEach(function(r) {
+        if (r.ParentId) {
+          if (!repliesMap[r.ParentId]) repliesMap[r.ParentId] = [];
+          repliesMap[r.ParentId].push(r);
+        }
+      });
+
+      var html = '';
+
+      parents.slice().reverse().forEach(function(parent) {
+        html += '<div class="chat-thread">';
+        html += renderSingleComment(parent, false);
+
+        var replies = repliesMap[parent.Id] || [];
+
+        replies.forEach(function(reply) {
+          html += renderSingleComment(reply, true);
+        });
+
+        html += renderReplyBox(parent.Id);
+        html += '</div>';
+      });
+
+      container.innerHTML = html;
+
+      if (scrollToBottom) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    function renderSingleComment(r, isReply) {
+      var name = r.Name || 'Chưa rõ người gửi';
+      var role = r.Role || 'Khác';
+      var message = r.Message || '';
+      var time = r.Time || '';
+      var likes = Number(r.Likes || 0);
+
+      var roleLower = String(role).toLowerCase();
+      var cls = 'chat-message';
+
+      if (roleLower.indexOf('ceo') >= 0) {
+        cls += ' chat-message-ceo';
+      } else if (roleLower.indexOf('pmo') >= 0) {
+        cls += ' chat-message-pmo';
+      }
+
+      if (isReply) cls += ' chat-reply';
+
+      var imageHtml = '';
+
+      if (r.ImagePreview || r.ImageUrl) {
+        var imgSrc = r.ImagePreview || getDriveImageSrc(r.ImageUrl);
+
+        imageHtml =
+          '<div class="chat-image">'
+          + '<a href="' + safe(r.ImageUrl || imgSrc) + '" target="_blank">Mở ảnh đính kèm</a>'
+          + '<br>'
+          + '<img src="' + safe(imgSrc) + '" loading="lazy" onerror="this.style.display=\'none\';">'
+          + '</div>';
+      }
+
+      return ''
+        + '<div class="' + cls + '">'
+        +   '<div class="chat-meta">'
+        +     '<span class="chat-sender">' + safe(name) + '</span>'
+        +     ' | <span>' + safe(role) + '</span>'
+        +     ' | <span>' + safe(time) + '</span>'
+        +   '</div>'
+        +   '<div class="chat-text" id="comment-text-' + safeAttr(r.Id) + '">' + safe(message) + '</div>'
+        +   imageHtml
+        +   '<div class="chat-actions-inline">'
+        +     '<button class="mini-action" onclick="likeComment(\'' + safeForJs(r.Id) + '\')">👍 Like ' + likes + '</button>'
+        +     '<button class="mini-action" onclick="toggleReplyBox(\'' + safeForJs(r.Id) + '\')">↩ Trả lời</button>'
+        +     '<button class="mini-action" onclick="copyCommentText(\'' + safeForJs(r.Id) + '\')">📋 Copy</button>'
+        +     '<button class="mini-action danger-action" onclick="deleteComment(\'' + safeForJs(r.Id) + '\')">🗑 Xóa</button>'
+        +   '</div>'
+        + '</div>';
+    }
+
+    function renderReplyBox(parentId) {
+      return ''
+        + '<div class="reply-box" id="reply-box-' + safeAttr(parentId) + '">'
+        +   '<textarea id="reply-text-' + safeAttr(parentId) + '" placeholder="Nhập nội dung trả lời..."></textarea>'
+        +   '<div style="margin-top:8px;">'
+        +     '<button class="comment-btn" onclick="sendReply(\'' + safeForJs(parentId) + '\')">Gửi trả lời</button> '
+        +     '<button class="comment-btn secondary" onclick="toggleReplyBox(\'' + safeForJs(parentId) + '\')">Đóng</button>'
+        +   '</div>'
+        + '</div>';
+    }
+
+    function toggleReplyBox(commentId) {
+      var box = document.getElementById('reply-box-' + safeAttr(commentId));
+
+      if (!box) return;
+
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
+
+      var textarea = document.getElementById('reply-text-' + safeAttr(commentId));
+
+      if (textarea && box.style.display === 'block') textarea.focus();
+    }
+
+    function sendReply(parentId) {
+      var textarea = document.getElementById('reply-text-' + safeAttr(parentId));
+
+      if (!textarea) return;
+
+      var text = textarea.value.trim();
+
+      if (!text) {
+        alert('Anh nhập nội dung trả lời trước.');
+        return;
+      }
+
+      submitDashboardComment(parentId, text);
+    }
+
+    function likeComment(commentId) {
+      var nameBox = document.getElementById('commentName');
+      var name = nameBox ? nameBox.value.trim() : '';
+
+      if (!name) name = 'Người dùng';
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (res && res.comments) {
+            renderDashboardComments(res.comments, false);
+          } else {
+            loadDashboardComments(false);
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert('Lỗi like comment: ' + ((error && error.message) ? error.message : error));
+        })
+        .likeDashboardComment({
+          commentId: commentId,
+          name: name
+        });
+    }
+
+    function deleteComment(commentId) {
+      var ok = confirm('Xóa comment này? Nếu comment có trả lời bên dưới thì các trả lời cũng bị xóa.');
+
+      if (!ok) return;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (res && res.comments) {
+            renderDashboardComments(res.comments, false);
+          } else {
+            loadDashboardComments(false);
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert('Lỗi xóa comment: ' + ((error && error.message) ? error.message : error));
+        })
+        .deleteDashboardComment({
+          commentId: commentId
+        });
+    }
+
+    function copyCommentText(commentId) {
+      var el = document.getElementById('comment-text-' + safeAttr(commentId));
+
+      if (!el) return;
+
+      var text = el.innerText || el.textContent || '';
+
+      navigator.clipboard.writeText(text).then(function() {
+        alert('Đã copy comment.');
+      }).catch(function() {
+        alert('Không copy tự động được. Anh bôi đen comment để copy tay.');
+      });
+    }
+
+    function getDriveImageSrc(url) {
+      if (!url) return '';
+
+      var s = String(url);
+      var id = '';
+
+      var match1 = s.match(/[?&]id=([^&]+)/);
+
+      if (match1 && match1[1]) {
+        id = match1[1];
+      }
+
+      var match2 = s.match(/\/d\/([^\/]+)/);
+
+      if (!id && match2 && match2[1]) {
+        id = match2[1];
+      }
+
+      if (!id && s.indexOf('drive.google.com/uc') >= 0) {
+        return s;
+      }
+
+      if (id) {
+        return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w1000';
+      }
+
+      return s;
+    }
+
+    function isUserWritingComment() {
+      var active = document.activeElement;
+
+      if (!active) return false;
+
+      var id = active.id || '';
+      var tag = String(active.tagName || '').toLowerCase();
+
+      if (id === 'commentMessage') return true;
+      if (id.indexOf('reply-text-') === 0) return true;
+      if (tag === 'textarea' && id.indexOf('reply-text-') === 0) return true;
+
+      var commentMessage = document.getElementById('commentMessage');
+
+      if (commentMessage && commentMessage.value.trim()) return true;
+
+      var replyBoxes = document.querySelectorAll('[id^="reply-text-"]');
+
+      for (var i = 0; i < replyBoxes.length; i++) {
+        if (replyBoxes[i].value && replyBoxes[i].value.trim()) return true;
+      }
+
+      return false;
+    }
+
+    /* =====================================================
+       COMMON HELPERS
+    ===================================================== */
+
+    function calcPriorityScore(r) {
+      var score = 0;
+
+      score += Number(r.Overdue || 0) * 6;
+      score += Number(r.Risks || 0) * 5;
+      score += Number(r.Decisions || 0) * 5;
+      score += Number(r.Blocked || 0) * 4;
+
+      if (String(r.RAG || '').toLowerCase().includes('red')) score += 12;
+      if (String(r.RAG || '').toLowerCase().includes('amber')) score += 2;
+
+      score += Number(r.Total || 0) * 0.2;
+
+      return score;
+    }
+
+    function getAllItemsFromWorkstreamSources() {
+      var output = [];
+
+      if (!dashboardCache || !dashboardCache.workstreamSources) return output;
+
+      Object.keys(dashboardCache.workstreamSources).forEach(function(k) {
+        var source = dashboardCache.workstreamSources[k];
+
+        (source.Items || []).forEach(function(item) {
+          output.push(item);
+        });
+      });
+
+      return output;
+    }
+
+    function getTopPICLoad(items) {
+      var map = {};
+
+      items.forEach(function(x) {
+        var name = x.PIC || 'Chưa rõ PIC';
+
+        if (!map[name]) map[name] = 0;
+
+        map[name] += 1;
+      });
+
+      return Object.keys(map).map(function(k) {
+        return { name: k, count: map[k] };
+      }).sort(function(a, b) {
+        return b.count - a.count;
+      });
+    }
+
+    function hasTextClient(value) {
+      return value !== null && value !== undefined && String(value).trim() !== '';
+    }
+
+    function ragBadge(rag) {
+      var r = String(rag || '').toLowerCase();
+
+      if (r.includes('green') || r.includes('xanh')) {
+        return '<span class="badge badge-green">Xanh</span>';
+      }
+
+      if (r.includes('red') || r.includes('đỏ')) {
+        return '<span class="badge badge-red">Đỏ</span>';
+      }
+
+      return '<span class="badge badge-amber">Vàng</span>';
+    }
+
+    function sourceLink(url, label) {
+      if (!url) return '';
+      return '<a href="' + safe(url) + '" target="_blank">' + safe(label || 'Mở') + '</a>';
+    }
+
+    function valueOrZero(v) {
+      if (v === null || v === undefined || v === '') return 0;
+      return v;
+    }
+
+    function safe(value) {
+      return String(value === null || value === undefined ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function safeForJs(value) {
+      return String(value === null || value === undefined ? '' : value)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '');
+    }
+
+    function safeAttr(value) {
+      return String(value === null || value === undefined ? '' : value)
+        .replace(/[^a-zA-Z0-9\-_]/g, '');
+    }
+  </script>
+</body>
+</html>
