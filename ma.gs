@@ -369,8 +369,7 @@ function saveDashboardComment(payload) {
 
   return {
     success: true,
-    savedAt: nowText,
-    comments: getDashboardComments()
+    savedAt: nowText
   };
 }
 

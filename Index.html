@@ -1874,15 +1874,7 @@
             if (replyBox) replyBox.style.display = 'none';
           }
 
-          if (res && res.comments) {
-            renderDashboardComments(res.comments, true);
-
-            if (status) {
-              status.innerText = 'Đã gửi và tải ' + res.comments.length + ' comment.';
-            }
-          } else {
-            loadDashboardComments(true);
-          }
+          loadDashboardComments(true);
         })
         .withFailureHandler(function(error) {
           isSendingComment = false;
