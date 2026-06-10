@@ -5,7 +5,7 @@ Dashboard theo dõi realtime cho ban lãnh đạo GSP NEXT 30: Workstream, Actio
 ## Link truy cập
 
 - **GitHub Pages (Dashboard):** https://namsonndbn.github.io/CODEGSPNEXT30/
-- **Google Apps Script (Backend API):** https://script.google.com/macros/s/AKfycbzCzBEykV5gzIfuVm_Y0etw8AhtRT0_QIU8j1DDiY8l48YhjtbHdc__ZEn3IxPwkS9fkw/exec
+- **Google Apps Script (Backend API):** https://script.google.com/macros/s/AKfycbydqHgolCAEXd34rBDMvudvFET5No28uFtuI3xrXTw-k2ZPHfjBAnwXVfftQuiLMGj6cg/exec
 - **GitHub Repo:** https://github.com/namsonndbn/CODEGSPNEXT30
 
 ## Kiến trúc hệ thống
