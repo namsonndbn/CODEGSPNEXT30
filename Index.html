@@ -906,19 +906,31 @@
   </div>
 
   <script>
+    var GAS_URL = 'https://script.google.com/macros/s/AKfycbyuGbiDZOYPTgTf45L7oqYyCmAyxFgVcdjrbnB_-OPgCghddIPj3p-gsULfB3z21b4c/exec';
     var dashboardCache = null;
     var advisorBriefText = '';
     var isSendingComment = false;
     var pastedCommentImage = null;
     var commentPasteInitialized = false;
 
+    function gasGet(action) {
+      return fetch(GAS_URL + '?action=' + action).then(function(r) { return r.json(); });
+    }
+
+    function gasPost(action, payload) {
+      return fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: action, payload: payload })
+      }).then(function(r) { return r.json(); });
+    }
+
     function loadDashboard() {
       document.getElementById('loading').style.display = 'block';
       document.getElementById('loading').innerText = 'Đang tải dữ liệu từ Google Sheet...';
       document.getElementById('errorBox').innerHTML = '';
 
-      google.script.run
-        .withSuccessHandler(function(data) {
+      gasGet('getDashboardData')
+        .then(function(data) {
           try {
             dashboardCache = data;
             renderDashboard(data);
@@ -926,10 +938,9 @@
             showError({ message: 'Lỗi khi render dashboard trên HTML: ' + e.message });
           }
         })
-        .withFailureHandler(function(error) {
-          showError(error);
-        })
-        .getDashboardData();
+        .catch(function(error) {
+          showError({ message: String(error) });
+        });
     }
 
     window.onload = function() {
@@ -1849,8 +1860,8 @@
 
       if (status) status.innerText = 'Đang gửi comment...';
 
-      google.script.run
-        .withSuccessHandler(function(res) {
+      gasPost('saveDashboardComment', payload)
+        .then(function(res) {
           isSendingComment = false;
 
           if (status) {
@@ -1876,23 +1887,22 @@
 
           loadDashboardComments(true);
         })
-        .withFailureHandler(function(error) {
+        .catch(function(error) {
           isSendingComment = false;
 
-          var msg = error && error.message ? error.message : String(error);
+          var msg = String(error);
 
           if (status) {
             status.innerText = 'Lỗi gửi comment: ' + msg;
           }
 
           alert('Lỗi gửi comment: ' + msg);
-        })
-        .saveDashboardComment(payload);
+        });
     }
 
     function loadDashboardComments(scrollToBottom) {
-      google.script.run
-        .withSuccessHandler(function(rows) {
+      gasGet('getDashboardComments')
+        .then(function(rows) {
           var status = document.getElementById('commentStatus');
 
           if (status) {
@@ -1901,16 +1911,14 @@
 
           renderDashboardComments(rows || [], scrollToBottom);
         })
-        .withFailureHandler(function(error) {
+        .catch(function(error) {
           var box = document.getElementById('commentList');
-          var msg = error && error.message ? error.message : String(error);
 
           if (box) {
             box.innerHTML =
-              '<div class="error">Lỗi tải comment: ' + safe(msg) + '</div>';
+              '<div class="error">Lỗi tải comment: ' + safe(String(error)) + '</div>';
           }
-        })
-        .getDashboardComments();
+        });
     }
 
     function renderDashboardComments(rows, scrollToBottom) {
@@ -2053,20 +2061,12 @@
 
       if (!name) name = 'Người dùng';
 
-      google.script.run
-        .withSuccessHandler(function(res) {
-          if (res && res.comments) {
-            renderDashboardComments(res.comments, false);
-          } else {
-            loadDashboardComments(false);
-          }
+      gasPost('likeDashboardComment', { commentId: commentId, name: name })
+        .then(function(res) {
+          loadDashboardComments(false);
         })
-        .withFailureHandler(function(error) {
-          alert('Lỗi like comment: ' + ((error && error.message) ? error.message : error));
-        })
-        .likeDashboardComment({
-          commentId: commentId,
-          name: name
+        .catch(function(error) {
+          alert('Lỗi like comment: ' + String(error));
         });
     }
 
@@ -2075,19 +2075,12 @@
 
       if (!ok) return;
 
-      google.script.run
-        .withSuccessHandler(function(res) {
-          if (res && res.comments) {
-            renderDashboardComments(res.comments, false);
-          } else {
-            loadDashboardComments(false);
-          }
+      gasPost('deleteDashboardComment', { commentId: commentId })
+        .then(function(res) {
+          loadDashboardComments(false);
         })
-        .withFailureHandler(function(error) {
-          alert('Lỗi xóa comment: ' + ((error && error.message) ? error.message : error));
-        })
-        .deleteDashboardComment({
-          commentId: commentId
+        .catch(function(error) {
+          alert('Lỗi xóa comment: ' + String(error));
         });
     }
 

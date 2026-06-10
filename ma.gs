@@ -1,7 +1,46 @@
-function doGet() {
+function doGet(e) {
+  var action = e && e.parameter && e.parameter.action;
+
+  if (action === 'getDashboardData') {
+    var data = getDashboardData();
+    return ContentService.createTextOutput(JSON.stringify(data))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'getDashboardComments') {
+    var comments = getDashboardComments();
+    return ContentService.createTextOutput(JSON.stringify(comments))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('GSP NEXT 30 - CEO Dashboard')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function doPost(e) {
+  try {
+    var body = JSON.parse(e.postData.contents);
+    var action = body.action;
+    var payload = body.payload || {};
+    var result;
+
+    if (action === 'saveDashboardComment') {
+      result = saveDashboardComment(payload);
+    } else if (action === 'likeDashboardComment') {
+      result = likeDashboardComment(payload);
+    } else if (action === 'deleteDashboardComment') {
+      result = deleteDashboardComment(payload);
+    } else {
+      result = { success: false, error: 'Unknown action' };
+    }
+
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 /* =====================================================
