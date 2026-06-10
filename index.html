@@ -783,13 +783,29 @@
   <div class="header">
     <div class="header-inner">
       <div class="header-logo">
-        <svg viewBox="0 0 105 118" xmlns="http://www.w3.org/2000/svg" width="68" height="76">
-          <path d="M54 7 A47 47 0 1 0 54 101" fill="none" stroke="white" stroke-width="9" stroke-linecap="round"/>
-          <path d="M54 21 A33 33 0 1 0 54 87" fill="none" stroke="white" stroke-width="9" stroke-linecap="round"/>
-          <path d="M54 35 A19 19 0 1 0 54 73" fill="none" stroke="white" stroke-width="9" stroke-linecap="round"/>
-          <circle cx="76" cy="54" r="20" fill="#f5c518"/>
-          <polygon points="76,38 78.5,49 89,44 81,54 93,57 81,61 89,68 78,63 76,74 74,63 64,68 71,61 58,57 70,54 62,44 73,49" fill="white"/>
-          <text x="52" y="114" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" fill="white" font-size="13" letter-spacing="2">GOLDSUN</text>
+        <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" width="72" height="72">
+          <!-- Outer arc - G shape -->
+          <path d="M55 8 A47 47 0 1 0 55 102" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+          <!-- Mid arc -->
+          <path d="M55 20 A35 35 0 1 0 55 90" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="7" stroke-linecap="round"/>
+          <!-- Inner arc -->
+          <path d="M55 32 A23 23 0 1 0 55 78" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="6" stroke-linecap="round"/>
+          <!-- Sun circle -->
+          <circle cx="78" cy="55" r="18" fill="#f5c518"/>
+          <!-- Sun rays -->
+          <g transform="translate(78,55)" fill="#fff">
+            <polygon points="0,-14 2,-6 0,-8 -2,-6"/>
+            <polygon points="14,0 6,2 8,0 6,-2"/>
+            <polygon points="0,14 -2,6 0,8 2,6"/>
+            <polygon points="-14,0 -6,-2 -8,0 -6,2"/>
+            <polygon points="10,-10 5,-3 7,-5 3,-7"/>
+            <polygon points="10,10 3,5 5,7 -3,5"/>
+            <polygon points="-10,10 -5,3 -7,5 -3,7"/>
+            <polygon points="-10,-10 -3,-5 -5,-7 3,-5"/>
+            <circle cx="0" cy="0" r="6" fill="#f5c518"/>
+          </g>
+          <!-- GOLDSUN text -->
+          <text x="52" y="108" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="white" font-size="11.5" letter-spacing="2.5">GOLDSUN</text>
         </svg>
       </div>
       <div class="header-divider"></div>
@@ -1018,17 +1034,37 @@
     var commentPasteInitialized = false;
 
     function gasGet(action) {
+      return fetch(GAS_URL + '?action=' + action, {
+        method: 'GET',
+        credentials: 'omit'
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' - GAS trả lỗi');
+        return res.json();
+      })
+      .catch(function() {
+        return gasGetJsonp(action);
+      });
+    }
+
+    function gasGetJsonp(action) {
       return new Promise(function(resolve, reject) {
-        var cbName = '_cb_' + action + '_' + Date.now();
+        var cbName = '_gcb_' + Date.now();
         var script = document.createElement('script');
-        var timer = setTimeout(function() { cleanup(); reject(new Error('Timeout')); }, 30000);
+        var timer = setTimeout(function() {
+          cleanup();
+          reject(new Error('Timeout 30s — GAS không phản hồi. Kiểm tra: Deploy > Manage deployments > Access = "Anyone, even anonymous"'));
+        }, 30000);
         function cleanup() {
           clearTimeout(timer);
           delete window[cbName];
           if (script.parentNode) script.parentNode.removeChild(script);
         }
         window[cbName] = function(data) { cleanup(); resolve(data); };
-        script.onerror = function() { cleanup(); reject(new Error('Lỗi kết nối GAS')); };
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('Không tải được GAS. Vào Apps Script > Deploy > Manage > sửa "Who has access" = "Anyone, even anonymous"'));
+        };
         script.src = GAS_URL + '?action=' + action + '&callback=' + cbName;
         document.head.appendChild(script);
       });
