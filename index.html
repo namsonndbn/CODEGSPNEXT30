@@ -914,14 +914,28 @@
     var commentPasteInitialized = false;
 
     function gasGet(action) {
-      return fetch(GAS_URL + '?action=' + action).then(function(r) { return r.json(); });
+      return new Promise(function(resolve, reject) {
+        var cbName = '_cb_' + action + '_' + Date.now();
+        var script = document.createElement('script');
+        var timer = setTimeout(function() { cleanup(); reject(new Error('Timeout')); }, 30000);
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+        window[cbName] = function(data) { cleanup(); resolve(data); };
+        script.onerror = function() { cleanup(); reject(new Error('Lỗi kết nối GAS')); };
+        script.src = GAS_URL + '?action=' + action + '&callback=' + cbName;
+        document.head.appendChild(script);
+      });
     }
 
     function gasPost(action, payload) {
       return fetch(GAS_URL, {
         method: 'POST',
+        mode: 'no-cors',
         body: JSON.stringify({ action: action, payload: payload })
-      }).then(function(r) { return r.json(); });
+      }).then(function() { return { success: true }; });
     }
 
     function loadDashboard() {

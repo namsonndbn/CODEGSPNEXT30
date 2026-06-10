@@ -1,16 +1,19 @@
 function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
+  var callback = e && e.parameter && e.parameter.callback;
 
   if (action === 'getDashboardData') {
-    var data = getDashboardData();
-    return ContentService.createTextOutput(JSON.stringify(data))
-      .setMimeType(ContentService.MimeType.JSON);
+    var json = JSON.stringify(getDashboardData());
+    var out = callback ? callback + '(' + json + ')' : json;
+    var mime = callback ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
+    return ContentService.createTextOutput(out).setMimeType(mime);
   }
 
   if (action === 'getDashboardComments') {
-    var comments = getDashboardComments();
-    return ContentService.createTextOutput(JSON.stringify(comments))
-      .setMimeType(ContentService.MimeType.JSON);
+    var json = JSON.stringify(getDashboardComments());
+    var out = callback ? callback + '(' + json + ')' : json;
+    var mime = callback ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
+    return ContentService.createTextOutput(out).setMimeType(mime);
   }
 
   return HtmlService.createHtmlOutputFromFile('index')
