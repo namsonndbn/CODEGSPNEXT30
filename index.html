@@ -1235,6 +1235,71 @@
       .mm-table-wrapper { padding: 12px 10px 24px; }
       .mm-search-input { width: 160px; }
     }
+
+    /* ── TO ACTION CENTER ── */
+    .toa-section-hdr {
+      font-size: 12px; font-weight: 700; color: #064e3b;
+      text-transform: uppercase; letter-spacing: .5px;
+      padding: 18px 0 8px; border-bottom: 2px solid #e5e7eb; margin-bottom: 10px;
+    }
+    .toa-area-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
+      gap: 8px; margin-bottom: 16px;
+    }
+    .toa-area-card {
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-left: 4px solid #9ca3af; border-radius: 6px; padding: 10px 12px;
+    }
+    .toa-area-card.red   { border-left-color: #dc2626; }
+    .toa-area-card.amber { border-left-color: #d97706; }
+    .toa-area-card.green { border-left-color: #16a34a; }
+    .toa-area-name  { font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 3px; }
+    .toa-area-count { font-size: 22px; font-weight: 700; color: #111827; line-height: 1.1; }
+    .toa-area-sub   { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    .toa-tabs {
+      display: flex; gap: 4px; flex-wrap: wrap; margin: 14px 0 0;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .toa-tab {
+      padding: 6px 12px; font-size: 12px; font-weight: 600;
+      border: 1px solid #e5e7eb; border-bottom: none;
+      border-radius: 6px 6px 0 0; background: #f3f4f6; color: #6b7280;
+      cursor: pointer; transition: all .12s; position: relative; bottom: -2px;
+    }
+    .toa-tab:hover { background: #e5e7eb; color: #374151; }
+    .toa-tab.active { background: #fff; color: #064e3b; font-weight: 700; border-bottom-color: #fff; }
+    .toa-tab-cnt {
+      display: inline-block; background: #ef4444; color: #fff;
+      border-radius: 10px; font-size: 10px; font-weight: 700;
+      padding: 0 5px; margin-left: 3px;
+    }
+    .toa-tab-cnt.amber { background: #d97706; }
+    .toa-tab-cnt.green { background: #16a34a; }
+    .toa-tab-cnt.gray  { background: #6b7280; }
+    .toa-evidence-list { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; }
+    .toa-evidence-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;
+    }
+    .toa-evidence-icon { font-size: 22px; flex-shrink: 0; }
+    .toa-evidence-info { flex: 1; min-width: 0; }
+    .toa-evidence-name { font-size: 13px; font-weight: 600; color: #374151; }
+    .toa-evidence-url  { font-size: 11px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px; }
+    .toa-open-btn {
+      padding: 7px 14px; font-size: 12px; font-weight: 600;
+      background: #064e3b; color: #fff; border: none; border-radius: 6px;
+      cursor: pointer; text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .toa-open-btn:hover { background: #065f46; }
+    .toa-tab-label { font-size: 11px; font-weight: 600; color: #374151; padding: 12px 0 6px; }
+    .toa-factory-bar { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 0 4px; }
+    .toa-ftab {
+      padding: 5px 14px; font-size: 12px; font-weight: 600;
+      border-radius: 20px; border: 1px solid #064e3b;
+      background: #f9fafb; color: #064e3b; cursor: pointer; transition: all .12s;
+    }
+    .toa-ftab.active { background: #064e3b; color: #fff; }
+    .toa-ftab:hover:not(.active) { background: #e8f5f0; }
   </style>
 </head>
 
@@ -1611,6 +1676,7 @@
   </div>
 
   <!-- ===== MODULE: TO ACTION CENTER ===== -->
+  <!-- ===== MODULE: TO ACTION CENTER ===== -->
   <div class="module" id="module-to-action">
     <div class="mod-toolbar">
       <div class="mod-toolbar-left">
@@ -1618,30 +1684,63 @@
         <span class="mod-count-badge" id="toa-badge">—</span>
       </div>
       <div class="mod-toolbar-right">
-        <input type="text" id="toa-search" class="mod-search" placeholder="🔍 Tìm action, PIC, cuộc họp..." oninput="filterTOActions(this.value)">
-        <select id="toa-filter-status" class="mod-search" style="min-width:150px" onchange="filterTOActions(document.getElementById('toa-search').value)">
+        <input type="text" id="toa-search" class="mod-search" placeholder="🔍 Tìm action, PIC, khu vực..." oninput="toaApplyFilters()">
+        <select id="toa-filter-area" class="mod-search" style="min-width:130px" onchange="toaApplyFilters()">
+          <option value="">Tất cả khu vực</option>
+        </select>
+        <select id="toa-filter-status" class="mod-search" style="min-width:140px" onchange="toaApplyFilters()">
           <option value="">Tất cả trạng thái</option>
-          <option value="Chưa xử lý">Chưa xử lý</option>
-          <option value="Đang xử lý">Đang xử lý</option>
-          <option value="Quá hạn">Quá hạn</option>
-          <option value="Hoàn thành">Hoàn thành</option>
+          <option value="In Progress">Đang xử lý</option>
+          <option value="Overdue">Quá hạn</option>
+          <option value="Done">Hoàn thành</option>
+          <option value="Blocked">Vướng mắc</option>
+          <option value="Not Started">Chưa bắt đầu</option>
         </select>
         <button class="command-btn" onclick="loadTOActions()">🔄 Cập nhật</button>
       </div>
     </div>
+
+    <div class="toa-section-hdr">📋 Hiện trạng vấn đề</div>
     <div class="mod-summary-bar">
-      <div class="mod-summary-card"><div class="mod-summary-val" id="toa-s-total">—</div><div class="mod-summary-lbl">Tổng action từ TO</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val blue" id="toa-s-inprogress">—</div><div class="mod-summary-lbl">Đang xử lý</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-s-overdue">—</div><div class="mod-summary-lbl">Quá hạn</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val green" id="toa-s-done">—</div><div class="mod-summary-lbl">Hoàn thành</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val amber" id="toa-s-pending">—</div><div class="mod-summary-lbl">Chờ phân công</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val" id="toa-iss-total">—</div><div class="mod-summary-lbl">Tổng vấn đề</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-iss-red">—</div><div class="mod-summary-lbl">🔴 Nghiêm trọng</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="toa-iss-amber">—</div><div class="mod-summary-lbl">🟡 Cần theo dõi</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val green" id="toa-iss-green">—</div><div class="mod-summary-lbl">🟢 Bình thường</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val blue" id="toa-iss-open">—</div><div class="mod-summary-lbl">Đang mở</div></div>
     </div>
+    <div id="toa-area-grid" class="toa-area-grid"></div>
+
+    <div class="toa-section-hdr">⚡ Tình hình xử lý action</div>
+    <div class="mod-summary-bar">
+      <div class="mod-summary-card"><div class="mod-summary-val" id="toa-act-total">—</div><div class="mod-summary-lbl">Tổng action</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-24h">—</div><div class="mod-summary-lbl">🔴 Xử lý ngay 24h</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="toa-act-72h">—</div><div class="mod-summary-lbl">🟡 Xử lý khẩn 72h</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-noowner">—</div><div class="mod-summary-lbl">❓ Chưa có Owner</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val gold" id="toa-act-ceo">—</div><div class="mod-summary-lbl">👑 CEO cần chốt</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val green" id="toa-act-done">—</div><div class="mod-summary-lbl">✅ Hoàn thành</div></div>
+    </div>
+
+    <div class="toa-factory-bar" id="toa-factory-bar">
+      <button class="toa-ftab active" onclick="toaSwitchFactory('all',this)">🏭 Tất cả</button>
+    </div>
+
+    <div class="toa-tabs">
+      <button class="toa-tab active" onclick="toaSwitchTab('all',this)">📋 Tất cả</button>
+      <button class="toa-tab" onclick="toaSwitchTab('24h',this)">🔴 24h <span id="toa-cnt-24h" class="toa-tab-cnt">0</span></button>
+      <button class="toa-tab" onclick="toaSwitchTab('72h',this)">🟡 72h <span id="toa-cnt-72h" class="toa-tab-cnt amber">0</span></button>
+      <button class="toa-tab" onclick="toaSwitchTab('plan',this)">📌 Kế hoạch</button>
+      <button class="toa-tab" onclick="toaSwitchTab('noowner',this)">❓ Chưa owner <span id="toa-cnt-noowner" class="toa-tab-cnt">0</span></button>
+      <button class="toa-tab" onclick="toaSwitchTab('ceo',this)">👑 CEO chốt <span id="toa-cnt-ceo" class="toa-tab-cnt amber">0</span></button>
+      <button class="toa-tab" onclick="toaSwitchTab('issues',this)">🔍 Vấn đề <span id="toa-cnt-issues" class="toa-tab-cnt gray">0</span></button>
+      <button class="toa-tab" onclick="toaSwitchTab('files',this)">📂 File nguồn <span id="toa-cnt-files" class="toa-tab-cnt green">0</span></button>
+    </div>
+
     <div id="toa-content">
       <div class="module-placeholder">
         <div class="module-placeholder-icon">⚡</div>
         <h2>TO Action Center</h2>
-        <p>Tổng hợp tất cả action phát sinh từ các buổi họp TO. Kết nối dữ liệu từ sheet <strong>TO_ACTIONS</strong> để theo dõi tiến độ, cảnh báo quá hạn và liên kết với biên bản họp.</p>
-        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet TO_ACTIONS</div>
+        <p>Theo dõi vấn đề hiện trường và action xử lý. Kết nối sheet <strong>TO_ISSUES</strong> và <strong>TO_ACTIONS</strong>.</p>
+        <div class="module-placeholder-badge">⏳ Nhấn "Cập nhật" để tải dữ liệu</div>
       </div>
     </div>
   </div>
@@ -1804,6 +1903,7 @@
     var currentModule = 'overview';
     var sosLoaded = false;
     var decLoaded = false;
+    var toaLoaded = false;
 
     function switchModule(moduleId, tabEl) {
       document.querySelectorAll('.module').forEach(function(m) { m.classList.remove('active'); });
@@ -1814,8 +1914,9 @@
       currentModule = moduleId;
       window.scrollTo(0, 0);
       // Auto-load aggregation modules on first visit
-      if (moduleId === 'risk-sos' && !sosLoaded)      { loadRiskSOSAll(); }
-      if (moduleId === 'ceo-decision' && !decLoaded)  { loadCEODecisionsAll(); }
+      if (moduleId === 'to-action'   && !toaLoaded)   { toaLoaded = true; loadTOActions(); }
+      if (moduleId === 'risk-sos'    && !sosLoaded)   { loadRiskSOSAll(); }
+      if (moduleId === 'ceo-decision'&& !decLoaded)   { loadCEODecisionsAll(); }
       if (moduleId === 'data-quality')                { refreshDataQualityModule(); }
     }
 
@@ -3443,88 +3544,357 @@
     /* =====================================================
        TO ACTION CENTER MODULE
     ===================================================== */
-    var toaAllRecords = [];
+    var toaCache          = null;
+    var toaActiveTab      = 'all';
+    var toaActiveFactory  = 'all';
 
     function loadTOActions() {
       var contentEl = document.getElementById('toa-content');
-      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải...</h2></div>';
-      gasGet('getTOActions')
-        .then(function(data) { renderTOActions(data); })
-        .catch(function() { renderTOActions(null); });
-    }
 
-    function renderTOActions(data) {
-      var contentEl = document.getElementById('toa-content');
-      if (!contentEl) return;
-      var records = data && Array.isArray(data.records) ? data.records : [];
-      if (!records.length) {
-        contentEl.innerHTML =
-          '<div class="module-placeholder">' +
-          '<div class="module-placeholder-icon">⚡</div>' +
-          '<h2>TO Action Center</h2>' +
-          '<p>Tổng hợp tất cả action phát sinh từ các buổi họp TO. Kết nối dữ liệu từ sheet <strong>TO_ACTIONS</strong>.</p>' +
-          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet TO_ACTIONS</div>' +
-          '</div>';
+      // Nếu dashboardCache đã có TO data (từ lần load dashboard), dùng luôn
+      if (dashboardCache && Array.isArray(dashboardCache.toActions)) {
+        renderTOActionCenter(buildTOCenterFromCache_(dashboardCache));
         return;
       }
-      toaAllRecords = records;
-      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-      var inprogress = records.filter(function(r) { return /đang xử lý|in progress/i.test(r.Status||''); }).length;
-      var overdue    = records.filter(function(r) { return /quá hạn|overdue/i.test(r.Status||''); }).length;
-      var done       = records.filter(function(r) { return /hoàn thành|done|complete/i.test(r.Status||''); }).length;
-      var pending    = records.filter(function(r) { return /chờ|pending/i.test(r.Status||''); }).length;
-      st('toa-badge', records.length + ' action');
-      st('toa-s-total', records.length); st('toa-s-inprogress', inprogress);
-      st('toa-s-overdue', overdue); st('toa-s-done', done); st('toa-s-pending', pending);
-      renderTOActionsTable(records);
-    }
 
-    function renderTOActionsTable(records) {
-      var contentEl = document.getElementById('toa-content');
-      if (!contentEl) return;
-      var statusFilter = (document.getElementById('toa-filter-status') || {}).value || '';
-      var filtered = statusFilter
-        ? records.filter(function(r) { return (r.Status||'').includes(statusFilter); })
-        : records;
-      var cols = ['Action ID','Ngày','Cuộc họp TO','Nội dung action','PIC','Owner','Deadline','Trạng thái','Kết quả','Link'];
-      var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
-      cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
-      html += '</tr></thead><tbody>';
-      if (!filtered.length) {
-        html += '<tr class="empty-row"><td colspan="' + cols.length + '">Không tìm thấy action nào</td></tr>';
-      } else {
-        filtered.forEach(function(r) {
-          html += '<tr>'
-            + '<td>' + safe(r.ActionID || r.RowId) + '</td>'
-            + '<td>' + safe(r.Date || r.MeetingDate) + '</td>'
-            + '<td>' + safe(r.Meeting || r.Source) + '</td>'
-            + '<td>' + safe(r.Action || r.Content) + '</td>'
-            + '<td>' + safe(r.PIC) + '</td>'
-            + '<td>' + safe(r.Owner) + '</td>'
-            + '<td>' + safe(r.Deadline) + '</td>'
-            + '<td>' + modStatusBadge(r.Status) + '</td>'
-            + '<td>' + safe(r.Result || r.Note) + '</td>'
-            + '<td>' + (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗 Mở</a>' : '') + '</td>'
-            + '</tr>';
+      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải dữ liệu...</h2></div>';
+
+      gasGet('getToActionCenterData')
+        .then(function(data) { renderTOActionCenter(data); })
+        .catch(function() {
+          // Fallback: endpoint getTOActions (legacy)
+          gasGet('getTOActions')
+            .then(function(d) {
+              var recs = (d && d.records) || [];
+              renderTOActionCenter(buildTOCenterFromRecords_(recs));
+            })
+            .catch(function() { renderTOActionCenter({ actions: [], issues: [], factories: [] }); });
         });
-      }
-      html += '</tbody></table></div>';
-      contentEl.innerHTML = html;
     }
 
-    function filterTOActions(keyword) {
-      if (!toaAllRecords.length) return;
-      var kw = (keyword || '').toLowerCase().trim();
-      var statusFilter = (document.getElementById('toa-filter-status') || {}).value || '';
-      var filtered = toaAllRecords.filter(function(r) {
-        var matchKw = !kw || ((r.Action||'') + (r.Content||'') + (r.PIC||'') + (r.Owner||'') + (r.Meeting||'')).toLowerCase().includes(kw);
-        var matchStatus = !statusFilter || (r.Status||'').includes(statusFilter);
-        return matchKw && matchStatus;
-      });
-      var el = document.getElementById('toa-badge');
-      if (el) el.textContent = filtered.length + ' action' + (kw || statusFilter ? ' (lọc)' : '');
-      renderTOActionsTable(filtered);
+    // Xây dựng cấu trúc renderTOActionCenter từ dashboardCache
+    function buildTOCenterFromCache_(cache) {
+      var actions = cache.toActions   || [];
+      var issues  = cache.toIssues    || [];
+      var sum     = cache.toSummary   || {};
+      return {
+        actions:        actions,
+        issues:         issues,
+        factories:      cache.toFactories || [],
+        evidenceFiles:  buildEvidenceFiles_(actions, issues),
+        byArea:         buildByArea_(issues),
+        urgent24h:      [], urgent72h: [], inPlan: [],
+        noOwnerList:    [], ceoList:    [],
+        issuesSummary:  sum.issuesSummary  || {},
+        actionsSummary: sum.actionsSummary || {}
+      };
     }
+
+    // Xây dựng cấu trúc renderTOActionCenter từ mảng records (legacy format)
+    function buildTOCenterFromRecords_(recs) {
+      return {
+        actions: recs, issues: [], factories: [],
+        evidenceFiles: buildEvidenceFiles_(recs, []),
+        byArea: [], urgent24h: [], urgent72h: [], inPlan: recs,
+        noOwnerList: [], ceoList: [],
+        issuesSummary:  { total: 0, byRAG: { Green: 0, Amber: 0, Red: 0 }, open: 0 },
+        actionsSummary: { total: recs.length, done: 0, inProgress: 0, overdue: 0,
+          noOwner: 0, ceoNeeded: 0, urgent24hCount: 0, urgent72hCount: 0, inPlanCount: recs.length }
+      };
+    }
+
+    function buildEvidenceFiles_(actions, issues) {
+      var map = {};
+      (issues  || []).forEach(function(x) { if (x.EvidenceLink || x.evidenceLink) { var u = x.EvidenceLink || x.evidenceLink; map[u] = { url: u, name: x.Reporter || x.reporter || 'Issue file' }; } });
+      (actions || []).forEach(function(x) { if (x.EvidenceLink || x.evidenceLink) { var u = x.EvidenceLink || x.evidenceLink; map[u] = { url: u, name: x.Source || x.context  || 'Action file' }; } });
+      return Object.keys(map).map(function(k) { return map[k]; });
+    }
+
+    function buildByArea_(issues) {
+      var m = {};
+      (issues || []).forEach(function(iss) {
+        var area = iss.Area || iss.area || 'Chưa phân loại';
+        var rag  = iss.RAG  || iss.rag  || 'Amber';
+        if (!m[area]) m[area] = { area: area, total: 0, green: 0, amber: 0, red: 0 };
+        m[area].total++;
+        if (rag === 'Green') m[area].green++; else if (rag === 'Red') m[area].red++; else m[area].amber++;
+      });
+      return Object.keys(m).map(function(k) { return m[k]; });
+    }
+
+    function renderTOActionCenter(data) {
+      if (!data) {
+        var el = document.getElementById('toa-content');
+        if (el) el.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⚡</div><h2>TO Action Center</h2><p>Chưa kết nối được dữ liệu. Kiểm tra sheet <strong>TO_ACTIONS</strong> và quyền truy cập GAS.</p><div class="module-placeholder-badge">⏳ Nhấn "Cập nhật" để thử lại</div></div>';
+        return;
+      }
+      // Normalize: hỗ trợ cả PascalCase (từ getToActionCenterData) và camelCase (từ getTOActionsData)
+      data.actions  = data.actions  || [];
+      data.issues   = data.issues   || [];
+      data.factories= data.factories|| [];
+      toaCache = data;
+
+      // ── Build factory tab bar ──
+      var factoryBar = document.getElementById('toa-factory-bar');
+      if (factoryBar) {
+        var factories = data.factories || [];
+        var ftHtml = '<button class="toa-ftab' + (toaActiveFactory === 'all' ? ' active' : '') + '" onclick="toaSwitchFactory(\'all\',this)">🏭 Tất cả</button>';
+        factories.forEach(function(f) {
+          ftHtml += '<button class="toa-ftab' + (toaActiveFactory === f ? ' active' : '') + '" onclick="toaSwitchFactory(\'' + f + '\',this)">' + f + '</button>';
+        });
+        factoryBar.innerHTML = ftHtml;
+      }
+
+      // ── Update all summary cards (respects factory filter) ──
+      toaUpdateFactoryCounts();
+    }
+
+    // Lọc records theo nhà máy đang active
+    function toaFilterByFactory(records) {
+      if (!records) return [];
+      if (toaActiveFactory === 'all') return records;
+      return records.filter(function(r) { return (r.Factory || '') === toaActiveFactory; });
+    }
+
+    // Tính lại tất cả summary cards + area grid theo factory filter hiện tại
+    function toaUpdateFactoryCounts() {
+      if (!toaCache) return;
+      var d  = toaCache;
+      var now   = new Date();
+      var in24h = new Date(now.getTime() + 24 * 3600 * 1000);
+      var in72h = new Date(now.getTime() + 72 * 3600 * 1000);
+
+      var issues  = toaFilterByFactory(d.issues  || []);
+      var actions = toaFilterByFactory(d.actions || []);
+
+      // Recompute urgency / special lists
+      var urgent24h = [], urgent72h = [], inPlan = [], noOwner = [], ceoList = [];
+      actions.forEach(function(a) {
+        var planType = (a.PlanType || '').toLowerCase();
+        var dl       = a.Deadline ? (typeof a.Deadline === 'string' ? new Date(a.Deadline.split('/').reverse().join('-')) : a.Deadline) : null;
+        var active   = (a.Status !== 'Done');
+        if (active) {
+          var is24 = planType.includes('24') || planType.includes('ngay')  || (dl && dl <= in24h);
+          var is72 = !is24 && (planType.includes('72') || planType.includes('khẩn') || planType.includes('khan') || (dl && dl > in24h && dl <= in72h));
+          if (is24)      urgent24h.push(a);
+          else if (is72) urgent72h.push(a);
+          else           inPlan.push(a);
+        }
+        if (!a.PIC && !a.Owner && active) noOwner.push(a);
+        if (a.CEONote && a.CEONote !== '' && a.CEONote.toLowerCase() !== 'không' && a.CEONote.toLowerCase() !== 'no') ceoList.push(a);
+      });
+
+      // Issues by RAG
+      var issRAG = { Red: 0, Amber: 0, Green: 0 };
+      var areaMap = {};
+      var evidenceMap = {};
+      issues.forEach(function(iss) {
+        var r = iss.RAG || 'Amber';
+        if (issRAG[r] !== undefined) issRAG[r]++; else issRAG['Amber']++;
+        var area = iss.Area || 'Chưa phân loại';
+        if (!areaMap[area]) areaMap[area] = { area: area, total: 0, green: 0, amber: 0, red: 0 };
+        areaMap[area].total++;
+        if (r === 'Green') areaMap[area].green++; else if (r === 'Red') areaMap[area].red++; else areaMap[area].amber++;
+        if (iss.EvidenceLink) evidenceMap[iss.EvidenceLink] = { url: iss.EvidenceLink, name: (iss.Reporter || '') + (iss.ReportDate ? ' — ' + iss.ReportDate : '') };
+      });
+      actions.forEach(function(a) {
+        if (a.EvidenceLink) evidenceMap[a.EvidenceLink] = { url: a.EvidenceLink, name: a.Source || a.Meeting || 'File báo cáo' };
+      });
+
+      var done = actions.filter(function(a) { return a.Status === 'Done'; });
+      var evidenceFiles = Object.keys(evidenceMap).map(function(k) { return evidenceMap[k]; });
+
+      function st(id, v) { var el = document.getElementById(id); if (el) el.textContent = (v !== null && v !== undefined) ? v : '—'; }
+      var label = toaActiveFactory === 'all' ? '' : ' [' + toaActiveFactory + ']';
+
+      st('toa-iss-total', issues.length);
+      st('toa-iss-red',   issRAG.Red   || 0);
+      st('toa-iss-amber', issRAG.Amber || 0);
+      st('toa-iss-green', issRAG.Green || 0);
+      st('toa-iss-open',  issues.filter(function(i) { return i.Status !== 'Đã xử lý' && i.Status !== 'Đóng'; }).length);
+      st('toa-act-total',   actions.length);
+      st('toa-act-24h',     urgent24h.length);
+      st('toa-act-72h',     urgent72h.length);
+      st('toa-act-noowner', noOwner.length);
+      st('toa-act-ceo',     ceoList.length);
+      st('toa-act-done',    done.length);
+      st('toa-badge',       actions.length + ' action  /  ' + issues.length + ' vấn đề' + label);
+      st('toa-cnt-24h',     urgent24h.length);
+      st('toa-cnt-72h',     urgent72h.length);
+      st('toa-cnt-noowner', noOwner.length);
+      st('toa-cnt-ceo',     ceoList.length);
+      st('toa-cnt-issues',  issues.length);
+      st('toa-cnt-files',   evidenceFiles.length);
+
+      // Area grid (filtered)
+      toaRenderAreaGrid(Object.keys(areaMap).map(function(k) { return areaMap[k]; }));
+
+      // Populate area filter dropdown
+      var areaSel = document.getElementById('toa-filter-area');
+      if (areaSel) {
+        var prev = areaSel.value;
+        while (areaSel.options.length > 1) areaSel.remove(1);
+        Object.keys(areaMap).forEach(function(area) {
+          var o = document.createElement('option'); o.value = area; o.textContent = area;
+          areaSel.appendChild(o);
+        });
+        areaSel.value = prev;
+      }
+
+      // Store filtered pools back so toaSwitchTab can use them
+      toaCache._filtered = { actions: actions, issues: issues, urgent24h: urgent24h, urgent72h: urgent72h, inPlan: inPlan, noOwnerList: noOwner, ceoList: ceoList, evidenceFiles: evidenceFiles };
+
+      // Re-render current tab
+      toaSwitchTab(toaActiveTab || 'all', document.querySelector('.toa-tab.active'));
+    }
+
+    function toaSwitchFactory(factory, el) {
+      toaActiveFactory = factory;
+      document.querySelectorAll('.toa-ftab').forEach(function(b) { b.classList.remove('active'); });
+      if (el) el.classList.add('active');
+      toaUpdateFactoryCounts();
+    }
+
+    function toaRenderAreaGrid(byArea) {
+      var grid = document.getElementById('toa-area-grid');
+      if (!grid) return;
+      if (!byArea.length) { grid.innerHTML = ''; return; }
+      var html = '';
+      byArea.forEach(function(a) {
+        var cls = (a.red > 0) ? 'red' : (a.amber > 0) ? 'amber' : 'green';
+        html += '<div class="toa-area-card ' + cls + '">'
+          + '<div class="toa-area-name">' + safe(a.area) + '</div>'
+          + '<div class="toa-area-count">' + (a.total || 0) + '</div>'
+          + '<div class="toa-area-sub">🔴 ' + (a.red||0) + '&nbsp;&nbsp;🟡 ' + (a.amber||0) + '&nbsp;&nbsp;🟢 ' + (a.green||0) + '</div>'
+          + '</div>';
+      });
+      grid.innerHTML = html;
+    }
+
+    function toaSwitchTab(tab, el) {
+      toaActiveTab = tab;
+      document.querySelectorAll('.toa-tab').forEach(function(t) { t.classList.remove('active'); });
+      if (el) el.classList.add('active');
+      if (!toaCache) return;
+      // Use filtered pools if available (set by toaUpdateFactoryCounts)
+      var f = toaCache._filtered || toaCache;
+      if (tab === 'all')          toaRenderActionsTable(f.actions      || [], 'Tất cả action');
+      else if (tab === '24h')     toaRenderActionsTable(f.urgent24h    || [], '🔴 Xử lý ngay trong 24h');
+      else if (tab === '72h')     toaRenderActionsTable(f.urgent72h    || [], '🟡 Xử lý khẩn trong 72h');
+      else if (tab === 'plan')    toaRenderActionsTable(f.inPlan       || [], '📌 Đưa vào kế hoạch xử lý');
+      else if (tab === 'noowner') toaRenderActionsTable(f.noOwnerList  || [], '❓ Action chưa có Owner');
+      else if (tab === 'ceo')     toaRenderActionsTable(f.ceoList      || [], '👑 CEO cần quyết / phê duyệt');
+      else if (tab === 'issues')  toaRenderIssuesTable(f.issues        || []);
+      else if (tab === 'files')   toaRenderEvidenceFiles(f.evidenceFiles || []);
+    }
+
+    function toaRenderActionsTable(records, title) {
+      var el = document.getElementById('toa-content');
+      if (!el) return;
+      if (!records.length) {
+        el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">Không có action nào trong nhóm này.</div>';
+        return;
+      }
+      var html = '<div class="toa-tab-label">' + safe(title) + ' &mdash; ' + records.length + ' action</div>'
+        + '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>'
+        + '<th>ID</th><th>Khu vực</th><th>Nội dung action</th><th>PIC</th><th>Owner</th>'
+        + '<th>Deadline</th><th>Loại</th><th>Trạng thái</th><th>CEO cần biết</th><th>File nguồn</th>'
+        + '</tr></thead><tbody>';
+      records.forEach(function(r) {
+        var evidBtn = r.EvidenceLink
+          ? '<a class="toa-open-btn" href="' + safe(r.EvidenceLink) + '" target="_blank">📂 Mở file</a>'
+          : (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗</a>' : '—');
+        html += '<tr' + (r.IsOverdue ? ' style="background:#fef2f2"' : (r.Status === 'Done' ? ' style="opacity:.55"' : '')) + '>'
+          + '<td style="font-size:11px;color:#6b7280">' + safe(r.ActionID || r.RowId) + '</td>'
+          + '<td>' + safe(r.Area) + '</td>'
+          + '<td>' + safe(r.Action) + '</td>'
+          + '<td>' + safe(r.PIC) + '</td>'
+          + '<td>' + (r.Owner ? safe(r.Owner) : '<span style="color:#dc2626;font-weight:600">⚠ Chưa có</span>') + '</td>'
+          + '<td>' + safe(r.Deadline) + '</td>'
+          + '<td style="font-size:11px;color:#6b7280">' + safe(r.PlanType || r.Priority || '') + '</td>'
+          + '<td>' + modStatusBadge(r.Status) + '</td>'
+          + '<td style="max-width:160px;font-size:12px">' + safe(r.CEONote) + '</td>'
+          + '<td>' + evidBtn + '</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+      el.innerHTML = html;
+    }
+
+    function toaRenderIssuesTable(issues) {
+      var el = document.getElementById('toa-content');
+      if (!el) return;
+      if (!issues.length) {
+        el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">Chưa có vấn đề nào trong sheet TO_ISSUES.</div>';
+        return;
+      }
+      var html = '<div class="toa-tab-label">📋 Danh sách vấn đề hiện trường &mdash; ' + issues.length + ' vấn đề</div>'
+        + '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>'
+        + '<th>Issue ID</th><th>Khu vực</th><th>Loại vấn đề</th><th>Mô tả vấn đề</th>'
+        + '<th>Mức độ</th><th>RAG</th><th>Trạng thái</th><th>Người báo cáo</th><th>Ngày</th><th>File nguồn</th>'
+        + '</tr></thead><tbody>';
+      issues.forEach(function(r) {
+        html += '<tr>'
+          + '<td style="font-size:11px;color:#6b7280">' + safe(r.IssueID) + '</td>'
+          + '<td>' + safe(r.Area) + '</td>'
+          + '<td>' + safe(r.IssueType) + '</td>'
+          + '<td>' + safe(r.Description) + '</td>'
+          + '<td>' + safe(r.Level) + '</td>'
+          + '<td>' + modRagBadge(r.RAG) + '</td>'
+          + '<td>' + modStatusBadge(r.Status) + '</td>'
+          + '<td>' + safe(r.Reporter) + '</td>'
+          + '<td>' + safe(r.ReportDate) + '</td>'
+          + '<td>' + (r.EvidenceLink ? '<a class="toa-open-btn" href="' + safe(r.EvidenceLink) + '" target="_blank">📂 Mở file</a>' : '—') + '</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+      el.innerHTML = html;
+    }
+
+    function toaRenderEvidenceFiles(files) {
+      var el = document.getElementById('toa-content');
+      if (!el) return;
+      if (!files.length) {
+        el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">Chưa có file nguồn nào được liên kết trong cột <strong>Evidence Link</strong>.</div>';
+        return;
+      }
+      var html = '<div class="toa-tab-label">📂 File báo cáo nguồn &mdash; ' + files.length + ' file</div><div class="toa-evidence-list">';
+      files.forEach(function(f) {
+        html += '<div class="toa-evidence-item">'
+          + '<div class="toa-evidence-icon">📊</div>'
+          + '<div class="toa-evidence-info">'
+          + '<div class="toa-evidence-name">' + safe(f.name || 'File báo cáo TO') + '</div>'
+          + '<div class="toa-evidence-url">' + safe(f.url || '') + '</div>'
+          + '</div>'
+          + (f.url ? '<a class="toa-open-btn" href="' + safe(f.url) + '" target="_blank">📂 Mở file nguồn</a>' : '')
+          + '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    function toaApplyFilters() {
+      if (!toaCache) return;
+      if (toaActiveTab === 'issues') { toaRenderIssuesTable(toaCache.issues || []); return; }
+      if (toaActiveTab === 'files')  { toaRenderEvidenceFiles(toaCache.evidenceFiles || []); return; }
+      var kw         = ((document.getElementById('toa-search')        || {}).value || '').toLowerCase().trim();
+      var areaFilter = ((document.getElementById('toa-filter-area')   || {}).value || '');
+      var statFilter = ((document.getElementById('toa-filter-status') || {}).value || '');
+      var tabPool    = { all: 'actions', '24h': 'urgent24h', '72h': 'urgent72h', plan: 'inPlan', noowner: 'noOwnerList', ceo: 'ceoList' };
+      var pool       = toaCache[tabPool[toaActiveTab] || 'actions'] || [];
+      var filtered   = pool.filter(function(r) {
+        var matchKw   = !kw   || ((r.Action||'') + (r.PIC||'') + (r.Owner||'') + (r.Area||'') + (r.CEONote||'')).toLowerCase().includes(kw);
+        var matchArea = !areaFilter || (r.Area||'') === areaFilter;
+        var matchStat = !statFilter || (r.Status||'').includes(statFilter);
+        return matchKw && matchArea && matchStat;
+      });
+      var labels = { all: 'Tất cả', '24h': '🔴 24h', '72h': '🟡 72h', plan: '📌 Kế hoạch', noowner: '❓ Chưa owner', ceo: '👑 CEO cần chốt' };
+      var suffix = (kw || areaFilter || statFilter) ? ' (đang lọc)' : '';
+      toaRenderActionsTable(filtered, (labels[toaActiveTab] || '') + suffix);
+    }
+
+    // Legacy alias — giữ lại để không vỡ nếu code cũ vẫn gọi
+    function filterTOActions(kw) { toaApplyFilters(); }
 
     /* =====================================================
        RISK / SOS CENTER MODULE
