@@ -12,13 +12,22 @@ function doGet(e) {
   if (action === 'getDashboardData')    return jsonOut(getDashboardData());
   if (action === 'getDashboardComments') return jsonOut(getDashboardComments());
   if (action === 'getCEOProjects')      return jsonOut(getCEOProjectsData());
-  if (action === 'getTOActions')        return jsonOut(getTOActionsData());
+  if (action === 'getTOActions') {
+    try {
+      return jsonOut(getTOActionsData());
+    } catch(eTOA) {
+      Logger.log('[getTOActions] ERROR: ' + eTOA.message);
+      return jsonOut({ exists: false, records: [], total: 0, _error: eTOA.message });
+    }
+  }
   if (action === 'getMeetingMinutes')   return jsonOut(getMeetingMinutesData());
   if (action === 'getRiskSOS')          return jsonOut(getRiskSOSData());
   if (action === 'getCEODecisions')     return jsonOut(getCEODecisionsData());
   if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
   if (action === 'getCommandCenterData') return jsonOut(getCommandCenterData());
   if (action === 'getPicPmoData')        return jsonOut(getPicPmoData());
+
+  if (action === 'ping') return jsonOut({ ok: true, ts: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss') });
 
   if (action === 'getToActionsRaw') {
     // DEBUG: đọc thẳng TO_ACTIONS, trả raw data

@@ -3577,16 +3577,21 @@
           renderTOActionCenter(buildTOCenterFromRecords_(basic.records));
           return;
         }
-        // Cả 2 trả về trống — hiện thông báo rõ
-        var errorInfo = '';
-        if (rich && rich._error) errorInfo += 'Rich: ' + rich._error + ' ';
-        if (rich && rich._failed) errorInfo += 'Rich API lỗi. ';
-        if (basic && basic._failed) errorInfo += 'Basic API lỗi. ';
+        // Cả 2 trả về trống — hiện thông báo rõ với lỗi thực tế
+        var errorParts = [];
+        if (rich && rich._failed)  errorParts.push('Rich: ' + (rich._err  || 'API fail'));
+        if (rich && rich._error)   errorParts.push('Rich err: ' + rich._error);
+        if (basic && basic._failed) errorParts.push('Basic: ' + (basic._err || 'API fail'));
+        if (basic && basic._error)  errorParts.push('Basic err: ' + basic._error);
+        var errorInfo = errorParts.join(' | ');
         var el = document.getElementById('toa-content');
         if (el) el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">'
-          + '<p>Chưa có dữ liệu trong sheet <strong>TO_ACTIONS</strong>.</p>'
-          + (errorInfo ? '<p style="color:#dc2626;font-size:12px">Lỗi: ' + errorInfo + '</p>' : '')
-          + '<p><a href="' + GAS_URL + '?action=getToActionsRaw" target="_blank" style="color:#064e3b">🔍 Kiểm tra kết nối GAS</a></p>'
+          + '<p>Chưa tải được dữ liệu TO Action Center.</p>'
+          + (errorInfo ? '<p style="color:#dc2626;font-size:12px;word-break:break-word;max-width:600px;margin:8px auto">' + errorInfo + '</p>' : '')
+          + '<p style="margin-top:12px">'
+          + '<a href="' + GAS_URL + '?action=getToActionsRaw" target="_blank" style="color:#064e3b;margin-right:16px">🔍 Kiểm tra kết nối GAS</a>'
+          + '<button onclick="toaLoaded=false;loadTOActions()" style="padding:6px 14px;background:#064e3b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">↺ Thử lại</button>'
+          + '</p>'
           + '</div>';
       });
     }
