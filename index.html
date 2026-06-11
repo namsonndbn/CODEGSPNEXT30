@@ -776,6 +776,164 @@
       .container { padding: 16px; }
       .header { padding: 20px; }
     }
+
+    /* =====================================================
+       TAB NAVIGATION
+    ===================================================== */
+    .nav-bar {
+      background: #042f23;
+      padding: 0 34px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      border-bottom: 2px solid rgba(245,197,24,0.35);
+    }
+    .nav-bar::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      padding: 13px 18px;
+      color: rgba(255,255,255,0.58);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.18s;
+      letter-spacing: 0.2px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .nav-tab:hover {
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.07);
+    }
+    .nav-tab.active {
+      color: #f5c518;
+      border-bottom: 3px solid #f5c518;
+      background: rgba(245,197,24,0.08);
+    }
+
+    /* =====================================================
+       MODULE SYSTEM
+    ===================================================== */
+    .module { display: none; }
+    .module.active { display: block; }
+
+    /* =====================================================
+       OVERVIEW MODULE
+    ===================================================== */
+    .overview-header {
+      padding: 28px 34px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 0;
+    }
+    .overview-header h2 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #064e3b;
+      margin: 0 0 4px;
+    }
+    .overview-header p {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+      padding: 24px 34px 36px;
+    }
+    .overview-card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px 22px;
+      border: 1.5px solid #e5e7eb;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .overview-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(6,78,59,0.13);
+      border-color: #064e3b;
+    }
+    .overview-card-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .overview-card-icon { font-size: 28px; line-height: 1.15; flex-shrink: 0; }
+    .overview-card-title { font-size: 14.5px; font-weight: 700; color: #111827; margin: 0 0 2px; }
+    .overview-card-sub { font-size: 11.5px; color: #9ca3af; }
+    .overview-card-desc {
+      font-size: 12.5px;
+      color: #6b7280;
+      line-height: 1.55;
+      margin-bottom: 14px;
+      min-height: 38px;
+    }
+    .overview-card-stats {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .overview-stat-val { font-size: 22px; font-weight: 800; color: #064e3b; line-height: 1; }
+    .overview-stat-lbl { font-size: 10.5px; color: #9ca3af; margin-top: 2px; }
+    .overview-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 20px;
+    }
+    .overview-badge.live { background: #dcfce7; color: #15803d; }
+    .overview-badge.pending { background: #fef3c7; color: #92400e; }
+
+    /* =====================================================
+       PLACEHOLDER MODULES
+    ===================================================== */
+    .module-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 90px 32px;
+      text-align: center;
+      min-height: 420px;
+    }
+    .module-placeholder-icon { font-size: 60px; margin-bottom: 18px; opacity: 0.3; }
+    .module-placeholder h2 { font-size: 21px; font-weight: 800; color: #374151; margin: 0 0 10px; }
+    .module-placeholder p {
+      font-size: 13.5px;
+      color: #9ca3af;
+      max-width: 460px;
+      line-height: 1.7;
+      margin: 0;
+    }
+    .module-placeholder-badge {
+      margin-top: 22px;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1.5px solid #fde68a;
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
+      .nav-bar { padding: 0 12px; }
+      .nav-tab { padding: 11px 12px; font-size: 12px; }
+      .overview-grid { padding: 16px; gap: 12px; }
+      .overview-header { padding: 20px 16px 14px; }
+    }
   </style>
 </head>
 
@@ -787,13 +945,114 @@
       </div>
       <div class="header-divider"></div>
       <div class="header-text">
-        <h1>GSP NEXT 30 — CEO Dashboard</h1>
-        <p>Theo dõi realtime: Workstream · Action · RAG / Đèn báo · Risk/SOS · Việc CEO cần chốt</p>
+        <h1>GSP NEXT 30 — CEO Command Center</h1>
+        <p>Trung tâm điều hành: PMO · Project Tracker · TO Actions · Risk/SOS · Decisions · Data Quality</p>
       </div>
       <div class="header-badge">📅 NEXT 30</div>
     </div>
   </div>
 
+  <nav class="nav-bar">
+    <button class="nav-tab active" data-module="overview" onclick="switchModule('overview',this)">🏠 Tổng quan</button>
+    <button class="nav-tab" data-module="pmo" onclick="switchModule('pmo',this)">📋 PMO GSP NEXT 30</button>
+    <button class="nav-tab" data-module="ceo-tracker" onclick="switchModule('ceo-tracker',this)">🎯 CEO Project Tracker</button>
+    <button class="nav-tab" data-module="to-action" onclick="switchModule('to-action',this)">⚡ TO Action Center</button>
+    <button class="nav-tab" data-module="risk-sos" onclick="switchModule('risk-sos',this)">🚨 Risk / SOS Center</button>
+    <button class="nav-tab" data-module="ceo-decision" onclick="switchModule('ceo-decision',this)">✅ CEO Decision Board</button>
+    <button class="nav-tab" data-module="data-quality" onclick="switchModule('data-quality',this)">📊 Data Quality</button>
+  </nav>
+
+  <!-- ===== MODULE: TỔNG QUAN ===== -->
+  <div class="module active" id="module-overview">
+    <div class="overview-header">
+      <h2>CEO Command Center — Tổng quan hệ thống</h2>
+      <p>Chọn module bên dưới để xem chi tiết · Dữ liệu tải tự động khi vào trang</p>
+    </div>
+    <div class="overview-grid">
+
+      <div class="overview-card" onclick="switchModule('pmo', document.querySelector('[data-module=pmo]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">📋</div>
+          <div>
+            <div class="overview-card-title">PMO GSP NEXT 30</div>
+            <div class="overview-card-sub">Dashboard kế hoạch 90 ngày · 16 PIC</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Theo dõi 6 Workstream, Action Items, RAG/Đèn báo, Deadline, Risk, Quyết định CEO.</div>
+        <div id="ov-pmo-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-total">—</div><div class="overview-stat-lbl">Tổng actions</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-done" style="color:#15803d">—</div><div class="overview-stat-lbl">Done</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-overdue" style="color:#dc2626">—</div><div class="overview-stat-lbl">Quá hạn</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-red" style="color:#dc2626">—</div><div class="overview-stat-lbl">RAG 🔴</div></div>
+        </div>
+        <span class="overview-badge live" id="ov-pmo-badge">● Live</span>
+      </div>
+
+      <div class="overview-card" onclick="switchModule('ceo-tracker', document.querySelector('[data-module=ceo-tracker]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">🎯</div>
+          <div>
+            <div class="overview-card-title">CEO Project Tracker</div>
+            <div class="overview-card-sub">Dự án chiến lược trực tiếp CEO dẫn dắt</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Theo dõi tiến độ các dự án trọng điểm CEO đang trực tiếp phụ trách và chỉ đạo.</div>
+        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+      </div>
+
+      <div class="overview-card" onclick="switchModule('to-action', document.querySelector('[data-module=to-action]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">⚡</div>
+          <div>
+            <div class="overview-card-title">TO Action Center</div>
+            <div class="overview-card-sub">Hành động từ các buổi họp TO</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Danh sách action xuất phát từ buổi họp TO, phân công và theo dõi tiến độ theo thời gian thực.</div>
+        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+      </div>
+
+      <div class="overview-card" onclick="switchModule('risk-sos', document.querySelector('[data-module=risk-sos]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">🚨</div>
+          <div>
+            <div class="overview-card-title">Risk / SOS Center</div>
+            <div class="overview-card-sub">Rủi ro & cảnh báo khẩn cần xử lý ngay</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Tổng hợp toàn bộ rủi ro và vấn đề SOS từ tất cả workstream, phân loại theo mức độ nghiêm trọng.</div>
+        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+      </div>
+
+      <div class="overview-card" onclick="switchModule('ceo-decision', document.querySelector('[data-module=ceo-decision]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">✅</div>
+          <div>
+            <div class="overview-card-title">CEO Decision Board</div>
+            <div class="overview-card-sub">Việc CEO cần phê duyệt và chốt</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Tập hợp tất cả quyết định đang chờ CEO, sắp xếp theo mức độ ưu tiên và thời hạn chốt.</div>
+        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+      </div>
+
+      <div class="overview-card" onclick="switchModule('data-quality', document.querySelector('[data-module=data-quality]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">📊</div>
+          <div>
+            <div class="overview-card-title">Data Quality</div>
+            <div class="overview-card-sub">Chất lượng dữ liệu 16 PIC</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Đánh giá mức độ điền đầy đủ dữ liệu theo workstream. Cảnh báo PIC thiếu thông tin trọng yếu.</div>
+        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== MODULE: PMO GSP NEXT 30 (toàn bộ dashboard cũ) ===== -->
+  <div class="module" id="module-pmo">
   <div class="container">
     <div class="command-bar">
       <button class="command-btn" onclick="loadDashboard()">🔄 Cập nhật dữ liệu</button>
@@ -1001,6 +1260,57 @@
       <div class="footer" id="updatedAt"></div>
     </div>
   </div>
+  </div><!-- /module-pmo -->
+
+  <!-- ===== MODULE: CEO PROJECT TRACKER ===== -->
+  <div class="module" id="module-ceo-tracker">
+    <div class="module-placeholder">
+      <div class="module-placeholder-icon">🎯</div>
+      <h2>CEO Project Tracker</h2>
+      <p>Module theo dõi tiến độ các dự án chiến lược CEO đang trực tiếp dẫn dắt. Kết nối dữ liệu từ sheet riêng và hiển thị trạng thái, milestone, rủi ro theo từng dự án.</p>
+      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    </div>
+  </div>
+
+  <!-- ===== MODULE: TO ACTION CENTER ===== -->
+  <div class="module" id="module-to-action">
+    <div class="module-placeholder">
+      <div class="module-placeholder-icon">⚡</div>
+      <h2>TO Action Center</h2>
+      <p>Module tổng hợp tất cả action xuất phát từ các buổi họp TO. Phân công người thực hiện, theo dõi tiến độ, cảnh báo quá hạn và liên kết trực tiếp với biên bản họp.</p>
+      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    </div>
+  </div>
+
+  <!-- ===== MODULE: RISK / SOS CENTER ===== -->
+  <div class="module" id="module-risk-sos">
+    <div class="module-placeholder">
+      <div class="module-placeholder-icon">🚨</div>
+      <h2>Risk / SOS Center</h2>
+      <p>Module tổng hợp toàn bộ rủi ro và cảnh báo SOS từ tất cả 6 workstream. Phân loại theo mức độ nghiêm trọng, workstream, PIC chịu trách nhiệm và đề xuất hướng xử lý.</p>
+      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    </div>
+  </div>
+
+  <!-- ===== MODULE: CEO DECISION BOARD ===== -->
+  <div class="module" id="module-ceo-decision">
+    <div class="module-placeholder">
+      <div class="module-placeholder-icon">✅</div>
+      <h2>CEO Decision Board</h2>
+      <p>Module tập hợp tất cả quyết định đang chờ CEO phê duyệt từ toàn bộ các workstream. Sắp xếp theo mức độ ưu tiên, deadline chốt và workstream đề xuất.</p>
+      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    </div>
+  </div>
+
+  <!-- ===== MODULE: DATA QUALITY ===== -->
+  <div class="module" id="module-data-quality">
+    <div class="module-placeholder">
+      <div class="module-placeholder-icon">📊</div>
+      <h2>Data Quality</h2>
+      <p>Module đánh giá chất lượng điền dữ liệu của toàn bộ 16 PIC theo 6 workstream. Hiển thị tỷ lệ điền đủ từng trường quan trọng và cảnh báo PIC cần cập nhật dữ liệu.</p>
+      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    </div>
+  </div>
 
   <script>
     var GAS_URL = 'https://script.google.com/macros/s/AKfycbydqHgolCAEXd34rBDMvudvFET5No28uFtuI3xrXTw-k2ZPHfjBAnwXVfftQuiLMGj6cg/exec';
@@ -1009,6 +1319,33 @@
     var isSendingComment = false;
     var pastedCommentImage = null;
     var commentPasteInitialized = false;
+    var currentModule = 'overview';
+
+    function switchModule(moduleId, tabEl) {
+      document.querySelectorAll('.module').forEach(function(m) { m.classList.remove('active'); });
+      document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+      var mod = document.getElementById('module-' + moduleId);
+      if (mod) mod.classList.add('active');
+      if (tabEl) tabEl.classList.add('active');
+      currentModule = moduleId;
+      window.scrollTo(0, 0);
+    }
+
+    function updateOverviewFromPMO(data) {
+      var s = data.summary || {};
+      var el = function(id) { return document.getElementById(id); };
+      if (el('ov-total')) el('ov-total').textContent = s.totalActions || 0;
+      if (el('ov-done')) el('ov-done').textContent = s.doneActions || 0;
+      if (el('ov-overdue')) el('ov-overdue').textContent = s.overdueActions || 0;
+      if (el('ov-red')) el('ov-red').textContent = s.red || 0;
+      var stats = el('ov-pmo-stats');
+      if (stats) stats.style.display = 'flex';
+      var badge = el('ov-pmo-badge');
+      if (badge) {
+        badge.className = 'overview-badge live';
+        badge.innerHTML = '● Live · ' + (data.updatedAt || 'Đã tải');
+      }
+    }
 
     function gasGet(action) {
       return fetch(GAS_URL + '?action=' + action, {
@@ -1128,6 +1465,8 @@
 
       document.getElementById('updatedAt').innerText =
         'Cập nhật lần cuối: ' + safe(data.updatedAt || '') + ' | Sheet: ' + safe(data.spreadsheetName || '');
+
+      updateOverviewFromPMO(data);
     }
 
     function toggleSection(id) {
