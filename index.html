@@ -3551,8 +3551,8 @@
     function loadTOActions() {
       var contentEl = document.getElementById('toa-content');
 
-      // Nếu dashboardCache đã có TO data (từ lần load dashboard), dùng luôn
-      if (dashboardCache && Array.isArray(dashboardCache.toActions)) {
+      // Nếu dashboardCache đã có TO data thực sự, dùng luôn (tránh gọi API thêm)
+      if (dashboardCache && Array.isArray(dashboardCache.toActions) && dashboardCache.toActions.length > 0) {
         renderTOActionCenter(buildTOCenterFromCache_(dashboardCache));
         return;
       }
