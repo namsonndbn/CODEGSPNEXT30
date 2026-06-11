@@ -936,6 +936,121 @@
     }
 
     /* =====================================================
+       SHARED MODULE STYLES (mod-*)
+    ===================================================== */
+    .mod-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; padding: 22px 32px 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .mod-toolbar-left { display: flex; align-items: center; gap: 12px; }
+    .mod-toolbar-left h2 { font-size: 18px; font-weight: 800; color: #064e3b; margin: 0; }
+    .mod-count-badge {
+      background: #064e3b; color: white; border-radius: 20px;
+      padding: 3px 11px; font-size: 12px; font-weight: 700;
+    }
+    .mod-toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .mod-search {
+      border: 1.5px solid #d1d5db; border-radius: 8px; padding: 7px 12px;
+      font-size: 13px; min-width: 220px; outline: none; transition: border 0.2s;
+      background: white; color: #374151;
+    }
+    .mod-search:focus { border-color: #064e3b; }
+    .mod-summary-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0; border-bottom: 1px solid #e5e7eb;
+    }
+    .mod-summary-card {
+      padding: 16px 20px; text-align: center;
+      border-right: 1px solid #e5e7eb;
+    }
+    .mod-summary-card:last-child { border-right: none; }
+    .mod-summary-val {
+      font-size: 26px; font-weight: 900; color: #374151;
+      line-height: 1; margin-bottom: 4px;
+    }
+    .mod-summary-val.red { color: #dc2626; }
+    .mod-summary-val.amber { color: #d97706; }
+    .mod-summary-val.green { color: #059669; }
+    .mod-summary-val.blue { color: #2563eb; }
+    .mod-summary-val.gold { color: #b45309; }
+    .mod-summary-lbl {
+      font-size: 10.5px; color: #6b7280; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .mod-table-wrapper { overflow-x: auto; padding: 0 24px 32px; }
+    .mod-table {
+      width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px;
+    }
+    .mod-table th {
+      background: #064e3b; color: white; padding: 10px 12px;
+      text-align: left; white-space: nowrap; font-size: 11.5px;
+      font-weight: 700; letter-spacing: 0.4px; position: sticky; top: 0;
+    }
+    .mod-table td {
+      padding: 9px 12px; border-bottom: 1px solid #f3f4f6;
+      vertical-align: top; color: #374151;
+    }
+    .mod-table tr:hover td { background: #f9fafb; }
+    .mod-table tr:last-child td { border-bottom: none; }
+    .mod-table .empty-row td {
+      text-align: center; padding: 40px; color: #9ca3af; font-style: italic;
+    }
+    .mod-rag {
+      display: inline-block; padding: 2px 9px; border-radius: 10px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .mod-rag.green { background: #d1fae5; color: #065f46; }
+    .mod-rag.amber { background: #fef3c7; color: #92400e; }
+    .mod-rag.red { background: #fee2e2; color: #991b1b; }
+    .mod-status {
+      display: inline-block; padding: 2px 9px; border-radius: 10px;
+      font-size: 11px; font-weight: 700;
+    }
+    .mod-status.done { background: #d1fae5; color: #065f46; }
+    .mod-status.pending { background: #fef3c7; color: #92400e; }
+    .mod-status.overdue { background: #fee2e2; color: #991b1b; }
+    .mod-status.blocked { background: #e0e7ff; color: #3730a3; }
+    .mod-link { color: #064e3b; text-decoration: none; font-size: 12px; }
+    .mod-link:hover { text-decoration: underline; }
+    .mod-dq-bar-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .mod-dq-bar-label { font-size: 12.5px; color: #374151; min-width: 130px; }
+    .mod-dq-bar-bg {
+      flex: 1; background: #e5e7eb; border-radius: 4px; height: 10px; overflow: hidden;
+    }
+    .mod-dq-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .mod-dq-bar-fill.green { background: #059669; }
+    .mod-dq-bar-fill.amber { background: #d97706; }
+    .mod-dq-bar-fill.red { background: #dc2626; }
+    .mod-dq-bar-pct { font-size: 12px; font-weight: 700; color: #374151; min-width: 36px; text-align: right; }
+    .mod-score-circle {
+      width: 90px; height: 90px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 22px;
+      font-weight: 900; color: white; margin: 0 auto 8px; flex-shrink: 0;
+    }
+    .mod-score-circle.green { background: #059669; }
+    .mod-score-circle.amber { background: #d97706; }
+    .mod-score-circle.red { background: #dc2626; }
+    .mod-dq-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px; padding: 20px 24px;
+    }
+    .mod-dq-section {
+      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px;
+    }
+    .mod-dq-section-title {
+      font-size: 13px; font-weight: 800; color: #064e3b;
+      margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    @media (max-width: 700px) {
+      .mod-toolbar { padding: 14px 16px 12px; }
+      .mod-search { min-width: 160px; }
+      .mod-table-wrapper { padding: 0 12px 20px; }
+    }
+
+    /* =====================================================
        MEETING MINUTES MODULE
     ===================================================== */
     .mm-toolbar {
@@ -1143,10 +1258,10 @@
     <button class="nav-tab" data-module="pmo" onclick="switchModule('pmo',this)">📋 PMO GSP NEXT 30</button>
     <button class="nav-tab" data-module="ceo-tracker" onclick="switchModule('ceo-tracker',this)">🎯 CEO Project Tracker</button>
     <button class="nav-tab" data-module="to-action" onclick="switchModule('to-action',this)">⚡ TO Action Center</button>
+    <button class="nav-tab" data-module="meeting-minutes" onclick="switchModule('meeting-minutes',this)">📄 Biên bản họp</button>
     <button class="nav-tab" data-module="risk-sos" onclick="switchModule('risk-sos',this)">🚨 Risk / SOS Center</button>
     <button class="nav-tab" data-module="ceo-decision" onclick="switchModule('ceo-decision',this)">✅ CEO Decision Board</button>
     <button class="nav-tab" data-module="data-quality" onclick="switchModule('data-quality',this)">📊 Data Quality</button>
-    <button class="nav-tab" data-module="meeting-minutes" onclick="switchModule('meeting-minutes',this)">📄 Biên bản họp</button>
   </nav>
 
   <!-- ===== MODULE: TỔNG QUAN ===== -->
@@ -1468,51 +1583,162 @@
 
   <!-- ===== MODULE: CEO PROJECT TRACKER ===== -->
   <div class="module" id="module-ceo-tracker">
-    <div class="module-placeholder">
-      <div class="module-placeholder-icon">🎯</div>
-      <h2>CEO Project Tracker</h2>
-      <p>Module theo dõi tiến độ các dự án chiến lược CEO đang trực tiếp dẫn dắt. Kết nối dữ liệu từ sheet riêng và hiển thị trạng thái, milestone, rủi ro theo từng dự án.</p>
-      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    <div class="mod-toolbar">
+      <div class="mod-toolbar-left">
+        <h2>🎯 CEO Project Tracker</h2>
+        <span class="mod-count-badge" id="cpt-badge">—</span>
+      </div>
+      <div class="mod-toolbar-right">
+        <input type="text" id="cpt-search" class="mod-search" placeholder="🔍 Tìm dự án, PIC Lead..." oninput="filterCEOProjects(this.value)">
+        <button class="command-btn" onclick="loadCEOProjects()">🔄 Cập nhật</button>
+      </div>
+    </div>
+    <div class="mod-summary-bar">
+      <div class="mod-summary-card"><div class="mod-summary-val" id="cpt-s-total">—</div><div class="mod-summary-lbl">Tổng dự án</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val blue" id="cpt-s-active">—</div><div class="mod-summary-lbl">Đang triển khai</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="cpt-s-overdue">—</div><div class="mod-summary-lbl">Quá hạn</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val green" id="cpt-s-done">—</div><div class="mod-summary-lbl">Hoàn thành</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="cpt-s-blocked">—</div><div class="mod-summary-lbl">Có vướng mắc</div></div>
+    </div>
+    <div id="cpt-content">
+      <div class="module-placeholder">
+        <div class="module-placeholder-icon">🎯</div>
+        <h2>CEO Project Tracker</h2>
+        <p>Theo dõi tiến độ các dự án chiến lược CEO trực tiếp dẫn dắt. Kết nối dữ liệu từ sheet <strong>CEO_PROJECTS</strong> để hiển thị milestone, trạng thái và rủi ro theo từng dự án.</p>
+        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet CEO_PROJECTS</div>
+      </div>
     </div>
   </div>
 
   <!-- ===== MODULE: TO ACTION CENTER ===== -->
   <div class="module" id="module-to-action">
-    <div class="module-placeholder">
-      <div class="module-placeholder-icon">⚡</div>
-      <h2>TO Action Center</h2>
-      <p>Module tổng hợp tất cả action xuất phát từ các buổi họp TO. Phân công người thực hiện, theo dõi tiến độ, cảnh báo quá hạn và liên kết trực tiếp với biên bản họp.</p>
-      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    <div class="mod-toolbar">
+      <div class="mod-toolbar-left">
+        <h2>⚡ TO Action Center</h2>
+        <span class="mod-count-badge" id="toa-badge">—</span>
+      </div>
+      <div class="mod-toolbar-right">
+        <input type="text" id="toa-search" class="mod-search" placeholder="🔍 Tìm action, PIC, cuộc họp..." oninput="filterTOActions(this.value)">
+        <select id="toa-filter-status" class="mod-search" style="min-width:150px" onchange="filterTOActions(document.getElementById('toa-search').value)">
+          <option value="">Tất cả trạng thái</option>
+          <option value="Chưa xử lý">Chưa xử lý</option>
+          <option value="Đang xử lý">Đang xử lý</option>
+          <option value="Quá hạn">Quá hạn</option>
+          <option value="Hoàn thành">Hoàn thành</option>
+        </select>
+        <button class="command-btn" onclick="loadTOActions()">🔄 Cập nhật</button>
+      </div>
+    </div>
+    <div class="mod-summary-bar">
+      <div class="mod-summary-card"><div class="mod-summary-val" id="toa-s-total">—</div><div class="mod-summary-lbl">Tổng action từ TO</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val blue" id="toa-s-inprogress">—</div><div class="mod-summary-lbl">Đang xử lý</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-s-overdue">—</div><div class="mod-summary-lbl">Quá hạn</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val green" id="toa-s-done">—</div><div class="mod-summary-lbl">Hoàn thành</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="toa-s-pending">—</div><div class="mod-summary-lbl">Chờ phân công</div></div>
+    </div>
+    <div id="toa-content">
+      <div class="module-placeholder">
+        <div class="module-placeholder-icon">⚡</div>
+        <h2>TO Action Center</h2>
+        <p>Tổng hợp tất cả action phát sinh từ các buổi họp TO. Kết nối dữ liệu từ sheet <strong>TO_ACTIONS</strong> để theo dõi tiến độ, cảnh báo quá hạn và liên kết với biên bản họp.</p>
+        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet TO_ACTIONS</div>
+      </div>
     </div>
   </div>
 
   <!-- ===== MODULE: RISK / SOS CENTER ===== -->
   <div class="module" id="module-risk-sos">
-    <div class="module-placeholder">
-      <div class="module-placeholder-icon">🚨</div>
-      <h2>Risk / SOS Center</h2>
-      <p>Module tổng hợp toàn bộ rủi ro và cảnh báo SOS từ tất cả 6 workstream. Phân loại theo mức độ nghiêm trọng, workstream, PIC chịu trách nhiệm và đề xuất hướng xử lý.</p>
-      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    <div class="mod-toolbar">
+      <div class="mod-toolbar-left">
+        <h2>🚨 Risk / SOS Center</h2>
+        <span class="mod-count-badge" id="sos-badge">—</span>
+      </div>
+      <div class="mod-toolbar-right">
+        <input type="text" id="sos-search" class="mod-search" placeholder="🔍 Tìm risk, workstream, PIC..." oninput="filterRiskSOS(this.value)">
+        <select id="sos-filter-rag" class="mod-search" style="min-width:130px" onchange="filterRiskSOS(document.getElementById('sos-search').value)">
+          <option value="">Tất cả RAG</option>
+          <option value="red">🔴 Red</option>
+          <option value="amber">🟡 Amber</option>
+          <option value="green">🟢 Green</option>
+        </select>
+      </div>
+    </div>
+    <div class="mod-summary-bar">
+      <div class="mod-summary-card"><div class="mod-summary-val" id="sos-s-total">—</div><div class="mod-summary-lbl">Tổng Risk / SOS</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="sos-s-red">—</div><div class="mod-summary-lbl">Mức độ Red</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="sos-s-amber">—</div><div class="mod-summary-lbl">Mức độ Amber</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val green" id="sos-s-resolved">—</div><div class="mod-summary-lbl">Đã xử lý</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val blue" id="sos-s-ceo">—</div><div class="mod-summary-lbl">CEO cần biết</div></div>
+    </div>
+    <div id="sos-content">
+      <div class="module-placeholder">
+        <div class="module-placeholder-icon">🚨</div>
+        <h2>Risk / SOS Center</h2>
+        <p>Tổng hợp toàn bộ rủi ro và cảnh báo SOS từ 6 workstream PMO. Dữ liệu sẽ tự động cập nhật khi PMO Dashboard tải xong.</p>
+        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>
+      </div>
     </div>
   </div>
 
   <!-- ===== MODULE: CEO DECISION BOARD ===== -->
   <div class="module" id="module-ceo-decision">
-    <div class="module-placeholder">
-      <div class="module-placeholder-icon">✅</div>
-      <h2>CEO Decision Board</h2>
-      <p>Module tập hợp tất cả quyết định đang chờ CEO phê duyệt từ toàn bộ các workstream. Sắp xếp theo mức độ ưu tiên, deadline chốt và workstream đề xuất.</p>
-      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    <div class="mod-toolbar">
+      <div class="mod-toolbar-left">
+        <h2>✅ CEO Decision Board</h2>
+        <span class="mod-count-badge" id="dec-badge">—</span>
+      </div>
+      <div class="mod-toolbar-right">
+        <input type="text" id="dec-search" class="mod-search" placeholder="🔍 Tìm quyết định, workstream, PIC..." oninput="filterCEODecisions(this.value)">
+        <select id="dec-filter-rag" class="mod-search" style="min-width:130px" onchange="filterCEODecisions(document.getElementById('dec-search').value)">
+          <option value="">Tất cả RAG</option>
+          <option value="red">🔴 Red</option>
+          <option value="amber">🟡 Amber</option>
+          <option value="green">🟢 Green</option>
+        </select>
+      </div>
+    </div>
+    <div class="mod-summary-bar">
+      <div class="mod-summary-card"><div class="mod-summary-val" id="dec-s-total">—</div><div class="mod-summary-lbl">Tổng cần CEO chốt</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="dec-s-red">—</div><div class="mod-summary-lbl">RAG Red</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="dec-s-amber">—</div><div class="mod-summary-lbl">RAG Amber</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val green" id="dec-s-green">—</div><div class="mod-summary-lbl">RAG Green</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val blue" id="dec-s-ws">—</div><div class="mod-summary-lbl">Số workstream</div></div>
+    </div>
+    <div id="dec-content">
+      <div class="module-placeholder">
+        <div class="module-placeholder-icon">✅</div>
+        <h2>CEO Decision Board</h2>
+        <p>Tập hợp tất cả quyết định đang chờ CEO phê duyệt từ toàn bộ các workstream. Dữ liệu sẽ tự động cập nhật khi PMO Dashboard tải xong.</p>
+        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>
+      </div>
     </div>
   </div>
 
   <!-- ===== MODULE: DATA QUALITY ===== -->
   <div class="module" id="module-data-quality">
-    <div class="module-placeholder">
-      <div class="module-placeholder-icon">📊</div>
-      <h2>Data Quality</h2>
-      <p>Module đánh giá chất lượng điền dữ liệu của toàn bộ 16 PIC theo 6 workstream. Hiển thị tỷ lệ điền đủ từng trường quan trọng và cảnh báo PIC cần cập nhật dữ liệu.</p>
-      <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu — Sẽ triển khai trong giai đoạn tiếp theo</div>
+    <div class="mod-toolbar">
+      <div class="mod-toolbar-left">
+        <h2>📊 Data Quality</h2>
+        <span class="mod-count-badge" id="dq-badge">—</span>
+      </div>
+      <div class="mod-toolbar-right">
+        <button class="command-btn" onclick="refreshDataQualityModule()">🔄 Làm mới</button>
+      </div>
+    </div>
+    <div class="mod-summary-bar">
+      <div class="mod-summary-card"><div class="mod-summary-val gold" id="dq-s-score">—</div><div class="mod-summary-lbl">Điểm chất lượng</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val amber" id="dq-s-total">—</div><div class="mod-summary-lbl">Tổng dòng dữ liệu</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="dq-s-missing-owner">—</div><div class="mod-summary-lbl">Thiếu Owner</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="dq-s-missing-deadline">—</div><div class="mod-summary-lbl">Thiếu Deadline</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="dq-s-missing-rag">—</div><div class="mod-summary-lbl">Thiếu RAG</div></div>
+    </div>
+    <div id="dq-content">
+      <div class="module-placeholder">
+        <div class="module-placeholder-icon">📊</div>
+        <h2>Data Quality</h2>
+        <p>Đánh giá chất lượng điền dữ liệu của 16 PIC theo 6 workstream. Dữ liệu sẽ tự động cập nhật khi PMO Dashboard tải xong.</p>
+        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>
+      </div>
     </div>
   </div>
 
@@ -1721,6 +1947,9 @@
         'Cập nhật lần cuối: ' + safe(data.updatedAt || '') + ' | Sheet: ' + safe(data.spreadsheetName || '');
 
       updateOverviewFromPMO(data);
+      renderRiskSOSModule(data);
+      renderCEODecisionBoardModule(data);
+      renderDataQualityModule(data);
     }
 
     function toggleSection(id) {
@@ -3117,6 +3346,461 @@
       var countEl = document.getElementById('mm-count-badge');
       if (countEl) countEl.textContent = filtered.length + ' biên bản' + (kw ? ' (lọc)' : '');
       renderMeetingMinutesTable(filtered);
+    }
+
+    /* =====================================================
+       CEO PROJECT TRACKER MODULE
+    ===================================================== */
+    var cptAllRecords = [];
+
+    function loadCEOProjects() {
+      var contentEl = document.getElementById('cpt-content');
+      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải...</h2></div>';
+      gasGet('getCEOProjects')
+        .then(function(data) { renderCEOProjects(data); })
+        .catch(function() { renderCEOProjects(null); });
+    }
+
+    function renderCEOProjects(data) {
+      var contentEl = document.getElementById('cpt-content');
+      if (!contentEl) return;
+      var records = data && Array.isArray(data.records) ? data.records : [];
+      if (!records.length) {
+        contentEl.innerHTML =
+          '<div class="module-placeholder">' +
+          '<div class="module-placeholder-icon">🎯</div>' +
+          '<h2>CEO Project Tracker</h2>' +
+          '<p>Theo dõi tiến độ các dự án chiến lược CEO trực tiếp dẫn dắt. Kết nối dữ liệu từ sheet <strong>CEO_PROJECTS</strong>.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet CEO_PROJECTS</div>' +
+          '</div>';
+        return;
+      }
+      cptAllRecords = records;
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      var active  = records.filter(function(r) { return /triển khai|in progress/i.test(r.Status||''); }).length;
+      var overdue = records.filter(function(r) { return /quá hạn|overdue/i.test(r.Status||''); }).length;
+      var done    = records.filter(function(r) { return /hoàn thành|done|complete/i.test(r.Status||''); }).length;
+      var blocked = records.filter(function(r) { return hasTextClient(r.Issues); }).length;
+      st('cpt-badge', records.length + ' dự án');
+      st('cpt-s-total', records.length); st('cpt-s-active', active);
+      st('cpt-s-overdue', overdue); st('cpt-s-done', done); st('cpt-s-blocked', blocked);
+      renderCEOProjectsTable(records);
+    }
+
+    function renderCEOProjectsTable(records) {
+      var contentEl = document.getElementById('cpt-content');
+      if (!contentEl) return;
+      var cols = ['Project ID','Tên dự án','PIC Lead','Bắt đầu','Deadline','% HT','Trạng thái','RAG','Milestone gần nhất','Vướng mắc','CEO cần chốt','Link'];
+      var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
+      cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      if (!records.length) {
+        html += '<tr class="empty-row"><td colspan="' + cols.length + '">Không tìm thấy dự án nào</td></tr>';
+      } else {
+        records.forEach(function(r) {
+          html += '<tr>'
+            + '<td>' + safe(r.ProjectID || r.RowId) + '</td>'
+            + '<td><b>' + safe(r.ProjectName || r.Action) + '</b></td>'
+            + '<td>' + safe(r.PICLead || r.PIC) + '</td>'
+            + '<td>' + safe(r.StartDate) + '</td>'
+            + '<td>' + safe(r.Deadline) + '</td>'
+            + '<td>' + safe(r.Progress) + '</td>'
+            + '<td>' + safe(r.Status) + '</td>'
+            + '<td>' + modRagBadge(r.RAG) + '</td>'
+            + '<td>' + safe(r.Milestone) + '</td>'
+            + '<td>' + safe(r.Issues) + '</td>'
+            + '<td>' + safe(r.CEODecision) + '</td>'
+            + '<td>' + (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗 Mở</a>' : '') + '</td>'
+            + '</tr>';
+        });
+      }
+      html += '</tbody></table></div>';
+      contentEl.innerHTML = html;
+    }
+
+    function filterCEOProjects(keyword) {
+      if (!cptAllRecords.length) return;
+      var kw = (keyword || '').toLowerCase().trim();
+      var filtered = kw
+        ? cptAllRecords.filter(function(r) {
+            return ((r.ProjectName||'') + (r.PICLead||'') + (r.PIC||'') + (r.Status||'') + (r.Action||''))
+              .toLowerCase().includes(kw);
+          })
+        : cptAllRecords;
+      var el = document.getElementById('cpt-badge');
+      if (el) el.textContent = filtered.length + ' dự án' + (kw ? ' (lọc)' : '');
+      renderCEOProjectsTable(filtered);
+    }
+
+    /* =====================================================
+       TO ACTION CENTER MODULE
+    ===================================================== */
+    var toaAllRecords = [];
+
+    function loadTOActions() {
+      var contentEl = document.getElementById('toa-content');
+      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải...</h2></div>';
+      gasGet('getTOActions')
+        .then(function(data) { renderTOActions(data); })
+        .catch(function() { renderTOActions(null); });
+    }
+
+    function renderTOActions(data) {
+      var contentEl = document.getElementById('toa-content');
+      if (!contentEl) return;
+      var records = data && Array.isArray(data.records) ? data.records : [];
+      if (!records.length) {
+        contentEl.innerHTML =
+          '<div class="module-placeholder">' +
+          '<div class="module-placeholder-icon">⚡</div>' +
+          '<h2>TO Action Center</h2>' +
+          '<p>Tổng hợp tất cả action phát sinh từ các buổi họp TO. Kết nối dữ liệu từ sheet <strong>TO_ACTIONS</strong>.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet TO_ACTIONS</div>' +
+          '</div>';
+        return;
+      }
+      toaAllRecords = records;
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      var inprogress = records.filter(function(r) { return /đang xử lý|in progress/i.test(r.Status||''); }).length;
+      var overdue    = records.filter(function(r) { return /quá hạn|overdue/i.test(r.Status||''); }).length;
+      var done       = records.filter(function(r) { return /hoàn thành|done|complete/i.test(r.Status||''); }).length;
+      var pending    = records.filter(function(r) { return /chờ|pending/i.test(r.Status||''); }).length;
+      st('toa-badge', records.length + ' action');
+      st('toa-s-total', records.length); st('toa-s-inprogress', inprogress);
+      st('toa-s-overdue', overdue); st('toa-s-done', done); st('toa-s-pending', pending);
+      renderTOActionsTable(records);
+    }
+
+    function renderTOActionsTable(records) {
+      var contentEl = document.getElementById('toa-content');
+      if (!contentEl) return;
+      var statusFilter = (document.getElementById('toa-filter-status') || {}).value || '';
+      var filtered = statusFilter
+        ? records.filter(function(r) { return (r.Status||'').includes(statusFilter); })
+        : records;
+      var cols = ['Action ID','Ngày','Cuộc họp TO','Nội dung action','PIC','Owner','Deadline','Trạng thái','Kết quả','Link'];
+      var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
+      cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      if (!filtered.length) {
+        html += '<tr class="empty-row"><td colspan="' + cols.length + '">Không tìm thấy action nào</td></tr>';
+      } else {
+        filtered.forEach(function(r) {
+          html += '<tr>'
+            + '<td>' + safe(r.ActionID || r.RowId) + '</td>'
+            + '<td>' + safe(r.Date || r.MeetingDate) + '</td>'
+            + '<td>' + safe(r.Meeting || r.Source) + '</td>'
+            + '<td>' + safe(r.Action || r.Content) + '</td>'
+            + '<td>' + safe(r.PIC) + '</td>'
+            + '<td>' + safe(r.Owner) + '</td>'
+            + '<td>' + safe(r.Deadline) + '</td>'
+            + '<td>' + modStatusBadge(r.Status) + '</td>'
+            + '<td>' + safe(r.Result || r.Note) + '</td>'
+            + '<td>' + (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗 Mở</a>' : '') + '</td>'
+            + '</tr>';
+        });
+      }
+      html += '</tbody></table></div>';
+      contentEl.innerHTML = html;
+    }
+
+    function filterTOActions(keyword) {
+      if (!toaAllRecords.length) return;
+      var kw = (keyword || '').toLowerCase().trim();
+      var statusFilter = (document.getElementById('toa-filter-status') || {}).value || '';
+      var filtered = toaAllRecords.filter(function(r) {
+        var matchKw = !kw || ((r.Action||'') + (r.Content||'') + (r.PIC||'') + (r.Owner||'') + (r.Meeting||'')).toLowerCase().includes(kw);
+        var matchStatus = !statusFilter || (r.Status||'').includes(statusFilter);
+        return matchKw && matchStatus;
+      });
+      var el = document.getElementById('toa-badge');
+      if (el) el.textContent = filtered.length + ' action' + (kw || statusFilter ? ' (lọc)' : '');
+      renderTOActionsTable(filtered);
+    }
+
+    /* =====================================================
+       RISK / SOS CENTER MODULE (aggregates PMO data)
+    ===================================================== */
+    var sosAllRecords = [];
+
+    function renderRiskSOSModule(data) {
+      var contentEl = document.getElementById('sos-content');
+      if (!contentEl) return;
+      var rows = (data && data.topRisks) || [];
+      if (!rows.length) {
+        contentEl.innerHTML =
+          '<div class="module-placeholder">' +
+          '<div class="module-placeholder-icon">🚨</div>' +
+          '<h2>Risk / SOS Center</h2>' +
+          '<p>Tổng hợp toàn bộ rủi ro và cảnh báo SOS từ 6 workstream PMO. Dữ liệu sẽ tự động cập nhật khi PMO Dashboard tải xong.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>' +
+          '</div>';
+        return;
+      }
+      sosAllRecords = rows;
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      var red  = rows.filter(function(r) { return /red|đỏ/i.test(r.RAG||''); }).length;
+      var amb  = rows.filter(function(r) { return /amber|vàng/i.test(r.RAG||''); }).length;
+      var done = rows.filter(function(r) { return /done|hoàn thành/i.test(r.Status||''); }).length;
+      var ceo  = rows.filter(function(r) { return hasTextClient(r.CEODecision); }).length;
+      st('sos-badge', rows.length + ' items');
+      st('sos-s-total', rows.length); st('sos-s-red', red);
+      st('sos-s-amber', amb); st('sos-s-resolved', done); st('sos-s-ceo', ceo);
+      renderRiskSOSTable(rows);
+    }
+
+    function renderRiskSOSTable(rows) {
+      var contentEl = document.getElementById('sos-content');
+      if (!contentEl) return;
+      var ragFilter = (document.getElementById('sos-filter-rag') || {}).value || '';
+      var filtered = ragFilter
+        ? rows.filter(function(r) { return (r.RAG||'').toLowerCase().includes(ragFilter); })
+        : rows;
+      var cols = ['Mã dòng','Workstream','PIC','Owner','Risk / SOS','Action liên quan','Deadline','RAG','CEO cần biết','Link'];
+      var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
+      cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      if (!filtered.length) {
+        html += '<tr class="empty-row"><td colspan="' + cols.length + '">Không có Risk/SOS nào' + (ragFilter ? ' ở mức ' + ragFilter : '') + '</td></tr>';
+      } else {
+        filtered.forEach(function(r) {
+          html += '<tr>'
+            + '<td>' + safe(r.RowId) + '</td>'
+            + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
+            + '<td>' + safe(r.PIC) + '</td>'
+            + '<td>' + safe(r.Owner) + '</td>'
+            + '<td><b>' + safe(r.Risk) + '</b></td>'
+            + '<td>' + safe(r.Action) + '</td>'
+            + '<td>' + safe(r.Deadline) + '</td>'
+            + '<td>' + modRagBadge(r.RAG) + '</td>'
+            + '<td>' + safe(r.CEODecision) + '</td>'
+            + '<td>' + (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗</a>' : '') + '</td>'
+            + '</tr>';
+        });
+      }
+      html += '</tbody></table></div>';
+      contentEl.innerHTML = html;
+    }
+
+    function filterRiskSOS(keyword) {
+      if (!sosAllRecords.length) return;
+      var kw = (keyword || '').toLowerCase().trim();
+      var ragFilter = (document.getElementById('sos-filter-rag') || {}).value || '';
+      var filtered = sosAllRecords.filter(function(r) {
+        var matchKw = !kw || ((r.Risk||'') + (r.Action||'') + (r.PIC||'') + (r.Workstream||'')).toLowerCase().includes(kw);
+        var matchRag = !ragFilter || (r.RAG||'').toLowerCase().includes(ragFilter);
+        return matchKw && matchRag;
+      });
+      var el = document.getElementById('sos-badge');
+      if (el) el.textContent = filtered.length + ' items' + (kw || ragFilter ? ' (lọc)' : '');
+      renderRiskSOSTable(filtered);
+    }
+
+    /* =====================================================
+       CEO DECISION BOARD MODULE (aggregates PMO data)
+    ===================================================== */
+    var decAllRecords = [];
+
+    function renderCEODecisionBoardModule(data) {
+      var contentEl = document.getElementById('dec-content');
+      if (!contentEl) return;
+      var rows = (data && data.decisionList) || [];
+      if (!rows.length) {
+        contentEl.innerHTML =
+          '<div class="module-placeholder">' +
+          '<div class="module-placeholder-icon">✅</div>' +
+          '<h2>CEO Decision Board</h2>' +
+          '<p>Tập hợp tất cả quyết định đang chờ CEO phê duyệt từ toàn bộ các workstream. Dữ liệu tự động cập nhật khi PMO Dashboard tải xong.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>' +
+          '</div>';
+        return;
+      }
+      decAllRecords = rows;
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      var red  = rows.filter(function(r) { return /red|đỏ/i.test(r.RAG||''); }).length;
+      var amb  = rows.filter(function(r) { return /amber|vàng/i.test(r.RAG||''); }).length;
+      var grn  = rows.filter(function(r) { return /green|xanh/i.test(r.RAG||''); }).length;
+      var wsSet = {};
+      rows.forEach(function(r) { if (r.Workstream) wsSet[r.Workstream] = 1; });
+      st('dec-badge', rows.length + ' quyết định');
+      st('dec-s-total', rows.length); st('dec-s-red', red);
+      st('dec-s-amber', amb); st('dec-s-green', grn);
+      st('dec-s-ws', Object.keys(wsSet).length);
+      renderCEODecisionTable(rows);
+    }
+
+    function renderCEODecisionTable(rows) {
+      var contentEl = document.getElementById('dec-content');
+      if (!contentEl) return;
+      var ragFilter = (document.getElementById('dec-filter-rag') || {}).value || '';
+      var filtered = ragFilter
+        ? rows.filter(function(r) { return (r.RAG||'').toLowerCase().includes(ragFilter); })
+        : rows;
+      var cols = ['Mã dòng','Workstream','PIC','Owner','Việc CEO cần chốt','Action liên quan','Deadline','RAG','Risk','Link'];
+      var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
+      cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
+      html += '</tr></thead><tbody>';
+      if (!filtered.length) {
+        html += '<tr class="empty-row"><td colspan="' + cols.length + '">Không có quyết định nào cần CEO chốt</td></tr>';
+      } else {
+        filtered.forEach(function(r) {
+          html += '<tr>'
+            + '<td>' + safe(r.RowId) + '</td>'
+            + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
+            + '<td>' + safe(r.PIC) + '</td>'
+            + '<td>' + safe(r.Owner) + '</td>'
+            + '<td><b>' + safe(r.CEODecision) + '</b></td>'
+            + '<td>' + safe(r.Action) + '</td>'
+            + '<td>' + safe(r.Deadline) + '</td>'
+            + '<td>' + modRagBadge(r.RAG) + '</td>'
+            + '<td>' + safe(r.Risk) + '</td>'
+            + '<td>' + (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗</a>' : '') + '</td>'
+            + '</tr>';
+        });
+      }
+      html += '</tbody></table></div>';
+      contentEl.innerHTML = html;
+    }
+
+    function filterCEODecisions(keyword) {
+      if (!decAllRecords.length) return;
+      var kw = (keyword || '').toLowerCase().trim();
+      var ragFilter = (document.getElementById('dec-filter-rag') || {}).value || '';
+      var filtered = decAllRecords.filter(function(r) {
+        var matchKw = !kw || ((r.CEODecision||'') + (r.Action||'') + (r.PIC||'') + (r.Workstream||'')).toLowerCase().includes(kw);
+        var matchRag = !ragFilter || (r.RAG||'').toLowerCase().includes(ragFilter);
+        return matchKw && matchRag;
+      });
+      var el = document.getElementById('dec-badge');
+      if (el) el.textContent = filtered.length + ' quyết định' + (kw || ragFilter ? ' (lọc)' : '');
+      renderCEODecisionTable(filtered);
+    }
+
+    /* =====================================================
+       DATA QUALITY MODULE (aggregates PMO data)
+    ===================================================== */
+    function renderDataQualityModule(data) {
+      var contentEl = document.getElementById('dq-content');
+      if (!contentEl) return;
+      var dq = data && data.dataQuality;
+      if (!dq || !dq.total) {
+        contentEl.innerHTML =
+          '<div class="module-placeholder">' +
+          '<div class="module-placeholder-icon">📊</div>' +
+          '<h2>Data Quality</h2>' +
+          '<p>Đánh giá chất lượng điền dữ liệu của 16 PIC theo 6 workstream. Dữ liệu tự động cập nhật khi PMO Dashboard tải xong.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>' +
+          '</div>';
+        return;
+      }
+      var score = Number(dq.score || 0);
+      var total = Number(dq.total || 0);
+      var mOwner    = Number(dq.missingOwner || 0);
+      var mPIC      = Number(dq.missingPIC || 0);
+      var mDeadline = Number(dq.missingDeadline || 0);
+      var mAction   = Number(dq.missingAction || 0);
+      var mStatus   = Number(dq.missingStatus || 0);
+      var mRAG      = Number(dq.missingRAG || 0);
+
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      var scoreCls = score >= 80 ? 'green' : score >= 60 ? 'amber' : 'red';
+      st('dq-badge', '6 workstream · ' + total + ' dòng');
+      st('dq-s-score', score + '%');
+      st('dq-s-total', total);
+      st('dq-s-missing-owner', mOwner);
+      st('dq-s-missing-deadline', mDeadline);
+      st('dq-s-missing-rag', mRAG);
+
+      var workstreams = (data && data.workstreamSummary) || [];
+
+      var pct = function(missing) {
+        return total > 0 ? Math.round((1 - missing / total) * 100) : 0;
+      };
+      var barCls = function(p) { return p >= 80 ? 'green' : p >= 60 ? 'amber' : 'red'; };
+
+      var scoreCircleHtml =
+        '<div class="mod-score-circle ' + scoreCls + '">' + score + '%</div>' +
+        '<div style="text-align:center;font-size:12px;color:#6b7280;font-weight:600">Điểm chất lượng tổng thể</div>';
+
+      var fields = [
+        { label: 'Có Owner',    missing: mOwner,    pct: pct(mOwner) },
+        { label: 'Có PIC',      missing: mPIC,      pct: pct(mPIC) },
+        { label: 'Có Deadline', missing: mDeadline, pct: pct(mDeadline) },
+        { label: 'Có Action',   missing: mAction,   pct: pct(mAction) },
+        { label: 'Có Status',   missing: mStatus,   pct: pct(mStatus) },
+        { label: 'Có RAG',      missing: mRAG,      pct: pct(mRAG) }
+      ];
+
+      var fieldBarsHtml = fields.map(function(f) {
+        return '<div class="mod-dq-bar-row">' +
+          '<div class="mod-dq-bar-label">' + safe(f.label) + '</div>' +
+          '<div class="mod-dq-bar-bg"><div class="mod-dq-bar-fill ' + barCls(f.pct) + '" style="width:' + f.pct + '%"></div></div>' +
+          '<div class="mod-dq-bar-pct">' + f.pct + '%</div>' +
+          '</div>';
+      }).join('');
+
+      var wsCols = ['Workstream','Tổng','Done','Quá hạn','Blocked','Risk/SOS','CEO chốt','RAG'];
+      var wsTableHtml = '<table class="mod-table"><thead><tr>' +
+        wsCols.map(function(c) { return '<th>' + safe(c) + '</th>'; }).join('') +
+        '</tr></thead><tbody>';
+      if (!workstreams.length) {
+        wsTableHtml += '<tr class="empty-row"><td colspan="' + wsCols.length + '">Không có dữ liệu workstream</td></tr>';
+      } else {
+        workstreams.forEach(function(r) {
+          wsTableHtml += '<tr>'
+            + '<td><b>' + safe(r.WorkstreamDisplay || r.Workstream) + '</b></td>'
+            + '<td>' + safe(r.Total || 0) + '</td>'
+            + '<td style="color:#059669;font-weight:700">' + safe(r.Done || 0) + '</td>'
+            + '<td style="color:#dc2626;font-weight:700">' + safe(r.Overdue || 0) + '</td>'
+            + '<td style="color:#7c3aed;font-weight:700">' + safe(r.Blocked || 0) + '</td>'
+            + '<td style="color:#d97706;font-weight:700">' + safe(r.Risks || 0) + '</td>'
+            + '<td style="color:#2563eb;font-weight:700">' + safe(r.Decisions || 0) + '</td>'
+            + '<td>' + modRagBadge(r.RAG) + '</td>'
+            + '</tr>';
+        });
+      }
+      wsTableHtml += '</tbody></table>';
+
+      contentEl.innerHTML =
+        '<div class="mod-dq-grid">' +
+        '<div class="mod-dq-section" style="display:flex;flex-direction:column;align-items:center;justify-content:center">' +
+        scoreCircleHtml +
+        '<div style="margin-top:14px;font-size:12px;color:#6b7280;text-align:center">Tổng: ' + total + ' dòng dữ liệu<br>Thiếu Owner: ' + mOwner + ' · Thiếu Deadline: ' + mDeadline + ' · Thiếu RAG: ' + mRAG + '</div>' +
+        '</div>' +
+        '<div class="mod-dq-section">' +
+        '<div class="mod-dq-section-title">Tỷ lệ điền đủ từng trường</div>' +
+        fieldBarsHtml +
+        '</div>' +
+        '</div>' +
+        '<div class="mod-table-wrapper">' +
+        '<div class="mod-dq-section-title" style="padding:16px 0 8px;font-size:13px;color:#064e3b;font-weight:800;text-transform:uppercase;letter-spacing:0.5px">Tình trạng theo Workstream</div>' +
+        wsTableHtml +
+        '</div>';
+    }
+
+    function refreshDataQualityModule() {
+      if (dashboardCache) {
+        renderDataQualityModule(dashboardCache);
+      }
+    }
+
+    /* =====================================================
+       SHARED MOD BADGE HELPERS
+    ===================================================== */
+    function modRagBadge(rag) {
+      var r = String(rag || '').toLowerCase();
+      if (r.includes('green') || r.includes('xanh')) return '<span class="mod-rag green">🟢 Green</span>';
+      if (r.includes('red') || r.includes('đỏ'))    return '<span class="mod-rag red">🔴 Red</span>';
+      return '<span class="mod-rag amber">🟡 Amber</span>';
+    }
+
+    function modStatusBadge(status) {
+      var s = String(status || '').toLowerCase();
+      if (s.includes('hoàn thành') || s.includes('done')) return '<span class="mod-status done">' + safe(status) + '</span>';
+      if (s.includes('quá hạn') || s.includes('overdue'))  return '<span class="mod-status overdue">' + safe(status) + '</span>';
+      if (s.includes('blocked') || s.includes('vướng'))    return '<span class="mod-status blocked">' + safe(status) + '</span>';
+      if (status) return '<span class="mod-status pending">' + safe(status) + '</span>';
+      return '';
     }
   </script>
 </body>
