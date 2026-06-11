@@ -1,20 +1,22 @@
 function doGet(e) {
-  var action = e && e.parameter && e.parameter.action;
+  var action   = e && e.parameter && e.parameter.action;
   var callback = e && e.parameter && e.parameter.callback;
 
-  if (action === 'getDashboardData') {
-    var json = JSON.stringify(getDashboardData());
-    var out = callback ? callback + '(' + json + ')' : json;
+  function jsonOut(data) {
+    var json = JSON.stringify(data);
+    var body = callback ? callback + '(' + json + ')' : json;
     var mime = callback ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
-    return ContentService.createTextOutput(out).setMimeType(mime);
+    return ContentService.createTextOutput(body).setMimeType(mime);
   }
 
-  if (action === 'getDashboardComments') {
-    var json = JSON.stringify(getDashboardComments());
-    var out = callback ? callback + '(' + json + ')' : json;
-    var mime = callback ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
-    return ContentService.createTextOutput(out).setMimeType(mime);
-  }
+  if (action === 'getDashboardData')    return jsonOut(getDashboardData());
+  if (action === 'getDashboardComments') return jsonOut(getDashboardComments());
+  if (action === 'getCEOProjects')      return jsonOut(getCEOProjectsData());
+  if (action === 'getTOActions')        return jsonOut(getTOActionsData());
+  if (action === 'getMeetingMinutes')   return jsonOut(getMeetingMinutesData());
+  if (action === 'getRiskSOS')          return jsonOut(getRiskSOSData());
+  if (action === 'getCEODecisions')     return jsonOut(getCEODecisionsData());
+  if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
 
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('GSP NEXT 30 - CEO Dashboard')
@@ -771,4 +773,541 @@ function testSaveCommentManual() {
   });
 
   Logger.log(JSON.stringify(result, null, 2));
+}
+
+/* =====================================================
+   SAFE SHEET READER
+   Đọc sheet với header ở hàng 1, data từ hàng 2.
+   Trả về { exists, headers, rows, rowCount }.
+   Không throw nếu sheet chưa tạo.
+===================================================== */
+
+function safeReadSheet(ss, sheetName) {
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    return { exists: false, headers: [], rows: [], rowCount: 0 };
+  }
+  var values = sheet.getDataRange().getValues();
+  if (!values || values.length < 2) {
+    return { exists: true, headers: values && values[0] ? values[0] : [], rows: [], rowCount: 0 };
+  }
+  var headers = values[0].map(function(h) { return String(h || '').trim(); });
+  var rows = values.slice(1)
+    .filter(function(row) {
+      return row.some(function(cell) { return String(cell || '').trim() !== ''; });
+    })
+    .map(function(row) {
+      var obj = {};
+      headers.forEach(function(h, i) { obj[h] = (row[i] !== undefined && row[i] !== null) ? row[i] : ''; });
+      return obj;
+    });
+  return { exists: true, headers: headers, rows: rows, rowCount: rows.length };
+}
+
+/* =====================================================
+   CEO PROJECTS
+   Sheet: CEO_PROJECTS (header hàng 1)
+   → Khi Vướng mắc ≠ "" hoặc RAG = Red → tự vào Risk/SOS
+   → Khi CEO cần chốt ≠ "" → tự vào CEO Decision Board
+===================================================== */
+
+function getCEOProjectsData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var data = safeReadSheet(ss, 'CEO_PROJECTS');
+
+  var records = data.rows.map(function(r, i) {
+    var rag = normalizeRag(r['RAG'] || '');
+    var status = normalizeStatus(r['Trạng thái'] || r['Status'] || '');
+    return {
+      RowId:       String(r['Project ID'] || ('PRJ-' + String(i + 1).padStart(3, '0'))),
+      ProjectName: String(r['Tên dự án']   || r['Project Name'] || ''),
+      PICLead:     String(r['PIC Lead']    || r['PIC'] || ''),
+      Owner:       String(r['Owner']       || r['CEO phụ trách'] || ''),
+      Workstream:  String(r['Workstream']  || r['Lĩnh vực'] || ''),
+      StartDate:   formatDate(r['Ngày bắt đầu']),
+      Deadline:    formatDate(r['Deadline']),
+      Status:      status,
+      RAG:         rag,
+      Progress:    String(r['% Hoàn thành'] || r['Progress'] || ''),
+      Milestone:   String(r['Milestone gần nhất'] || r['Milestone'] || ''),
+      NextMile:    String(r['Milestone tiếp theo'] || ''),
+      Issues:      String(r['Vướng mắc']   || r['Risk/SOS'] || ''),
+      CEODecision: String(r['CEO cần chốt'] || r['CEO Decision'] || ''),
+      Note:        String(r['Ghi chú'] || ''),
+      RowUrl:      String(r['Link'] || r['URL'] || '')
+    };
+  });
+
+  return { exists: data.exists, records: records, total: records.length };
+}
+
+/* =====================================================
+   TO ACTIONS
+   Sheet: TO_ACTIONS (header hàng 1)
+   → Khi CEO cần biết ≠ "" → tự vào CEO Decision Board
+   → Khi RAG = Red hoặc Mức độ ưu tiên = Cao → tự vào Risk/SOS
+===================================================== */
+
+function getTOActionsData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var data = safeReadSheet(ss, 'TO_ACTIONS');
+
+  var records = data.rows.map(function(r, i) {
+    return {
+      RowId:       String(r['Action ID']          || ('TOA-' + String(i + 1).padStart(4, '0'))),
+      ActionID:    String(r['Action ID']          || ('TOA-' + String(i + 1).padStart(4, '0'))),
+      Date:        formatDate(r['Ngày phát sinh'] || r['Ngày'] || ''),
+      MeetingDate: formatDate(r['Ngày phát sinh'] || ''),
+      Meeting:     String(r['Cuộc họp']          || r['Bối cảnh'] || ''),
+      MeetingID:   String(r['Meeting ID']         || ''),
+      Action:      String(r['Nội dung action']    || r['Action'] || ''),
+      Content:     String(r['Nội dung action']    || r['Action'] || ''),
+      PIC:         String(r['PIC thực hiện']      || r['PIC'] || ''),
+      Owner:       String(r['Owner theo dõi']     || r['Owner'] || ''),
+      Deadline:    formatDate(r['Deadline']        || ''),
+      Status:      normalizeStatus(r['Trạng thái'] || r['Status'] || ''),
+      Priority:    String(r['Mức độ ưu tiên']     || r['Priority'] || ''),
+      RAG:         normalizeRag(r['RAG']           || ''),
+      Result:      String(r['Kết quả']            || r['Output'] || ''),
+      CEONote:     String(r['CEO cần biết']        || ''),
+      Note:        String(r['Ghi chú']            || ''),
+      RowUrl:      String(r['Link biên bản']       || r['Link'] || '')
+    };
+  });
+
+  return { exists: data.exists, records: records, total: records.length };
+}
+
+/* =====================================================
+   MEETING MINUTES
+   Sheet: MEETING_MINUTES (header hàng 1)
+   → Khi Risk/SOS phát sinh ≠ "" → tự vào Risk/SOS Center
+   → Khi Chỉ đạo CEO hoặc CEO cần quyết tiếp ≠ "" → CEO Decision
+===================================================== */
+
+function getMeetingMinutesData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var data = safeReadSheet(ss, 'MEETING_MINUTES');
+
+  var records = data.rows.map(function(r, i) {
+    return {
+      MeetingID:    String(r['Meeting ID']            || ('MTG-' + String(i + 1).padStart(3, '0'))),
+      Date:         formatDate(r['Ngày họp']          || ''),
+      Topic:        String(r['Chủ đề họp']            || r['Chủ đề'] || ''),
+      Chair:        String(r['Người chủ trì']         || ''),
+      Attendees:    String(r['Thành phần tham dự']    || r['Thành phần'] || ''),
+      Scope:        String(r['Phạm vi']               || ''),
+      Summary:      String(r['Tóm tắt chính']         || r['Tóm tắt'] || ''),
+      CEODirective: String(r['Chỉ đạo CEO']           || ''),
+      Decisions:    String(r['Quyết định đã chốt']    || ''),
+      Actions:      String(r['Action phát sinh']       || ''),
+      RiskSOS:      String(r['Risk/SOS phát sinh']     || r['Risk SOS phát sinh'] || ''),
+      CEODecision:  String(r['CEO cần quyết tiếp']     || ''),
+      FileMinutes:  String(r['File biên bản']          || ''),
+      FileAudio:    String(r['File ghi âm']            || r['File transcript'] || ''),
+      RecordedBy:   String(r['Người lập biên bản']     || ''),
+      Status:       String(r['Trạng thái']             || 'Nháp'),
+      SecretNote:   String(r['Ghi chú bảo mật']        || '')
+    };
+  });
+
+  return {
+    exists:  data.exists,
+    records: records,
+    total:   records.length,
+    pending: records.filter(function(r) { return String(r.Status || '').includes('Chờ'); }).length
+  };
+}
+
+/* =====================================================
+   RISK / SOS CENTER — Tổng hợp từ TẤT CẢ nguồn
+   Nguồn 1: 6 sheets PMO — cột Risk/SOS ≠ "" hoặc RAG = Red
+   Nguồn 2: CEO_PROJECTS — Vướng mắc ≠ "" hoặc RAG = Red
+   Nguồn 3: MEETING_MINUTES — Risk/SOS phát sinh ≠ ""
+   Nguồn 4: TO_ACTIONS — RAG = Red hoặc Mức độ ưu tiên = Cao
+===================================================== */
+
+function getRiskSOSData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var allRisks = [];
+  var seen = {};
+
+  function addRisk(item) {
+    var key = (item.Source || '') + '||' + (item.RowId || '') + '||' + String(item.Risk || '').slice(0, 40);
+    if (seen[key]) return;
+    seen[key] = true;
+    allRisks.push(item);
+  }
+
+  // --- Nguồn 1: 6 sheets PMO (header hàng 3, data từ hàng 4) ---
+  DASHBOARD_SHEETS.forEach(function(config) {
+    var sheet = ss.getSheetByName(config.name);
+    if (!sheet) return;
+    var values = sheet.getDataRange().getValues();
+    if (!values || values.length < 4) return;
+    var headers = values[2].map(function(h) { return String(h || '').trim(); });
+    var sheetId = sheet.getSheetId();
+    values.slice(3).forEach(function(row, idx) {
+      var obj = {};
+      headers.forEach(function(h, i) { if (h) obj[h] = row[i]; });
+      var rowId = getVal(obj, ['Mã dòng (ID)', 'Mã dòng', 'ID']);
+      if (!hasText(rowId)) return;
+      var risk = String(getVal(obj, ['Risk / SOS', 'Risk', 'SOS', 'Rủi ro', 'Blocker', 'Vướng mắc']) || '');
+      var rag  = normalizeRag(getVal(obj, ['RAG', 'Đèn RAG', 'Đèn báo']));
+      if (!hasText(risk) && rag !== 'Red') return;
+      addRisk({
+        Source:           config.display,
+        Workstream:       config.label,
+        WorkstreamDisplay:config.display,
+        RowId:            String(rowId),
+        PIC:              String(getVal(obj, ['PIC Lead', 'PIC', 'Đầu mối']) || ''),
+        Owner:            String(getVal(obj, ['Owner', 'Người phụ trách']) || ''),
+        Risk:             risk || 'RAG Red',
+        Action:           String(getVal(obj, ['Kế hoạch hành động', 'Action Plan', 'Action', 'Hành động']) || ''),
+        Deadline:         formatDate(getVal(obj, ['Deadline', 'Hạn hoàn thành'])),
+        RAG:              rag,
+        Status:           normalizeStatus(getVal(obj, ['Status', 'Trạng thái', 'Tình trạng'])),
+        CEODecision:      String(getVal(obj, ['CEO Decision Needed', 'CEO cần chốt', 'Cần CEO chốt']) || ''),
+        RowUrl:           ss.getUrl() + '#gid=' + sheetId + '&range=A' + (idx + 4) + ':Z' + (idx + 4)
+      });
+    });
+  });
+
+  // --- Nguồn 2: CEO_PROJECTS ---
+  safeReadSheet(ss, 'CEO_PROJECTS').rows.forEach(function(r) {
+    var issues = String(r['Vướng mắc'] || r['Risk/SOS'] || '');
+    var rag    = normalizeRag(r['RAG'] || '');
+    if (!hasText(issues) && rag !== 'Red') return;
+    addRisk({
+      Source:           'CEO Projects',
+      Workstream:       'CEO Projects',
+      WorkstreamDisplay:'CEO Projects',
+      RowId:            String(r['Project ID'] || ''),
+      PIC:              String(r['PIC Lead'] || r['PIC'] || ''),
+      Owner:            String(r['Owner'] || r['CEO phụ trách'] || ''),
+      Risk:             issues || 'RAG Red',
+      Action:           String(r['Tên dự án'] || r['Project Name'] || ''),
+      Deadline:         formatDate(r['Deadline'] || ''),
+      RAG:              rag,
+      Status:           normalizeStatus(r['Trạng thái'] || r['Status'] || ''),
+      CEODecision:      String(r['CEO cần chốt'] || ''),
+      RowUrl:           String(r['Link'] || '')
+    });
+  });
+
+  // --- Nguồn 3: MEETING_MINUTES ---
+  safeReadSheet(ss, 'MEETING_MINUTES').rows.forEach(function(r) {
+    var riskText = String(r['Risk/SOS phát sinh'] || r['Risk SOS phát sinh'] || '');
+    if (!hasText(riskText)) return;
+    addRisk({
+      Source:           'Biên bản họp',
+      Workstream:       'Meeting',
+      WorkstreamDisplay:'BB: ' + String(r['Chủ đề họp'] || '').slice(0, 30),
+      RowId:            String(r['Meeting ID'] || ''),
+      PIC:              String(r['Người chủ trì'] || ''),
+      Owner:            String(r['Người lập biên bản'] || ''),
+      Risk:             riskText,
+      Action:           String(r['Chủ đề họp'] || ''),
+      Deadline:         formatDate(r['Ngày họp'] || ''),
+      RAG:              'Amber',
+      Status:           String(r['Trạng thái'] || 'Nháp'),
+      CEODecision:      String(r['CEO cần quyết tiếp'] || ''),
+      RowUrl:           String(r['File biên bản'] || '')
+    });
+  });
+
+  // --- Nguồn 4: TO_ACTIONS (RAG=Red hoặc Ưu tiên Cao) ---
+  safeReadSheet(ss, 'TO_ACTIONS').rows.forEach(function(r) {
+    var rag      = normalizeRag(r['RAG'] || '');
+    var priority = String(r['Mức độ ưu tiên'] || r['Priority'] || '').toLowerCase();
+    if (rag !== 'Red' && !priority.includes('cao')) return;
+    addRisk({
+      Source:           'TO Actions',
+      Workstream:       'TO',
+      WorkstreamDisplay:'TO: ' + String(r['Cuộc họp'] || '').slice(0, 25),
+      RowId:            String(r['Action ID'] || ''),
+      PIC:              String(r['PIC thực hiện'] || r['PIC'] || ''),
+      Owner:            String(r['Owner theo dõi'] || r['Owner'] || ''),
+      Risk:             String(r['Nội dung action'] || ''),
+      Action:           String(r['Nội dung action'] || ''),
+      Deadline:         formatDate(r['Deadline'] || ''),
+      RAG:              rag,
+      Status:           normalizeStatus(r['Trạng thái'] || r['Status'] || ''),
+      CEODecision:      String(r['CEO cần biết'] || ''),
+      RowUrl:           String(r['Link biên bản'] || r['Link'] || '')
+    });
+  });
+
+  // Sắp xếp: Red → Amber → Green
+  var ragOrder = { Red: 0, Amber: 1, Green: 2 };
+  allRisks.sort(function(a, b) {
+    return (ragOrder[a.RAG] || 1) - (ragOrder[b.RAG] || 1);
+  });
+
+  return {
+    exists:     true,
+    topRisks:   allRisks,
+    total:      allRisks.length,
+    redCount:   allRisks.filter(function(r) { return r.RAG === 'Red'; }).length,
+    amberCount: allRisks.filter(function(r) { return r.RAG === 'Amber'; }).length
+  };
+}
+
+/* =====================================================
+   CEO DECISION BOARD — Tổng hợp từ TẤT CẢ nguồn
+   Nguồn 1: 6 sheets PMO — cột "CEO cần chốt" ≠ ""
+   Nguồn 2: CEO_PROJECTS — cột "CEO cần chốt" ≠ ""
+   Nguồn 3: MEETING_MINUTES — "Chỉ đạo CEO" hoặc "CEO cần quyết tiếp" ≠ ""
+   Nguồn 4: TO_ACTIONS — cột "CEO cần biết" ≠ ""
+===================================================== */
+
+function getCEODecisionsData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var allDecisions = [];
+  var seen = {};
+
+  function addDecision(item) {
+    var key = (item.Source || '') + '||' + (item.RowId || '') + '||' + String(item.CEODecision || '').slice(0, 40);
+    if (seen[key]) return;
+    seen[key] = true;
+    allDecisions.push(item);
+  }
+
+  // --- Nguồn 1: 6 sheets PMO ---
+  DASHBOARD_SHEETS.forEach(function(config) {
+    var sheet = ss.getSheetByName(config.name);
+    if (!sheet) return;
+    var values = sheet.getDataRange().getValues();
+    if (!values || values.length < 4) return;
+    var headers = values[2].map(function(h) { return String(h || '').trim(); });
+    var sheetId = sheet.getSheetId();
+    values.slice(3).forEach(function(row, idx) {
+      var obj = {};
+      headers.forEach(function(h, i) { if (h) obj[h] = row[i]; });
+      var rowId  = getVal(obj, ['Mã dòng (ID)', 'Mã dòng', 'ID']);
+      if (!hasText(rowId)) return;
+      var ceoCol = String(getVal(obj, ['CEO Decision Needed', 'CEO cần chốt', 'CEO quyết định', 'Cần CEO chốt']) || '');
+      if (!isDecision(ceoCol)) return;
+      addDecision({
+        Source:           config.display,
+        Workstream:       config.label,
+        WorkstreamDisplay:config.display,
+        RowId:            String(rowId),
+        PIC:              String(getVal(obj, ['PIC Lead', 'PIC', 'Đầu mối']) || ''),
+        Owner:            String(getVal(obj, ['Owner', 'Người phụ trách']) || ''),
+        CEODecision:      ceoCol,
+        Action:           String(getVal(obj, ['Kế hoạch hành động', 'Action Plan', 'Action', 'Hành động']) || ''),
+        Deadline:         formatDate(getVal(obj, ['Deadline', 'Hạn hoàn thành'])),
+        RAG:              normalizeRag(getVal(obj, ['RAG', 'Đèn RAG'])),
+        Risk:             String(getVal(obj, ['Risk / SOS', 'Risk', 'SOS', 'Vướng mắc']) || ''),
+        RowUrl:           ss.getUrl() + '#gid=' + sheetId + '&range=A' + (idx + 4) + ':Z' + (idx + 4)
+      });
+    });
+  });
+
+  // --- Nguồn 2: CEO_PROJECTS ---
+  safeReadSheet(ss, 'CEO_PROJECTS').rows.forEach(function(r) {
+    var ceoCol = String(r['CEO cần chốt'] || r['CEO Decision'] || '');
+    if (!isDecision(ceoCol)) return;
+    addDecision({
+      Source:           'CEO Projects',
+      Workstream:       'CEO Projects',
+      WorkstreamDisplay:'CEO Projects',
+      RowId:            String(r['Project ID'] || ''),
+      PIC:              String(r['PIC Lead'] || r['PIC'] || ''),
+      Owner:            String(r['Owner'] || ''),
+      CEODecision:      ceoCol,
+      Action:           String(r['Tên dự án'] || r['Project Name'] || ''),
+      Deadline:         formatDate(r['Deadline'] || ''),
+      RAG:              normalizeRag(r['RAG'] || ''),
+      Risk:             String(r['Vướng mắc'] || ''),
+      RowUrl:           String(r['Link'] || '')
+    });
+  });
+
+  // --- Nguồn 3: MEETING_MINUTES ---
+  safeReadSheet(ss, 'MEETING_MINUTES').rows.forEach(function(r) {
+    var directive = String(r['Chỉ đạo CEO'] || '');
+    var nextDecision = String(r['CEO cần quyết tiếp'] || '');
+    if (!hasText(directive) && !hasText(nextDecision)) return;
+    addDecision({
+      Source:           'Biên bản họp',
+      Workstream:       'Meeting',
+      WorkstreamDisplay:'BB: ' + String(r['Chủ đề họp'] || '').slice(0, 30),
+      RowId:            String(r['Meeting ID'] || ''),
+      PIC:              String(r['Người chủ trì'] || ''),
+      Owner:            String(r['Người lập biên bản'] || ''),
+      CEODecision:      nextDecision || directive,
+      Action:           directive || String(r['Chủ đề họp'] || ''),
+      Deadline:         formatDate(r['Ngày họp'] || ''),
+      RAG:              'Amber',
+      Risk:             String(r['Risk/SOS phát sinh'] || ''),
+      RowUrl:           String(r['File biên bản'] || '')
+    });
+  });
+
+  // --- Nguồn 4: TO_ACTIONS ---
+  safeReadSheet(ss, 'TO_ACTIONS').rows.forEach(function(r) {
+    var ceoCol = String(r['CEO cần biết'] || '');
+    if (!hasText(ceoCol)) return;
+    addDecision({
+      Source:           'TO Actions',
+      Workstream:       'TO',
+      WorkstreamDisplay:'TO: ' + String(r['Cuộc họp'] || '').slice(0, 25),
+      RowId:            String(r['Action ID'] || ''),
+      PIC:              String(r['PIC thực hiện'] || r['PIC'] || ''),
+      Owner:            String(r['Owner theo dõi'] || r['Owner'] || ''),
+      CEODecision:      ceoCol,
+      Action:           String(r['Nội dung action'] || ''),
+      Deadline:         formatDate(r['Deadline'] || ''),
+      RAG:              normalizeRag(r['RAG'] || ''),
+      Risk:             '',
+      RowUrl:           String(r['Link biên bản'] || r['Link'] || '')
+    });
+  });
+
+  // Sắp xếp: Red → Amber → Green
+  var ragOrder = { Red: 0, Amber: 1, Green: 2 };
+  allDecisions.sort(function(a, b) {
+    return (ragOrder[a.RAG] || 1) - (ragOrder[b.RAG] || 1);
+  });
+
+  return {
+    exists:       true,
+    decisionList: allDecisions,
+    total:        allDecisions.length,
+    redCount:     allDecisions.filter(function(r) { return r.RAG === 'Red'; }).length
+  };
+}
+
+/* =====================================================
+   DATA QUALITY — Kiểm tra từng sheet
+   Quy tắc DQ:
+   PMO: bắt buộc RowId, Action, PIC, Deadline, Status, RAG
+   CEO_PROJECTS: bắt buộc Project ID, Tên dự án, PIC Lead, Deadline, Trạng thái, RAG
+   TO_ACTIONS: bắt buộc Action ID, Nội dung action, PIC thực hiện, Deadline, Trạng thái
+   MEETING_MINUTES: bắt buộc Meeting ID, Ngày họp, Chủ đề họp, Người chủ trì, Trạng thái
+===================================================== */
+
+function getDataQualityFullData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var modules = [];
+
+  // Tính DQ score cho 1 mảng rows với danh sách field bắt buộc
+  function calcDQ(rows, requiredFields, label, sheetName) {
+    if (!rows.length) return { module: label, sheetName: sheetName, total: 0, score: 100, missing: {} };
+    var missingCount = {};
+    requiredFields.forEach(function(f) { missingCount[f] = 0; });
+    rows.forEach(function(r) {
+      requiredFields.forEach(function(f) {
+        if (!hasText(r[f])) missingCount[f]++;
+      });
+    });
+    var totalChecks  = rows.length * requiredFields.length;
+    var totalMissing = requiredFields.reduce(function(s, f) { return s + missingCount[f]; }, 0);
+    var score = totalChecks > 0 ? Math.round((1 - totalMissing / totalChecks) * 100) : 100;
+    return { module: label, sheetName: sheetName, total: rows.length, score: score, missing: missingCount };
+  }
+
+  // ---- PMO 6 sheets (đọc theo cấu trúc đặc biệt: header hàng 3, data từ hàng 4) ----
+  DASHBOARD_SHEETS.forEach(function(config) {
+    var sheet = ss.getSheetByName(config.name);
+    if (!sheet) {
+      modules.push({ module: config.display, sheetName: config.name, sheetExists: false, total: 0, score: 0, missing: {} });
+      return;
+    }
+    var values = sheet.getDataRange().getValues();
+    if (!values || values.length < 4) {
+      modules.push({ module: config.display, sheetName: config.name, sheetExists: true, total: 0, score: 100, missing: {} });
+      return;
+    }
+    var headers = values[2].map(function(h) { return String(h || '').trim(); });
+    var rows = values.slice(3)
+      .filter(function(row) {
+        return headers.some(function(h, i) {
+          return (h.includes('Mã dòng') || h === 'ID') && hasText(row[i]);
+        });
+      })
+      .map(function(row) {
+        var obj = {};
+        headers.forEach(function(h, i) { if (h) obj[h] = row[i]; });
+        // Chuẩn hóa về key cố định để kiểm tra
+        return {
+          'Action':   getVal(obj, ['Kế hoạch hành động', 'Action Plan', 'Action', 'Hành động', 'Nhiệm vụ']),
+          'PIC':      getVal(obj, ['PIC Lead', 'PIC', 'Đầu mối']),
+          'Owner':    getVal(obj, ['Owner', 'Người phụ trách']),
+          'Deadline': getVal(obj, ['Deadline', 'Hạn hoàn thành']),
+          'Status':   getVal(obj, ['Status', 'Trạng thái', 'Tình trạng']),
+          'RAG':      getVal(obj, ['RAG', 'Đèn RAG', 'Đèn báo'])
+        };
+      });
+    var dq = calcDQ(rows, ['Action', 'PIC', 'Owner', 'Deadline', 'Status', 'RAG'], config.display, config.name);
+    dq.sheetExists = true;
+    modules.push(dq);
+  });
+
+  // ---- CEO_PROJECTS ----
+  var cptData = safeReadSheet(ss, 'CEO_PROJECTS');
+  var cptDQ = calcDQ(cptData.rows, ['Tên dự án', 'PIC Lead', 'Deadline', 'Trạng thái', 'RAG'], 'CEO Projects', 'CEO_PROJECTS');
+  cptDQ.sheetExists = cptData.exists;
+  modules.push(cptDQ);
+
+  // ---- TO_ACTIONS ----
+  var toaData = safeReadSheet(ss, 'TO_ACTIONS');
+  var toaDQ = calcDQ(toaData.rows, ['Nội dung action', 'PIC thực hiện', 'Deadline', 'Trạng thái'], 'TO Actions', 'TO_ACTIONS');
+  toaDQ.sheetExists = toaData.exists;
+  modules.push(toaDQ);
+
+  // ---- MEETING_MINUTES ----
+  var mmData = safeReadSheet(ss, 'MEETING_MINUTES');
+  var mmDQ = calcDQ(mmData.rows, ['Ngày họp', 'Chủ đề họp', 'Người chủ trì', 'Trạng thái'], 'Biên bản họp', 'MEETING_MINUTES');
+  mmDQ.sheetExists = mmData.exists;
+  modules.push(mmDQ);
+
+  // ---- Tổng hợp ----
+  var existingModules = modules.filter(function(m) { return m.sheetExists && m.total > 0; });
+  var totalRows  = existingModules.reduce(function(s, m) { return s + m.total; }, 0);
+  var avgScore   = existingModules.length > 0
+    ? Math.round(existingModules.reduce(function(s, m) { return s + m.score; }, 0) / existingModules.length)
+    : 0;
+
+  return {
+    exists:   true,
+    overall:  { score: avgScore, total: totalRows, moduleCount: existingModules.length },
+    modules:  modules
+  };
+}
+
+/* =====================================================
+   TEST — New endpoints
+===================================================== */
+
+function testGetCEOProjects() {
+  Logger.log(JSON.stringify(getCEOProjectsData(), null, 2));
+}
+
+function testGetTOActions() {
+  Logger.log(JSON.stringify(getTOActionsData(), null, 2));
+}
+
+function testGetMeetingMinutes() {
+  Logger.log(JSON.stringify(getMeetingMinutesData(), null, 2));
+}
+
+function testGetRiskSOS() {
+  var data = getRiskSOSData();
+  Logger.log('Tổng Risk/SOS: ' + data.total + ' (Red: ' + data.redCount + ', Amber: ' + data.amberCount + ')');
+}
+
+function testGetCEODecisions() {
+  var data = getCEODecisionsData();
+  Logger.log('Tổng CEO Decisions: ' + data.total + ' (Red: ' + data.redCount + ')');
+}
+
+function testGetDataQualityFull() {
+  var data = getDataQualityFullData();
+  Logger.log('Điểm DQ tổng thể: ' + data.overall.score + '% (' + data.overall.total + ' dòng)');
+  data.modules.forEach(function(m) {
+    Logger.log(m.module + ': ' + m.score + '% (' + m.total + ' dòng) - Sheet exists: ' + m.sheetExists);
+  });
 }

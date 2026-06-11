@@ -1661,6 +1661,7 @@
           <option value="amber">🟡 Amber</option>
           <option value="green">🟢 Green</option>
         </select>
+        <button class="command-btn" onclick="loadRiskSOSAll()">🔄 Tải tất cả nguồn</button>
       </div>
     </div>
     <div class="mod-summary-bar">
@@ -1695,6 +1696,7 @@
           <option value="amber">🟡 Amber</option>
           <option value="green">🟢 Green</option>
         </select>
+        <button class="command-btn" onclick="loadCEODecisionsAll()">🔄 Tải tất cả nguồn</button>
       </div>
     </div>
     <div class="mod-summary-bar">
@@ -1800,6 +1802,8 @@
     var pastedCommentImage = null;
     var commentPasteInitialized = false;
     var currentModule = 'overview';
+    var sosLoaded = false;
+    var decLoaded = false;
 
     function switchModule(moduleId, tabEl) {
       document.querySelectorAll('.module').forEach(function(m) { m.classList.remove('active'); });
@@ -1809,6 +1813,10 @@
       if (tabEl) tabEl.classList.add('active');
       currentModule = moduleId;
       window.scrollTo(0, 0);
+      // Auto-load aggregation modules on first visit
+      if (moduleId === 'risk-sos' && !sosLoaded)      { loadRiskSOSAll(); }
+      if (moduleId === 'ceo-decision' && !decLoaded)  { loadCEODecisionsAll(); }
+      if (moduleId === 'data-quality')                { refreshDataQualityModule(); }
     }
 
     function updateOverviewFromPMO(data) {
@@ -3519,9 +3527,22 @@
     }
 
     /* =====================================================
-       RISK / SOS CENTER MODULE (aggregates PMO data)
+       RISK / SOS CENTER MODULE
+       - renderRiskSOSModule(data): dùng PMO data (auto khi tải dashboard)
+       - loadRiskSOSAll():          gọi GAS getRiskSOS để gom tất cả nguồn
     ===================================================== */
     var sosAllRecords = [];
+
+    function loadRiskSOSAll() {
+      sosLoaded = true;
+      var badge = document.getElementById('sos-badge');
+      if (badge) badge.textContent = '⏳ Đang tải...';
+      gasGet('getRiskSOS')
+        .then(function(data) { renderRiskSOSModule(data); })
+        .catch(function() {
+          if (dashboardCache) renderRiskSOSModule(dashboardCache);
+        });
+    }
 
     function renderRiskSOSModule(data) {
       var contentEl = document.getElementById('sos-content');
@@ -3556,7 +3577,7 @@
       var filtered = ragFilter
         ? rows.filter(function(r) { return (r.RAG||'').toLowerCase().includes(ragFilter); })
         : rows;
-      var cols = ['Mã dòng','Workstream','PIC','Owner','Risk / SOS','Action liên quan','Deadline','RAG','CEO cần biết','Link'];
+      var cols = ['Nguồn','Mã dòng','Workstream','PIC','Risk / SOS','Action liên quan','Deadline','RAG','CEO cần biết','Link'];
       var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
       cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
       html += '</tr></thead><tbody>';
@@ -3565,10 +3586,10 @@
       } else {
         filtered.forEach(function(r) {
           html += '<tr>'
+            + '<td><span style="font-size:11px;background:#f3f4f6;border-radius:6px;padding:2px 7px;color:#374151">' + safe(r.Source || r.WorkstreamDisplay || r.Workstream) + '</span></td>'
             + '<td>' + safe(r.RowId) + '</td>'
             + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
             + '<td>' + safe(r.PIC) + '</td>'
-            + '<td>' + safe(r.Owner) + '</td>'
             + '<td><b>' + safe(r.Risk) + '</b></td>'
             + '<td>' + safe(r.Action) + '</td>'
             + '<td>' + safe(r.Deadline) + '</td>'
@@ -3597,9 +3618,22 @@
     }
 
     /* =====================================================
-       CEO DECISION BOARD MODULE (aggregates PMO data)
+       CEO DECISION BOARD MODULE
+       - renderCEODecisionBoardModule(data): dùng PMO data (auto khi tải dashboard)
+       - loadCEODecisionsAll():              gọi GAS getCEODecisions để gom tất cả nguồn
     ===================================================== */
     var decAllRecords = [];
+
+    function loadCEODecisionsAll() {
+      decLoaded = true;
+      var badge = document.getElementById('dec-badge');
+      if (badge) badge.textContent = '⏳ Đang tải...';
+      gasGet('getCEODecisions')
+        .then(function(data) { renderCEODecisionBoardModule(data); })
+        .catch(function() {
+          if (dashboardCache) renderCEODecisionBoardModule(dashboardCache);
+        });
+    }
 
     function renderCEODecisionBoardModule(data) {
       var contentEl = document.getElementById('dec-content');
@@ -3636,7 +3670,7 @@
       var filtered = ragFilter
         ? rows.filter(function(r) { return (r.RAG||'').toLowerCase().includes(ragFilter); })
         : rows;
-      var cols = ['Mã dòng','Workstream','PIC','Owner','Việc CEO cần chốt','Action liên quan','Deadline','RAG','Risk','Link'];
+      var cols = ['Nguồn','Mã dòng','Workstream','PIC','Việc CEO cần chốt','Action liên quan','Deadline','RAG','Risk','Link'];
       var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
       cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
       html += '</tr></thead><tbody>';
@@ -3645,10 +3679,10 @@
       } else {
         filtered.forEach(function(r) {
           html += '<tr>'
+            + '<td><span style="font-size:11px;background:#f3f4f6;border-radius:6px;padding:2px 7px;color:#374151">' + safe(r.Source || r.WorkstreamDisplay || r.Workstream) + '</span></td>'
             + '<td>' + safe(r.RowId) + '</td>'
             + '<td>' + safe(r.WorkstreamDisplay || r.Workstream) + '</td>'
             + '<td>' + safe(r.PIC) + '</td>'
-            + '<td>' + safe(r.Owner) + '</td>'
             + '<td><b>' + safe(r.CEODecision) + '</b></td>'
             + '<td>' + safe(r.Action) + '</td>'
             + '<td>' + safe(r.Deadline) + '</td>'
@@ -3779,9 +3813,74 @@
     }
 
     function refreshDataQualityModule() {
-      if (dashboardCache) {
-        renderDataQualityModule(dashboardCache);
+      var badge = document.getElementById('dq-badge');
+      if (badge) badge.textContent = '⏳ Đang tải...';
+      gasGet('getDataQualityFull')
+        .then(function(data) { renderDataQualityModuleFull(data); })
+        .catch(function() {
+          if (dashboardCache) renderDataQualityModule(dashboardCache);
+        });
+    }
+
+    function renderDataQualityModuleFull(data) {
+      var contentEl = document.getElementById('dq-content');
+      if (!contentEl) return;
+      if (!data || !data.overall) {
+        if (dashboardCache) { renderDataQualityModule(dashboardCache); return; }
+        return;
       }
+      var ov = data.overall;
+      var mods = data.modules || [];
+      var score = ov.score || 0;
+      var scoreCls = score >= 80 ? 'green' : score >= 60 ? 'amber' : 'red';
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      st('dq-badge', ov.moduleCount + ' modules · ' + ov.total + ' dòng');
+      st('dq-s-score', score + '%');
+      st('dq-s-total', ov.total);
+
+      var scoreCircleHtml = '<div class="mod-score-circle ' + scoreCls + '">' + score + '%</div>' +
+        '<div style="text-align:center;font-size:12px;color:#6b7280;font-weight:600">Điểm DQ tổng thể</div>' +
+        '<div style="text-align:center;font-size:12px;color:#9ca3af;margin-top:4px">' + ov.total + ' dòng · ' + ov.moduleCount + ' modules</div>';
+
+      // Per-module table
+      var modCols = ['Module','Sheet tồn tại','Tổng dòng','Điểm DQ','Thiếu nhiều nhất'];
+      var modTableHtml = '<table class="mod-table"><thead><tr>' +
+        modCols.map(function(c) { return '<th>' + safe(c) + '</th>'; }).join('') +
+        '</tr></thead><tbody>';
+      if (!mods.length) {
+        modTableHtml += '<tr class="empty-row"><td colspan="5">Chưa có dữ liệu</td></tr>';
+      } else {
+        mods.forEach(function(m) {
+          var s = m.score || 0;
+          var cls = s >= 80 ? 'green' : s >= 60 ? 'amber' : 'red';
+          var missing = m.missing || {};
+          var worstField = Object.keys(missing).reduce(function(a, b) {
+            return (missing[a] || 0) > (missing[b] || 0) ? a : b;
+          }, '');
+          var worstCount = worstField ? (missing[worstField] || 0) : 0;
+          var worstText = worstCount > 0 ? worstField + ' (' + worstCount + ' dòng)' : '—';
+          var existBadge = m.sheetExists
+            ? '<span style="background:#d1fae5;color:#065f46;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">✓ Có</span>'
+            : '<span style="background:#fee2e2;color:#991b1b;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">✗ Chưa tạo</span>';
+          modTableHtml += '<tr>'
+            + '<td><b>' + safe(m.module) + '</b></td>'
+            + '<td>' + existBadge + '</td>'
+            + '<td>' + (m.total || 0) + '</td>'
+            + '<td><span class="mod-rag ' + cls + '">' + s + '%</span></td>'
+            + '<td style="color:#9ca3af;font-size:12px">' + safe(worstText) + '</td>'
+            + '</tr>';
+        });
+      }
+      modTableHtml += '</tbody></table>';
+
+      contentEl.innerHTML =
+        '<div class="mod-dq-grid">' +
+        '<div class="mod-dq-section" style="display:flex;flex-direction:column;align-items:center;justify-content:center">' +
+        scoreCircleHtml + '</div>' +
+        '<div class="mod-dq-section"><div class="mod-dq-section-title">Trạng thái từng module</div>' +
+        '<div style="font-size:12px;color:#6b7280;margin-bottom:10px">Sheet chưa tạo = chưa kết nối. Điểm = % field được điền đủ.</div>' +
+        modTableHtml + '</div>' +
+        '</div>';
     }
 
     /* =====================================================
