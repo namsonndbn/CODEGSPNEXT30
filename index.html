@@ -3551,25 +3551,44 @@
     function loadTOActions() {
       var contentEl = document.getElementById('toa-content');
 
-      // Nếu dashboardCache đã có TO data thực sự, dùng luôn (tránh gọi API thêm)
+      // Cache hit: dashboardCache đã có TO data thực sự
       if (dashboardCache && Array.isArray(dashboardCache.toActions) && dashboardCache.toActions.length > 0) {
         renderTOActionCenter(buildTOCenterFromCache_(dashboardCache));
         return;
       }
 
-      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải dữ liệu...</h2></div>';
+      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải dữ liệu TO...</h2></div>';
 
-      gasGet('getToActionCenterData')
-        .then(function(data) { renderTOActionCenter(data); })
-        .catch(function() {
-          // Fallback: endpoint getTOActions (legacy)
-          gasGet('getTOActions')
-            .then(function(d) {
-              var recs = (d && d.records) || [];
-              renderTOActionCenter(buildTOCenterFromRecords_(recs));
-            })
-            .catch(function() { renderTOActionCenter({ actions: [], issues: [], factories: [] }); });
-        });
+      // Gọi song song cả 2 endpoints, dùng cái nào có dữ liệu
+      var p1 = gasGet('getToActionCenterData').catch(function(e) { return { _failed: true, _err: String(e) }; });
+      var p2 = gasGet('getTOActions').catch(function(e) { return { _failed: true, _err: String(e) }; });
+
+      Promise.all([p1, p2]).then(function(res) {
+        var rich  = res[0];
+        var basic = res[1];
+
+        // Dùng rich data nếu có action hoặc issue
+        if (rich && !rich._failed && ((rich.actions && rich.actions.length > 0) || (rich.issues && rich.issues.length > 0))) {
+          renderTOActionCenter(rich);
+          return;
+        }
+        // Dùng basic data nếu có records
+        if (basic && !basic._failed && basic.records && basic.records.length > 0) {
+          renderTOActionCenter(buildTOCenterFromRecords_(basic.records));
+          return;
+        }
+        // Cả 2 trả về trống — hiện thông báo rõ
+        var errorInfo = '';
+        if (rich && rich._error) errorInfo += 'Rich: ' + rich._error + ' ';
+        if (rich && rich._failed) errorInfo += 'Rich API lỗi. ';
+        if (basic && basic._failed) errorInfo += 'Basic API lỗi. ';
+        var el = document.getElementById('toa-content');
+        if (el) el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">'
+          + '<p>Chưa có dữ liệu trong sheet <strong>TO_ACTIONS</strong>.</p>'
+          + (errorInfo ? '<p style="color:#dc2626;font-size:12px">Lỗi: ' + errorInfo + '</p>' : '')
+          + '<p><a href="' + GAS_URL + '?action=getToActionsRaw" target="_blank" style="color:#064e3b">🔍 Kiểm tra kết nối GAS</a></p>'
+          + '</div>';
+      });
     }
 
     // Xây dựng cấu trúc renderTOActionCenter từ dashboardCache

@@ -19,7 +19,44 @@ function doGet(e) {
   if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
   if (action === 'getCommandCenterData') return jsonOut(getCommandCenterData());
   if (action === 'getPicPmoData')        return jsonOut(getPicPmoData());
-  if (action === 'getToActionCenterData') return jsonOut(getToActionCenterData());
+
+  if (action === 'getToActionsRaw') {
+    // DEBUG: đọc thẳng TO_ACTIONS, trả raw data
+    var ss2 = SpreadsheetApp.getActiveSpreadsheet();
+    var sh  = ss2.getSheetByName('TO_ACTIONS');
+    if (!sh) return jsonOut({ ok: false, reason: 'Sheet TO_ACTIONS không tìm thấy', allSheets: ss2.getSheets().map(function(s){ return s.getName(); }) });
+    var lastRow = sh.getLastRow();
+    var lastCol = sh.getLastColumn();
+    if (lastRow < 2) return jsonOut({ ok: false, reason: 'Sheet trống (lastRow=' + lastRow + ')' });
+    var headers = sh.getRange(1, 1, 1, lastCol).getValues()[0];
+    var sample  = sh.getRange(2, 1, Math.min(3, lastRow - 1), lastCol).getValues();
+    return jsonOut({ ok: true, rowCount: lastRow - 1, headers: headers, sample: sample });
+  }
+
+  if (action === 'getToActionCenterData') {
+    try {
+      return jsonOut(getToActionCenterData());
+    } catch(e) {
+      Logger.log('[getToActionCenterData] ERROR: ' + e.message);
+      // Fallback: đọc đơn giản qua getTOActionsData
+      try {
+        var toa = getTOActionsData();
+        var recs = toa.records || [];
+        return jsonOut({
+          actions: recs, issues: [], factories: [],
+          evidenceFiles: [], byArea: [],
+          urgent24h: [], urgent72h: [], inPlan: recs,
+          noOwnerList: [], ceoList: [],
+          _error: e.message,
+          issuesSummary: { total: 0, byRAG: { Green: 0, Amber: 0, Red: 0 }, open: 0 },
+          actionsSummary: { total: recs.length, done: 0, inProgress: 0, overdue: 0,
+            noOwner: 0, ceoNeeded: 0, urgent24hCount: 0, urgent72hCount: 0, inPlanCount: recs.length }
+        });
+      } catch(e2) {
+        return jsonOut({ actions: [], issues: [], factories: [], _error: e.message + ' | ' + e2.message });
+      }
+    }
+  }
 
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('GSP NEXT 30 - CEO Dashboard')
