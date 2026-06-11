@@ -17,6 +17,7 @@ function doGet(e) {
   if (action === 'getRiskSOS')          return jsonOut(getRiskSOSData());
   if (action === 'getCEODecisions')     return jsonOut(getCEODecisionsData());
   if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
+  if (action === 'getCommandCenterData') return jsonOut(getCommandCenterData());
 
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('GSP NEXT 30 - CEO Dashboard')
@@ -1309,5 +1310,418 @@ function testGetDataQualityFull() {
   Logger.log('Điểm DQ tổng thể: ' + data.overall.score + '% (' + data.overall.total + ' dòng)');
   data.modules.forEach(function(m) {
     Logger.log(m.module + ': ' + m.score + '% (' + m.total + ' dòng) - Sheet exists: ' + m.sheetExists);
+  });
+}
+
+/* =====================================================
+   READ SHEET SAFE — Helper chuẩn cho Command Center
+   Input : sheetName (string)
+   Output: [] nếu sheet chưa tồn tại hoặc chưa có data
+           [{col1: val, col2: val, ...}, ...] nếu có data
+   Header ở hàng 1, data từ hàng 2.
+   Bỏ qua dòng trống hoàn toàn. Không throw exception.
+===================================================== */
+
+function readSheetSafe(sheetName) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+    if (!sheet) return [];
+    var values = sheet.getDataRange().getValues();
+    if (!values || values.length < 2) return [];
+    var headers = values[0].map(function(h) { return String(h || '').trim(); });
+    return values.slice(1)
+      .filter(function(row) {
+        return row.some(function(c) { return String(c || '').trim() !== ''; });
+      })
+      .map(function(row) {
+        var obj = {};
+        headers.forEach(function(h, i) {
+          obj[h] = (row[i] !== null && row[i] !== undefined) ? row[i] : '';
+        });
+        return obj;
+      });
+  } catch (e) {
+    Logger.log('readSheetSafe error [' + sheetName + ']: ' + e.message);
+    return [];
+  }
+}
+
+/* =====================================================
+   GET COMMAND CENTER DATA
+   Action: getCommandCenterData
+   Trả JSON đầy đủ cho toàn bộ CEO Command Center.
+   Không ảnh hưởng getDashboardData (PMO cũ).
+===================================================== */
+
+function getCommandCenterData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // ---- Đọc từng sheet an toàn ----
+  var rawPMO        = readSheetSafe('PMO_90D_ACTIONS');
+  var rawProjects   = readSheetSafe('CEO_PROJECTS');
+  var rawUpdates    = readSheetSafe('CEO_PROJECT_UPDATES');
+  var rawTOActions  = readSheetSafe('TO_ACTIONS');
+  var rawMinutes    = readSheetSafe('MEETING_MINUTES');
+  var rawDecisions  = readSheetSafe('CEO_DECISIONS');
+  var rawRisks      = readSheetSafe('RISK_SOS');
+  var rawMasterPIC  = readSheetSafe('MASTER_PIC');
+  var rawMasterSts  = readSheetSafe('MASTER_STATUS');
+  var rawConfig     = readSheetSafe('CONFIG');
+
+  // ---- Normalize từng module ----
+  var pmoActions        = rawPMO.map(normalizePMOAction_);
+  var ceoProjects       = rawProjects.map(normalizeCEOProject_);
+  var ceoProjectUpdates = rawUpdates.map(normalizeCEOProjectUpdate_);
+  var toActions         = rawTOActions.map(normalizeTOAction_);
+  var meetingMinutes    = rawMinutes.map(normalizeMeetingMinutes_);
+  var ceoDecisions      = rawDecisions.map(normalizeCEODecision_);
+  var riskSos           = rawRisks.map(normalizeRiskSOS_);
+
+  // MASTER & CONFIG trả raw (web dùng để build dropdown, hiển thị nhãn)
+  var masterPic    = rawMasterPIC.map(function(r) {
+    return {
+      Name:       String(r['Tên PIC'] || r['Name'] || r['PIC'] || ''),
+      Workstream: String(r['Workstream'] || r['Trục'] || ''),
+      Email:      String(r['Email'] || ''),
+      Phone:      String(r['Số điện thoại'] || r['Phone'] || ''),
+      Role:       String(r['Vai trò'] || r['Role'] || '')
+    };
+  });
+  var masterStatus = rawMasterSts.map(function(r) {
+    return {
+      Value:    String(r['Giá trị'] || r['Value'] || r['Trạng thái'] || ''),
+      Category: String(r['Nhóm'] || r['Category'] || ''),
+      Color:    String(r['Màu'] || r['Color'] || ''),
+      Order:    Number(r['Thứ tự'] || r['Order'] || 0)
+    };
+  });
+
+  var data = {
+    pmoActions:        pmoActions,
+    ceoProjects:       ceoProjects,
+    ceoProjectUpdates: ceoProjectUpdates,
+    toActions:         toActions,
+    meetingMinutes:    meetingMinutes,
+    ceoDecisions:      ceoDecisions,
+    riskSos:           riskSos,
+    masterPic:         masterPic,
+    masterStatus:      masterStatus,
+    spreadsheetName:   ss.getName(),
+    updatedAt:         Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss')
+  };
+
+  data.commandCenterSummary = buildCommandCenterSummary(data);
+
+  return JSON.parse(JSON.stringify(data));
+}
+
+/* =====================================================
+   NORMALIZE FUNCTIONS — Mỗi sheet có normalize riêng.
+   Input : row object từ readSheetSafe (key = tên cột header)
+   Output: object chuẩn hóa với key cố định cho web dùng.
+   Dùng getVal() để hỗ trợ alias tên cột đa dạng.
+===================================================== */
+
+function normalizePMOAction_(r, i) {
+  var rag      = normalizeRag(getVal(r, ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo']));
+  var status   = normalizeStatus(getVal(r, ['Status', 'Trạng thái', 'Tình trạng']));
+  var deadline = formatDate(getVal(r, ['Deadline', 'Hạn hoàn thành', 'Thời hạn']));
+  var action   = String(getVal(r, ['Hành động', 'Action', 'Kế hoạch hành động', 'Action Plan', 'Nhiệm vụ', 'Cam kết']) || '');
+  var pic      = String(getVal(r, ['PIC', 'PIC Lead', 'Đầu mối', 'Người thực hiện']) || '');
+  var owner    = String(getVal(r, ['Owner', 'Người phụ trách', 'Người chịu trách nhiệm']) || '');
+  return {
+    RowId:       String(getVal(r, ['Mã dòng', 'Mã dòng (ID)', 'ID', 'Row ID']) || ('PMO-' + String(i + 1).padStart(4, '0'))),
+    Workstream:  String(getVal(r, ['Workstream', 'Trục', 'Lĩnh vực', 'Trục công việc']) || ''),
+    Unit:        String(getVal(r, ['Đơn vị', 'Khối', 'Unit', 'Bộ phận']) || ''),
+    Action:      action,
+    PIC:         pic,
+    Owner:       owner,
+    Deadline:    deadline,
+    Status:      status,
+    RAG:         rag,
+    Risk:        String(getVal(r, ['Risk/SOS', 'Risk', 'SOS', 'Rủi ro', 'Vướng mắc', 'Blocker']) || ''),
+    CEODecision: String(getVal(r, ['CEO cần chốt', 'CEO Decision', 'CEO Decision Needed', 'Cần CEO chốt']) || ''),
+    PMOComment:  String(getVal(r, ['PMO Comment', 'Ghi chú PMO', 'Nhận xét PMO', 'Ghi chú']) || ''),
+    IsOverdue:   isPastDeadline(deadline, status),
+    DQ:          calcRowDataQuality_({ Action: action, Owner: owner, PIC: pic, Deadline: deadline, Status: status, RAG: rag })
+  };
+}
+
+function normalizeCEOProject_(r, i) {
+  var rag      = normalizeRag(r['RAG'] || '');
+  var status   = normalizeStatus(r['Trạng thái'] || r['Status'] || '');
+  var deadline = formatDate(r['Deadline'] || '');
+  return {
+    RowId:         String(r['Project ID'] || ('PRJ-' + String(i + 1).padStart(3, '0'))),
+    ProjectName:   String(r['Tên dự án']      || r['Project Name'] || ''),
+    Workstream:    String(r['Workstream']      || r['Lĩnh vực'] || ''),
+    PICLead:       String(r['PIC Lead']        || r['PIC'] || ''),
+    Owner:         String(r['Owner']           || r['CEO phụ trách'] || ''),
+    StartDate:     formatDate(r['Ngày bắt đầu'] || ''),
+    Deadline:      deadline,
+    Status:        status,
+    RAG:           rag,
+    Progress:      String(r['% Hoàn thành']    || r['Progress'] || ''),
+    Milestone:     String(r['Milestone gần nhất'] || r['Milestone'] || ''),
+    NextMilestone: String(r['Milestone tiếp theo'] || ''),
+    Issues:        String(r['Vướng mắc']       || r['Risk/SOS'] || ''),
+    CEODecision:   String(r['CEO cần chốt']    || r['CEO Decision'] || ''),
+    Note:          String(r['Ghi chú']         || ''),
+    RowUrl:        String(r['Link']            || r['URL'] || ''),
+    IsOverdue:     isPastDeadline(deadline, status),
+    DQ:            calcRowDataQuality_({ Action: r['Tên dự án'] || '', Owner: r['Owner'] || '', PIC: r['PIC Lead'] || '', Deadline: deadline, Status: status, RAG: rag })
+  };
+}
+
+function normalizeCEOProjectUpdate_(r, i) {
+  return {
+    UpdateID:      String(r['Update ID']         || ('UPD-' + String(i + 1).padStart(4, '0'))),
+    ProjectID:     String(r['Project ID']         || ''),
+    Date:          formatDate(r['Ngày cập nhật']  || r['Date'] || ''),
+    UpdatedBy:     String(r['PIC cập nhật']       || r['Người cập nhật'] || ''),
+    Progress:      String(r['% Hoàn thành']       || r['Progress'] || ''),
+    MilestoneDone: String(r['Milestone đã đạt']   || r['Milestone Done'] || ''),
+    NextMilestone: String(r['Milestone tiếp theo'] || r['Next Milestone'] || ''),
+    Issues:        String(r['Vướng mắc']          || r['Issues'] || ''),
+    CEONote:       String(r['CEO cần biết']        || r['CEO Note'] || ''),
+    RAG:           normalizeRag(r['RAG']           || ''),
+    Note:          String(r['Ghi chú']            || '')
+  };
+}
+
+function normalizeTOAction_(r, i) {
+  var rag      = normalizeRag(r['RAG'] || '');
+  var status   = normalizeStatus(r['Trạng thái'] || r['Status'] || '');
+  var deadline = formatDate(r['Deadline'] || '');
+  return {
+    RowId:     String(r['Action ID']          || ('TOA-' + String(i + 1).padStart(4, '0'))),
+    ActionID:  String(r['Action ID']          || ('TOA-' + String(i + 1).padStart(4, '0'))),
+    Date:      formatDate(r['Ngày phát sinh'] || r['Ngày'] || ''),
+    MeetingID: String(r['Meeting ID']         || ''),
+    Meeting:   String(r['Cuộc họp']          || r['Bối cảnh'] || ''),
+    Action:    String(r['Nội dung action']    || r['Action'] || ''),
+    PIC:       String(r['PIC thực hiện']      || r['PIC'] || ''),
+    Owner:     String(r['Owner theo dõi']     || r['Owner'] || ''),
+    Deadline:  deadline,
+    Status:    status,
+    Priority:  String(r['Mức độ ưu tiên']    || r['Priority'] || ''),
+    RAG:       rag,
+    Result:    String(r['Kết quả']           || r['Output'] || ''),
+    CEONote:   String(r['CEO cần biết']       || ''),
+    Note:      String(r['Ghi chú']           || ''),
+    RowUrl:    String(r['Link biên bản']      || r['Link'] || ''),
+    IsOverdue: isPastDeadline(deadline, status),
+    DQ:        calcRowDataQuality_({ Action: r['Nội dung action'] || '', Owner: r['Owner theo dõi'] || '', PIC: r['PIC thực hiện'] || '', Deadline: deadline, Status: status, RAG: rag })
+  };
+}
+
+function normalizeMeetingMinutes_(r, i) {
+  return {
+    MeetingID:    String(r['Meeting ID']           || ('MTG-' + String(i + 1).padStart(3, '0'))),
+    Date:         formatDate(r['Ngày họp']         || ''),
+    Topic:        String(r['Chủ đề họp']           || r['Chủ đề'] || ''),
+    Chair:        String(r['Người chủ trì']        || ''),
+    Attendees:    String(r['Thành phần tham dự']   || r['Thành phần'] || ''),
+    Scope:        String(r['Phạm vi']              || ''),
+    Summary:      String(r['Tóm tắt chính']        || r['Tóm tắt'] || ''),
+    CEODirective: String(r['Chỉ đạo CEO']          || ''),
+    Decisions:    String(r['Quyết định đã chốt']   || ''),
+    Actions:      String(r['Action phát sinh']      || ''),
+    RiskSOS:      String(r['Risk/SOS phát sinh']    || r['Risk SOS phát sinh'] || ''),
+    CEODecision:  String(r['CEO cần quyết tiếp']    || ''),
+    FileMinutes:  String(r['File biên bản']         || ''),
+    FileAudio:    String(r['File ghi âm']           || r['File transcript'] || ''),
+    RecordedBy:   String(r['Người lập biên bản']    || ''),
+    Status:       String(r['Trạng thái']            || 'Nháp'),
+    SecretNote:   String(r['Ghi chú bảo mật']       || ''),
+    DQ:           calcRowDataQuality_({ Action: r['Chủ đề họp'] || '', Owner: r['Người lập biên bản'] || '', PIC: r['Người chủ trì'] || '', Deadline: r['Ngày họp'] || '', Status: r['Trạng thái'] || '', RAG: '' })
+  };
+}
+
+function normalizeCEODecision_(r, i) {
+  var deadline = formatDate(r['Deadline'] || r['Hạn chốt'] || '');
+  var status   = String(r['Trạng thái'] || r['Status'] || '');
+  return {
+    RowId:        String(r['Decision ID']         || ('DEC-' + String(i + 1).padStart(4, '0'))),
+    DecisionID:   String(r['Decision ID']         || ('DEC-' + String(i + 1).padStart(4, '0'))),
+    Source:       String(r['Nguồn']              || r['Source'] || ''),
+    SourceID:     String(r['Source ID']          || r['Mã nguồn'] || ''),
+    Workstream:   String(r['Workstream']         || r['Trục'] || ''),
+    Content:      String(r['Nội dung cần chốt']  || r['Content'] || ''),
+    Proposer:     String(r['PIC đề xuất']        || r['PIC'] || ''),
+    Deadline:     deadline,
+    Status:       status,
+    Decision:     String(r['Quyết định CEO']     || r['CEO Decision'] || ''),
+    DecisionDate: formatDate(r['Ngày chốt']      || r['Decision Date'] || ''),
+    Note:         String(r['Ghi chú']            || ''),
+    IsOverdue:    isPastDeadline(deadline, status),
+    IsPending:    /chờ|pending|chưa/i.test(status)
+  };
+}
+
+function normalizeRiskSOS_(r, i) {
+  var rag      = normalizeRag(r['RAG'] || r['Mức độ'] || '');
+  var deadline = formatDate(r['Deadline xử lý'] || r['Deadline'] || '');
+  var status   = String(r['Trạng thái'] || r['Status'] || '');
+  return {
+    RowId:       String(r['Risk ID']             || ('RSK-' + String(i + 1).padStart(4, '0'))),
+    RiskID:      String(r['Risk ID']             || ('RSK-' + String(i + 1).padStart(4, '0'))),
+    Source:      String(r['Nguồn']              || r['Source'] || ''),
+    SourceID:    String(r['Source ID']          || ''),
+    Workstream:  String(r['Workstream']         || r['Trục'] || ''),
+    PIC:         String(r['PIC xử lý']          || r['PIC'] || ''),
+    Description: String(r['Mô tả rủi ro']       || r['Description'] || r['Risk'] || ''),
+    Level:       String(r['Mức độ']             || r['Level'] || ''),
+    RAG:         rag,
+    Deadline:    deadline,
+    Status:      status,
+    Action:      String(r['Biện pháp xử lý']    || r['Action'] || ''),
+    CEONote:     String(r['CEO cần biết']        || ''),
+    IsOverdue:   isPastDeadline(deadline, status),
+    IsOpen:      !/done|hoàn thành|đã xử lý|resolved/i.test(status)
+  };
+}
+
+/* =====================================================
+   BUILD COMMAND CENTER SUMMARY
+   Tổng hợp số liệu từ tất cả module cho Overview.
+   Input : data object từ getCommandCenterData()
+   Output: summary stats object
+===================================================== */
+
+function buildCommandCenterSummary(data) {
+  var pmo      = data.pmoActions        || [];
+  var projects = data.ceoProjects       || [];
+  var toActs   = data.toActions         || [];
+  var mm       = data.meetingMinutes    || [];
+  var decs     = data.ceoDecisions      || [];
+  var risks    = data.riskSos           || [];
+
+  // ---- PMO ----
+  var pmoOverdue = pmo.filter(function(r) { return r.IsOverdue; }).length;
+  var pmoRed     = pmo.filter(function(r) { return r.RAG === 'Red'; }).length;
+  var pmoAmber   = pmo.filter(function(r) { return r.RAG === 'Amber'; }).length;
+  var pmoGreen   = pmo.filter(function(r) { return r.RAG === 'Green'; }).length;
+  var pmoDone    = pmo.filter(function(r) { return r.Status === 'Done'; }).length;
+
+  // ---- CEO Projects ----
+  var projActive  = projects.filter(function(r) { return r.Status === 'In Progress'; }).length;
+  var projDone    = projects.filter(function(r) { return r.Status === 'Done'; }).length;
+  var projOverdue = projects.filter(function(r) { return r.IsOverdue; }).length;
+  var projRed     = projects.filter(function(r) { return r.RAG === 'Red'; }).length;
+
+  // ---- TO Actions ----
+  var toOverdue = toActs.filter(function(r) { return r.IsOverdue; }).length;
+  var toDone    = toActs.filter(function(r) { return r.Status === 'Done'; }).length;
+  var toRed     = toActs.filter(function(r) { return r.RAG === 'Red'; }).length;
+
+  // ---- Meeting Minutes ----
+  var mmPending    = mm.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
+  var mmHasCEO     = mm.filter(function(r) { return hasText(r.CEODirective); }).length;
+  var mmHasRisk    = mm.filter(function(r) { return hasText(r.RiskSOS); }).length;
+  var mmHasDecision= mm.filter(function(r) { return hasText(r.CEODecision); }).length;
+
+  // ---- CEO Decisions ----
+  var decPending  = decs.filter(function(r) { return r.IsPending; }).length;
+  var decOverdue  = decs.filter(function(r) { return r.IsOverdue; }).length;
+  var decDone     = decs.filter(function(r) { return !r.IsPending; }).length;
+
+  // ---- Risk/SOS ----
+  var riskOpen    = risks.filter(function(r) { return r.IsOpen; }).length;
+  var riskRed     = risks.filter(function(r) { return r.RAG === 'Red'; }).length;
+  var riskAmber   = risks.filter(function(r) { return r.RAG === 'Amber'; }).length;
+  var riskOverdue = risks.filter(function(r) { return r.IsOverdue; }).length;
+
+  // ---- Data Quality across all ----
+  var allRows = [].concat(pmo, projects, toActs);
+  var dqTotal   = allRows.length;
+  var dqAvgScore= dqTotal > 0
+    ? Math.round(allRows.reduce(function(s, r) { return s + (r.DQ || 0); }, 0) / dqTotal)
+    : 0;
+
+  // ---- Overall health ----
+  var totalRed = pmoRed + projRed + toRed + riskRed;
+  var health = 'Green';
+  if (totalRed > 0 || riskOpen > 2) health = 'Red';
+  else if (pmoAmber > 0 || projOverdue > 0 || decOverdue > 0) health = 'Amber';
+
+  return {
+    // PMO
+    pmoTotal:       pmo.length,
+    pmoDone:        pmoDone,
+    pmoOverdue:     pmoOverdue,
+    pmoRed:         pmoRed,
+    pmoAmber:       pmoAmber,
+    pmoGreen:       pmoGreen,
+    pmoCompletionRate: pmo.length > 0 ? Math.round(pmoDone / pmo.length * 100) : 0,
+
+    // CEO Projects
+    projectsTotal:   projects.length,
+    projectsActive:  projActive,
+    projectsDone:    projDone,
+    projectsOverdue: projOverdue,
+    projectsRed:     projRed,
+
+    // TO Actions
+    toActionsTotal:   toActs.length,
+    toActionsDone:    toDone,
+    toActionsOverdue: toOverdue,
+    toActionsRed:     toRed,
+
+    // Meetings
+    meetingsTotal:      mm.length,
+    meetingsPending:    mmPending,
+    meetingsWithCEO:    mmHasCEO,
+    meetingsWithRisk:   mmHasRisk,
+    meetingsWithDecision: mmHasDecision,
+
+    // CEO Decisions
+    decisionsTotal:   decs.length,
+    decisionsPending: decPending,
+    decisionsOverdue: decOverdue,
+    decisionsDone:    decDone,
+
+    // Risks
+    risksTotal:   risks.length,
+    risksOpen:    riskOpen,
+    risksRed:     riskRed,
+    risksAmber:   riskAmber,
+    risksOverdue: riskOverdue,
+
+    // DQ & Health
+    dataQualityScore: dqAvgScore,
+    overallHealth:    health,
+
+    updatedAt: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss')
+  };
+}
+
+/* =====================================================
+   TEST — Command Center
+===================================================== */
+
+function testGetCommandCenterData() {
+  var data = getCommandCenterData();
+  var s    = data.commandCenterSummary;
+  Logger.log('=== COMMAND CENTER SUMMARY ===');
+  Logger.log('PMO: ' + data.pmoActions.length + ' actions | Overdue: ' + s.pmoOverdue + ' | Red: ' + s.pmoRed);
+  Logger.log('Projects: ' + data.ceoProjects.length + ' | Active: ' + s.projectsActive + ' | Overdue: ' + s.projectsOverdue);
+  Logger.log('TO Actions: ' + data.toActions.length + ' | Overdue: ' + s.toActionsOverdue);
+  Logger.log('Meetings: ' + data.meetingMinutes.length + ' | Pending: ' + s.meetingsPending);
+  Logger.log('Decisions: ' + data.ceoDecisions.length + ' | Pending: ' + s.decisionsPending);
+  Logger.log('Risks: ' + data.riskSos.length + ' | Open: ' + s.risksOpen + ' | Red: ' + s.risksRed);
+  Logger.log('Overall Health: ' + s.overallHealth + ' | DQ Score: ' + s.dataQualityScore + '%');
+  Logger.log('Master PIC: ' + data.masterPic.length + ' | Status: ' + data.masterStatus.length);
+}
+
+function testReadSheetSafe() {
+  var sheets = [
+    'PMO_90D_ACTIONS', 'CEO_PROJECTS', 'CEO_PROJECT_UPDATES',
+    'TO_ACTIONS', 'MEETING_MINUTES', 'CEO_DECISIONS',
+    'RISK_SOS', 'MASTER_PIC', 'MASTER_STATUS', 'CONFIG'
+  ];
+  sheets.forEach(function(name) {
+    var rows = readSheetSafe(name);
+    Logger.log(name + ': ' + rows.length + ' dòng' + (rows.length === 0 ? ' (chưa tạo hoặc chưa có data)' : ''));
   });
 }
