@@ -1364,7 +1364,13 @@
           </div>
         </div>
         <div class="overview-card-desc">Theo dõi tiến độ các dự án trọng điểm CEO đang trực tiếp phụ trách và chỉ đạo.</div>
-        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+        <div id="ov-proj-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-proj-total">—</div><div class="overview-stat-lbl">Tổng dự án</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-proj-active" style="color:#1d4ed8">—</div><div class="overview-stat-lbl">Đang chạy</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-proj-overdue" style="color:#dc2626">—</div><div class="overview-stat-lbl">Quá hạn</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-proj-red" style="color:#dc2626">—</div><div class="overview-stat-lbl">RAG 🔴</div></div>
+        </div>
+        <span class="overview-badge pending" id="ov-proj-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
       <div class="overview-card" onclick="switchModule('to-action', document.querySelector('[data-module=to-action]'))">
@@ -1376,7 +1382,13 @@
           </div>
         </div>
         <div class="overview-card-desc">Danh sách action xuất phát từ buổi họp TO, phân công và theo dõi tiến độ theo thời gian thực.</div>
-        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+        <div id="ov-to-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-to-total">—</div><div class="overview-stat-lbl">Tổng action</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-to-overdue" style="color:#dc2626">—</div><div class="overview-stat-lbl">Quá hạn</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-to-done" style="color:#15803d">—</div><div class="overview-stat-lbl">Hoàn thành</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-to-noowner" style="color:#b45309">—</div><div class="overview-stat-lbl">Chờ phân công</div></div>
+        </div>
+        <span class="overview-badge pending" id="ov-to-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
       <div class="overview-card" onclick="switchModule('risk-sos', document.querySelector('[data-module=risk-sos]'))">
@@ -1388,7 +1400,13 @@
           </div>
         </div>
         <div class="overview-card-desc">Tổng hợp toàn bộ rủi ro và vấn đề SOS từ tất cả workstream, phân loại theo mức độ nghiêm trọng.</div>
-        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+        <div id="ov-risk-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-risk-total">—</div><div class="overview-stat-lbl">Tổng Risk/SOS</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-risk-open" style="color:#b45309">—</div><div class="overview-stat-lbl">Đang mở</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-risk-red" style="color:#dc2626">—</div><div class="overview-stat-lbl">RAG 🔴</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-risk-overdue" style="color:#dc2626">—</div><div class="overview-stat-lbl">Quá hạn</div></div>
+        </div>
+        <span class="overview-badge pending" id="ov-risk-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
       <div class="overview-card" onclick="switchModule('ceo-decision', document.querySelector('[data-module=ceo-decision]'))">
@@ -1400,7 +1418,13 @@
           </div>
         </div>
         <div class="overview-card-desc">Tập hợp tất cả quyết định đang chờ CEO, sắp xếp theo mức độ ưu tiên và thời hạn chốt.</div>
-        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+        <div id="ov-dec-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dec-total">—</div><div class="overview-stat-lbl">Tổng decision</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dec-pending" style="color:#b45309">—</div><div class="overview-stat-lbl">Chờ CEO</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dec-done" style="color:#15803d">—</div><div class="overview-stat-lbl">Đã chốt</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dec-overdue" style="color:#dc2626">—</div><div class="overview-stat-lbl">Quá hạn</div></div>
+        </div>
+        <span class="overview-badge pending" id="ov-dec-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
       <div class="overview-card" onclick="switchModule('data-quality', document.querySelector('[data-module=data-quality]'))">
@@ -1412,7 +1436,12 @@
           </div>
         </div>
         <div class="overview-card-desc">Đánh giá mức độ điền đầy đủ dữ liệu theo workstream. Cảnh báo PIC thiếu thông tin trọng yếu.</div>
-        <span class="overview-badge pending">⏳ Đang chờ dữ liệu</span>
+        <div id="ov-dq-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dq-score" style="color:#1d4ed8">—</div><div class="overview-stat-lbl">Data score</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dq-noowner" style="color:#dc2626">—</div><div class="overview-stat-lbl">Thiếu owner</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-dq-norag" style="color:#b45309">—</div><div class="overview-stat-lbl">Thiếu RAG</div></div>
+        </div>
+        <span class="overview-badge pending" id="ov-dq-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
       <div class="overview-card" onclick="switchModule('meeting-minutes', document.querySelector('[data-module=meeting-minutes]'))">
@@ -1936,6 +1965,84 @@
       }
     }
 
+    function updateAllOverviewCards(data) {
+      var cc = data.commandCenterSummary || {};
+      var el = function(id) { return document.getElementById(id); };
+      var st = function(id, v) { var e = el(id); if (e) e.textContent = v; };
+      var ts = cc.updatedAt || data.updatedAt || 'Đã tải';
+      function activate(statsId, badgeId) {
+        var s = el(statsId); if (s) s.style.display = 'flex';
+        var b = el(badgeId);
+        if (b) { b.className = 'overview-badge live'; b.innerHTML = '● Live · ' + ts; }
+      }
+
+      // CEO Project Tracker
+      if (cc.projectsTotal > 0) {
+        st('ov-proj-total',   cc.projectsTotal);
+        st('ov-proj-active',  cc.projectsActive);
+        st('ov-proj-overdue', cc.projectsOverdue);
+        st('ov-proj-red',     cc.projectsRed);
+        activate('ov-proj-stats', 'ov-proj-badge');
+      }
+
+      // TO Action Center
+      if (cc.toActionsTotal > 0) {
+        var toActs = data.toActions || [];
+        var toNoOwner = 0;
+        toActs.forEach(function(r) {
+          var st_ = String(r.Status || '').toLowerCase();
+          var active = st_ !== 'done' && !st_.includes('hoàn') && !st_.includes('hoan');
+          if (!active) return;
+          var pic = String(r.PIC || '').trim().toLowerCase();
+          var own = String(r.Owner || '').trim().toLowerCase();
+          if (!pic || pic === 'cần phân công' || pic === 'can phan cong' || pic === 'tbd' ||
+              !own || own === 'cần phân công' || own === 'can phan cong' || own === 'tbd') toNoOwner++;
+        });
+        st('ov-to-total',   cc.toActionsTotal);
+        st('ov-to-overdue', cc.toActionsOverdue);
+        st('ov-to-done',    cc.toActionsDone);
+        st('ov-to-noowner', toNoOwner);
+        activate('ov-to-stats', 'ov-to-badge');
+      }
+
+      // Risk/SOS Center
+      if (cc.risksTotal > 0) {
+        st('ov-risk-total',   cc.risksTotal);
+        st('ov-risk-open',    cc.risksOpen);
+        st('ov-risk-red',     cc.risksRed);
+        st('ov-risk-overdue', cc.risksOverdue);
+        activate('ov-risk-stats', 'ov-risk-badge');
+      }
+
+      // CEO Decision Board
+      if (cc.decisionsTotal > 0) {
+        st('ov-dec-total',   cc.decisionsTotal);
+        st('ov-dec-pending', cc.decisionsPending);
+        st('ov-dec-done',    cc.decisionsDone);
+        st('ov-dec-overdue', cc.decisionsOverdue);
+        activate('ov-dec-stats', 'ov-dec-badge');
+      }
+
+      // Data Quality
+      var allRows = [].concat(data.pmoActions || [], data.ceoProjects || [], data.toActions || []);
+      if (allRows.length > 0) {
+        var dqNoOwner = allRows.filter(function(r) { return !(r.PIC || r.PICLead) && !r.Owner; }).length;
+        var dqNoRAG   = allRows.filter(function(r) { return !r.RAG || r.RAG === 'N/A' || r.RAG === ''; }).length;
+        st('ov-dq-score',   (cc.dataQualityScore || 0) + '%');
+        st('ov-dq-noowner', dqNoOwner);
+        st('ov-dq-norag',   dqNoRAG);
+        activate('ov-dq-stats', 'ov-dq-badge');
+      }
+
+      // Meeting Minutes
+      if (cc.meetingsTotal > 0) {
+        st('ov-mm-total',   cc.meetingsTotal);
+        st('ov-mm-pending', cc.meetingsPending);
+        st('ov-mm-action',  cc.meetingsWithCEO);
+        activate('ov-mm-stats', 'ov-mm-badge');
+      }
+    }
+
     function gasGet(action) {
       return fetch(GAS_URL + '?action=' + action, {
         method: 'GET',
@@ -2056,6 +2163,7 @@
         'Cập nhật lần cuối: ' + safe(data.updatedAt || '') + ' | Sheet: ' + safe(data.spreadsheetName || '');
 
       updateOverviewFromPMO(data);
+      updateAllOverviewCards(data);
       renderRiskSOSModule(data);
       renderCEODecisionBoardModule(data);
       renderDataQualityModule(data);

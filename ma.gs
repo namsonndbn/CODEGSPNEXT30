@@ -258,6 +258,28 @@ function getDashboardData() {
     dashboardData.toSummary   = {};
   }
 
+  // ── Command Center Summary (các module sheet riêng) ──
+  try {
+    var rawProjects  = readSheetSafe('CEO_PROJECTS');
+    var rawRisks     = readSheetSafe('RISK_SOS');
+    var rawDecisions = readSheetSafe('CEO_DECISIONS');
+    var rawMinutes   = readSheetSafe('MEETING_MINUTES');
+    var ccData = {
+      pmoActions:     rows,
+      ceoProjects:    rawProjects.map(normalizeCEOProject_),
+      toActions:      dashboardData.toActions || [],
+      riskSos:        rawRisks.map(normalizeRiskSOS_),
+      ceoDecisions:   rawDecisions.map(normalizeCEODecision_),
+      meetingMinutes: rawMinutes.map(normalizeMeetingMinutes_)
+    };
+    dashboardData.commandCenterSummary = buildCommandCenterSummary(ccData);
+    dashboardData.ceoProjects = ccData.ceoProjects;
+  } catch(e) {
+    Logger.log('getDashboardData [commandCenterSummary]: ' + e.message);
+    dashboardData.commandCenterSummary = {};
+    dashboardData.ceoProjects = [];
+  }
+
   return JSON.parse(JSON.stringify(dashboardData));
 }
 
