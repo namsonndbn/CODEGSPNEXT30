@@ -1300,6 +1300,59 @@
     }
     .toa-ftab.active { background: #064e3b; color: #fff; }
     .toa-ftab:hover:not(.active) { background: #e8f5f0; }
+
+    /* ── CEO Quick View — per-factory summary cards ── */
+    .toa-factory-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+      gap: 14px; margin-bottom: 6px;
+    }
+    .toa-factory-card {
+      background: #fff; border: 1px solid #e5e7eb; border-top: 4px solid #9ca3af;
+      border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .toa-factory-card.card-red   { border-top-color: #dc2626; }
+    .toa-factory-card.card-amber { border-top-color: #d97706; }
+    .toa-factory-card.card-green { border-top-color: #16a34a; }
+    .toa-fcard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .toa-fcard-name { font-size: 15px; font-weight: 700; color: #111827; }
+    .toa-fcard-assess {
+      font-size: 11px; font-weight: 600; padding: 3px 9px;
+      border-radius: 12px; color: #fff; white-space: nowrap;
+    }
+    .toa-fcard-assess.a-red   { background: #dc2626; }
+    .toa-fcard-assess.a-amber { background: #d97706; }
+    .toa-fcard-assess.a-blue  { background: #2563eb; }
+    .toa-fcard-assess.a-green { background: #16a34a; }
+    .toa-fcard-stats {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 6px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;
+    }
+    .toa-fcard-stats.no-border { border-bottom: none; margin-bottom: 4px; }
+    .toa-fcard-stat { text-align: center; }
+    .toa-fcard-stat-val { font-size: 17px; font-weight: 700; color: #111827; line-height: 1.1; }
+    .toa-fcard-stat-val.sv-red   { color: #dc2626; }
+    .toa-fcard-stat-val.sv-amber { color: #d97706; }
+    .toa-fcard-stat-val.sv-blue  { color: #2563eb; }
+    .toa-fcard-stat-lbl { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+    .toa-fcard-subhdr {
+      font-size: 10px; font-weight: 700; color: #374151;
+      text-transform: uppercase; letter-spacing: .4px;
+      margin: 8px 0 4px; padding-bottom: 2px; border-bottom: 1px solid #f3f4f6;
+    }
+    .toa-fcard-row {
+      display: flex; align-items: flex-start; gap: 7px;
+      padding: 4px 0; border-bottom: 1px solid #fafafa; font-size: 12px;
+    }
+    .toa-fcard-row:last-child { border-bottom: none; }
+    .toa-fcard-rag {
+      flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 1px 5px;
+      border-radius: 3px; color: #fff; margin-top: 1px;
+    }
+    .toa-fcard-rag.Red   { background: #dc2626; }
+    .toa-fcard-rag.Amber { background: #d97706; }
+    .toa-fcard-rag.Green { background: #16a34a; }
+    .toa-fcard-text { flex: 1; color: #374151; line-height: 1.35; }
+    .toa-fcard-meta { font-size: 10px; color: #9ca3af; margin-top: 1px; }
   </style>
 </head>
 
@@ -1384,6 +1437,7 @@
         <div class="overview-card-desc">Danh sách action xuất phát từ buổi họp TO, phân công và theo dõi tiến độ theo thời gian thực.</div>
         <div id="ov-to-stats" class="overview-card-stats" style="display:none;">
           <div class="overview-stat"><div class="overview-stat-val" id="ov-to-total">—</div><div class="overview-stat-lbl">Tổng action</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-to-issues" style="color:#7c3aed">—</div><div class="overview-stat-lbl">Vấn đề</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-to-overdue" style="color:#dc2626">—</div><div class="overview-stat-lbl">Quá hạn</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-to-done" style="color:#15803d">—</div><div class="overview-stat-lbl">Hoàn thành</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-to-noowner" style="color:#b45309">—</div><div class="overview-stat-lbl">Chờ phân công</div></div>
@@ -1729,6 +1783,9 @@
       </div>
     </div>
 
+    <div class="toa-section-hdr" id="toa-cqv-hdr">🏆 CEO Quick View — Tóm tắt nhanh vấn đề nhà máy</div>
+    <div id="toa-ceo-quick-view" class="toa-factory-grid"></div>
+
     <div class="toa-section-hdr">📋 Hiện trạng vấn đề</div>
     <div class="mod-summary-bar">
       <div class="mod-summary-card"><div class="mod-summary-val" id="toa-iss-total">—</div><div class="mod-summary-lbl">Tổng vấn đề</div></div>
@@ -1986,8 +2043,10 @@
       }
 
       // TO Action Center
-      if (cc.toActionsTotal > 0) {
-        var toActs = data.toActions || [];
+      var toActs  = data.toActions || [];
+      var toIsss  = data.toIssues  || [];
+      var hasTO   = cc.toActionsTotal > 0 || toIsss.length > 0;
+      if (hasTO) {
         var toNoOwner = 0;
         toActs.forEach(function(r) {
           var st_ = String(r.Status || '').toLowerCase();
@@ -1998,7 +2057,8 @@
           if (!pic || pic === 'cần phân công' || pic === 'can phan cong' || pic === 'tbd' ||
               !own || own === 'cần phân công' || own === 'can phan cong' || own === 'tbd') toNoOwner++;
         });
-        st('ov-to-total',   cc.toActionsTotal);
+        st('ov-to-total',   cc.toActionsTotal || toActs.length);
+        st('ov-to-issues',  toIsss.length);
         st('ov-to-overdue', cc.toActionsOverdue);
         st('ov-to-done',    cc.toActionsDone);
         st('ov-to-noowner', toNoOwner);
@@ -3892,6 +3952,21 @@
         areaSel.value = prev;
       }
 
+      // Build per-factory aggregation for CEO Quick View
+      var factoryMap = {};
+      issues.forEach(function(iss) {
+        var f = iss.Factory || ''; if (!f) return;
+        if (!factoryMap[f]) factoryMap[f] = { factory: f, issues: [], actions: [] };
+        factoryMap[f].issues.push(iss);
+      });
+      actions.forEach(function(act) {
+        var f = act.Factory || ''; if (!f) return;
+        if (!factoryMap[f]) factoryMap[f] = { factory: f, issues: [], actions: [] };
+        factoryMap[f].actions.push(act);
+      });
+      var byFactory = Object.keys(factoryMap).sort().map(function(k) { return factoryMap[k]; });
+      toaRenderCeoQuickView(byFactory);
+
       // Store filtered pools back so toaSwitchTab can use them
       toaCache._filtered = { actions: actions, issues: issues, urgent24h: urgent24h, urgent72h: urgent72h, inPlan: inPlan, noOwnerList: noOwner, ceoList: ceoList, evidenceFiles: evidenceFiles };
 
@@ -3918,6 +3993,126 @@
           + '<div class="toa-area-count">' + (a.total || 0) + '</div>'
           + '<div class="toa-area-sub">🔴 ' + (a.red||0) + '&nbsp;&nbsp;🟡 ' + (a.amber||0) + '&nbsp;&nbsp;🟢 ' + (a.green||0) + '</div>'
           + '</div>';
+      });
+      grid.innerHTML = html;
+    }
+
+    function toaRenderCeoQuickView(byFactory) {
+      var grid = document.getElementById('toa-ceo-quick-view');
+      if (!grid) return;
+      if (!byFactory || !byFactory.length) {
+        grid.innerHTML = '<div style="padding:10px 0;color:#9ca3af;font-size:13px">Chưa có dữ liệu phân theo nhà máy.</div>';
+        return;
+      }
+      var now = new Date();
+      var html = '';
+      byFactory.forEach(function(fac) {
+        var issues  = fac.issues  || [];
+        var actions = fac.actions || [];
+        var activeActs = actions.filter(function(a) {
+          var s = (a.Status||'').toLowerCase();
+          return s !== 'done' && !s.includes('hoàn') && !s.includes('hoan');
+        });
+        var redIss   = issues.filter(function(i) { return i.RAG === 'Red'; }).length;
+        var amberIss = issues.filter(function(i) { return i.RAG === 'Amber'; }).length;
+        var overdue  = activeActs.filter(function(a) {
+          var dl = a.Deadline ? new Date(String(a.Deadline).split('/').reverse().join('-')) : null;
+          return a.IsOverdue || (dl && !isNaN(dl) && dl < now);
+        }).length;
+        var noOwner = activeActs.filter(function(a) {
+          var p = String(a.PIC||'').trim().toLowerCase();
+          var o = String(a.Owner||'').trim().toLowerCase();
+          return !p || p==='cần phân công'||p==='tbd'||!o||o==='cần phân công'||o==='tbd';
+        }).length;
+        var ceoNeeded = actions.filter(function(a) {
+          var n = String(a.CEONote||'').toLowerCase().trim();
+          return n && n !== 'không' && n !== 'khong' && n !== 'no' && n !== 'n/a';
+        }).length;
+        var inProg = actions.filter(function(a) {
+          return /in progress|đang xử lý|dang xu ly/i.test(a.Status||'');
+        }).length;
+
+        // Auto assessment
+        var assess = 'Theo dõi tiếp'; var assessCls = 'a-green';
+        if (redIss > 0 || overdue >= 2)   { assess = 'Cần can thiệp';   assessCls = 'a-red'; }
+        else if (noOwner > 0)              { assess = 'Cần chốt owner';  assessCls = 'a-amber'; }
+        else if (overdue > 0 || amberIss >= 2) { assess = 'Cần đẩy tiến độ'; assessCls = 'a-amber'; }
+        else if (ceoNeeded > 0)            { assess = 'CEO cần chốt';    assessCls = 'a-blue'; }
+
+        var cardCls = (redIss > 0 || overdue >= 2) ? 'card-red'
+                    : (noOwner > 0 || overdue > 0)  ? 'card-amber' : 'card-green';
+
+        // Top issues: Red first, then Amber
+        var topIssues = issues.slice().sort(function(a,b) {
+          var ord = {Red:0,Amber:1,Green:2};
+          return (ord[a.RAG]||1) - (ord[b.RAG]||1);
+        }).slice(0, 5);
+
+        // Top actions: overdue first, then red RAG, active only
+        var topActions = activeActs.slice().sort(function(a,b) {
+          var dlA = a.Deadline ? new Date(String(a.Deadline).split('/').reverse().join('-')) : null;
+          var dlB = b.Deadline ? new Date(String(b.Deadline).split('/').reverse().join('-')) : null;
+          var ovA = a.IsOverdue || (dlA && !isNaN(dlA) && dlA < now) ? 0 : 1;
+          var ovB = b.IsOverdue || (dlB && !isNaN(dlB) && dlB < now) ? 0 : 1;
+          if (ovA !== ovB) return ovA - ovB;
+          var ragOrd = {Red:0,Amber:1,Green:2};
+          return (ragOrd[a.RAG]||1) - (ragOrd[b.RAG]||1);
+        }).slice(0, 5);
+
+        html += '<div class="toa-factory-card ' + cardCls + '">'
+          + '<div class="toa-fcard-header">'
+          + '<span class="toa-fcard-name">🏭 ' + safe(fac.factory) + '</span>'
+          + '<span class="toa-fcard-assess ' + assessCls + '">' + safe(assess) + '</span>'
+          + '</div>'
+          // Row 1: issue stats
+          + '<div class="toa-fcard-stats">'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val">' + issues.length + '</div><div class="toa-fcard-stat-lbl">Vấn đề</div></div>'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val sv-red">' + redIss + '</div><div class="toa-fcard-stat-lbl">🔴 Red</div></div>'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val sv-amber">' + amberIss + '</div><div class="toa-fcard-stat-lbl">🟡 Amber</div></div>'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val sv-blue">' + issues.filter(function(i){ return i.Status !== 'Đã xử lý' && i.Status !== 'Đóng'; }).length + '</div><div class="toa-fcard-stat-lbl">Đang mở</div></div>'
+          + '</div>'
+          // Row 2: action stats
+          + '<div class="toa-fcard-stats no-border">'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val">' + actions.length + '</div><div class="toa-fcard-stat-lbl">Action</div></div>'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val sv-blue">' + inProg + '</div><div class="toa-fcard-stat-lbl">Đang xử lý</div></div>'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val sv-red">' + overdue + '</div><div class="toa-fcard-stat-lbl">Quá hạn</div></div>'
+          + '<div class="toa-fcard-stat"><div class="toa-fcard-stat-val sv-amber">' + noOwner + '</div><div class="toa-fcard-stat-lbl">Chờ owner</div></div>'
+          + '</div>';
+
+        // Top issues list
+        if (topIssues.length) {
+          html += '<div class="toa-fcard-subhdr">📋 Vấn đề ưu tiên</div>';
+          topIssues.forEach(function(iss) {
+            var desc = iss.Description || iss.IssueType || '—';
+            if (desc.length > 80) desc = desc.slice(0,77) + '...';
+            html += '<div class="toa-fcard-row">'
+              + '<span class="toa-fcard-rag ' + safe(iss.RAG||'Amber') + '">' + safe(iss.RAG||'?') + '</span>'
+              + '<span class="toa-fcard-text"><div>' + safe(desc) + '</div>'
+              + '<div class="toa-fcard-meta">' + safe(iss.Area||'') + (iss.IssueType ? ' · ' + iss.IssueType : '') + '</div>'
+              + '</span></div>';
+          });
+        }
+
+        // Top actions list
+        if (topActions.length) {
+          html += '<div class="toa-fcard-subhdr" style="margin-top:10px">⚡ Action ưu tiên</div>';
+          topActions.forEach(function(act) {
+            var dlA = act.Deadline ? new Date(String(act.Deadline).split('/').reverse().join('-')) : null;
+            var isOv = act.IsOverdue || (dlA && !isNaN(dlA) && dlA < now);
+            var action = act.Action || '—';
+            if (action.length > 70) action = action.slice(0,67) + '...';
+            html += '<div class="toa-fcard-row">'
+              + '<span class="toa-fcard-rag ' + safe(act.RAG||'Amber') + '">' + safe(act.RAG||'?') + '</span>'
+              + '<span class="toa-fcard-text"><div>' + safe(action) + '</div>'
+              + '<div class="toa-fcard-meta">'
+              + (act.Owner || act.PIC ? safe(act.Owner || act.PIC) + ' · ' : '')
+              + (act.Deadline ? 'Hạn: ' + safe(act.Deadline) : '')
+              + (isOv ? ' <span style="color:#dc2626;font-weight:600">⏰ Quá hạn</span>' : '')
+              + '</div></span></div>';
+          });
+        }
+
+        html += '</div>'; // end toa-factory-card
       });
       grid.innerHTML = html;
     }
@@ -3984,22 +4179,29 @@
         el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">Chưa có vấn đề nào trong sheet TO_ISSUES.</div>';
         return;
       }
+      var showFactory = toaActiveFactory === 'all';
       var html = '<div class="toa-tab-label">📋 Danh sách vấn đề hiện trường &mdash; ' + issues.length + ' vấn đề</div>'
         + '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>'
-        + '<th>Issue ID</th><th>Khu vực</th><th>Loại vấn đề</th><th>Mô tả vấn đề</th>'
-        + '<th>Mức độ</th><th>RAG</th><th>Trạng thái</th><th>Người báo cáo</th><th>Ngày</th><th>File nguồn</th>'
+        + '<th>Issue ID</th>'
+        + (showFactory ? '<th>Nhà máy</th>' : '')
+        + '<th>Khu vực</th><th>Loại vấn đề</th><th>Mô tả vấn đề</th>'
+        + '<th>Nguyên nhân</th><th>Ảnh hưởng</th><th>Mức độ</th>'
+        + '<th>RAG</th><th>Trạng thái</th><th>Action ID liên quan</th><th>File nguồn</th>'
         + '</tr></thead><tbody>';
       issues.forEach(function(r) {
-        html += '<tr>'
+        var ragCls = r.RAG === 'Red' ? ' style="background:#fef2f2"' : (r.RAG === 'Amber' ? ' style="background:#fffbeb"' : '');
+        html += '<tr' + ragCls + '>'
           + '<td style="font-size:11px;color:#6b7280">' + safe(r.IssueID) + '</td>'
+          + (showFactory ? '<td style="font-size:11px;font-weight:600;color:#064e3b">' + safe(r.Factory) + '</td>' : '')
           + '<td>' + safe(r.Area) + '</td>'
           + '<td>' + safe(r.IssueType) + '</td>'
           + '<td>' + safe(r.Description) + '</td>'
-          + '<td>' + safe(r.Level) + '</td>'
+          + '<td style="font-size:11px;color:#6b7280">' + safe(r.RootCause) + '</td>'
+          + '<td style="font-size:11px;color:#6b7280">' + safe(r.Impact) + '</td>'
+          + '<td style="font-size:11px">' + safe(r.Level) + '</td>'
           + '<td>' + modRagBadge(r.RAG) + '</td>'
           + '<td>' + modStatusBadge(r.Status) + '</td>'
-          + '<td>' + safe(r.Reporter) + '</td>'
-          + '<td>' + safe(r.ReportDate) + '</td>'
+          + '<td style="font-size:11px;color:#2563eb">' + safe(r.ActionIDRef) + '</td>'
           + '<td>' + (r.EvidenceLink ? '<a class="toa-open-btn" href="' + safe(r.EvidenceLink) + '" target="_blank">📂 Mở file</a>' : '—') + '</td>'
           + '</tr>';
       });
@@ -4031,8 +4233,9 @@
 
     function toaApplyFilters() {
       if (!toaCache) return;
-      if (toaActiveTab === 'issues') { toaRenderIssuesTable(toaCache.issues || []); return; }
-      if (toaActiveTab === 'files')  { toaRenderEvidenceFiles(toaCache.evidenceFiles || []); return; }
+      var flt = toaCache._filtered || toaCache;
+      if (toaActiveTab === 'issues') { toaRenderIssuesTable(flt.issues || []); return; }
+      if (toaActiveTab === 'files')  { toaRenderEvidenceFiles(flt.evidenceFiles || toaCache.evidenceFiles || []); return; }
       var kw         = ((document.getElementById('toa-search')        || {}).value || '').toLowerCase().trim();
       var areaFilter = ((document.getElementById('toa-filter-area')   || {}).value || '');
       var statFilter = ((document.getElementById('toa-filter-status') || {}).value || '');
