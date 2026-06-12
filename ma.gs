@@ -161,7 +161,10 @@ const PMO_COLUMN_ALIASES = {
   'Phối hợp':         ['Phối hợp', 'Coordinator', 'Người phối hợp', 'Support', 'Hỗ trợ'],
   'Start Date':       ['Start Date', 'Ngày bắt đầu', 'Start', 'Bắt đầu', 'Ngày KH bắt đầu'],
   'Deadline':         ['Deadline', 'Hạn hoàn thành', 'Thời hạn', 'Due Date', 'Due', 'Hạn KH',
-                       'Deadline ngày/tuần', 'Deadline ngày', 'Deadline tuần'],
+                       'Deadline ngày/tuần', 'Deadline ngày', 'Deadline tuần',
+                       'Mốc thời gian', 'Mốc hoàn thành', 'Ngày hoàn thành',
+                       'Tuần hoàn thành', 'Timeline', 'Thời điểm hoàn thành',
+                       'Thời hạn hoàn thành', 'Hạn chót', 'Target date'],
   'Status':           ['Status', 'Trạng thái', 'Tình trạng'],
   'RAG':              ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo', 'RAG Status'],
   '% Tiến độ':        ['% Tiến độ', '% Done', '% Hoàn thành', 'Progress', 'Tiến độ', 'Completion %'],
@@ -2044,13 +2047,27 @@ function setupPicSheets() {
 
    Returns: { imported, picCode, targetSheet } hoặc { skipped, reason }
 ---------------------------------------------------------------- */
+// Normalize header text: bỏ newline, dấu tiếng Việt, trim khoảng trắng,
+// bỏ ký tự đặc biệt → dùng để so sánh fuzzy giữa alias và header file nguồn.
+function normHeader_(s) {
+  return String(s || '')
+    .replace(/\r?\n|\r/g, ' ')           // newline → space
+    .replace(/\s+/g, ' ').trim()
+    .replace(/đ/gi, 'd')                 // đ/Đ không decompose được bằng NFD
+    .normalize('NFD')                    // tách dấu ra khỏi ký tự gốc
+    .replace(/[̀-ͯ]/g, '')     // bỏ dấu combining
+    .toLowerCase()
+    .replace(/[^a-z0-9 \/%+\-]/g, ' ')  // bỏ ký tự lạ, giữ / % + -
+    .replace(/\s+/g, ' ').trim();
+}
+
 // Tìm dòng header của bảng action bằng từ khóa, không chỉ đếm số ô.
 function findActionHeaderRow_(values) {
   var keywords = ['stt', 'mã', 'hành động', 'công việc', 'deadline', 'owner',
                   'người phụ trách', 'phối hợp', 'kết quả', 'output'];
   var best = { idx: 0, score: 0 };
   for (var i = 0; i < Math.min(25, values.length); i++) {
-    var rowStr = values[i].map(function(c) { return String(c || '').toLowerCase(); }).join('|');
+    var rowStr = values[i].map(function(c) { return normHeader_(c); }).join('|');
     var score = 0;
     keywords.forEach(function(kw) { if (rowStr.indexOf(kw) >= 0) score++; });
     if (score > best.score) best = { idx: i, score: score };
@@ -2174,20 +2191,37 @@ function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forc
   var meta = extractPicMetadata_(values, headerRowIdx);
   Logger.log('[importPic] headerRowIdx=' + headerRowIdx + ' | dept=' + meta.department + ' | ws=' + meta.workstream);
 
-  // Build column index map: stdCol → source column index
+  // Normalize source headers (bỏ newline, dấu tiếng Việt, ký tự lạ)
+  var srcHeadersNorm = srcHeaders.map(function(h) { return normHeader_(h); });
+  Logger.log('[importPic] srcHeadersNorm=' + JSON.stringify(srcHeadersNorm));
+
+  // Build column index map: stdCol → source column index (so sánh qua normHeader_)
   var colIdx = {};
   Object.keys(PMO_COLUMN_ALIASES).forEach(function(stdCol) {
     var aliases = PMO_COLUMN_ALIASES[stdCol];
     for (var ai = 0; ai < aliases.length; ai++) {
-      var aliasLow = aliases[ai].toLowerCase();
-      for (var ci = 0; ci < srcHeaders.length; ci++) {
-        if (srcHeaders[ci].toLowerCase() === aliasLow) {
+      var aliasNorm = normHeader_(aliases[ai]);
+      for (var ci = 0; ci < srcHeadersNorm.length; ci++) {
+        if (srcHeadersNorm[ci] === aliasNorm && srcHeadersNorm[ci] !== '') {
           if (!(stdCol in colIdx)) colIdx[stdCol] = ci;
           break;
         }
       }
     }
   });
+
+  // Log chi tiết deadline
+  var dlIdx = colIdx['Deadline'];
+  var dlHeader = dlIdx !== undefined ? srcHeaders[dlIdx] : '(không tìm thấy)';
+  var dlSamples = [];
+  if (dlIdx !== undefined) {
+    for (var si = 1; si <= 5 && (headerRowIdx + si) < values.length; si++) {
+      dlSamples.push(String(values[headerRowIdx + si][dlIdx] || '').trim());
+    }
+  }
+  Logger.log('[importPic] deadlineColumnIndex=' + (dlIdx !== undefined ? dlIdx : -1));
+  Logger.log('[importPic] deadlineHeaderMatched="' + dlHeader + '"');
+  Logger.log('[importPic] deadline5Samples=' + JSON.stringify(dlSamples));
   Logger.log('[importPic] colIdx=' + JSON.stringify(colIdx));
 
   // Map từng row dữ liệu sang standard headers
@@ -2223,8 +2257,12 @@ function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forc
       }
       if (colIdx[col] !== undefined) {
         var val = srcRow[colIdx[col]];
-        if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
-        return String(val === null || val === undefined ? '' : val);
+        if (val instanceof Date) {
+          // Deadline là ngày thật → format chuẩn
+          return Utilities.formatDate(val, 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy');
+        }
+        var strVal = String(val === null || val === undefined ? '' : val).trim();
+        return strVal;
       }
       return '';
     });
