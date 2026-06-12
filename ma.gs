@@ -151,17 +151,22 @@ const PMO_COLUMN_ALIASES = {
   'Bộ phận/Đơn vị':  ['Bộ phận/Đơn vị', 'Bộ phận', 'Đơn vị', 'Đơn vị / Khối', 'Khối/Bộ phận'],
   'Nhà máy/Khối':    ['Nhà máy/Khối', 'Nhà máy', 'Factory', 'Site', 'Khối'],
   'Workstream':       ['Workstream', 'Trục', 'Lĩnh vực', 'Trục chiến lược'],
-  'Nhóm việc':        ['Nhóm việc', 'Nhóm', 'Phân nhóm', 'Group', 'Category'],
-  'Action':           ['Action', 'Kế hoạch hành động', 'Action Plan', 'Việc cần làm', 'Nhiệm vụ', 'Nội dung việc', 'Task', 'Hành động', 'Cam kết hành động'],
-  'Output kỳ vọng':   ['Output kỳ vọng', 'Expected Output', 'Output', 'Kết quả kỳ vọng', 'Deliverable', 'Kết quả đầu ra'],
-  'Owner':            ['Owner', 'PIC', 'PIC Lead', 'Đầu mối', 'Người phụ trách', 'Người chịu trách nhiệm', 'Người thực hiện'],
+  'Nhóm việc':        ['Nhóm việc', 'Nhóm', 'Phân nhóm', 'Group', 'Category', 'Mã'],
+  'Action':           ['Action', 'Kế hoạch hành động', 'Action Plan', 'Việc cần làm', 'Nhiệm vụ', 'Nội dung việc', 'Task',
+                       'Hành động', 'Cam kết hành động', 'Hành động / Công việc', 'Hành động/Công việc', 'Công việc'],
+  'Output kỳ vọng':   ['Output kỳ vọng', 'Expected Output', 'Output', 'Kết quả kỳ vọng', 'Deliverable', 'Kết quả đầu ra',
+                       'Kết quả / Output nếu có', 'Kết quả / Output', 'Kết quả/Output', 'Kết quả'],
+  'Owner':            ['Owner', 'PIC', 'PIC Lead', 'Đầu mối', 'Người phụ trách', 'Người chịu trách nhiệm', 'Người thực hiện',
+                       'Owner (Người phụ trách)'],
   'Phối hợp':         ['Phối hợp', 'Coordinator', 'Người phối hợp', 'Support', 'Hỗ trợ'],
   'Start Date':       ['Start Date', 'Ngày bắt đầu', 'Start', 'Bắt đầu', 'Ngày KH bắt đầu'],
-  'Deadline':         ['Deadline', 'Hạn hoàn thành', 'Thời hạn', 'Due Date', 'Due', 'Hạn KH'],
+  'Deadline':         ['Deadline', 'Hạn hoàn thành', 'Thời hạn', 'Due Date', 'Due', 'Hạn KH',
+                       'Deadline ngày/tuần', 'Deadline ngày', 'Deadline tuần'],
   'Status':           ['Status', 'Trạng thái', 'Tình trạng'],
   'RAG':              ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo', 'RAG Status'],
   '% Tiến độ':        ['% Tiến độ', '% Done', '% Hoàn thành', 'Progress', 'Tiến độ', 'Completion %'],
-  'Update mới nhất':  ['Update mới nhất', 'Update', 'Cập nhật', 'Latest Update', 'Cập nhật mới nhất', 'Ghi chú update'],
+  'Update mới nhất':  ['Update mới nhất', 'Update', 'Cập nhật', 'Latest Update', 'Cập nhật mới nhất', 'Ghi chú update',
+                       'Chi tiết công việc theo ngày/theo tuần', 'Chi tiết công việc', 'Chi tiết'],
   'Risk/SOS':         ['Risk/SOS', 'Risk / SOS', 'Risk', 'SOS', 'Rủi ro', 'Blocker', 'Vướng mắc'],
   'CEO Decision':     ['CEO Decision', 'CEO Decision Needed', 'CEO cần chốt', 'Cần CEO chốt', 'Cần anh Vinh chốt', 'CEO quyết định'],
   'PMO Comment':      ['PMO Comment', 'Ghi chú PMO', 'Nhận xét PMO', 'PMO Note'],
@@ -2039,6 +2044,63 @@ function setupPicSheets() {
 
    Returns: { imported, picCode, targetSheet } hoặc { skipped, reason }
 ---------------------------------------------------------------- */
+// Tìm dòng header của bảng action bằng từ khóa, không chỉ đếm số ô.
+function findActionHeaderRow_(values) {
+  var keywords = ['stt', 'mã', 'hành động', 'công việc', 'deadline', 'owner',
+                  'người phụ trách', 'phối hợp', 'kết quả', 'output'];
+  var best = { idx: 0, score: 0 };
+  for (var i = 0; i < Math.min(25, values.length); i++) {
+    var rowStr = values[i].map(function(c) { return String(c || '').toLowerCase(); }).join('|');
+    var score = 0;
+    keywords.forEach(function(kw) { if (rowStr.indexOf(kw) >= 0) score++; });
+    if (score > best.score) best = { idx: i, score: score };
+  }
+  if (best.score >= 2) return best.idx;
+  // Fallback: dòng nhiều ô nhất trong 10 dòng đầu
+  var maxCells = 0, fallback = 0;
+  for (var i = 0; i < Math.min(10, values.length); i++) {
+    var cnt = values[i].filter(function(c) { return String(c || '').trim() !== ''; }).length;
+    if (cnt > maxCells) { maxCells = cnt; fallback = i; }
+  }
+  return fallback;
+}
+
+// Trích xuất metadata từ phần mô tả đầu file (trước dòng header bảng action).
+function extractPicMetadata_(values, headerRowIdx) {
+  var meta = { department: '', workstream: '', goal90: '' };
+
+  // Tìm value kế tiếp label trong cùng 1 row
+  function findValueInRow(row, labelKeywords) {
+    for (var j = 0; j < row.length; j++) {
+      var cell = String(row[j] || '').trim();
+      var cellLow = cell.toLowerCase();
+      for (var ki = 0; ki < labelKeywords.length; ki++) {
+        if (cellLow.indexOf(labelKeywords[ki]) >= 0) {
+          // Thử lấy phần sau dấu ':'
+          var colonIdx = cell.indexOf(':');
+          if (colonIdx >= 0 && cell.substring(colonIdx + 1).trim()) {
+            return cell.substring(colonIdx + 1).trim();
+          }
+          // Tìm ô không rỗng tiếp theo trong cùng row
+          for (var k = j + 1; k < row.length; k++) {
+            var v = String(row[k] || '').trim();
+            if (v) return v;
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  for (var i = 0; i < Math.min(headerRowIdx, 25); i++) {
+    var row = values[i];
+    if (!meta.department) meta.department = findValueInRow(row, ['bộ phận', 'department']);
+    if (!meta.workstream) meta.workstream = findValueInRow(row, ['workstream', 'trục chiến lược', 'trục']);
+    if (!meta.goal90)     meta.goal90     = findValueInRow(row, ['mục tiêu 90', 'mục tiêu']);
+  }
+  return meta;
+}
+
 function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forceReimport) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var ts = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
@@ -2104,14 +2166,13 @@ function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forc
     return { imported: 0, warning: 'Sheet nguồn không có dữ liệu' };
   }
 
-  // Tìm header row (row có nhiều ô nhất trong 6 row đầu)
-  var headerRowIdx = 0;
-  var bestCount = 0;
-  for (var hi = 0; hi < Math.min(6, values.length); hi++) {
-    var cnt = values[hi].filter(function(c) { return String(c || '').trim() !== ''; }).length;
-    if (cnt > bestCount) { bestCount = cnt; headerRowIdx = hi; }
-  }
+  // Tìm header row bằng từ khóa (thay vì chỉ đếm ô)
+  var headerRowIdx = findActionHeaderRow_(values);
   var srcHeaders = values[headerRowIdx].map(function(h) { return String(h || '').trim(); });
+
+  // Trích xuất metadata từ phần đầu file (Bộ phận, Workstream, Mục tiêu 90 ngày)
+  var meta = extractPicMetadata_(values, headerRowIdx);
+  Logger.log('[importPic] headerRowIdx=' + headerRowIdx + ' | dept=' + meta.department + ' | ws=' + meta.workstream);
 
   // Build column index map: stdCol → source column index
   var colIdx = {};
@@ -2127,6 +2188,7 @@ function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forc
       }
     }
   });
+  Logger.log('[importPic] colIdx=' + JSON.stringify(colIdx));
 
   // Map từng row dữ liệu sang standard headers
   var outputRows = [];
@@ -2138,14 +2200,26 @@ function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forc
     rowNum++;
 
     var newRow = PMO_STANDARD_HEADERS.map(function(col) {
-      if (col === 'PIC Code')   return picCode;
-      if (col === 'PIC Name')   return picName;
-      if (col === 'Source File') return srcSS.getName() + ' | ' + picSheetName;
-      if (col === 'Last Update') return ts;
-      if (col === 'Update By')   return 'PMO Import';
+      if (col === 'PIC Code')        return picCode;
+      if (col === 'PIC Name')        return picName;
+      if (col === 'Source File')     return srcSS.getName() + ' | ' + picSheetName;
+      if (col === 'Last Update')     return ts;
+      if (col === 'Update By')       return 'PMO Import';
+      // Metadata từ đầu file
+      if (col === 'Bộ phận/Đơn vị') return meta.department || '';
+      if (col === 'Workstream')      return meta.workstream || '';
+
       if (col === 'Action ID') {
         var rawId = colIdx[col] !== undefined ? String(srcRow[colIdx[col]] || '').trim() : '';
         return rawId || (picCode + '-' + String(rowNum).padStart(4, '0'));
+      }
+      if (col === 'Status') {
+        var sv = colIdx[col] !== undefined ? String(srcRow[colIdx[col]] || '').trim() : '';
+        return sv || 'Chưa bắt đầu';
+      }
+      if (col === 'RAG') {
+        // Không tự bịa — chỉ lấy từ file nếu có
+        return colIdx[col] !== undefined ? String(srcRow[colIdx[col]] || '').trim() : '';
       }
       if (colIdx[col] !== undefined) {
         var val = srcRow[colIdx[col]];
@@ -2282,7 +2356,7 @@ function testSyncPicSheets() {
 // Dán link Google Sheets thật vào mỗi function rồi Run.
 
 function testImportPIC01() {
-  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1wcw0aNb8fpK-g4Ed1vSv32Rbs54VRYR9NZ6EaR4UJU8/edit?gid=674565336#gid=674565336', null, 'PIC01', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1wcw0aNb8fpK-g4Ed1vSv32Rbs54VRYR9NZ6EaR4UJU8/edit?gid=674565336#gid=674565336', null, 'PIC01', null, true);
   Logger.log('PIC01: ' + JSON.stringify(r));
 }
 
