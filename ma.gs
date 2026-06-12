@@ -2282,12 +2282,12 @@ function testSyncPicSheets() {
 // Dán link Google Sheets thật vào mỗi function rồi Run.
 
 function testImportPIC01() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC01_VAO_DAY', null, 'PIC01', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1wcw0aNb8fpK-g4Ed1vSv32Rbs54VRYR9NZ6EaR4UJU8/edit?gid=674565336#gid=674565336', null, 'PIC01', null, false);
   Logger.log('PIC01: ' + JSON.stringify(r));
 }
 
 function testImportPIC02() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC02_VAO_DAY', null, 'PIC02', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1ovnXqPb_z9xjFnJveyNosRZmECqDzVrzQWQGyyeDv_M/edit?gid=1025666321#gid=1025666321', null, 'PIC02', null, false);
   Logger.log('PIC02: ' + JSON.stringify(r));
 }
 
@@ -2297,67 +2297,67 @@ function testImportPIC03() {
 }
 
 function testImportPIC04() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC04_VAO_DAY', null, 'PIC04', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1iE7uZEW2K8brwYEowtoGPg-hCxY7WpqyA9ICuQMXygY/edit?gid=2025716379#gid=2025716379', null, 'PIC04', null, false);
   Logger.log('PIC04: ' + JSON.stringify(r));
 }
 
 function testImportPIC05() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC05_VAO_DAY', null, 'PIC05', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1qzxOFNJJri6d9R8FRuMgvOwWcPzFkTTYq-CflA49jRk/edit?gid=1330008661#gid=1330008661', null, 'PIC05', null, false);
   Logger.log('PIC05: ' + JSON.stringify(r));
 }
 
 function testImportPIC06() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC06_VAO_DAY', null, 'PIC06', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1xWGxzAqeGW2W7ZEwopYhHHDpNzpyxmktXp-qbxSX3XU/edit?gid=1106585649#gid=1106585649', null, 'PIC06', null, false);
   Logger.log('PIC06: ' + JSON.stringify(r));
 }
 
 function testImportPIC07() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC07_VAO_DAY', null, 'PIC07', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1jR4v5KHwFC9q3wfdRE8navbKtOnJ5MQJQP2pThNNP0c/edit?gid=980701653#gid=980701653', null, 'PIC07', null, false);
   Logger.log('PIC07: ' + JSON.stringify(r));
 }
 
 function testImportPIC08() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC08_VAO_DAY', null, 'PIC08', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1oaDzR7nwfzaOog-knI-GSvym58B0NinOb-tgW5gWp58/edit?gid=504626587#gid=504626587', null, 'PIC08', null, false);
   Logger.log('PIC08: ' + JSON.stringify(r));
 }
 
 function testImportPIC09() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC09_VAO_DAY', null, 'PIC09', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1kY1Y2doayQgXg54j9BH5xsH3NHsZyr2tqZmtwGLQh0g/edit?gid=1970385017#gid=1970385017', null, 'PIC09', null, false);
   Logger.log('PIC09: ' + JSON.stringify(r));
 }
 
 function testImportPIC10() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC10_VAO_DAY', null, 'PIC10', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1RcaiX-MR-taWUD5hxbWGj_aH4_Ra0TDgTWewWEem-fM/edit?gid=2057573109#gid=2057573109', null, 'PIC10', null, false);
   Logger.log('PIC10: ' + JSON.stringify(r));
 }
 
 function testImportPIC11() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC11_VAO_DAY', null, 'PIC11', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1jWggECv-GhG_ybk_7NishuW2Lb0cXeXlXayOzFv5KgU/edit?gid=1400779779#gid=1400779779', null, 'PIC11', null, false);
   Logger.log('PIC11: ' + JSON.stringify(r));
 }
 
 function testImportPIC12() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC12_VAO_DAY', null, 'PIC12', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1qyEtg8SD__spubxLgW8Vr5O2JI-nrGTgAJHYboKlwfQ/edit?gid=1262195897#gid=1262195897', null, 'PIC12', null, false);
   Logger.log('PIC12: ' + JSON.stringify(r));
 }
 
 function testImportPIC13() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC13_VAO_DAY', null, 'PIC13', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/181muxohTIWaitQF7xsaJGMRG2BuY517zbduoEG4pIvw/edit?gid=1120467208#gid=1120467208', null, 'PIC13', null, false);
   Logger.log('PIC13: ' + JSON.stringify(r));
 }
 
 function testImportPIC14() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC14_VAO_DAY', null, 'PIC14', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1ux9-bBoG_Z5WLlWwVSS2ensivMNOeCPEsCleH8eIIzk/edit?gid=867676644#gid=867676644', null, 'PIC14', null, false);
   Logger.log('PIC14: ' + JSON.stringify(r));
 }
 
 function testImportPIC15() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC15_VAO_DAY', null, 'PIC15', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1hhrMgvXlv9JXSblPizyCk34CFP889k7KcEcTIT2HkqE/edit?gid=681657984#gid=681657984', null, 'PIC15', null, false);
   Logger.log('PIC15: ' + JSON.stringify(r));
 }
 
 function testImportPIC16() {
-  var r = importPicPlanToDatabase('DAN_LINK_PIC16_VAO_DAY', null, 'PIC16', null, false);
+  var r = importPicPlanToDatabase('https://docs.google.com/spreadsheets/d/1GhMrKtUnoRegr8Hf7ThfivAggppafJ-65oTQI5qJAdg/edit?gid=46456607#gid=46456607', null, 'PIC16', null, false);
   Logger.log('PIC16: ' + JSON.stringify(r));
 }
 
