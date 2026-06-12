@@ -114,66 +114,200 @@ const COMMENT_SHEET_NAME = 'CEO_Comments';
 const COMMENT_FOLDER_NAME = 'GSP_NEXT30_Dashboard_Comments';
 
 /* =====================================================
+   PMO NEW MODEL — 16 PIC SHEETS + PMO_ALL_ACTIONS
+===================================================== */
+
+const PIC_SHEETS_CONFIG = [
+  { name: 'PIC01_KinhDoanh',      code: 'PIC01', label: '01 Kinh Doanh' },
+  { name: 'PIC02_SalesTech',      code: 'PIC02', label: '02 Sales Tech' },
+  { name: 'PIC03_SCM',            code: 'PIC03', label: '03 SCM' },
+  { name: 'PIC04_MuaHang',        code: 'PIC04', label: '04 Mua Hàng' },
+  { name: 'PIC05_CongNghe',       code: 'PIC05', label: '05 Công Nghệ' },
+  { name: 'PIC06_CoDien_QLTB',    code: 'PIC06', label: '06 Cơ Điện/QLTB' },
+  { name: 'PIC07_IT_ERP',         code: 'PIC07', label: '07 IT/ERP' },
+  { name: 'PIC08_QA',             code: 'PIC08', label: '08 QA' },
+  { name: 'PIC09_PC',             code: 'PIC09', label: '09 P&C' },
+  { name: 'PIC10_GiamSatTuanThu', code: 'PIC10', label: '10 Giám Sát Tuân Thủ' },
+  { name: 'PIC11_KiemSoatNoiBo',  code: 'PIC11', label: '11 Kiểm Soát Nội Bộ' },
+  { name: 'PIC12_HCNS',           code: 'PIC12', label: '12 HCNS' },
+  { name: 'PIC13_TaiChinhKeToan', code: 'PIC13', label: '13 Tài Chính/Kế Toán' },
+  { name: 'PIC14_GS1',            code: 'PIC14', label: '14 GS1' },
+  { name: 'PIC15_GS5',            code: 'PIC15', label: '15 GS5' },
+  { name: 'PIC16_GS6',            code: 'PIC16', label: '16 GS6' }
+];
+
+const PMO_STANDARD_HEADERS = [
+  'Action ID', 'PIC Code', 'PIC Name', 'Bộ phận/Đơn vị', 'Nhà máy/Khối',
+  'Workstream', 'Nhóm việc', 'Action', 'Output kỳ vọng', 'Owner', 'Phối hợp',
+  'Start Date', 'Deadline', 'Status', 'RAG', '% Tiến độ', 'Update mới nhất',
+  'Risk/SOS', 'CEO Decision', 'PMO Comment', 'Evidence Link',
+  'Source File', 'Last Update', 'Update By'
+];
+
+const PMO_COLUMN_ALIASES = {
+  'Action ID':        ['Action ID', 'Mã dòng (ID)', 'Mã dòng', 'ID', 'STT', 'No.', 'No'],
+  'PIC Code':         ['PIC Code', 'Mã PIC'],
+  'PIC Name':         ['PIC Name', 'Tên PIC'],
+  'Bộ phận/Đơn vị':  ['Bộ phận/Đơn vị', 'Bộ phận', 'Đơn vị', 'Đơn vị / Khối', 'Khối/Bộ phận'],
+  'Nhà máy/Khối':    ['Nhà máy/Khối', 'Nhà máy', 'Factory', 'Site', 'Khối'],
+  'Workstream':       ['Workstream', 'Trục', 'Lĩnh vực', 'Trục chiến lược'],
+  'Nhóm việc':        ['Nhóm việc', 'Nhóm', 'Phân nhóm', 'Group', 'Category'],
+  'Action':           ['Action', 'Kế hoạch hành động', 'Action Plan', 'Việc cần làm', 'Nhiệm vụ', 'Nội dung việc', 'Task', 'Hành động', 'Cam kết hành động'],
+  'Output kỳ vọng':   ['Output kỳ vọng', 'Expected Output', 'Output', 'Kết quả kỳ vọng', 'Deliverable', 'Kết quả đầu ra'],
+  'Owner':            ['Owner', 'PIC', 'PIC Lead', 'Đầu mối', 'Người phụ trách', 'Người chịu trách nhiệm', 'Người thực hiện'],
+  'Phối hợp':         ['Phối hợp', 'Coordinator', 'Người phối hợp', 'Support', 'Hỗ trợ'],
+  'Start Date':       ['Start Date', 'Ngày bắt đầu', 'Start', 'Bắt đầu', 'Ngày KH bắt đầu'],
+  'Deadline':         ['Deadline', 'Hạn hoàn thành', 'Thời hạn', 'Due Date', 'Due', 'Hạn KH'],
+  'Status':           ['Status', 'Trạng thái', 'Tình trạng'],
+  'RAG':              ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo', 'RAG Status'],
+  '% Tiến độ':        ['% Tiến độ', '% Done', '% Hoàn thành', 'Progress', 'Tiến độ', 'Completion %'],
+  'Update mới nhất':  ['Update mới nhất', 'Update', 'Cập nhật', 'Latest Update', 'Cập nhật mới nhất', 'Ghi chú update'],
+  'Risk/SOS':         ['Risk/SOS', 'Risk / SOS', 'Risk', 'SOS', 'Rủi ro', 'Blocker', 'Vướng mắc'],
+  'CEO Decision':     ['CEO Decision', 'CEO Decision Needed', 'CEO cần chốt', 'Cần CEO chốt', 'Cần anh Vinh chốt', 'CEO quyết định'],
+  'PMO Comment':      ['PMO Comment', 'Ghi chú PMO', 'Nhận xét PMO', 'PMO Note'],
+  'Evidence Link':    ['Evidence Link', 'Link bằng chứng', 'Evidence', 'File minh chứng', 'Link minh chứng'],
+  'Source File':      ['Source File', 'File nguồn', 'Source'],
+  'Last Update':      ['Last Update', 'Cập nhật lần cuối', 'Updated At'],
+  'Update By':        ['Update By', 'Người cập nhật', 'Updated By']
+};
+
+// Đọc sheet có standard headers (row 1 = header, row 2+ = data) → internal row format
+function readStandardPMORows_(ss, sheetName) {
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return null;
+  var vals = sheet.getDataRange().getValues();
+  if (vals.length < 2) return null;
+
+  var hdrs = vals[0].map(function(h) { return String(h || '').trim(); });
+  var sheetUrl = ss.getUrl() + '#gid=' + sheet.getSheetId();
+  var rows = [];
+
+  vals.slice(1).forEach(function(row, i) {
+    var obj = {};
+    hdrs.forEach(function(h, j) { if (h) obj[h] = row[j]; });
+
+    var rowId = getVal(obj, ['Action ID', 'Mã dòng (ID)', 'Mã dòng', 'ID', 'STT']);
+    if (!hasText(rowId)) return;
+
+    var rowUrl = ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + (i + 2) + ':Z' + (i + 2);
+    var deadline = formatDate(getVal(obj, ['Deadline', 'Hạn hoàn thành', 'Thời hạn', 'Due Date']));
+    var status   = normalizeStatus(getVal(obj, ['Status', 'Trạng thái', 'Tình trạng']));
+
+    // Workstream: từ cột Workstream, fallback sang PIC Name
+    var ws     = String(getVal(obj, ['Workstream', 'Trục']) || '');
+    var wsDisp = ws || String(getVal(obj, ['PIC Name', 'Bộ phận/Đơn vị']) || '');
+
+    var rowObj = {
+      RowId:             String(rowId),
+      Workstream:        ws || wsDisp,
+      WorkstreamDisplay: wsDisp,
+      SourceSheet:       sheetName,
+      SourceUrl:         sheetUrl,
+      RowUrl:            rowUrl,
+      Unit:              String(getVal(obj, ['Bộ phận/Đơn vị', 'Đơn vị / Khối', 'Đơn vị', 'Nhà máy/Khối']) || ''),
+      PIC:               String(getVal(obj, ['Owner', 'PIC Name', 'PIC', 'PIC Lead', 'Đầu mối']) || ''),
+      Action:            String(getVal(obj, ['Action', 'Kế hoạch hành động', 'Việc cần làm', 'Nhiệm vụ']) || ''),
+      Owner:             String(getVal(obj, ['Owner', 'Người phụ trách', 'Người chịu trách nhiệm']) || ''),
+      Deadline:          deadline,
+      Status:            status,
+      RAG:               normalizeRag(getVal(obj, ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo'])),
+      Risk:              String(getVal(obj, ['Risk/SOS', 'Risk / SOS', 'Risk', 'Rủi ro', 'Vướng mắc']) || ''),
+      CEODecision:       String(getVal(obj, ['CEO Decision', 'CEO cần chốt', 'CEO Decision Needed', 'Cần CEO chốt']) || ''),
+      PMOComment:        String(getVal(obj, ['PMO Comment', 'Ghi chú PMO', 'Nhận xét PMO']) || ''),
+      // Extra fields (new model)
+      PICCode:           String(getVal(obj, ['PIC Code']) || ''),
+      PICName:           String(getVal(obj, ['PIC Name']) || ''),
+      Progress:          String(getVal(obj, ['% Tiến độ', '% Done', '% Hoàn thành']) || ''),
+      Output:            String(getVal(obj, ['Output kỳ vọng', 'Output', 'Expected Output']) || ''),
+      UpdateNote:        String(getVal(obj, ['Update mới nhất', 'Cập nhật mới nhất', 'Update']) || '')
+    };
+    rowObj.IsOverdue    = isPastDeadline(deadline, status);
+    rowObj.DataQuality  = calcRowDataQuality_(rowObj);
+    rowObj.PriorityScore= calcPriorityScore_(rowObj);
+    rows.push(rowObj);
+  });
+  return rows.length > 0 ? rows : null;
+}
+
+/* =====================================================
    DASHBOARD DATA
 ===================================================== */
 
 function getDashboardData() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let rows = [];
+  let dataSource = 'legacy';
 
-  DASHBOARD_SHEETS.forEach(function(config) {
-    const sheet = ss.getSheetByName(config.name);
-    if (!sheet) return;
-
-    const values = sheet.getDataRange().getValues();
-    if (!values || values.length < 4) return;
-
-    const headers = values[2].map(function(h) {
-      return String(h || '').trim();
+  // ── Priority 1: PMO_ALL_ACTIONS (new unified model) ──
+  var allActRows = readStandardPMORows_(ss, 'PMO_ALL_ACTIONS');
+  if (allActRows && allActRows.length > 0) {
+    rows = allActRows;
+    dataSource = 'PMO_ALL_ACTIONS';
+  } else {
+    // ── Priority 2: 16 PIC sheets ──
+    PIC_SHEETS_CONFIG.forEach(function(pic) {
+      var picRows = readStandardPMORows_(ss, pic.name);
+      if (picRows) rows = rows.concat(picRows);
     });
+    if (rows.length > 0) {
+      dataSource = 'PIC_SHEETS';
+    } else {
+      // ── Priority 3: Fallback — 6 workstream sheets cũ ──
+      DASHBOARD_SHEETS.forEach(function(config) {
+        const sheet = ss.getSheetByName(config.name);
+        if (!sheet) return;
 
-    const sheetUrl = ss.getUrl() + '#gid=' + sheet.getSheetId();
+        const values = sheet.getDataRange().getValues();
+        if (!values || values.length < 4) return;
 
-    values.slice(3).forEach(function(row, index) {
-      const obj = {};
+        const headers = values[2].map(function(h) {
+          return String(h || '').trim();
+        });
 
-      headers.forEach(function(h, i) {
-        if (h) obj[h] = row[i];
+        const sheetUrl = ss.getUrl() + '#gid=' + sheet.getSheetId();
+
+        values.slice(3).forEach(function(row, index) {
+          const obj = {};
+
+          headers.forEach(function(h, i) {
+            if (h) obj[h] = row[i];
+          });
+
+          const rowNumber = index + 4;
+          const rowId = getVal(obj, ['Mã dòng (ID)', 'Mã dòng', 'ID']);
+
+          if (!hasText(rowId)) return;
+
+          const rowUrl = ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + rowNumber + ':Z' + rowNumber;
+
+          const rowObj = {
+            RowId: String(rowId || ''),
+            Workstream: config.label,
+            WorkstreamDisplay: config.display,
+            SourceSheet: config.name,
+            SourceUrl: sheetUrl,
+            RowUrl: rowUrl,
+            Unit: String(getVal(obj, ['Đơn vị / Khối', 'Đơn vị', 'Khối', 'Bộ phận', 'Phòng ban']) || ''),
+            PIC: String(getVal(obj, ['PIC Lead', 'PIC', 'Đầu mối']) || ''),
+            Action: String(getVal(obj, ['Kế hoạch hành động', 'Action Plan', 'Action', 'Việc cần làm', 'Cam kết hành động', 'Hành động', 'Nhiệm vụ']) || ''),
+            Owner: String(getVal(obj, ['Owner', 'Người phụ trách', 'Người chịu trách nhiệm']) || ''),
+            Deadline: formatDate(getVal(obj, ['Deadline', 'Hạn hoàn thành', 'Thời hạn'])),
+            Status: normalizeStatus(getVal(obj, ['Status', 'Trạng thái', 'Tình trạng'])),
+            RAG: normalizeRag(getVal(obj, ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo'])),
+            Risk: String(getVal(obj, ['Risk / SOS', 'Risk', 'SOS', 'Rủi ro', 'Blocker', 'Vướng mắc']) || ''),
+            CEODecision: String(getVal(obj, ['CEO Decision Needed', 'CEO cần chốt', 'CEO quyết định', 'Cần CEO chốt', 'Cần anh Vinh chốt']) || ''),
+            PMOComment: String(getVal(obj, ['PMO Comment', 'Ghi chú PMO', 'Nhận xét PMO']) || '')
+          };
+
+          rowObj.IsOverdue = isPastDeadline(rowObj.Deadline, rowObj.Status);
+          rowObj.DataQuality = calcRowDataQuality_(rowObj);
+          rowObj.PriorityScore = calcPriorityScore_(rowObj);
+
+          rows.push(rowObj);
+        });
       });
-
-      const rowNumber = index + 4;
-      const rowId = getVal(obj, ['Mã dòng (ID)', 'Mã dòng', 'ID']);
-
-      if (!hasText(rowId)) return;
-
-      const rowUrl = ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + rowNumber + ':Z' + rowNumber;
-
-      const rowObj = {
-        RowId: String(rowId || ''),
-        Workstream: config.label,
-        WorkstreamDisplay: config.display,
-        SourceSheet: config.name,
-        SourceUrl: sheetUrl,
-        RowUrl: rowUrl,
-        Unit: String(getVal(obj, ['Đơn vị / Khối', 'Đơn vị', 'Khối', 'Bộ phận', 'Phòng ban']) || ''),
-        PIC: String(getVal(obj, ['PIC Lead', 'PIC', 'Đầu mối']) || ''),
-        Action: String(getVal(obj, ['Kế hoạch hành động', 'Action Plan', 'Action', 'Việc cần làm', 'Cam kết hành động', 'Hành động', 'Nhiệm vụ']) || ''),
-        Owner: String(getVal(obj, ['Owner', 'Người phụ trách', 'Người chịu trách nhiệm']) || ''),
-        Deadline: formatDate(getVal(obj, ['Deadline', 'Hạn hoàn thành', 'Thời hạn'])),
-        Status: normalizeStatus(getVal(obj, ['Status', 'Trạng thái', 'Tình trạng'])),
-        RAG: normalizeRag(getVal(obj, ['RAG', 'Đèn RAG', 'Đèn báo', 'Cảnh báo'])),
-        Risk: String(getVal(obj, ['Risk / SOS', 'Risk', 'SOS', 'Rủi ro', 'Blocker', 'Vướng mắc']) || ''),
-        CEODecision: String(getVal(obj, ['CEO Decision Needed', 'CEO cần chốt', 'CEO quyết định', 'Cần CEO chốt', 'Cần anh Vinh chốt']) || ''),
-        PMOComment: String(getVal(obj, ['PMO Comment', 'Ghi chú PMO', 'Nhận xét PMO']) || '')
-      };
-
-      rowObj.IsOverdue = isPastDeadline(rowObj.Deadline, rowObj.Status);
-      rowObj.DataQuality = calcRowDataQuality_(rowObj);
-      rowObj.PriorityScore = calcPriorityScore_(rowObj);
-
-      rows.push(rowObj);
-    });
-  });
+    }
+  }
 
   const doneRows = rows.filter(r => r.Status === 'Done');
   const inProgressRows = rows.filter(r => r.Status === 'In Progress');
@@ -197,6 +331,7 @@ function getDashboardData() {
   const dashboardData = {
     spreadsheetName: ss.getName(),
     spreadsheetUrl: ss.getUrl(),
+    dataSource: dataSource,
     updatedAt: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss'),
 
     summary: {
@@ -1845,6 +1980,314 @@ function testReadSheetSafe() {
   });
 }
 
+
+/* ================================================================
+   PMO — SETUP, IMPORT, SYNC
+================================================================ */
+
+// Tạo 16 PIC sheets, PMO_ALL_ACTIONS, PMO_IMPORT_LOG, PMO_SOURCE_FILES
+function setupPicSheets() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var created = [];
+
+  PIC_SHEETS_CONFIG.forEach(function(pic) {
+    if (!ss.getSheetByName(pic.name)) {
+      var sh = ss.insertSheet(pic.name);
+      sh.getRange(1, 1, 1, PMO_STANDARD_HEADERS.length).setValues([PMO_STANDARD_HEADERS]);
+      sh.setFrozenRows(1);
+      created.push(pic.name);
+    }
+  });
+
+  if (!ss.getSheetByName('PMO_ALL_ACTIONS')) {
+    var sh = ss.insertSheet('PMO_ALL_ACTIONS');
+    sh.getRange(1, 1, 1, PMO_STANDARD_HEADERS.length).setValues([PMO_STANDARD_HEADERS]);
+    sh.setFrozenRows(1);
+    created.push('PMO_ALL_ACTIONS');
+  }
+
+  if (!ss.getSheetByName('PMO_IMPORT_LOG')) {
+    var logHdr = ['Timestamp', 'PIC Code', 'PIC Name', 'Source URL', 'Sheet Name', 'Rows Imported', 'Status', 'Error'];
+    var sh = ss.insertSheet('PMO_IMPORT_LOG');
+    sh.getRange(1, 1, 1, logHdr.length).setValues([logHdr]);
+    sh.setFrozenRows(1);
+    created.push('PMO_IMPORT_LOG');
+  }
+
+  if (!ss.getSheetByName('PMO_SOURCE_FILES')) {
+    var srcHdr = ['PIC Code', 'PIC Name', 'Source URL', 'Sheet Name', 'Last Imported', 'Row Count', 'Active'];
+    var sh = ss.insertSheet('PMO_SOURCE_FILES');
+    sh.getRange(1, 1, 1, srcHdr.length).setValues([srcHdr]);
+    sh.setFrozenRows(1);
+    created.push('PMO_SOURCE_FILES');
+  }
+
+  Logger.log('setupPicSheets: ' + (created.length > 0 ? 'Đã tạo: ' + created.join(', ') : 'Tất cả sheets đã tồn tại'));
+  return { created: created };
+}
+
+/* ----------------------------------------------------------------
+   importPicPlanToDatabase — đọc file Google Sheets nguồn của PIC,
+   map về header chuẩn, ghi vào PIC sheet và log.
+
+   Params:
+     sourceUrl    — URL của Google Sheets file PIC
+     picSheetName — tên sheet trong file nguồn (null = tự tìm)
+     picCode      — VD: 'PIC01'
+     picName      — tên hiển thị (null = lấy từ config)
+     forceReimport— true = ghi đè ngay cả khi đã import trước đó
+
+   Returns: { imported, picCode, targetSheet } hoặc { skipped, reason }
+---------------------------------------------------------------- */
+function importPicPlanToDatabase(sourceUrl, picSheetName, picCode, picName, forceReimport) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ts = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+
+  if (!sourceUrl) throw new Error('sourceUrl là bắt buộc');
+  if (!picCode)   throw new Error('picCode là bắt buộc');
+
+  var picCfg = null;
+  for (var pi = 0; pi < PIC_SHEETS_CONFIG.length; pi++) {
+    if (PIC_SHEETS_CONFIG[pi].code === picCode) { picCfg = PIC_SHEETS_CONFIG[pi]; break; }
+  }
+  if (!picCfg) throw new Error('Không tìm thấy PIC config cho code: ' + picCode);
+
+  var targetSheetName = picCfg.name;
+  if (!picName) picName = picCfg.label;
+
+  // Kiểm tra đã import chưa (trừ khi forceReimport)
+  if (!forceReimport) {
+    var srcFileSh = ss.getSheetByName('PMO_SOURCE_FILES');
+    if (srcFileSh && srcFileSh.getLastRow() > 1) {
+      var sfVals = srcFileSh.getDataRange().getValues();
+      for (var si = 1; si < sfVals.length; si++) {
+        if (String(sfVals[si][0]) === picCode && String(sfVals[si][2]) === sourceUrl) {
+          Logger.log('File đã import. Dùng forceReimport=true để import lại.');
+          return { skipped: true, reason: 'Already imported on ' + sfVals[si][4] };
+        }
+      }
+    }
+  }
+
+  // Mở file nguồn
+  var srcSS;
+  try { srcSS = SpreadsheetApp.openByUrl(sourceUrl); }
+  catch(e) {
+    pmoLogImport_(ss, ts, picCode, picName, sourceUrl, picSheetName || '', 0, 'ERROR', 'Cannot open: ' + e.message);
+    throw new Error('Không mở được file nguồn: ' + e.message);
+  }
+
+  // Tìm sheet nguồn
+  var srcSheet;
+  if (picSheetName) {
+    srcSheet = srcSS.getSheetByName(picSheetName);
+    if (!srcSheet) {
+      pmoLogImport_(ss, ts, picCode, picName, sourceUrl, picSheetName, 0, 'ERROR', 'Sheet not found: ' + picSheetName);
+      throw new Error('Sheet "' + picSheetName + '" không tồn tại trong file nguồn');
+    }
+  } else {
+    // Lấy sheet có nhiều dữ liệu nhất
+    var sheets = srcSS.getSheets();
+    var maxRows = 0;
+    sheets.forEach(function(sh) {
+      var lr = sh.getLastRow();
+      if (lr > maxRows) { maxRows = lr; srcSheet = sh; }
+    });
+    if (!srcSheet) throw new Error('File không có sheet nào');
+    picSheetName = srcSheet.getName();
+  }
+
+  // Đọc dữ liệu nguồn
+  var values = srcSheet.getDataRange().getValues();
+  if (values.length < 2) {
+    pmoLogImport_(ss, ts, picCode, picName, sourceUrl, picSheetName, 0, 'WARN', 'Sheet empty');
+    return { imported: 0, warning: 'Sheet nguồn không có dữ liệu' };
+  }
+
+  // Tìm header row (row có nhiều ô nhất trong 6 row đầu)
+  var headerRowIdx = 0;
+  var bestCount = 0;
+  for (var hi = 0; hi < Math.min(6, values.length); hi++) {
+    var cnt = values[hi].filter(function(c) { return String(c || '').trim() !== ''; }).length;
+    if (cnt > bestCount) { bestCount = cnt; headerRowIdx = hi; }
+  }
+  var srcHeaders = values[headerRowIdx].map(function(h) { return String(h || '').trim(); });
+
+  // Build column index map: stdCol → source column index
+  var colIdx = {};
+  Object.keys(PMO_COLUMN_ALIASES).forEach(function(stdCol) {
+    var aliases = PMO_COLUMN_ALIASES[stdCol];
+    for (var ai = 0; ai < aliases.length; ai++) {
+      var aliasLow = aliases[ai].toLowerCase();
+      for (var ci = 0; ci < srcHeaders.length; ci++) {
+        if (srcHeaders[ci].toLowerCase() === aliasLow) {
+          if (!(stdCol in colIdx)) colIdx[stdCol] = ci;
+          break;
+        }
+      }
+    }
+  });
+
+  // Map từng row dữ liệu sang standard headers
+  var outputRows = [];
+  var rowNum = 0;
+  for (var ri = headerRowIdx + 1; ri < values.length; ri++) {
+    var srcRow = values[ri];
+    var nonEmpty = srcRow.filter(function(c) { return String(c || '').trim() !== ''; }).length;
+    if (nonEmpty === 0) continue;
+    rowNum++;
+
+    var newRow = PMO_STANDARD_HEADERS.map(function(col) {
+      if (col === 'PIC Code')   return picCode;
+      if (col === 'PIC Name')   return picName;
+      if (col === 'Source File') return srcSS.getName() + ' | ' + picSheetName;
+      if (col === 'Last Update') return ts;
+      if (col === 'Update By')   return 'PMO Import';
+      if (col === 'Action ID') {
+        var rawId = colIdx[col] !== undefined ? String(srcRow[colIdx[col]] || '').trim() : '';
+        return rawId || (picCode + '-' + String(rowNum).padStart(4, '0'));
+      }
+      if (colIdx[col] !== undefined) {
+        var val = srcRow[colIdx[col]];
+        if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
+        return String(val === null || val === undefined ? '' : val);
+      }
+      return '';
+    });
+    outputRows.push(newRow);
+  }
+
+  if (outputRows.length === 0) {
+    pmoLogImport_(ss, ts, picCode, picName, sourceUrl, picSheetName, 0, 'WARN', 'No data rows after mapping');
+    return { imported: 0, warning: 'Không tìm thấy dòng dữ liệu sau khi map cột' };
+  }
+
+  // Ghi vào PIC sheet
+  var targetSheet = ss.getSheetByName(targetSheetName) || ss.insertSheet(targetSheetName);
+  targetSheet.clearContents();
+  var allData = [PMO_STANDARD_HEADERS].concat(outputRows);
+  targetSheet.getRange(1, 1, allData.length, PMO_STANDARD_HEADERS.length).setValues(allData);
+  targetSheet.setFrozenRows(1);
+
+  // Log
+  pmoLogImport_(ss, ts, picCode, picName, sourceUrl, picSheetName, outputRows.length, 'OK', '');
+  pmoUpdateSourceFiles_(ss, picCode, picName, sourceUrl, picSheetName, ts, outputRows.length);
+
+  Logger.log('importPicPlanToDatabase: ' + outputRows.length + ' rows → ' + targetSheetName);
+  return { imported: outputRows.length, picCode: picCode, targetSheet: targetSheetName };
+}
+
+function pmoLogImport_(ss, ts, picCode, picName, url, sheetName, rowCount, status, error) {
+  var sh = ss.getSheetByName('PMO_IMPORT_LOG');
+  if (!sh) return;
+  sh.appendRow([ts, picCode, picName, url, sheetName, rowCount, status, error]);
+}
+
+function pmoUpdateSourceFiles_(ss, picCode, picName, url, sheetName, ts, rowCount) {
+  var sh = ss.getSheetByName('PMO_SOURCE_FILES');
+  if (!sh) return;
+  var data = sh.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === picCode && String(data[i][2]) === url) {
+      sh.getRange(i + 1, 1, 1, 7).setValues([[picCode, picName, url, sheetName, ts, rowCount, 'TRUE']]);
+      return;
+    }
+  }
+  sh.appendRow([picCode, picName, url, sheetName, ts, rowCount, 'TRUE']);
+}
+
+/* ----------------------------------------------------------------
+   syncPicSheetsToPmoAllActions — gom dữ liệu từ 16 PIC sheets
+   vào PMO_ALL_ACTIONS. Xóa dữ liệu cũ, ghi lại toàn bộ.
+---------------------------------------------------------------- */
+function syncPicSheetsToPmoAllActions() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ts = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+  var allRows = [];
+  var picReport = [];
+
+  PIC_SHEETS_CONFIG.forEach(function(pic) {
+    var sheet = ss.getSheetByName(pic.name);
+    if (!sheet || sheet.getLastRow() < 2) {
+      picReport.push({ pic: pic.code, rows: 0 });
+      return;
+    }
+    var vals = sheet.getDataRange().getValues();
+    var hdrs = vals[0].map(function(h) { return String(h || '').trim(); });
+    // Chỉ đọc sheet có standard header
+    if (hdrs[0] !== 'Action ID') {
+      picReport.push({ pic: pic.code, rows: 0, skip: 'No standard header' });
+      return;
+    }
+    var count = 0;
+    vals.slice(1).forEach(function(row) {
+      var nonEmpty = row.filter(function(c) { return String(c || '').trim() !== ''; }).length;
+      if (nonEmpty === 0) return;
+      // Map theo position (PIC sheets dùng standard headers)
+      var mapped = PMO_STANDARD_HEADERS.map(function(h) {
+        var idx = hdrs.indexOf(h);
+        return idx >= 0 ? row[idx] : '';
+      });
+      allRows.push(mapped);
+      count++;
+    });
+    picReport.push({ pic: pic.code, rows: count });
+  });
+
+  var allSheet = ss.getSheetByName('PMO_ALL_ACTIONS') || ss.insertSheet('PMO_ALL_ACTIONS');
+  allSheet.clearContents();
+  var output = [PMO_STANDARD_HEADERS].concat(allRows);
+  allSheet.getRange(1, 1, output.length, PMO_STANDARD_HEADERS.length).setValues(output);
+  allSheet.setFrozenRows(1);
+
+  var total = allRows.length;
+  Logger.log('syncPicSheetsToPmoAllActions: ' + total + ' rows → PMO_ALL_ACTIONS (' + ts + ')');
+  Logger.log('Per-PIC: ' + JSON.stringify(picReport));
+  return { total: total, updatedAt: ts, perPic: picReport };
+}
+
+/* ----------------------------------------------------------------
+   getPicPmoSummary — trả JSON tóm tắt theo từng PIC (dùng cho web)
+---------------------------------------------------------------- */
+function getPicPmoSummary() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var result = [];
+
+  PIC_SHEETS_CONFIG.forEach(function(pic) {
+    var rows = readStandardPMORows_(ss, pic.name);
+    if (!rows) { result.push({ code: pic.code, label: pic.label, total: 0 }); return; }
+    var done    = rows.filter(function(r) { return r.Status === 'Done'; }).length;
+    var overdue = rows.filter(function(r) { return r.IsOverdue; }).length;
+    var red     = rows.filter(function(r) { return r.RAG === 'Red'; }).length;
+    result.push({ code: pic.code, label: pic.label, total: rows.length, done: done, overdue: overdue, red: red });
+  });
+
+  return { pics: result, updatedAt: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm:ss') };
+}
+
+/* ----------------------------------------------------------------
+   TEST helpers
+---------------------------------------------------------------- */
+function testSetupPicSheets() {
+  var r = setupPicSheets();
+  Logger.log('Created: ' + JSON.stringify(r.created));
+}
+
+function testSyncPicSheets() {
+  var r = syncPicSheetsToPmoAllActions();
+  Logger.log('Sync result: ' + JSON.stringify(r));
+}
+
+function testImportPic01(sourceUrl) {
+  // Gọi: testImportPic01('https://docs.google.com/spreadsheets/d/...')
+  var r = importPicPlanToDatabase(sourceUrl, null, 'PIC01', null, true);
+  Logger.log('Import result: ' + JSON.stringify(r));
+}
+
+function testGetDashboardDataSource() {
+  var data = getDashboardData();
+  Logger.log('dataSource: ' + data.dataSource + ' | rows: ' + (data.summary ? data.summary.totalActions : '?'));
+}
 
 /* ================================================================
    SETUP DATABASE — setupGspNext30Database()
