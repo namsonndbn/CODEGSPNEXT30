@@ -2278,10 +2278,87 @@ function testSyncPicSheets() {
   Logger.log('Sync result: ' + JSON.stringify(r));
 }
 
-function testImportPic01(sourceUrl) {
-  // Gọi: testImportPic01('https://docs.google.com/spreadsheets/d/...')
-  var r = importPicPlanToDatabase(sourceUrl, null, 'PIC01', null, true);
-  Logger.log('Import result: ' + JSON.stringify(r));
+// ── Chạy từng function trong Apps Script Editor để import file PIC ──
+// Dán link Google Sheets thật vào mỗi function rồi Run.
+
+function testImportPIC01() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC01_VAO_DAY', null, 'PIC01', null, false);
+  Logger.log('PIC01: ' + JSON.stringify(r));
+}
+
+function testImportPIC02() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC02_VAO_DAY', null, 'PIC02', null, false);
+  Logger.log('PIC02: ' + JSON.stringify(r));
+}
+
+function testImportPIC03() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC03_VAO_DAY', null, 'PIC03', null, false);
+  Logger.log('PIC03: ' + JSON.stringify(r));
+}
+
+function testImportPIC04() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC04_VAO_DAY', null, 'PIC04', null, false);
+  Logger.log('PIC04: ' + JSON.stringify(r));
+}
+
+function testImportPIC05() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC05_VAO_DAY', null, 'PIC05', null, false);
+  Logger.log('PIC05: ' + JSON.stringify(r));
+}
+
+function testImportPIC06() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC06_VAO_DAY', null, 'PIC06', null, false);
+  Logger.log('PIC06: ' + JSON.stringify(r));
+}
+
+function testImportPIC07() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC07_VAO_DAY', null, 'PIC07', null, false);
+  Logger.log('PIC07: ' + JSON.stringify(r));
+}
+
+function testImportPIC08() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC08_VAO_DAY', null, 'PIC08', null, false);
+  Logger.log('PIC08: ' + JSON.stringify(r));
+}
+
+function testImportPIC09() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC09_VAO_DAY', null, 'PIC09', null, false);
+  Logger.log('PIC09: ' + JSON.stringify(r));
+}
+
+function testImportPIC10() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC10_VAO_DAY', null, 'PIC10', null, false);
+  Logger.log('PIC10: ' + JSON.stringify(r));
+}
+
+function testImportPIC11() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC11_VAO_DAY', null, 'PIC11', null, false);
+  Logger.log('PIC11: ' + JSON.stringify(r));
+}
+
+function testImportPIC12() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC12_VAO_DAY', null, 'PIC12', null, false);
+  Logger.log('PIC12: ' + JSON.stringify(r));
+}
+
+function testImportPIC13() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC13_VAO_DAY', null, 'PIC13', null, false);
+  Logger.log('PIC13: ' + JSON.stringify(r));
+}
+
+function testImportPIC14() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC14_VAO_DAY', null, 'PIC14', null, false);
+  Logger.log('PIC14: ' + JSON.stringify(r));
+}
+
+function testImportPIC15() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC15_VAO_DAY', null, 'PIC15', null, false);
+  Logger.log('PIC15: ' + JSON.stringify(r));
+}
+
+function testImportPIC16() {
+  var r = importPicPlanToDatabase('DAN_LINK_PIC16_VAO_DAY', null, 'PIC16', null, false);
+  Logger.log('PIC16: ' + JSON.stringify(r));
 }
 
 function testGetDashboardDataSource() {
