@@ -2704,7 +2704,7 @@ function getToActionCenterData() {
       else            inPlan.push(a);
     }
 
-    if (!hasText(a.PIC) && !hasText(a.Owner) && active) noOwner.push(a);
+    if ((isNeedAssign_(a.PIC) || isNeedAssign_(a.Owner)) && active) noOwner.push(a);
     if (hasText(a.CEONote) && !isNoValue_(a.CEONote))    ceoList.push(a);
   });
 
@@ -2794,6 +2794,13 @@ function buildStatusCounts_(rows, field) {
 function isNoValue_(v) {
   var s = String(v || '').toLowerCase().trim();
   return !s || s === 'không' || s === 'khong' || s === 'không cần' || s === 'no' || s === 'n/a';
+}
+
+function isNeedAssign_(v) {
+  var s = String(v || '').trim().toLowerCase();
+  return !s || s === 'cần phân công' || s === 'can phan cong'
+    || s === 'chưa phân công' || s === 'chua phan cong'
+    || s === 'tbd' || s === 'chưa có' || s === 'chua co';
 }
 
 /* ── Normalize TO_ISSUES row ── */

@@ -1713,11 +1713,11 @@
     <div class="toa-section-hdr">⚡ Tình hình xử lý action</div>
     <div class="mod-summary-bar">
       <div class="mod-summary-card"><div class="mod-summary-val" id="toa-act-total">—</div><div class="mod-summary-lbl">Tổng action</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-24h">—</div><div class="mod-summary-lbl">🔴 Xử lý ngay 24h</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val amber" id="toa-act-72h">—</div><div class="mod-summary-lbl">🟡 Xử lý khẩn 72h</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-noowner">—</div><div class="mod-summary-lbl">❓ Chưa có Owner</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val gold" id="toa-act-ceo">—</div><div class="mod-summary-lbl">👑 CEO cần chốt</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val blue" id="toa-act-inprogress">—</div><div class="mod-summary-lbl">🔵 Đang xử lý</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-overdue">—</div><div class="mod-summary-lbl">⏰ Quá hạn</div></div>
       <div class="mod-summary-card"><div class="mod-summary-val green" id="toa-act-done">—</div><div class="mod-summary-lbl">✅ Hoàn thành</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-noowner">—</div><div class="mod-summary-lbl">❓ Chờ phân công</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val gold" id="toa-act-ceo">—</div><div class="mod-summary-lbl">👑 CEO cần chốt</div></div>
     </div>
 
     <div class="toa-factory-bar" id="toa-factory-bar">
@@ -1729,7 +1729,7 @@
       <button class="toa-tab" onclick="toaSwitchTab('24h',this)">🔴 24h <span id="toa-cnt-24h" class="toa-tab-cnt">0</span></button>
       <button class="toa-tab" onclick="toaSwitchTab('72h',this)">🟡 72h <span id="toa-cnt-72h" class="toa-tab-cnt amber">0</span></button>
       <button class="toa-tab" onclick="toaSwitchTab('plan',this)">📌 Kế hoạch</button>
-      <button class="toa-tab" onclick="toaSwitchTab('noowner',this)">❓ Chưa owner <span id="toa-cnt-noowner" class="toa-tab-cnt">0</span></button>
+      <button class="toa-tab" onclick="toaSwitchTab('noowner',this)">❓ Chờ phân công <span id="toa-cnt-noowner" class="toa-tab-cnt">0</span></button>
       <button class="toa-tab" onclick="toaSwitchTab('ceo',this)">👑 CEO chốt <span id="toa-cnt-ceo" class="toa-tab-cnt amber">0</span></button>
       <button class="toa-tab" onclick="toaSwitchTab('issues',this)">🔍 Vấn đề <span id="toa-cnt-issues" class="toa-tab-cnt gray">0</span></button>
       <button class="toa-tab" onclick="toaSwitchTab('files',this)">📂 File nguồn <span id="toa-cnt-files" class="toa-tab-cnt green">0</span></button>
@@ -3691,12 +3691,31 @@
       var issues  = toaFilterByFactory(d.issues  || []);
       var actions = toaFilterByFactory(d.actions || []);
 
+      // Helper: coi "Cần phân công" / blank là chưa phân công
+      function isNeedsAssign(v) {
+        var s = String(v || '').trim().toLowerCase();
+        return !s || s === 'cần phân công' || s === 'can phan cong'
+          || s === 'chưa phân công' || s === 'chua phan cong'
+          || s === 'tbd' || s === 'chưa có' || s === 'chua co';
+      }
+
       // Recompute urgency / special lists
       var urgent24h = [], urgent72h = [], inPlan = [], noOwner = [], ceoList = [];
+      var inProgressList = [], overdueList = [];
       actions.forEach(function(a) {
         var planType = (a.PlanType || '').toLowerCase();
         var dl       = a.Deadline ? (typeof a.Deadline === 'string' ? new Date(a.Deadline.split('/').reverse().join('-')) : a.Deadline) : null;
-        var active   = (a.Status !== 'Done');
+        var status   = (a.Status || '').toLowerCase();
+        var active   = status !== 'done' && status !== 'hoàn thành' && status !== 'hoan thanh';
+
+        // Đang xử lý
+        if (status === 'in progress' || status === 'đang xử lý' || status === 'dang xu ly') {
+          inProgressList.push(a);
+        }
+        // Quá hạn: IsOverdue flag từ GAS hoặc tính lại
+        if (a.IsOverdue || (dl && dl < now && active)) {
+          overdueList.push(a);
+        }
         if (active) {
           var is24 = planType.includes('24') || planType.includes('ngay')  || (dl && dl <= in24h);
           var is72 = !is24 && (planType.includes('72') || planType.includes('khẩn') || planType.includes('khan') || (dl && dl > in24h && dl <= in72h));
@@ -3704,7 +3723,7 @@
           else if (is72) urgent72h.push(a);
           else           inPlan.push(a);
         }
-        if (!a.PIC && !a.Owner && active) noOwner.push(a);
+        if ((isNeedsAssign(a.PIC) || isNeedsAssign(a.Owner)) && active) noOwner.push(a);
         if (a.CEONote && a.CEONote !== '' && a.CEONote.toLowerCase() !== 'không' && a.CEONote.toLowerCase() !== 'no') ceoList.push(a);
       });
 
@@ -3736,13 +3755,13 @@
       st('toa-iss-amber', issRAG.Amber || 0);
       st('toa-iss-green', issRAG.Green || 0);
       st('toa-iss-open',  issues.filter(function(i) { return i.Status !== 'Đã xử lý' && i.Status !== 'Đóng'; }).length);
-      st('toa-act-total',   actions.length);
-      st('toa-act-24h',     urgent24h.length);
-      st('toa-act-72h',     urgent72h.length);
-      st('toa-act-noowner', noOwner.length);
-      st('toa-act-ceo',     ceoList.length);
-      st('toa-act-done',    done.length);
-      st('toa-badge',       actions.length + ' action  /  ' + issues.length + ' vấn đề' + label);
+      st('toa-act-total',      actions.length);
+      st('toa-act-inprogress', inProgressList.length);
+      st('toa-act-overdue',    overdueList.length);
+      st('toa-act-done',       done.length);
+      st('toa-act-noowner',    noOwner.length);
+      st('toa-act-ceo',        ceoList.length);
+      st('toa-badge',          actions.length + ' action  /  ' + issues.length + ' vấn đề' + label);
       st('toa-cnt-24h',     urgent24h.length);
       st('toa-cnt-72h',     urgent72h.length);
       st('toa-cnt-noowner', noOwner.length);
@@ -3806,7 +3825,7 @@
       else if (tab === '24h')     toaRenderActionsTable(f.urgent24h    || [], '🔴 Xử lý ngay trong 24h');
       else if (tab === '72h')     toaRenderActionsTable(f.urgent72h    || [], '🟡 Xử lý khẩn trong 72h');
       else if (tab === 'plan')    toaRenderActionsTable(f.inPlan       || [], '📌 Đưa vào kế hoạch xử lý');
-      else if (tab === 'noowner') toaRenderActionsTable(f.noOwnerList  || [], '❓ Action chưa có Owner');
+      else if (tab === 'noowner') toaRenderActionsTable(f.noOwnerList  || [], '❓ Chờ phân công (PIC/Owner chưa được chỉ định)');
       else if (tab === 'ceo')     toaRenderActionsTable(f.ceoList      || [], '👑 CEO cần quyết / phê duyệt');
       else if (tab === 'issues')  toaRenderIssuesTable(f.issues        || []);
       else if (tab === 'files')   toaRenderEvidenceFiles(f.evidenceFiles || []);
@@ -3819,8 +3838,10 @@
         el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">Không có action nào trong nhóm này.</div>';
         return;
       }
+      var showFactory = toaActiveFactory === 'all';
       var html = '<div class="toa-tab-label">' + safe(title) + ' &mdash; ' + records.length + ' action</div>'
         + '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>'
+        + (showFactory ? '<th>NM</th>' : '')
         + '<th>ID</th><th>Khu vực</th><th>Nội dung action</th><th>PIC</th><th>Owner</th>'
         + '<th>Deadline</th><th>Loại</th><th>Trạng thái</th><th>CEO cần biết</th><th>File nguồn</th>'
         + '</tr></thead><tbody>';
@@ -3828,12 +3849,15 @@
         var evidBtn = r.EvidenceLink
           ? '<a class="toa-open-btn" href="' + safe(r.EvidenceLink) + '" target="_blank">📂 Mở file</a>'
           : (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗</a>' : '—');
+        var picNeedAssign = !r.PIC || /cần phân công|tbd|chưa có/i.test(r.PIC);
+        var ownerNeedAssign = !r.Owner || /cần phân công|tbd|chưa có/i.test(r.Owner);
         html += '<tr' + (r.IsOverdue ? ' style="background:#fef2f2"' : (r.Status === 'Done' ? ' style="opacity:.55"' : '')) + '>'
+          + (showFactory ? '<td style="font-size:11px;font-weight:600;color:#064e3b">' + safe(r.Factory || r.factory || '') + '</td>' : '')
           + '<td style="font-size:11px;color:#6b7280">' + safe(r.ActionID || r.RowId) + '</td>'
           + '<td>' + safe(r.Area) + '</td>'
           + '<td>' + safe(r.Action) + '</td>'
-          + '<td>' + safe(r.PIC) + '</td>'
-          + '<td>' + (r.Owner ? safe(r.Owner) : '<span style="color:#dc2626;font-weight:600">⚠ Chưa có</span>') + '</td>'
+          + '<td>' + (picNeedAssign ? '<span style="color:#dc2626;font-weight:600">⚠ ' + (r.PIC || 'Chưa có') + '</span>' : safe(r.PIC)) + '</td>'
+          + '<td>' + (ownerNeedAssign ? '<span style="color:#dc2626;font-weight:600">⚠ ' + (r.Owner || 'Chưa có') + '</span>' : safe(r.Owner)) + '</td>'
           + '<td>' + safe(r.Deadline) + '</td>'
           + '<td style="font-size:11px;color:#6b7280">' + safe(r.PlanType || r.Priority || '') + '</td>'
           + '<td>' + modStatusBadge(r.Status) + '</td>'
@@ -3905,7 +3929,8 @@
       var areaFilter = ((document.getElementById('toa-filter-area')   || {}).value || '');
       var statFilter = ((document.getElementById('toa-filter-status') || {}).value || '');
       var tabPool    = { all: 'actions', '24h': 'urgent24h', '72h': 'urgent72h', plan: 'inPlan', noowner: 'noOwnerList', ceo: 'ceoList' };
-      var pool       = toaCache[tabPool[toaActiveTab] || 'actions'] || [];
+      var src        = (toaCache._filtered) || toaCache;
+      var pool       = src[tabPool[toaActiveTab] || 'actions'] || [];
       var filtered   = pool.filter(function(r) {
         var matchKw   = !kw   || ((r.Action||'') + (r.PIC||'') + (r.Owner||'') + (r.Area||'') + (r.CEONote||'')).toLowerCase().includes(kw);
         var matchArea = !areaFilter || (r.Area||'') === areaFilter;
