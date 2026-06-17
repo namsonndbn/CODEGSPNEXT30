@@ -21,6 +21,7 @@ function doGet(e) {
     }
   }
   if (action === 'getMeetingMinutes')   return jsonOut(getMeetingMinutesData());
+  if (action === 'getMeetingCenter')    return jsonOut(getMeetingCenterData());
   if (action === 'getRiskSOS')          return jsonOut(getRiskSOSData());
   if (action === 'getCEODecisions')     return jsonOut(getCEODecisionsData());
   if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
@@ -407,16 +408,23 @@ function getDashboardData() {
     var rawRisks     = readSheetSafe('RISK_SOS');
     var rawDecisions = readSheetSafe('CEO_DECISIONS');
     var rawMinutes   = readSheetSafe('MEETING_MINUTES');
+    var rawTopics    = readSheetSafe('MEETING_TOPICS');
+    var rawMeetActs  = readSheetSafe('MEETING_ACTIONS');
+    var meetMinutesFull = rawMinutes.map(normalizeMeetingMinutesFull_);
     var ccData = {
       pmoActions:     rows,
       ceoProjects:    rawProjects.map(normalizeCEOProject_),
       toActions:      dashboardData.toActions || [],
       riskSos:        rawRisks.map(normalizeRiskSOS_),
       ceoDecisions:   rawDecisions.map(normalizeCEODecision_),
-      meetingMinutes: rawMinutes.map(normalizeMeetingMinutes_)
+      meetingTopics:  rawTopics.map(normalizeMeetingTopic_),
+      meetingMinutes: meetMinutesFull
     };
     dashboardData.commandCenterSummary = buildCommandCenterSummary(ccData);
-    dashboardData.ceoProjects = ccData.ceoProjects;
+    dashboardData.ceoProjects    = ccData.ceoProjects;
+    dashboardData.meetingTopics  = ccData.meetingTopics;
+    dashboardData.meetingMinutes = meetMinutesFull;
+    dashboardData.meetingActions = rawMeetActs.map(normalizeMeetingAction_);
   } catch(e) {
     Logger.log('getDashboardData [commandCenterSummary]: ' + e.message);
     dashboardData.commandCenterSummary = {};
@@ -1781,23 +1789,93 @@ function normalizeMeetingMinutes_(r, i) {
   return {
     MeetingID:    String(r['Meeting ID']           || ('MTG-' + String(i + 1).padStart(3, '0'))),
     Date:         formatDate(r['Ngày họp']         || ''),
-    Topic:        String(r['Chủ đề họp']           || r['Chủ đề'] || ''),
+    Topic:        String(r['Chủ đề họp']           || r['Chủ đề biên bản'] || r['Chủ đề'] || ''),
     Chair:        String(r['Người chủ trì']        || ''),
     Attendees:    String(r['Thành phần tham dự']   || r['Thành phần'] || ''),
     Scope:        String(r['Phạm vi']              || ''),
-    Summary:      String(r['Tóm tắt chính']        || r['Tóm tắt'] || ''),
-    CEODirective: String(r['Chỉ đạo CEO']          || ''),
+    Summary:      String(r['Tóm tắt chính']        || r['Tóm tắt nhanh biên bản'] || r['Tóm tắt'] || ''),
+    CEODirective: String(r['Chỉ đạo CEO / Nội dung đã chốt'] || r['Chỉ đạo CEO'] || r['Nội dung đã chốt'] || ''),
     Decisions:    String(r['Quyết định đã chốt']   || ''),
     Actions:      String(r['Action phát sinh']      || ''),
     RiskSOS:      String(r['Risk/SOS phát sinh']    || r['Risk SOS phát sinh'] || ''),
-    CEODecision:  String(r['CEO cần quyết tiếp']    || ''),
+    CEODecision:  String(r['CEO cần chốt']          || r['CEO cần quyết tiếp'] || ''),
     FileMinutes:  String(r['File biên bản']         || ''),
-    FileAudio:    String(r['File ghi âm']           || r['File transcript'] || ''),
-    RecordedBy:   String(r['Người lập biên bản']    || ''),
-    Status:       String(r['Trạng thái']            || 'Nháp'),
+    FileAudio:    String(r['File ghi âm/transcript']|| r['File ghi âm'] || r['File transcript'] || ''),
+    RecordedBy:   String(r['Người nhập']            || r['Người lập biên bản'] || ''),
+    Status:       String(r['Trạng thái biên bản']   || r['Trạng thái'] || 'Nháp'),
     SecretNote:   String(r['Ghi chú bảo mật']       || ''),
-    DQ:           calcRowDataQuality_({ Action: r['Chủ đề họp'] || '', Owner: r['Người lập biên bản'] || '', PIC: r['Người chủ trì'] || '', Deadline: r['Ngày họp'] || '', Status: r['Trạng thái'] || '', RAG: '' })
+    DQ:           calcRowDataQuality_({ Action: r['Chủ đề họp'] || r['Chủ đề biên bản'] || '', Owner: r['Người nhập'] || r['Người lập biên bản'] || '', PIC: r['Người chủ trì'] || '', Deadline: r['Ngày họp'] || '', Status: r['Trạng thái biên bản'] || r['Trạng thái'] || '', RAG: '' })
   };
+}
+
+/* ── Normalize MEETING_TOPICS ── */
+function normalizeMeetingTopic_(r, i) {
+  return {
+    TopicID:   String(r['Topic ID']            || ('TOP-' + String(i + 1).padStart(3, '0'))),
+    TopicName: String(r['Topic Name']          || r['Tên Topic'] || '').trim(),
+    Module:    String(r['Nhóm/Module']         || r['Nhóm'] || '').trim(),
+    Desc:      String(r['Mô tả chủ đề']        || r['Mô tả'] || '').trim(),
+    Summary:   String(r['Tóm tắt nhanh Topic'] || r['Tóm tắt'] || '').trim(),
+    Owner:     String(r['Owner theo dõi']       || '').trim(),
+    Status:    String(r['Trạng thái']           || 'Đang diễn ra').trim(),
+    Note:      String(r['Ghi chú']             || '').trim()
+  };
+}
+
+/* ── Normalize MEETING_MINUTES full format ── */
+function normalizeMeetingMinutesFull_(r, i) {
+  return {
+    MeetingID:    String(r['Meeting ID']              || ('MTG-' + String(i + 1).padStart(3, '0'))),
+    TopicID:      String(r['Topic ID']                || '').trim(),
+    Date:         formatDate(r['Ngày họp']            || ''),
+    Topic:        String(r['Chủ đề biên bản']         || r['Chủ đề họp'] || r['Chủ đề'] || '').trim(),
+    Module:       String(r['Nhóm/Module']             || r['Nhóm'] || '').trim(),
+    Chair:        String(r['Người chủ trì']           || '').trim(),
+    Attendees:    String(r['Thành phần tham dự']      || r['Thành phần'] || '').trim(),
+    Summary:      String(r['Tóm tắt nhanh biên bản']  || r['Tóm tắt chính'] || r['Tóm tắt'] || '').trim(),
+    CEODirective: String(r['Chỉ đạo CEO / Nội dung đã chốt'] || r['Chỉ đạo CEO'] || r['Nội dung đã chốt'] || '').trim(),
+    Actions:      String(r['Action phát sinh']         || '').trim(),
+    CEODecision:  String(r['CEO cần chốt']             || r['CEO cần quyết tiếp'] || '').trim(),
+    Status:       String(r['Trạng thái biên bản']      || r['Trạng thái'] || 'Nháp').trim(),
+    FileMinutes:  String(r['File biên bản']            || '').trim(),
+    FileAudio:    String(r['File ghi âm/transcript']   || r['File ghi âm'] || r['File transcript'] || '').trim(),
+    RecordedBy:   String(r['Người nhập']               || r['Người lập biên bản'] || '').trim(),
+    UpdatedAt:    formatDate(r['Ngày cập nhật']        || ''),
+    Note:         String(r['Ghi chú']                 || '').trim()
+  };
+}
+
+/* ── Normalize MEETING_ACTIONS ── */
+function normalizeMeetingAction_(r, i) {
+  var rag      = normalizeRag(r['RAG'] || '');
+  var deadline = formatDate(r['Deadline'] || '');
+  var status   = String(r['Trạng thái'] || 'Chưa bắt đầu').trim();
+  return {
+    ActionID:    String(r['Action ID']         || ('MACT-' + String(i + 1).padStart(3, '0'))),
+    TopicID:     String(r['Topic ID']          || '').trim(),
+    MeetingID:   String(r['Meeting ID']        || '').trim(),
+    Date:        formatDate(r['Ngày họp']      || ''),
+    Module:      String(r['Nhóm/Module']       || '').trim(),
+    Action:      String(r['Nội dung action']   || '').trim(),
+    Owner:       String(r['Owner/PIC']         || r['PIC'] || '').trim(),
+    CoOwner:     String(r['Phối hợp']          || '').trim(),
+    Deadline:    deadline,
+    Output:      String(r['Đầu ra kỳ vọng']    || '').trim(),
+    Status:      status,
+    RAG:         rag,
+    CEODecision: String(r['CEO cần chốt']      || '').trim(),
+    FileMinutes: String(r['File biên bản']     || '').trim(),
+    Note:        String(r['Ghi chú']           || '').trim(),
+    IsOverdue:   isPastDeadline(deadline, status)
+  };
+}
+
+/* ── getMeetingCenterData() — new 3-sheet meeting data ── */
+function getMeetingCenterData() {
+  var topics  = readSheetSafe('MEETING_TOPICS').map(normalizeMeetingTopic_);
+  var minutes = readSheetSafe('MEETING_MINUTES').map(normalizeMeetingMinutesFull_);
+  var actions = readSheetSafe('MEETING_ACTIONS').map(normalizeMeetingAction_);
+  return { topics: topics, minutes: minutes, actions: actions };
 }
 
 function normalizeCEODecision_(r, i) {
@@ -1858,6 +1936,7 @@ function buildCommandCenterSummary(data) {
   var mm       = data.meetingMinutes    || [];
   var decs     = data.ceoDecisions      || [];
   var risks    = data.riskSos           || [];
+  var topics   = data.meetingTopics     || [];
 
   // ---- PMO ----
   var pmoOverdue = pmo.filter(function(r) { return r.IsOverdue; }).length;
@@ -1878,10 +1957,11 @@ function buildCommandCenterSummary(data) {
   var toRed     = toActs.filter(function(r) { return r.RAG === 'Red'; }).length;
 
   // ---- Meeting Minutes ----
-  var mmPending    = mm.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
-  var mmHasCEO     = mm.filter(function(r) { return hasText(r.CEODirective); }).length;
-  var mmHasRisk    = mm.filter(function(r) { return hasText(r.RiskSOS); }).length;
-  var mmHasDecision= mm.filter(function(r) { return hasText(r.CEODecision); }).length;
+  var mmPending     = mm.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
+  var mmHasCEO      = mm.filter(function(r) { return hasText(r.CEODirective); }).length;
+  var mmHasRisk     = mm.filter(function(r) { return hasText(r.RiskSOS); }).length;
+  var mmHasActions  = mm.filter(function(r) { return hasText(r.Actions); }).length;
+  var mmHasDecision = mm.filter(function(r) { return hasText(r.CEODecision); }).length;
 
   // ---- CEO Decisions ----
   var decPending  = decs.filter(function(r) { return r.IsPending; }).length;
@@ -1931,10 +2011,12 @@ function buildCommandCenterSummary(data) {
     toActionsRed:     toRed,
 
     // Meetings
-    meetingsTotal:      mm.length,
-    meetingsPending:    mmPending,
-    meetingsWithCEO:    mmHasCEO,
-    meetingsWithRisk:   mmHasRisk,
+    meetingsTopicsTotal:  topics.length,
+    meetingsTotal:        mm.length,
+    meetingsPending:      mmPending,
+    meetingsWithCEO:      mmHasCEO,
+    meetingsWithRisk:     mmHasRisk,
+    meetingsWithActions:  mmHasActions,
     meetingsWithDecision: mmHasDecision,
 
     // CEO Decisions

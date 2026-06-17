@@ -1233,7 +1233,121 @@
       .mm-toolbar { padding: 16px; }
       .mm-summary-bar { padding: 14px 16px; }
       .mm-table-wrapper { padding: 12px 10px 24px; }
-      .mm-search-input { width: 160px; }
+    }
+
+    /* ── MM group filter bar ── */
+    .mm-group-bar {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 14px 32px 0;
+    }
+    .mm-gtab {
+      padding: 5px 14px; font-size: 12px; font-weight: 600;
+      border-radius: 20px; border: 1px solid #064e3b;
+      background: #f9fafb; color: #064e3b; cursor: pointer;
+      transition: all .12s; font-family: inherit;
+    }
+    .mm-gtab.active { background: #064e3b; color: #fff; }
+    .mm-gtab:hover:not(.active) { background: #e8f5f0; }
+
+    /* ── MM Topic card grid ── */
+    .mm-topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px; padding: 20px 32px 32px;
+    }
+    .mm-topic-card {
+      background: #fff; border: 1px solid #e5e7eb;
+      border-left: 4px solid #064e3b; border-radius: 10px;
+      padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .mm-topic-card.closed { border-left-color: #9ca3af; opacity: .85; }
+    .mm-topic-card.paused { border-left-color: #d97706; }
+    .mm-topic-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .mm-topic-name { font-size: 13px; font-weight: 700; color: #111827; flex: 1; }
+    .mm-topic-status {
+      font-size: 10px; font-weight: 600; padding: 2px 7px;
+      border-radius: 10px; background: #dcfce7; color: #15803d;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .mm-topic-status.closed { background: #f3f4f6; color: #6b7280; }
+    .mm-topic-status.paused { background: #fef3c7; color: #92400e; }
+    .mm-topic-module { font-size: 11px; color: #6b7280; }
+    .mm-topic-summary { font-size: 12px; color: #374151; line-height: 1.45; flex: 1; }
+    .mm-topic-stats { display: flex; gap: 20px; padding: 8px 0 4px; }
+    .mm-ts { display: flex; flex-direction: column; align-items: center; }
+    .mm-ts-val { font-size: 20px; font-weight: 800; color: #111827; line-height: 1; }
+    .mm-ts-val.mm-ts-alert { color: #dc2626; }
+    .mm-ts-lbl { font-size: 10px; color: #9ca3af; margin-top: 2px; }
+    .mm-topic-owner { font-size: 11px; color: #6b7280; }
+    .mm-detail-btn {
+      margin-top: auto; padding: 8px 14px; font-size: 12px; font-weight: 600;
+      background: #064e3b; color: #fff; border: none; border-radius: 6px;
+      cursor: pointer; text-align: center; transition: background .12s;
+      font-family: inherit;
+    }
+    .mm-detail-btn:hover { background: #065f46; }
+
+    /* ── MM Detail / Timeline ── */
+    .mm-detail-header { padding: 18px 32px 0; }
+    .mm-back-btn {
+      background: none; border: 1px solid #e5e7eb; padding: 6px 14px;
+      border-radius: 6px; font-size: 12px; cursor: pointer; color: #374151;
+      font-weight: 600; margin-bottom: 10px; font-family: inherit;
+    }
+    .mm-back-btn:hover { background: #f3f4f6; }
+    .mm-detail-title { font-size: 16px; font-weight: 700; color: #064e3b; margin-bottom: 4px; }
+    .mm-detail-summary { font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+
+    .mm-timeline { padding: 16px 32px 32px; display: flex; flex-direction: column; gap: 14px; }
+    .mm-meeting-card {
+      background: #fff; border: 1px solid #e5e7eb;
+      border-left: 4px solid #064e3b; border-radius: 10px;
+      padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+    .mm-meeting-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .mm-meeting-date { font-size: 13px; font-weight: 700; color: #374151; }
+    .mm-meeting-topic { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+    .mm-meeting-meta { font-size: 12px; color: #6b7280; margin-bottom: 3px; }
+    .mm-meeting-summary { font-size: 12px; color: #374151; margin: 8px 0; line-height: 1.5; }
+    .mm-meeting-directive {
+      font-size: 12px; color: #374151; background: #fef9c3;
+      border-left: 3px solid #d97706; padding: 6px 10px;
+      border-radius: 0 6px 6px 0; margin: 6px 0; line-height: 1.45;
+    }
+    .mm-directive-label { font-weight: 700; color: #92400e; }
+    .mm-meeting-decision {
+      font-size: 12px; color: #374151; background: #f0fdf4;
+      border-left: 3px solid #16a34a; padding: 6px 10px;
+      border-radius: 0 6px 6px 0; margin: 6px 0; line-height: 1.45;
+    }
+    .mm-decision-label { font-weight: 700; color: #15803d; }
+    .mm-meeting-footer {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      margin-top: 10px; padding-top: 8px; border-top: 1px solid #f3f4f6;
+    }
+    .mm-meeting-id { font-size: 11px; color: #9ca3af; }
+    .mm-meeting-acnt { font-size: 11px; color: #6b7280; }
+    .mm-action-toggle-btn {
+      padding: 4px 10px; font-size: 11px; font-weight: 600;
+      background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;
+      border-radius: 4px; cursor: pointer; font-family: inherit;
+    }
+    .mm-action-toggle-btn:hover { background: #dcfce7; }
+    .mm-actions-list {
+      margin-top: 12px; border-top: 1px solid #e5e7eb; padding-top: 12px;
+    }
+    .mm-acts-table { overflow-x: auto; }
+    .mm-acts-table .mm-table { min-width: 720px; }
+
+    @media (max-width: 800px) {
+      .mm-group-bar { padding: 12px 16px 0; }
+      .mm-topic-grid { grid-template-columns: 1fr; padding: 14px 16px; }
+      .mm-timeline { padding: 12px 16px 24px; }
+      .mm-detail-header { padding: 14px 16px 0; }
     }
 
     /* ── TO ACTION CENTER ── */
@@ -1511,11 +1625,14 @@
             <div class="overview-card-sub">Meeting Minutes · Chỉ đạo CEO · Action</div>
           </div>
         </div>
-        <div class="overview-card-desc">Lưu trữ biên bản, chỉ đạo CEO, quyết định đã chốt và action phát sinh từ các cuộc họp.</div>
+        <div class="overview-card-desc">Topic → Biên bản → Action phát sinh · Chỉ đạo CEO · CEO Decision.</div>
         <div id="ov-mm-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-topics">—</div><div class="overview-stat-lbl">Tổng Topic</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-total">—</div><div class="overview-stat-lbl">Tổng biên bản</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-pending" style="color:#b45309">—</div><div class="overview-stat-lbl">Chờ duyệt</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-ceo" style="color:#92400e">—</div><div class="overview-stat-lbl">Có chỉ đạo CEO</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-action" style="color:#1d4ed8">—</div><div class="overview-stat-lbl">Có action</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-decision" style="color:#15803d">—</div><div class="overview-stat-lbl">CEO Decision</div></div>
         </div>
         <span class="overview-badge pending" id="ov-mm-badge">⏳ Đang chờ dữ liệu</span>
       </div>
@@ -1943,14 +2060,25 @@
         <span class="mm-total-badge" id="mm-count-badge">—</span>
       </div>
       <div class="mm-toolbar-right">
-        <input type="text" id="mm-search" class="mm-search-input"
-               placeholder="🔍 Tìm theo chủ đề, người chủ trì..."
-               oninput="filterMeetingMinutes(this.value)">
-        <button class="command-btn" onclick="loadMeetingMinutesData()">🔄 Cập nhật</button>
+        <button class="command-btn" onclick="loadMeetingCenter()">🔄 Cập nhật</button>
       </div>
     </div>
 
+    <!-- Group filter tabs -->
+    <div class="mm-group-bar" id="mm-group-bar" style="display:none">
+      <button class="mm-gtab active" onclick="mmSetGroupFilter('all',this)">Tất cả Topic</button>
+      <button class="mm-gtab" onclick="mmSetGroupFilter('hd',this)">Hệ điều hành toàn trình</button>
+      <button class="mm-gtab" onclick="mmSetGroupFilter('to',this)">TO / Hiện trường</button>
+      <button class="mm-gtab" onclick="mmSetGroupFilter('pmo',this)">PMO GSP NEXT 30</button>
+      <button class="mm-gtab" onclick="mmSetGroupFilter('ceo',this)">CEO Direction</button>
+      <button class="mm-gtab" onclick="mmSetGroupFilter('other',this)">Khác</button>
+    </div>
+
     <div class="mm-summary-bar">
+      <div class="mm-summary-card">
+        <div class="mm-summary-card-val" id="mm-s-topics">—</div>
+        <div class="mm-summary-card-lbl">Tổng Topic</div>
+      </div>
       <div class="mm-summary-card">
         <div class="mm-summary-card-val" id="mm-s-total">—</div>
         <div class="mm-summary-card-lbl">Tổng biên bản</div>
@@ -1977,8 +2105,8 @@
       <div class="module-placeholder">
         <div class="module-placeholder-icon">📄</div>
         <h2>Biên bản họp</h2>
-        <p>Đang chờ dữ liệu từ sheet <strong>MEETING_MINUTES</strong>. Khi sheet được kết nối, toàn bộ biên bản, chỉ đạo CEO và action phát sinh sẽ hiển thị tại đây.</p>
-        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet MEETING_MINUTES</div>
+        <p>Đang chờ dữ liệu từ sheet <strong>MEETING_TOPICS</strong>, <strong>MEETING_MINUTES</strong> và <strong>MEETING_ACTIONS</strong>. Nhấn <strong>🔄 Cập nhật</strong> để tải.</p>
+        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu</div>
       </div>
     </div>
 
@@ -2099,11 +2227,17 @@
         activate('ov-dq-stats', 'ov-dq-badge');
       }
 
-      // Meeting Minutes
-      if (cc.meetingsTotal > 0) {
-        st('ov-mm-total',   cc.meetingsTotal);
-        st('ov-mm-pending', cc.meetingsPending);
-        st('ov-mm-action',  cc.meetingsWithCEO);
+      // Meeting Minutes — 6 stats
+      var hasMMData = cc.meetingsTotal > 0 || cc.meetingsTopicsTotal > 0
+                   || (data.meetingTopics || []).length > 0;
+      if (hasMMData) {
+        var topicsLen = cc.meetingsTopicsTotal || (data.meetingTopics || []).length || 0;
+        st('ov-mm-topics',   topicsLen);
+        st('ov-mm-total',    cc.meetingsTotal);
+        st('ov-mm-pending',  cc.meetingsPending);
+        st('ov-mm-ceo',      cc.meetingsWithCEO);
+        st('ov-mm-action',   cc.meetingsWithActions || 0);
+        st('ov-mm-decision', cc.meetingsWithDecision);
         activate('ov-mm-stats', 'ov-mm-badge');
       }
     }
@@ -3493,142 +3627,262 @@
     }
 
     /* =====================================================
-       MEETING MINUTES MODULE
+       MEETING MINUTES MODULE — topic-first hierarchy
     ===================================================== */
 
-    var mmAllRecords = [];
+    var mmCache       = null; // { topics, minutes, actions }
+    var mmActiveGroup = 'all';
+    var mmAllRecords  = []; // backward-compat stub
 
-    function loadMeetingMinutesData() {
-      gasGet('getMeetingMinutes')
-        .then(function(data) {
-          renderMeetingMinutes({ meetingMinutes: data });
-        })
-        .catch(function() {
-          renderMeetingMinutes({ meetingMinutes: null });
+    /* ── Entry point: called by toolbar button ── */
+    function loadMeetingCenter() {
+      var el = document.getElementById('mm-content');
+      if (el) el.innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280;font-size:13px">⏳ Đang tải dữ liệu…</div>';
+      gasGet('getMeetingCenter')
+        .then(function(data) { renderMeetingCenter(data); })
+        .catch(function(e) {
+          var el2 = document.getElementById('mm-content');
+          if (el2) el2.innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:13px">❌ Lỗi tải dữ liệu: ' + safe(String(e && e.message || e)) + '</div>';
         });
     }
 
-    function renderMeetingMinutes(data) {
-      var minutes = data && data.meetingMinutes;
-      var contentEl = document.getElementById('mm-content');
-      if (!contentEl) return;
+    /* Backward-compat alias — some buttons may still call this */
+    function loadMeetingMinutesData() { loadMeetingCenter(); }
 
-      if (!minutes || !Array.isArray(minutes.records) || minutes.records.length === 0) {
-        contentEl.innerHTML =
-          '<div class="module-placeholder">' +
-          '<div class="module-placeholder-icon">📄</div>' +
-          '<h2>Biên bản họp</h2>' +
-          '<p>Đang chờ dữ liệu từ sheet <strong>MEETING_MINUTES</strong>. Khi sheet được kết nối, toàn bộ biên bản, chỉ đạo CEO và action phát sinh sẽ hiển thị tại đây.</p>' +
-          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet MEETING_MINUTES</div>' +
-          '</div>';
+    /* ── Main render: called with { topics, minutes, actions } ── */
+    function renderMeetingCenter(data) {
+      if (!data) return;
+
+      var topics  = data.topics  || [];
+      var minutes = (data.minutes || data.meetingMinutes || []);
+      if (!Array.isArray(minutes)) minutes = [];
+      var actions = data.actions || [];
+
+      /* If dashboard pushes old format {meetingMinutes:{records:[…]}} */
+      if (!data.topics && data.meetingMinutes && data.meetingMinutes.records) {
+        minutes = data.meetingMinutes.records;
+      }
+
+      mmCache = { topics: topics, minutes: minutes, actions: actions };
+      mmAllRecords = minutes;
+
+      /* ── Summary stats ── */
+      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+      var pending  = minutes.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
+      var hasCEO   = minutes.filter(function(r) { return hasTextClient(r.CEODirective); }).length;
+      var hasAct   = minutes.filter(function(r) { return hasTextClient(r.Actions); }).length;
+      var hasDec   = minutes.filter(function(r) { return hasTextClient(r.CEODecision); }).length;
+
+      st('mm-s-topics',   topics.length);
+      st('mm-s-total',    minutes.length);
+      st('mm-s-pending',  pending);
+      st('mm-s-ceo',      hasCEO);
+      st('mm-s-action',   hasAct);
+      st('mm-s-decision', hasDec);
+      st('mm-count-badge', topics.length + ' topic · ' + minutes.length + ' biên bản');
+
+      /* ── Update overview card ── */
+      var badge = document.getElementById('ov-mm-badge');
+      if (badge) { badge.className = 'overview-badge live'; badge.textContent = '● Live · ' + topics.length + ' topic'; }
+      var oStats = document.getElementById('ov-mm-stats');
+      if (oStats) oStats.style.display = 'flex';
+      st('ov-mm-topics',   topics.length);
+      st('ov-mm-total',    minutes.length);
+      st('ov-mm-pending',  pending);
+      st('ov-mm-ceo',      hasCEO);
+      st('ov-mm-action',   hasAct);
+      st('ov-mm-decision', hasDec);
+
+      /* ── Show filter bar ── */
+      var gb = document.getElementById('mm-group-bar');
+      if (gb) gb.style.display = 'flex';
+
+      /* ── Render topic cards ── */
+      mmRenderTopicCards(topics, minutes, actions, mmActiveGroup);
+    }
+
+    /* Backward-compat: called by old renderDashboard paths */
+    function renderMeetingMinutes(data) {
+      renderMeetingCenter(data || {});
+    }
+
+    /* ── Group filter tab click ── */
+    function mmSetGroupFilter(group, el) {
+      mmActiveGroup = group;
+      document.querySelectorAll('.mm-gtab').forEach(function(b) { b.classList.remove('active'); });
+      if (el) el.classList.add('active');
+      if (mmCache) {
+        mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, group);
+      }
+    }
+
+    function mmMatchGroup(topic, group) {
+      if (group === 'all') return true;
+      var m = String((topic.Module || topic.TopicName || '') + ' ' + (topic.Desc || '')).toLowerCase();
+      var HE_DIEU_HANH = /hệ điều hành|he dieu hanh|end.to.end|s&op|scm|aps|mes|wms|erp|bravo|dashboard|qms|forecast|điều độ|dieu do/;
+      var TO_HT = /\bto\b|hiện trường|hien truong|nhà máy|nha may/;
+      if (group === 'hd')    return HE_DIEU_HANH.test(m);
+      if (group === 'to')    return TO_HT.test(m);
+      if (group === 'pmo')   return /pmo/.test(m);
+      if (group === 'ceo')   return /ceo|chỉ đạo|chi dao|direction/.test(m);
+      if (group === 'other') return !HE_DIEU_HANH.test(m) && !TO_HT.test(m) && !/pmo|ceo|chỉ đạo|direction/.test(m);
+      return true;
+    }
+
+    /* ── Topic card grid ── */
+    function mmRenderTopicCards(topics, minutes, actions, group) {
+      var el = document.getElementById('mm-content');
+      if (!el) return;
+
+      var filtered = (topics || []).filter(function(t) { return mmMatchGroup(t, group || 'all'); });
+
+      if (!filtered.length && !minutes.length) {
+        el.innerHTML = '<div style="padding:48px;text-align:center;color:#9ca3af;font-size:14px">'
+          + 'Chưa có dữ liệu. Kết nối sheet MEETING_TOPICS, MEETING_MINUTES, MEETING_ACTIONS.</div>';
         return;
       }
 
-      var records = minutes.records;
-      mmAllRecords = records;
-
-      var total    = records.length;
-      var pending  = records.filter(function(r) { return String(r.Status||'').includes('Chờ'); }).length;
-      var hasCEO   = records.filter(function(r) { return hasTextClient(r.CEODirective); }).length;
-      var hasAct   = records.filter(function(r) { return hasTextClient(r.Actions); }).length;
-      var hasDec   = records.filter(function(r) { return hasTextClient(r.CEODecision); }).length;
-
-      var setText = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-      setText('mm-s-total',    total);
-      setText('mm-s-pending',  pending);
-      setText('mm-s-ceo',      hasCEO);
-      setText('mm-s-action',   hasAct);
-      setText('mm-s-decision', hasDec);
-      setText('mm-count-badge', total + ' biên bản');
-
-      var badge = document.getElementById('ov-mm-badge');
-      if (badge) { badge.className = 'overview-badge live'; badge.textContent = '● Live · ' + total + ' biên bản'; }
-      var oStats = document.getElementById('ov-mm-stats');
-      if (oStats) oStats.style.display = 'flex';
-      setText('ov-mm-total',   total);
-      setText('ov-mm-pending', pending);
-      setText('ov-mm-action',  hasAct);
-
-      renderMeetingMinutesTable(records);
-    }
-
-    function renderMeetingMinutesTable(records) {
-      var contentEl = document.getElementById('mm-content');
-      if (!contentEl) return;
-
-      var cols = [
-        'Meeting ID', 'Ngày họp', 'Chủ đề họp', 'Người chủ trì', 'Thành phần',
-        'Phạm vi', 'Tóm tắt chính', 'Chỉ đạo CEO', 'Quyết định đã chốt',
-        'Action phát sinh', 'Risk/SOS phát sinh', 'CEO cần quyết tiếp',
-        'File biên bản', 'File ghi âm/transcript', 'Người lập biên bản',
-        'Trạng thái', 'Ghi chú bảo mật'
-      ];
-
-      var statusClass = function(s) {
-        s = String(s || '').toLowerCase();
-        if (s.includes('duyệt') && !s.includes('chờ')) return 'approved';
-        if (s.includes('chờ')) return 'pending';
-        if (s.includes('nháp') || s.includes('draft')) return 'draft';
-        if (s.includes('lưu trữ') || s.includes('archive')) return 'archived';
-        return 'draft';
-      };
-
-      var fileLink = function(url, label) {
-        if (!url || url.trim() === '') return '<span style="color:#d1d5db">—</span>';
-        return '<a class="mm-link" href="' + safe(url) + '" target="_blank">🔗 ' + safe(label || 'Mở file') + '</a>';
-      };
-
-      var thead = '<thead><tr>' + cols.map(function(c) {
-        return '<th>' + safe(c) + '</th>';
-      }).join('') + '</tr></thead>';
-
-      var tbody = '<tbody>';
-      if (records.length === 0) {
-        tbody += '<tr class="mm-empty-row"><td colspan="' + cols.length + '">Không tìm thấy biên bản nào</td></tr>';
-      } else {
-        records.forEach(function(r) {
-          tbody += '<tr>' +
-            '<td><span class="mm-id-badge">' + safe(r.MeetingId || '—') + '</span></td>' +
-            '<td style="white-space:nowrap">' + safe(r.Date || '—') + '</td>' +
-            '<td><span class="mm-cell-truncate" title="' + safeAttr(r.Topic) + '">' + safe(r.Topic || '—') + '</span></td>' +
-            '<td>' + safe(r.Chair || '—') + '</td>' +
-            '<td><span class="mm-cell-truncate" title="' + safeAttr(r.Attendees) + '">' + safe(r.Attendees || '—') + '</span></td>' +
-            '<td>' + safe(r.Scope || '—') + '</td>' +
-            '<td><span class="mm-cell-long" title="' + safeAttr(r.Summary) + '">' + safe(r.Summary || '—') + '</span></td>' +
-            '<td><span class="mm-cell-long" title="' + safeAttr(r.CEODirective) + '">' + (hasTextClient(r.CEODirective) ? '<span class="mm-tag">' + safe(r.CEODirective) + '</span>' : '<span style="color:#d1d5db">—</span>') + '</span></td>' +
-            '<td><span class="mm-cell-long">' + (hasTextClient(r.CEODecision) ? '<span class="mm-tag green">' + safe(r.CEODecision) + '</span>' : '<span style="color:#d1d5db">—</span>') + '</span></td>' +
-            '<td><span class="mm-cell-long">' + (hasTextClient(r.Actions) ? '<span class="mm-tag">' + safe(r.Actions) + '</span>' : '<span style="color:#d1d5db">—</span>') + '</span></td>' +
-            '<td>' + (hasTextClient(r.RiskSOS) ? '<span class="mm-tag red">' + safe(r.RiskSOS) + '</span>' : '<span style="color:#d1d5db">—</span>') + '</td>' +
-            '<td>' + (hasTextClient(r.CEONextDecision) ? '<span class="mm-tag">' + safe(r.CEONextDecision) + '</span>' : '<span style="color:#d1d5db">—</span>') + '</td>' +
-            '<td>' + fileLink(r.FileMinutes, 'Biên bản') + '</td>' +
-            '<td>' + fileLink(r.FileAudio, 'Ghi âm') + '</td>' +
-            '<td>' + safe(r.RecordedBy || '—') + '</td>' +
-            '<td><span class="mm-status-badge ' + statusClass(r.Status) + '">' + safe(r.Status || 'Nháp') + '</span></td>' +
-            '<td>' + (hasTextClient(r.SecretNote) ? '<span class="mm-secret">🔒 ' + safe(r.SecretNote) + '</span>' : '<span style="color:#d1d5db">—</span>') + '</td>' +
-            '</tr>';
-        });
+      /* If no topics but has minutes — show all minutes as timeline */
+      if (!filtered.length && minutes.length) {
+        var html0 = '<div style="padding:12px 32px 4px"><div class="mm-detail-title">Tất cả biên bản</div></div>'
+          + '<div class="mm-timeline">';
+        minutes.slice().sort(function(a, b) { return (b.Date || '').localeCompare(a.Date || ''); })
+          .forEach(function(m) { html0 += mmMinuteCardHTML(m, actions); });
+        html0 += '</div>';
+        el.innerHTML = html0;
+        return;
       }
-      tbody += '</tbody>';
 
-      contentEl.innerHTML =
-        '<div class="mm-table-wrapper">' +
-        '<table class="mm-table">' + thead + tbody + '</table>' +
-        '</div>';
+      var html = '<div class="mm-topic-grid">';
+      filtered.forEach(function(topic) {
+        var topicMins = minutes.filter(function(m) { return m.TopicID === topic.TopicID; });
+        var topicActs = actions.filter(function(a) { return a.TopicID === topic.TopicID; });
+        var ceoPending = topicMins.filter(function(m) { return hasTextClient(m.CEODecision); }).length;
+        var statusCls  = /hoàn|kết thúc|đóng/i.test(topic.Status) ? 'closed'
+                       : /tạm dừng/i.test(topic.Status) ? 'paused' : '';
+
+        html += '<div class="mm-topic-card ' + statusCls + '">'
+          + '<div class="mm-topic-card-header">'
+          + '<div class="mm-topic-name">' + safe(topic.TopicName) + '</div>'
+          + '<span class="mm-topic-status ' + statusCls + '">' + safe(topic.Status || 'Đang diễn ra') + '</span>'
+          + '</div>'
+          + (topic.Module ? '<div class="mm-topic-module">📁 ' + safe(topic.Module) + '</div>' : '')
+          + (topic.Summary ? '<div class="mm-topic-summary">' + safe(topic.Summary) + '</div>' : '')
+          + '<div class="mm-topic-stats">'
+          + '<div class="mm-ts"><span class="mm-ts-val">' + topicMins.length + '</span><span class="mm-ts-lbl">Biên bản</span></div>'
+          + '<div class="mm-ts"><span class="mm-ts-val">' + topicActs.length + '</span><span class="mm-ts-lbl">Action</span></div>'
+          + '<div class="mm-ts"><span class="mm-ts-val' + (ceoPending > 0 ? ' mm-ts-alert' : '') + '">' + ceoPending + '</span><span class="mm-ts-lbl">CEO chốt</span></div>'
+          + '</div>'
+          + (topic.Owner ? '<div class="mm-topic-owner">👤 ' + safe(topic.Owner) + '</div>' : '')
+          + '<button class="mm-detail-btn" onclick="mmShowTopicDetail(\'' + String(topic.TopicID).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + '\')">Xem chi tiết →</button>'
+          + '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
     }
 
-    function filterMeetingMinutes(keyword) {
-      if (!mmAllRecords.length) return;
-      var kw = (keyword || '').toLowerCase().trim();
-      var filtered = kw
-        ? mmAllRecords.filter(function(r) {
-            return (r.Topic + r.Chair + r.Summary + r.CEODirective + r.Actions + r.Scope)
-              .toLowerCase().includes(kw);
-          })
-        : mmAllRecords;
-      var countEl = document.getElementById('mm-count-badge');
-      if (countEl) countEl.textContent = filtered.length + ' biên bản' + (kw ? ' (lọc)' : '');
-      renderMeetingMinutesTable(filtered);
+    /* ── Topic detail: timeline of meetings ── */
+    function mmShowTopicDetail(topicId) {
+      if (!mmCache) return;
+      var topic   = mmCache.topics.filter(function(t) { return t.TopicID === topicId; })[0];
+      var minutes = mmCache.minutes.filter(function(m) { return m.TopicID === topicId; })
+                      .slice().sort(function(a, b) { return (b.Date || '').localeCompare(a.Date || ''); });
+      var el = document.getElementById('mm-content');
+      if (!el) return;
+
+      var topicName = topic ? topic.TopicName : topicId;
+      var html = '<div class="mm-detail-header">'
+        + '<button class="mm-back-btn" onclick="mmBackToTopics()">← Danh sách Topic</button>'
+        + '<div class="mm-detail-title">' + safe(topicName) + '</div>'
+        + (topic && topic.Module ? '<div class="mm-detail-summary">📁 ' + safe(topic.Module) + '</div>' : '')
+        + (topic && topic.Summary ? '<div class="mm-detail-summary">' + safe(topic.Summary) + '</div>' : '')
+        + '</div>'
+        + '<div class="mm-timeline">';
+
+      if (!minutes.length) {
+        html += '<div style="padding:32px;text-align:center;color:#9ca3af;font-size:14px">Chưa có biên bản nào thuộc topic này.</div>';
+      } else {
+        minutes.forEach(function(m) { html += mmMinuteCardHTML(m, mmCache.actions); });
+      }
+      html += '</div>';
+      el.innerHTML = html;
     }
+
+    function mmBackToTopics() {
+      if (mmCache) {
+        mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, mmActiveGroup);
+      }
+    }
+
+    /* ── Single meeting card HTML ── */
+    function mmMinuteCardHTML(m, allActions) {
+      var meetingActs = (allActions || []).filter(function(a) { return a.MeetingID === m.MeetingID; });
+      var hasCEO = hasTextClient(m.CEODirective);
+      var hasDec = hasTextClient(m.CEODecision);
+      var s = String(m.Status || '').toLowerCase();
+      var statusCls = (s.includes('duyệt') && !s.includes('chờ')) ? 'approved'
+                    : s.includes('chờ') ? 'pending'
+                    : s.includes('lưu trữ') || s.includes('archive') ? 'archived' : 'draft';
+      var mid = String(m.MeetingID || '').replace(/[^a-zA-Z0-9\-_]/g, '');
+
+      var html = '<div class="mm-meeting-card">'
+        + '<div class="mm-meeting-header">'
+        + '<div class="mm-meeting-date">📅 ' + safe(m.Date || '—') + '</div>'
+        + '<span class="mm-status-badge ' + statusCls + '">' + safe(m.Status || 'Nháp') + '</span>'
+        + '</div>'
+        + '<div class="mm-meeting-topic">' + safe(m.Topic || '—') + '</div>'
+        + (m.Module ? '<div class="mm-meeting-meta">📁 ' + safe(m.Module) + '</div>' : '')
+        + '<div class="mm-meeting-meta">👤 Chủ trì: ' + safe(m.Chair || '—')
+        + (m.Attendees ? ' &nbsp;|&nbsp; 👥 ' + safe(m.Attendees) : '') + '</div>'
+        + (m.Summary ? '<div class="mm-meeting-summary"><strong>Tóm tắt:</strong> ' + safe(m.Summary) + '</div>' : '')
+        + (hasCEO ? '<div class="mm-meeting-directive"><span class="mm-directive-label">👑 Chỉ đạo CEO:</span> ' + safe(m.CEODirective) + '</div>' : '')
+        + (hasDec ? '<div class="mm-meeting-decision"><span class="mm-decision-label">✅ CEO cần chốt:</span> ' + safe(m.CEODecision) + '</div>' : '')
+        + '<div class="mm-meeting-footer">'
+        + '<span class="mm-meeting-id">' + safe(m.MeetingID) + '</span>'
+        + '<span class="mm-meeting-acnt">' + meetingActs.length + ' action</span>'
+        + (m.FileMinutes ? '<a class="mm-link" href="' + safe(m.FileMinutes) + '" target="_blank">📄 Mở biên bản</a>' : '')
+        + (m.FileAudio   ? '<a class="mm-link" href="' + safe(m.FileAudio)   + '" target="_blank">🎙 Transcript</a>' : '')
+        + (meetingActs.length ? '<button class="mm-action-toggle-btn" onclick="mmToggleActions(\'' + mid + '\')">📋 Xem action (' + meetingActs.length + ')</button>' : '')
+        + '</div>';
+
+      if (meetingActs.length) {
+        html += '<div class="mm-actions-list" id="mm-acts-' + mid + '" style="display:none">'
+          + '<div class="mm-acts-table"><table class="mm-table"><thead><tr>'
+          + '<th>Nội dung action</th><th>Owner/PIC</th><th>Deadline</th>'
+          + '<th>Trạng thái</th><th>RAG</th><th>CEO cần chốt</th><th>Đầu ra kỳ vọng</th>'
+          + '</tr></thead><tbody>';
+        meetingActs.forEach(function(a) {
+          html += '<tr>'
+            + '<td>' + safe(a.Action) + '</td>'
+            + '<td>' + safe(a.Owner) + '</td>'
+            + '<td style="white-space:nowrap">' + safe(a.Deadline) + '</td>'
+            + '<td>' + modStatusBadge(a.Status) + '</td>'
+            + '<td>' + modRagBadge(a.RAG) + '</td>'
+            + '<td>' + safe(a.CEODecision) + '</td>'
+            + '<td style="font-size:11px;color:#6b7280">' + safe(a.Output) + '</td>'
+            + '</tr>';
+        });
+        html += '</tbody></table></div></div>';
+      }
+
+      html += '</div>'; // end .mm-meeting-card
+      return html;
+    }
+
+    function mmToggleActions(mid) {
+      var el = document.getElementById('mm-acts-' + mid);
+      if (!el) return;
+      var isHidden = el.style.display === 'none';
+      el.style.display = isHidden ? 'block' : 'none';
+      var card = el.closest('.mm-meeting-card');
+      if (card) {
+        var btn = card.querySelector('.mm-action-toggle-btn');
+        if (btn && isHidden) btn.textContent = btn.textContent.replace('Xem action', 'Ẩn action');
+        if (btn && !isHidden) btn.textContent = btn.textContent.replace('Ẩn action', 'Xem action');
+      }
+    }
+
+    function filterMeetingMinutes() {} /* stub — no longer used */
 
     /* =====================================================
        CEO PROJECT TRACKER MODULE
