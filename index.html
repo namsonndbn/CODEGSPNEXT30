@@ -1462,6 +1462,169 @@
       .mm-modal-row { grid-template-columns: 120px 1fr; }
     }
 
+    /* ── CEO PROJECT TRACKER (Theo dõi dự án CEO) ── */
+    .cpt-kpi-bar {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 14px 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;
+    }
+    .cpt-kpi-card {
+      flex: 1; min-width: 90px; max-width: 140px;
+      background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 10px 14px; cursor: pointer; text-align: center;
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .cpt-kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); border-color: #9ca3af; }
+    .cpt-kpi-card.kpi-active { border-width: 2px; box-shadow: 0 4px 14px rgba(6,78,59,.15); }
+    .cpt-kpi-card.cpt-blue  { border-top: 3px solid #1d4ed8; }
+    .cpt-kpi-card.cpt-green { border-top: 3px solid #16a34a; }
+    .cpt-kpi-card.cpt-amber { border-top: 3px solid #d97706; }
+    .cpt-kpi-card.cpt-red   { border-top: 3px solid #dc2626; }
+    .cpt-kpi-card.cpt-gray  { border-top: 3px solid #6b7280; }
+    .cpt-kpi-card.cpt-gold  { border-top: 3px solid #b45309; }
+    .cpt-kpi-card.kpi-active.cpt-blue  { background: #eff6ff; }
+    .cpt-kpi-card.kpi-active.cpt-green { background: #f0fdf4; }
+    .cpt-kpi-card.kpi-active.cpt-amber { background: #fffbeb; }
+    .cpt-kpi-card.kpi-active.cpt-red   { background: #fef2f2; }
+    .cpt-kpi-card.kpi-active.cpt-gold  { background: #fffbeb; }
+    .cpt-kpi-val {
+      font-size: 26px; font-weight: 800; color: #111827;
+      line-height: 1.1; margin-bottom: 4px;
+    }
+    .cpt-kpi-lbl { font-size: 11px; color: #6b7280; font-weight: 500; }
+
+    .cpt-filter-bar {
+      display: none; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 8px 20px; background: #fffbeb; border-bottom: 1px solid #fde68a; font-size: 12px;
+    }
+    .cpt-filter-bar.visible { display: flex; }
+    .cpt-filter-text { flex: 1; color: #92400e; font-weight: 600; }
+    .cpt-clear-btn {
+      padding: 4px 12px; font-size: 12px; font-weight: 600;
+      border: 1px solid #d97706; border-radius: 6px;
+      background: #fff; color: #92400e; cursor: pointer; font-family: inherit;
+    }
+    .cpt-clear-btn:hover { background: #fef3c7; }
+
+    .cpt-qs-wrap { margin: 0; border-bottom: 1px solid #e5e7eb; }
+    .cpt-qs-toggle {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 20px; cursor: pointer; background: #f0fdf4;
+      font-size: 12.5px; font-weight: 700; color: #064e3b;
+      user-select: none; border-bottom: 1px solid #bbf7d0;
+    }
+    .cpt-qs-toggle:hover { background: #dcfce7; }
+    .cpt-qs-body { padding: 14px 20px 18px; background: #fff; }
+    .cpt-qs-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .cpt-qs-section { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; }
+    .cpt-qs-title {
+      font-size: 11px; font-weight: 700; color: #374151;
+      text-transform: uppercase; letter-spacing: .4px; margin-bottom: 7px;
+    }
+    .cpt-qs-empty { font-size: 12px; color: #9ca3af; font-style: italic; }
+    .cpt-qs-item {
+      font-size: 12px; color: #111827; padding: 3px 0;
+      border-bottom: 1px solid #f1f5f9; display: flex; gap: 6px; align-items: baseline;
+    }
+    .cpt-qs-item:last-child { border-bottom: none; }
+    .cpt-qs-item-ma { font-weight: 700; color: #064e3b; flex-shrink: 0; min-width: 28px; }
+    .cpt-qs-item-ten { flex: 1; }
+    .cpt-qs-item-sub { font-size: 11px; color: #6b7280; flex-shrink: 0; }
+
+    .cpt-project-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px; padding: 18px 20px;
+    }
+    .cpt-project-card {
+      background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px;
+      padding: 14px 16px; cursor: pointer; position: relative;
+      transition: box-shadow .15s, border-color .15s;
+      border-left: 5px solid #9ca3af;
+    }
+    .cpt-project-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: #d1d5db; }
+    .cpt-project-card.rag-green { border-left-color: #16a34a; }
+    .cpt-project-card.rag-amber { border-left-color: #d97706; }
+    .cpt-project-card.rag-red   { border-left-color: #dc2626; }
+    .cpt-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .cpt-card-id { font-size: 11px; font-weight: 700; color: #6b7280; flex-shrink: 0; }
+    .cpt-card-title { font-size: 13.5px; font-weight: 700; color: #111827; line-height: 1.35; flex: 1; }
+    .cpt-card-rag {
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; flex-shrink: 0;
+    }
+    .cpt-card-rag.green { background: #dcfce7; color: #15803d; }
+    .cpt-card-rag.amber { background: #fef3c7; color: #92400e; }
+    .cpt-card-rag.red   { background: #fef2f2; color: #dc2626; }
+    .cpt-card-rag.none  { background: #f1f5f9; color: #64748b; }
+    .cpt-card-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11.5px; color: #6b7280; margin-bottom: 8px; }
+    .cpt-card-meta span { display: flex; align-items: center; gap: 3px; }
+    .cpt-progress-wrap { margin-bottom: 6px; }
+    .cpt-progress-bar {
+      height: 6px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin-top: 3px;
+    }
+    .cpt-progress-fill { height: 100%; border-radius: 4px; transition: width .3s; }
+    .cpt-progress-fill.green { background: #16a34a; }
+    .cpt-progress-fill.amber { background: #d97706; }
+    .cpt-progress-fill.red   { background: #dc2626; }
+    .cpt-progress-pct { font-size: 11px; font-weight: 600; color: #374151; }
+    .cpt-card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .cpt-tag {
+      font-size: 10.5px; font-weight: 600; padding: 2px 8px;
+      border-radius: 8px; white-space: nowrap;
+    }
+    .cpt-tag.overdue { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .cpt-tag.risk    { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .cpt-tag.ceoq    { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .cpt-tag.stale   { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .cpt-card-update { font-size: 11px; color: #9ca3af; margin-top: 8px; line-height: 1.5; }
+
+    .cpt-detail-view { padding: 20px 24px 32px; }
+    .cpt-detail-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 600; color: #064e3b;
+      border: 1px solid #bbf7d0; background: #f0fdf4; border-radius: 7px;
+      padding: 6px 14px; cursor: pointer; font-family: inherit; margin-bottom: 18px;
+    }
+    .cpt-detail-back:hover { background: #dcfce7; }
+    .cpt-detail-title { font-size: 18px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+    .cpt-detail-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #6b7280; margin-bottom: 18px; }
+    .cpt-detail-meta span { display: flex; align-items: center; gap: 4px; }
+    .cpt-detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+    }
+    .cpt-detail-section {
+      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;
+    }
+    .cpt-detail-section.full { grid-column: 1 / -1; }
+    .cpt-detail-section.highlight { background: #fffbeb; border-color: #fde68a; }
+    .cpt-detail-section.ceo-block { background: #f0fdf4; border-color: #bbf7d0; }
+    .cpt-detail-section-title {
+      font-size: 10.5px; font-weight: 700; color: #6b7280;
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
+    }
+    .cpt-detail-row { display: grid; grid-template-columns: 140px 1fr; gap: 4px 10px; margin-bottom: 6px; align-items: start; }
+    .cpt-detail-label { font-size: 12px; font-weight: 600; color: #6b7280; padding-top: 1px; }
+    .cpt-detail-val   { font-size: 12.5px; color: #111827; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .cpt-detail-empty { color: #9ca3af; font-style: italic; font-size: 12px; }
+    .cpt-sub-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+    .cpt-sub-table th {
+      background: #f1f5f9; font-weight: 600; color: #374151; padding: 5px 8px;
+      text-align: left; border-bottom: 1px solid #e2e8f0;
+    }
+    .cpt-sub-table td { padding: 5px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    .cpt-sub-table tr:last-child td { border-bottom: none; }
+
+    @media (max-width: 800px) {
+      .cpt-kpi-bar { padding: 10px 12px; gap: 6px; }
+      .cpt-kpi-card { min-width: 70px; padding: 8px 10px; }
+      .cpt-kpi-val { font-size: 22px; }
+      .cpt-project-grid { grid-template-columns: 1fr; padding: 12px 14px; }
+      .cpt-detail-view { padding: 14px 14px 24px; }
+      .cpt-detail-grid { grid-template-columns: 1fr; }
+      .cpt-detail-section.full { grid-column: auto; }
+    }
+
     /* ── TO ACTION CENTER ── */
     .toa-section-hdr {
       font-size: 12px; font-weight: 700; color: #064e3b;
@@ -1963,31 +2126,77 @@
   </div>
   </div><!-- /module-pmo -->
 
-  <!-- ===== MODULE: CEO PROJECT TRACKER ===== -->
+  <!-- ===== MODULE: THEO DÕI DỰ ÁN CEO ===== -->
   <div class="module" id="module-ceo-tracker">
     <div class="mod-toolbar">
       <div class="mod-toolbar-left">
-        <h2>🎯 CEO Project Tracker</h2>
+        <h2>📊 Theo dõi dự án CEO</h2>
         <span class="mod-count-badge" id="cpt-badge">—</span>
       </div>
       <div class="mod-toolbar-right">
-        <input type="text" id="cpt-search" class="mod-search" placeholder="🔍 Tìm dự án, PIC Lead..." oninput="filterCEOProjects(this.value)">
-        <button class="command-btn" onclick="loadCEOProjects()">🔄 Cập nhật</button>
+        <button class="command-btn" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0" onclick="cptCopyReport()">📋 Sao chép tóm tắt</button>
+        <button class="command-btn" onclick="cptLoad()">🔄 Cập nhật</button>
       </div>
     </div>
-    <div class="mod-summary-bar">
-      <div class="mod-summary-card"><div class="mod-summary-val" id="cpt-s-total">—</div><div class="mod-summary-lbl">Tổng dự án</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val blue" id="cpt-s-active">—</div><div class="mod-summary-lbl">Đang triển khai</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val red" id="cpt-s-overdue">—</div><div class="mod-summary-lbl">Quá hạn</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val green" id="cpt-s-done">—</div><div class="mod-summary-lbl">Hoàn thành</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val amber" id="cpt-s-blocked">—</div><div class="mod-summary-lbl">Có vướng mắc</div></div>
+
+    <!-- 8 KPI cards -->
+    <div class="cpt-kpi-bar" id="cpt-kpi-bar" style="display:none">
+      <div class="cpt-kpi-card" id="cpt-kc-total"  onclick="cptClickKpi('total')">
+        <div class="cpt-kpi-val" id="cpt-kv-total">—</div>
+        <div class="cpt-kpi-lbl">Tổng dự án</div>
+      </div>
+      <div class="cpt-kpi-card cpt-blue" id="cpt-kc-active" onclick="cptClickKpi('active')">
+        <div class="cpt-kpi-val" id="cpt-kv-active">—</div>
+        <div class="cpt-kpi-lbl">Đang triển khai</div>
+      </div>
+      <div class="cpt-kpi-card cpt-green" id="cpt-kc-green" onclick="cptClickKpi('green')">
+        <div class="cpt-kpi-val" id="cpt-kv-green">—</div>
+        <div class="cpt-kpi-lbl">Đúng tiến độ 🟢</div>
+      </div>
+      <div class="cpt-kpi-card cpt-amber" id="cpt-kc-amber" onclick="cptClickKpi('amber')">
+        <div class="cpt-kpi-val" id="cpt-kv-amber">—</div>
+        <div class="cpt-kpi-lbl">Nguy cơ chậm 🟡</div>
+      </div>
+      <div class="cpt-kpi-card cpt-red" id="cpt-kc-overdue" onclick="cptClickKpi('overdue')">
+        <div class="cpt-kpi-val" id="cpt-kv-overdue">—</div>
+        <div class="cpt-kpi-lbl">Quá hạn 🔴</div>
+      </div>
+      <div class="cpt-kpi-card cpt-gray" id="cpt-kc-nopt" onclick="cptClickKpi('nopt')">
+        <div class="cpt-kpi-val" id="cpt-kv-nopt">—</div>
+        <div class="cpt-kpi-lbl">Chưa có NPT</div>
+      </div>
+      <div class="cpt-kpi-card cpt-amber" id="cpt-kc-risk" onclick="cptClickKpi('risk')">
+        <div class="cpt-kpi-val" id="cpt-kv-risk">—</div>
+        <div class="cpt-kpi-lbl">Có rủi ro ⚠️</div>
+      </div>
+      <div class="cpt-kpi-card cpt-gold" id="cpt-kc-ceoq" onclick="cptClickKpi('ceoq')">
+        <div class="cpt-kpi-val" id="cpt-kv-ceoq">—</div>
+        <div class="cpt-kpi-lbl">CEO cần quyết 👑</div>
+      </div>
     </div>
+
+    <!-- Active filter bar -->
+    <div class="cpt-filter-bar" id="cpt-filter-bar">
+      <span class="cpt-filter-text" id="cpt-filter-text">Đang lọc: —</span>
+      <button class="cpt-clear-btn" onclick="cptClearFilter()">✕ Xóa bộ lọc</button>
+    </div>
+
+    <!-- CEO Quick Summary -->
+    <div class="cpt-qs-wrap" id="cpt-qs-wrap" style="display:none">
+      <div class="cpt-qs-toggle" onclick="cptToggleQS()">
+        <span>👑 Tóm tắt nhanh cho CEO</span>
+        <span id="cpt-qs-arrow">▼</span>
+      </div>
+      <div class="cpt-qs-body" id="cpt-qs-body" style="display:none"></div>
+    </div>
+
+    <!-- Main content -->
     <div id="cpt-content">
       <div class="module-placeholder">
-        <div class="module-placeholder-icon">🎯</div>
-        <h2>CEO Project Tracker</h2>
-        <p>Theo dõi tiến độ các dự án chiến lược CEO trực tiếp dẫn dắt. Kết nối dữ liệu từ sheet <strong>CEO_PROJECTS</strong> để hiển thị milestone, trạng thái và rủi ro theo từng dự án.</p>
-        <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet CEO_PROJECTS</div>
+        <div class="module-placeholder-icon">📊</div>
+        <h2>Theo dõi dự án CEO</h2>
+        <p>Theo dõi tiến độ 8 dự án chiến lược CEO trực tiếp dẫn dắt. Nhấn <strong>Cập nhật</strong> để tải dữ liệu từ sheet <strong>THEO_DOI_DU_AN_CEO</strong>.</p>
+        <div class="module-placeholder-badge">⏳ Nhấn 🔄 Cập nhật để bắt đầu</div>
       </div>
     </div>
   </div>
@@ -4286,88 +4495,395 @@
     function filterMeetingMinutes() {} /* stub */
 
     /* =====================================================
-       CEO PROJECT TRACKER MODULE
+       THEO DÕI DỰ ÁN CEO — CEO Project Tracker (new)
+       Backend: getCEOProjectTracker → getCEOProjectTrackerData()
+       Sheet: THEO_DOI_DU_AN_CEO
     ===================================================== */
-    var cptAllRecords = [];
+    var cptCache     = null;
+    var cptActiveKpi = null; // null | 'total'|'active'|'green'|'amber'|'overdue'|'nopt'|'risk'|'ceoq'
+    var cptDetailId  = null;
+    var cptQSOpen    = false;
 
-    function loadCEOProjects() {
-      var contentEl = document.getElementById('cpt-content');
-      if (contentEl) contentEl.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải...</h2></div>';
-      gasGet('getCEOProjects')
-        .then(function(data) { renderCEOProjects(data); })
-        .catch(function() { renderCEOProjects(null); });
+    function cptLoad() {
+      var el = document.getElementById('cpt-content');
+      if (el) el.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải dữ liệu dự án...</h2></div>';
+      gasGet('getCEOProjectTracker')
+        .then(function(data) { cptCache = data; cptRender(data); })
+        .catch(function() {
+          var el2 = document.getElementById('cpt-content');
+          if (el2) el2.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">❌</div><h2>Không thể tải dữ liệu</h2><p>Kiểm tra kết nối hoặc sheet THEO_DOI_DU_AN_CEO.</p></div>';
+        });
     }
 
-    function renderCEOProjects(data) {
-      var contentEl = document.getElementById('cpt-content');
-      if (!contentEl) return;
-      var records = data && Array.isArray(data.records) ? data.records : [];
-      if (!records.length) {
-        contentEl.innerHTML =
+    function cptRender(data) {
+      if (!data || !data.exists || !data.projects || data.projects.length === 0) {
+        var el = document.getElementById('cpt-content');
+        if (el) el.innerHTML =
           '<div class="module-placeholder">' +
-          '<div class="module-placeholder-icon">🎯</div>' +
-          '<h2>CEO Project Tracker</h2>' +
-          '<p>Theo dõi tiến độ các dự án chiến lược CEO trực tiếp dẫn dắt. Kết nối dữ liệu từ sheet <strong>CEO_PROJECTS</strong>.</p>' +
-          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet CEO_PROJECTS</div>' +
-          '</div>';
+          '<div class="module-placeholder-icon">📊</div>' +
+          '<h2>Theo dõi dự án CEO</h2>' +
+          '<p>Chưa có dữ liệu trong sheet <strong>THEO_DOI_DU_AN_CEO</strong>. ' +
+          'Hãy chạy <code>setupCEOProjectTrackerSheet()</code> rồi nhập dữ liệu P1–P8.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet THEO_DOI_DU_AN_CEO</div></div>';
+        ['cpt-kpi-bar','cpt-qs-wrap'].forEach(function(id) {
+          var e = document.getElementById(id); if (e) e.style.display = 'none';
+        });
         return;
       }
-      cptAllRecords = records;
-      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-      var active  = records.filter(function(r) { return /triển khai|in progress/i.test(r.Status||''); }).length;
-      var overdue = records.filter(function(r) { return /quá hạn|overdue/i.test(r.Status||''); }).length;
-      var done    = records.filter(function(r) { return /hoàn thành|done|complete/i.test(r.Status||''); }).length;
-      var blocked = records.filter(function(r) { return hasTextClient(r.Issues); }).length;
-      st('cpt-badge', records.length + ' dự án');
-      st('cpt-s-total', records.length); st('cpt-s-active', active);
-      st('cpt-s-overdue', overdue); st('cpt-s-done', done); st('cpt-s-blocked', blocked);
-      renderCEOProjectsTable(records);
+      var s = data.summary || {};
+      var st = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+      st('cpt-badge', data.projects.length + ' dự án');
+      // KPI bar
+      st('cpt-kv-total',  s.tongDuAn           || 0);
+      st('cpt-kv-active', s.dangTrienKhai       || 0);
+      st('cpt-kv-green',  s.dungTienDo          || 0);
+      st('cpt-kv-amber',  s.coNguyChamTre       || 0);
+      st('cpt-kv-overdue',s.quaHan              || 0);
+      st('cpt-kv-nopt',   s.chuaCoNguoiPhuTrach || 0);
+      st('cpt-kv-risk',   s.coRuiRo             || 0);
+      st('cpt-kv-ceoq',   s.canCEOQuyetDinh     || 0);
+      var bar = document.getElementById('cpt-kpi-bar');
+      if (bar) bar.style.display = 'flex';
+      // Quick summary
+      cptRenderQuickSummary(s);
+      var qsWrap = document.getElementById('cpt-qs-wrap');
+      if (qsWrap) qsWrap.style.display = 'block';
+      // Project grid
+      cptDetailId = null;
+      cptRenderGrid(data.projects, null);
     }
 
-    function renderCEOProjectsTable(records) {
-      var contentEl = document.getElementById('cpt-content');
-      if (!contentEl) return;
-      var cols = ['Project ID','Tên dự án','PIC Lead','Bắt đầu','Deadline','% HT','Trạng thái','RAG','Milestone gần nhất','Vướng mắc','CEO cần chốt','Link'];
-      var html = '<div class="mod-table-wrapper"><table class="mod-table"><thead><tr>';
-      cols.forEach(function(c) { html += '<th>' + safe(c) + '</th>'; });
-      html += '</tr></thead><tbody>';
-      if (!records.length) {
-        html += '<tr class="empty-row"><td colspan="' + cols.length + '">Không tìm thấy dự án nào</td></tr>';
-      } else {
-        records.forEach(function(r) {
-          html += '<tr>'
-            + '<td>' + safe(r.ProjectID || r.RowId) + '</td>'
-            + '<td><b>' + safe(r.ProjectName || r.Action) + '</b></td>'
-            + '<td>' + safe(r.PICLead || r.PIC) + '</td>'
-            + '<td>' + safe(r.StartDate) + '</td>'
-            + '<td>' + safe(r.Deadline) + '</td>'
-            + '<td>' + safe(r.Progress) + '</td>'
-            + '<td>' + safe(r.Status) + '</td>'
-            + '<td>' + modRagBadge(r.RAG) + '</td>'
-            + '<td>' + safe(r.Milestone) + '</td>'
-            + '<td>' + safe(r.Issues) + '</td>'
-            + '<td>' + safe(r.CEODecision) + '</td>'
-            + '<td>' + (r.RowUrl ? '<a class="mod-link" href="' + safe(r.RowUrl) + '" target="_blank">🔗 Mở</a>' : '') + '</td>'
-            + '</tr>';
-        });
+    function cptClickKpi(kpi) {
+      if (!cptCache) return;
+      if (cptActiveKpi === kpi) { cptClearFilter(); return; }
+      cptActiveKpi = kpi;
+      // Highlight active card
+      ['total','active','green','amber','overdue','nopt','risk','ceoq'].forEach(function(k) {
+        var card = document.getElementById('cpt-kc-' + k);
+        if (card) card.classList.toggle('kpi-active', k === kpi);
+      });
+      var labels = { total:'Tất cả dự án', active:'Đang triển khai', green:'Đúng tiến độ 🟢',
+        amber:'Nguy cơ chậm 🟡', overdue:'Quá hạn 🔴', nopt:'Chưa có người phụ trách',
+        risk:'Có rủi ro ⚠️', ceoq:'CEO cần quyết định 👑' };
+      var ft = document.getElementById('cpt-filter-text');
+      if (ft) ft.textContent = 'Đang lọc: ' + (labels[kpi] || kpi);
+      var fb = document.getElementById('cpt-filter-bar');
+      if (fb) fb.classList.add('visible');
+      cptDetailId = null;
+      cptRenderGrid(cptCache.projects, kpi);
+    }
+
+    function cptClearFilter() {
+      cptActiveKpi = null;
+      ['total','active','green','amber','overdue','nopt','risk','ceoq'].forEach(function(k) {
+        var c = document.getElementById('cpt-kc-' + k);
+        if (c) c.classList.remove('kpi-active');
+      });
+      var fb = document.getElementById('cpt-filter-bar');
+      if (fb) fb.classList.remove('visible');
+      if (cptCache) cptRenderGrid(cptCache.projects, null);
+    }
+
+    function cptFilter_(projects, kpi) {
+      if (!kpi || kpi === 'total') return projects;
+      if (kpi === 'active')  return projects.filter(function(p) { return /đang triển khai/i.test(p.TrangThai); });
+      if (kpi === 'green')   return projects.filter(function(p) { return p.RAG === 'Xanh'; });
+      if (kpi === 'amber')   return projects.filter(function(p) { return p.RAG === 'Vàng'; });
+      if (kpi === 'overdue') return projects.filter(function(p) { return p.CongViecQuaHan > 0 || /quá hạn/i.test(p.TrangThai); });
+      if (kpi === 'nopt')    return projects.filter(function(p) { return !hasTextClient(p.NguoiPhuTrach); });
+      if (kpi === 'risk')    return projects.filter(function(p) { return p.SoRuiRo > 0; });
+      if (kpi === 'ceoq')    return projects.filter(function(p) { return p.SoCEOQuyetCan > 0; });
+      return projects;
+    }
+
+    function cptRenderGrid(projects, kpi) {
+      var el = document.getElementById('cpt-content');
+      if (!el) return;
+      var filtered = cptFilter_(projects, kpi);
+      if (!filtered.length) {
+        el.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">🔍</div><h2>Không có dự án phù hợp</h2><p>Thay đổi bộ lọc để xem thêm.</p></div>';
+        return;
       }
-      html += '</tbody></table></div>';
-      contentEl.innerHTML = html;
+      var html = '<div class="cpt-project-grid">';
+      filtered.forEach(function(p) { html += cptProjectCardHTML(p); });
+      html += '</div>';
+      el.innerHTML = html;
     }
 
-    function filterCEOProjects(keyword) {
-      if (!cptAllRecords.length) return;
-      var kw = (keyword || '').toLowerCase().trim();
-      var filtered = kw
-        ? cptAllRecords.filter(function(r) {
-            return ((r.ProjectName||'') + (r.PICLead||'') + (r.PIC||'') + (r.Status||'') + (r.Action||''))
-              .toLowerCase().includes(kw);
-          })
-        : cptAllRecords;
-      var el = document.getElementById('cpt-badge');
-      if (el) el.textContent = filtered.length + ' dự án' + (kw ? ' (lọc)' : '');
-      renderCEOProjectsTable(filtered);
+    function cptProjectCardHTML(p) {
+      var ragCls = p.RAG === 'Xanh' ? 'green' : p.RAG === 'Vàng' ? 'amber' : p.RAG === 'Đỏ' ? 'red' : 'none';
+      var ragCard = p.RAG === 'Xanh' ? 'rag-green' : p.RAG === 'Vàng' ? 'rag-amber' : p.RAG === 'Đỏ' ? 'rag-red' : '';
+      var ragLabel = p.RAG === 'Xanh' ? '🟢 Xanh' : p.RAG === 'Vàng' ? '🟡 Vàng' : p.RAG === 'Đỏ' ? '🔴 Đỏ' : '— RAG';
+      var tienDo = p.TienDo !== null ? p.TienDo : (hasTextClient(p.PhanTramHT) ? parseInt(p.PhanTramHT) : null);
+      var fillCls = tienDo >= 80 ? 'green' : tienDo >= 40 ? 'amber' : 'red';
+
+      var tags = '';
+      if (p.CongViecQuaHan > 0) tags += '<span class="cpt-tag overdue">⏰ ' + p.CongViecQuaHan + ' CV quá hạn</span>';
+      if (p.SoRuiRo > 0)        tags += '<span class="cpt-tag risk">⚠️ ' + p.SoRuiRo + ' rủi ro</span>';
+      if (p.SoCEOQuyetCan > 0)  tags += '<span class="cpt-tag ceoq">👑 CEO cần quyết</span>';
+      if (p.NgayKhongCapNhat !== null && p.NgayKhongCapNhat > 7)
+        tags += '<span class="cpt-tag stale">📭 ' + p.NgayKhongCapNhat + ' ngày chưa CN</span>';
+
+      var lastUpd = '';
+      if (hasTextClient(p.CapNhatGanNhat)) {
+        lastUpd = '<div class="cpt-card-update">📝 ' + safe(p.CapNhatGanNhat.slice(0, 80)) + (p.CapNhatGanNhat.length > 80 ? '…' : '') + '</div>';
+      }
+
+      return '<div class="cpt-project-card ' + ragCard + '" onclick="cptShowDetail(\'' + safeAttr(p.MaBanGhi) + '\')">'
+        + '<div class="cpt-card-head">'
+        +   '<div class="cpt-card-id">' + safe(p.MaBanGhi) + '</div>'
+        +   '<span class="cpt-card-rag ' + ragCls + '">' + ragLabel + '</span>'
+        + '</div>'
+        + '<div class="cpt-card-title">' + safe(p.TenBanGhi) + '</div>'
+        + '<div class="cpt-card-meta">'
+        +   (hasTextClient(p.NguoiPhuTrach) ? '<span>👤 ' + safe(p.NguoiPhuTrach) + '</span>' : '<span style="color:#dc2626">👤 Chưa có NPT</span>')
+        +   (hasTextClient(p.ThoiHanHoanThanh) ? '<span>📅 ' + safe(p.ThoiHanHoanThanh) + '</span>' : '')
+        +   (hasTextClient(p.TrangThai) ? '<span>' + safe(p.TrangThai) + '</span>' : '')
+        + '</div>'
+        + (tienDo !== null
+            ? '<div class="cpt-progress-wrap">'
+            +   '<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:#6b7280">Tiến độ</span><span class="cpt-progress-pct">' + tienDo + '%</span></div>'
+            +   '<div class="cpt-progress-bar"><div class="cpt-progress-fill ' + fillCls + '" style="width:' + Math.min(tienDo, 100) + '%"></div></div>'
+            + '</div>' : '')
+        + (tags ? '<div class="cpt-card-tags">' + tags + '</div>' : '')
+        + lastUpd
+        + '</div>';
     }
+
+    function cptShowDetail(projectId) {
+      if (!cptCache) return;
+      var p = null;
+      for (var i = 0; i < cptCache.projects.length; i++) {
+        if (cptCache.projects[i].MaBanGhi === projectId) { p = cptCache.projects[i]; break; }
+      }
+      if (!p) return;
+      cptDetailId = projectId;
+
+      var hms  = (cptCache.hangMucs  || []).filter(function(h) { return h.MaCapTren === projectId || h.MaDuAn === projectId; });
+      var cvs  = (cptCache.congViecs || []).filter(function(c) { return c.MaDuAn === projectId; });
+      var cns  = (cptCache.capNhats  || []).filter(function(u) { return u.MaDuAn === projectId || u.MaCapTren === projectId; })
+                   .sort(function(a, b) { return (b.NgayCapNhat||'').localeCompare(a.NgayCapNhat||''); });
+      var qds  = (cptCache.quyetDinhs|| []).filter(function(q) { return q.MaDuAn === projectId || q.MaCapTren === projectId; });
+
+      var ragCls   = p.RAG === 'Xanh' ? 'green' : p.RAG === 'Vàng' ? 'amber' : p.RAG === 'Đỏ' ? 'red' : 'none';
+      var ragLabel = p.RAG === 'Xanh' ? '🟢 Xanh' : p.RAG === 'Vàng' ? '🟡 Vàng' : p.RAG === 'Đỏ' ? '🔴 Đỏ' : '—';
+
+      function row(lbl, val, cls) {
+        var v = hasTextClient(val) ? safe(val) : '<span class="cpt-detail-empty">—</span>';
+        return '<div class="cpt-detail-row"><div class="cpt-detail-label">' + lbl + '</div>'
+          + '<div class="cpt-detail-val' + (cls ? ' ' + cls : '') + '">' + v + '</div></div>';
+      }
+      function section(title, content, extra) {
+        return '<div class="cpt-detail-section' + (extra ? ' ' + extra : '') + '">'
+          + '<div class="cpt-detail-section-title">' + title + '</div>' + content + '</div>';
+      }
+
+      // Sub-tables
+      function cvTable(list) {
+        if (!list.length) return '<div class="cpt-detail-empty">Không có công việc</div>';
+        var h = '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Tên công việc</th><th>Người PT</th><th>Hạn</th><th>Trạng thái</th><th>RAG</th></tr></thead><tbody>';
+        list.forEach(function(c) {
+          var isOD = c.IsOverdue;
+          h += '<tr' + (isOD ? ' style="background:#fff8f8"' : '') + '>'
+            + '<td>' + safe(c.MaBanGhi) + '</td><td>' + safe(c.TenBanGhi) + '</td>'
+            + '<td>' + safe(c.NguoiPhuTrach||'—') + '</td><td>' + safe(c.ThoiHanHoanThanh||'—') + '</td>'
+            + '<td>' + safe(c.TrangThai||'—') + '</td><td>' + modRagBadge(c.RAG) + '</td></tr>';
+        });
+        h += '</tbody></table>';
+        return h;
+      }
+      function cnList(list) {
+        if (!list.length) return '<div class="cpt-detail-empty">Chưa có cập nhật</div>';
+        var h = '';
+        list.slice(0, 5).forEach(function(u) {
+          h += '<div class="cpt-qs-item">'
+            + '<span class="cpt-qs-item-sub">' + safe(u.NgayCapNhat||'') + '</span>'
+            + '<span class="cpt-qs-item-ten">' + safe(u.CapNhatMoiNhat || u.CongViecDaThucHien || u.TenBanGhi || '') + '</span>'
+            + '</div>';
+        });
+        return h;
+      }
+
+      var tienDo = p.TienDo !== null ? p.TienDo : (hasTextClient(p.PhanTramHT) ? parseInt(p.PhanTramHT) : null);
+      var fillCls = tienDo >= 80 ? 'green' : tienDo >= 40 ? 'amber' : 'red';
+
+      var html = '<div class="cpt-detail-view">';
+      html += '<button class="cpt-detail-back" onclick="cptBackToGrid()">← Quay lại</button>';
+      html += '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:6px">'
+        + '<div style="flex:1"><div class="cpt-detail-title">' + safe(p.TenBanGhi) + '</div></div>'
+        + '<span class="cpt-card-rag ' + ragCls + '" style="font-size:13px;padding:4px 12px">' + ragLabel + '</span>'
+        + '</div>';
+      html += '<div class="cpt-detail-meta">'
+        + '<span>📌 ' + safe(p.MaBanGhi) + '</span>'
+        + (hasTextClient(p.TrangThai) ? '<span>⚡ ' + safe(p.TrangThai) + '</span>' : '')
+        + (hasTextClient(p.GiaiDoan)  ? '<span>🏗️ ' + safe(p.GiaiDoan) + '</span>' : '')
+        + (hasTextClient(p.MucDoUuTien) ? '<span>🎯 Ưu tiên: ' + safe(p.MucDoUuTien) + '</span>' : '')
+        + '</div>';
+
+      if (tienDo !== null) {
+        html += '<div style="margin-bottom:16px">'
+          + '<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
+          +   '<span style="font-size:12px;font-weight:600;color:#374151">Tiến độ tổng thể</span>'
+          +   '<span style="font-size:13px;font-weight:800">' + tienDo + '%</span>'
+          + '</div>'
+          + '<div class="cpt-progress-bar" style="height:10px"><div class="cpt-progress-fill ' + fillCls + '" style="width:' + Math.min(tienDo, 100) + '%"></div></div>'
+          + '<div style="font-size:11px;color:#6b7280;margin-top:4px">' + p.CongViecHoanThanh + '/' + p.TongCongViec + ' công việc hoàn thành</div>'
+          + '</div>';
+      }
+
+      html += '<div class="cpt-detail-grid">';
+      html += section('Thông tin cơ bản',
+        row('Người phụ trách', p.NguoiPhuTrach)
+        + row('Người phối hợp', p.NguoiPhoiHop)
+        + row('Trục công việc', p.TrucCongViec)
+        + row('Ngày bắt đầu', p.NgayBatDau)
+        + row('Hạn hoàn thành', p.ThoiHanHoanThanh)
+        + row('Cập nhật lần cuối', p.NgayCapNhatGanNhat || p.NgayCapNhat));
+      html += section('Mô tả & Mục tiêu',
+        row('Mô tả', p.MoTa)
+        + row('Bối cảnh', p.BoiCanh)
+        + row('Mục tiêu', p.MucTieu)
+        + row('Phạm vi', p.PhamVi)
+        + row('Sản phẩm đầu ra', p.SanPhamDauRa));
+      html += section('Cập nhật mới nhất',
+        row('Đã thực hiện', p.CongViecDaThucHien)
+        + row('Kết quả đạt được', p.KetQuaDatDuoc)
+        + row('Cập nhật', p.CapNhatGanNhat)
+        + row('Kế hoạch tiếp', p.KeHoachTiepTheo));
+      html += section('Vướng mắc / Rủi ro',
+        row('Vướng mắc/Rủi ro', p.VuongMacRuiRo)
+        + row('Hướng xử lý', p.HuongXuLy), 'highlight');
+      if (hasTextClient(p.NdCEOCanBiet) || hasTextClient(p.NdCanCEOQuyet)) {
+        html += section('👑 Thông tin cho CEO',
+          row('CEO cần biết', p.NdCEOCanBiet)
+          + row('CEO cần quyết', p.NdCanCEOQuyet)
+          + row('Các phương án', p.CacPhuongAn)
+          + row('Quyết định CEO', p.QuyetDinhCEO), 'ceo-block');
+      }
+      if (hasTextClient(p.GhiChu) || hasTextClient(p.LinkFile)) {
+        html += section('Ghi chú & Tài liệu',
+          row('Ghi chú', p.GhiChu)
+          + (hasTextClient(p.LinkFile) ? '<div class="cpt-detail-row"><div class="cpt-detail-label">Link/File</div><div class="cpt-detail-val"><a href="' + safeAttr(p.LinkFile) + '" target="_blank" style="color:#1d4ed8">🔗 Mở tài liệu</a></div></div>' : ''));
+      }
+      if (cns.length > 0) {
+        html += '<div class="cpt-detail-section"><div class="cpt-detail-section-title">📋 Lịch sử cập nhật (mới nhất)</div>' + cnList(cns) + '</div>';
+      }
+      if (qds.length > 0) {
+        html += '<div class="cpt-detail-section"><div class="cpt-detail-section-title">👑 Quyết định CEO</div>'
+          + '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Nội dung</th><th>Quyết định</th><th>Trạng thái</th></tr></thead><tbody>';
+        qds.forEach(function(q) {
+          html += '<tr><td>' + safe(q.MaBanGhi) + '</td><td>' + safe(q.TenBanGhi) + '</td>'
+            + '<td>' + safe(q.QuyetDinhCEO||'—') + '</td><td>' + safe(q.NdCanCEOQuyet||'—') + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+      html += '<div class="cpt-detail-section full"><div class="cpt-detail-section-title">📌 Danh sách công việc (' + cvs.length + ')</div>' + cvTable(cvs) + '</div>';
+      if (hms.length > 0) {
+        html += '<div class="cpt-detail-section full"><div class="cpt-detail-section-title">🗂️ Hạng mục (' + hms.length + ')</div>'
+          + '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Tên hạng mục</th><th>Người PT</th><th>Trạng thái</th></tr></thead><tbody>';
+        hms.forEach(function(h) {
+          html += '<tr><td>' + safe(h.MaBanGhi) + '</td><td>' + safe(h.TenBanGhi) + '</td>'
+            + '<td>' + safe(h.NguoiPhuTrach||'—') + '</td><td>' + safe(h.TrangThai||'—') + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+      }
+      html += '</div>'; // cpt-detail-grid
+      html += '</div>'; // cpt-detail-view
+
+      var contentEl = document.getElementById('cpt-content');
+      if (contentEl) contentEl.innerHTML = html;
+    }
+
+    function cptBackToGrid() {
+      cptDetailId = null;
+      if (cptCache) cptRenderGrid(cptCache.projects, cptActiveKpi);
+    }
+
+    function cptToggleQS() {
+      cptQSOpen = !cptQSOpen;
+      var body = document.getElementById('cpt-qs-body');
+      var arrow = document.getElementById('cpt-qs-arrow');
+      if (body)  body.style.display  = cptQSOpen ? 'block' : 'none';
+      if (arrow) arrow.textContent   = cptQSOpen ? '▲' : '▼';
+    }
+
+    function cptRenderQuickSummary(s) {
+      var body = document.getElementById('cpt-qs-body');
+      if (!body) return;
+
+      function qsSection(title, items, emptyMsg) {
+        var h = '<div class="cpt-qs-section"><div class="cpt-qs-title">' + title + '</div>';
+        if (!items || !items.length) {
+          h += '<div class="cpt-qs-empty">' + (emptyMsg || 'Không có') + '</div>';
+        } else {
+          items.slice(0, 5).forEach(function(it) {
+            h += '<div class="cpt-qs-item">'
+              + '<span class="cpt-qs-item-ma">' + safe(it.ma||'') + '</span>'
+              + '<span class="cpt-qs-item-ten">' + safe(it.ten||'') + '</span>'
+              + (hasTextClient(it.han) ? '<span class="cpt-qs-item-sub">' + safe(it.han) + '</span>' : '')
+              + '</div>';
+          });
+          if (items.length > 5) {
+            h += '<div class="cpt-qs-empty">... và ' + (items.length-5) + ' mục khác</div>';
+          }
+        }
+        h += '</div>';
+        return h;
+      }
+
+      var html = '<div class="cpt-qs-grid">';
+      html += qsSection('🚨 Dự án cần can thiệp ngay',       s.duAnCanCanThiep,           '✅ Không có dự án cần can thiệp');
+      html += qsSection('⏰ CV quá hạn nghiêm trọng (>3 ngày)', s.congViecQuaHanNghiemTrong, '✅ Không có công việc quá hạn nghiêm trọng');
+      html += qsSection('📭 Dự án chưa cập nhật >7 ngày',   s.duAnChuaCapNhat7Ngay,      '✅ Tất cả dự án đã cập nhật gần đây');
+      html += qsSection('❓ CV chưa có người phụ trách',     s.congViecChuaCoNPT,         '✅ Tất cả công việc đã có người phụ trách');
+      html += qsSection('👑 CEO cần quyết trong 48h (Khẩn)', s.canCEOQuyetTrong48h,       '✅ Không có vấn đề khẩn cần quyết định');
+      html += qsSection('✅ Sản phẩm hoàn thành tuần này',   s.sanPhamHoanThanhTuanNay,   '—');
+      html += qsSection('📅 Sản phẩm dự kiến tuần tới',     s.sanPhamDuKienTuanToi,      '—');
+      html += qsSection('🏆 Top 5 ưu tiên xử lý',            s.uuTienXuLy5Viec,           'Không có công việc đang mở');
+      html += '</div>';
+      body.innerHTML = html;
+    }
+
+    function cptCopyReport() {
+      if (!cptCache || !cptCache.summary) {
+        alert('Chưa có dữ liệu. Hãy nhấn Cập nhật trước.'); return;
+      }
+      var s = cptCache.summary;
+      var lines = [
+        '📊 TÓM TẮT DỰ ÁN CEO — ' + new Date().toLocaleDateString('vi-VN'),
+        '━━━━━━━━━━━━━━━━━━━━━━━',
+        '▶ Tổng: ' + s.tongDuAn + ' dự án | Đang chạy: ' + s.dangTrienKhai,
+        '🟢 Đúng tiến độ: ' + s.dungTienDo + ' | 🟡 Nguy cơ: ' + s.coNguyChamTre + ' | 🔴 Quá hạn: ' + s.quaHan,
+        '⚠️ Có rủi ro: ' + s.coRuiRo + ' | 👑 CEO cần quyết: ' + s.canCEOQuyetDinh,
+        ''
+      ];
+      function addSection(title, items) {
+        if (items && items.length) {
+          lines.push(title);
+          items.slice(0, 5).forEach(function(it) { lines.push('  • [' + (it.ma||'') + '] ' + (it.ten||'')); });
+          lines.push('');
+        }
+      }
+      addSection('🚨 Dự án cần can thiệp:', s.duAnCanCanThiep);
+      addSection('⏰ CV quá hạn nghiêm trọng:', s.congViecQuaHanNghiemTrong);
+      addSection('👑 CEO cần quyết khẩn:', s.canCEOQuyetTrong48h);
+      addSection('🏆 Top 5 ưu tiên:', s.uuTienXuLy5Viec);
+      var text = lines.join('\n');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() { alert('Đã sao chép tóm tắt báo cáo!'); });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        alert('Đã sao chép tóm tắt báo cáo!');
+      }
+    }
+
+    /* Backward compat stubs */
+    function loadCEOProjects()       { cptLoad(); }
+    function renderCEOProjects()     {}
+    function renderCEOProjectsTable(){ }
+    function filterCEOProjects()     {}
 
     /* =====================================================
        TO ACTION CENTER MODULE
