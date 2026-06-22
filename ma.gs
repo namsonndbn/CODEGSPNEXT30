@@ -1231,24 +1231,80 @@ function importCEOProjectSeedData(seedData) {
 
 function testImportCEOProjectSeedData() {
   Logger.log('=== testImportCEOProjectSeedData ===');
-  Logger.log('Dán seed data P1–P8 vào mảng seedData bên dưới rồi chạy lại.');
 
-  /* ── Dán seed data vào đây ── */
   var seedData = [
-    /*
-    Ví dụ: {
-      'Loại bản ghi': 'DỰ ÁN', 'Mã bản ghi': 'P1', 'Mã cấp trên': '', 'Mã dự án': 'P1',
-      'Tên dự án/Hạng mục/Công việc': 'Tên dự án P1', 'Giai đoạn triển khai': 'LÀM NGAY',
-      'Mức độ ưu tiên': 'Cao', 'Trạng thái': 'Đang triển khai', 'RAG': 'Xanh'
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P1',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P1',
+      'Tên dự án/Hạng mục/Công việc': 'Hệ thống quản lý GSP',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P2',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P2',
+      'Tên dự án/Hạng mục/Công việc': 'Kỷ luật nhà máy và nền tảng kho hàng',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P3',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P3',
+      'Tên dự án/Hạng mục/Công việc': 'Nền tảng dữ liệu và nguồn dữ liệu duy nhất',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P4',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P4',
+      'Tên dự án/Hạng mục/Công việc': 'Lập kế hoạch, quản lý chuỗi cung ứng và MRP',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P5',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P5',
+      'Tên dự án/Hạng mục/Công việc': 'Hệ điều hành chất lượng',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P6',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P6',
+      'Tên dự án/Hạng mục/Công việc': 'Hệ điều hành thương mại',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P7',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P7',
+      'Tên dự án/Hạng mục/Công việc': 'Ứng dụng công nghệ số và trí tuệ nhân tạo',
+      'Trạng thái':                   'Cần cập nhật'
+    },
+    {
+      'Loại bản ghi':                 'DỰ ÁN',
+      'Mã bản ghi':                   'P8',
+      'Mã cấp trên':                  '',
+      'Mã dự án':                     'P8',
+      'Tên dự án/Hạng mục/Công việc': 'Quản trị PMO và kiểm soát tiếp nhận',
+      'Trạng thái':                   'Cần cập nhật'
     }
-    */
   ];
 
-  if (seedData.length === 0) {
-    Logger.log('Chưa có seed data. Dán dữ liệu P1–P8 vào mảng seedData rồi chạy lại.');
-    return;
-  }
-  Logger.log('Kết quả: ' + JSON.stringify(importCEOProjectSeedData(seedData)));
+  var result = importCEOProjectSeedData(seedData);
+  Logger.log('Kết quả: ' + JSON.stringify(result));
+  Logger.log('Đã thêm: '  + result.added   + ' dự án');
+  Logger.log('Bỏ qua: '   + result.skipped + ' (trùng Mã bản ghi)');
+  Logger.log('Lỗi: '      + result.errors);
+  Logger.log('--- ' + (result.errors === 0 ? 'OK' : 'CÓ LỖI') + ' ---');
 }
 
 function normalizeCPTRow_(r, i) {
