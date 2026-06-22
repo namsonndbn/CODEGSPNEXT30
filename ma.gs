@@ -1181,7 +1181,7 @@ function testSetupCEOProjectTrackerSheet() {
 
 function importCEOProjectSeedData(seedData) {
   if (!Array.isArray(seedData)) {
-    return { added:0, skipped:0, errors:1, message:'seedData phải là mảng' };
+    return { added:0, updated:0, skipped:0, errors:1, message:'seedData phải là mảng' };
   }
   var SHEET_NAME = 'THEO_DOI_DU_AN_CEO';
   var COLUMNS = [
@@ -1194,55 +1194,119 @@ function importCEOProjectSeedData(seedData) {
     'Cập nhật mới nhất','Kết quả đạt được','Vướng mắc/Rủi ro',
     'Hướng xử lý','Kế hoạch tiếp theo','Nội dung CEO cần biết',
     'Nội dung cần CEO quyết','Các phương án đề xuất','Quyết định của CEO',
-    'Ngày cập nhật','Người cập nhật','Link bằng chứng/File nguồn','Ghi chú'
+    'Ngày cập nhật','Người cập nhật','Link bằng chứng/File nguồn','Ghi chú',
+    'Đề bài CEO','Việc đang triển khai','Tiến độ hiện tại'
+  ];
+  // Profile columns: safe to fill-in for existing DỰ ÁN rows if currently empty
+  var DU_AN_FILL_COLS = [
+    'Tên dự án/Hạng mục/Công việc','Mô tả','Bối cảnh','Mục tiêu','Phạm vi',
+    'Sản phẩm đầu ra','Người phụ trách','Người phối hợp',
+    'Trục công việc','Giai đoạn triển khai','Mức độ ưu tiên',
+    'Ghi chú','Đề bài CEO','Việc đang triển khai','Tiến độ hiện tại'
   ];
 
-  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) { setupCEOProjectTrackerSheet(); sheet = ss.getSheetByName(SHEET_NAME); }
 
   var lastRow = sheet.getLastRow();
-  var existingIds = {};
-  if (lastRow > 1) {
-    sheet.getRange(2, 2, lastRow - 1, 1).getValues()
-      .forEach(function(r) { if (r[0]) existingIds[String(r[0]).trim()] = true; });
-  }
+  var sheetCols = sheet.getLastColumn();
+  var allData = lastRow > 1 ? sheet.getRange(2, 1, lastRow - 1, sheetCols).getValues() : [];
 
-  var added = 0, skipped = 0, errors = 0, newRows = [];
+  // Build lookup: Mã bản ghi → { rowIdx (0-based in allData), loai, sheetRow (1-based) }
+  var existingMap = {};
+  allData.forEach(function(row, idx) {
+    var maId = String(row[1] || '').trim();
+    if (maId) existingMap[maId] = { rowIdx: idx, loai: String(row[0] || '').trim(), sheetRow: idx + 2 };
+  });
+
+  var added = 0, updated = 0, skipped = 0, errors = 0, newRows = [];
+  var cellUpdates = []; // { sheetRow, col (1-based), value }
+
   seedData.forEach(function(item, idx) {
     try {
       var maId = String(item['Mã bản ghi'] || '').trim();
       if (!maId) { errors++; return; }
-      if (existingIds[maId]) { skipped++; return; }
-      newRows.push(COLUMNS.map(function(col) {
+      var itemLoai = String(item['Loại bản ghi'] || '').trim();
+
+      if (existingMap[maId] !== undefined) {
+        // Existing record: for DỰ ÁN rows only, fill empty profile columns
+        if (itemLoai === 'DỰ ÁN' && existingMap[maId].loai === 'DỰ ÁN') {
+          var existingRow = allData[existingMap[maId].rowIdx];
+          var hasUpdate = false;
+          DU_AN_FILL_COLS.forEach(function(col) {
+            var ci = COLUMNS.indexOf(col);
+            if (ci < 0 || ci >= sheetCols) return;
+            var existingVal = String(existingRow[ci] || '').trim();
+            var newVal = String(item[col] || '').trim();
+            if (!existingVal && newVal) {
+              cellUpdates.push({ sheetRow: existingMap[maId].sheetRow, col: ci + 1, value: newVal });
+              existingRow[ci] = newVal; // update in-memory to avoid double scheduling
+              hasUpdate = true;
+            }
+          });
+          if (hasUpdate) updated++; else skipped++;
+        } else {
+          skipped++;
+        }
+        return;
+      }
+
+      // New record — append
+      var row = COLUMNS.map(function(col) {
         var v = item[col];
         return (v === undefined || v === null) ? '' : String(v);
-      }));
-      existingIds[maId] = true;
+      });
+      newRows.push(row);
+      existingMap[maId] = { rowIdx: allData.length + newRows.length - 1, loai: itemLoai, sheetRow: 0 };
       added++;
-    } catch(e) { Logger.log('importCEOProjectSeedData idx=' + idx + ': ' + e.message); errors++; }
+    } catch(e) {
+      Logger.log('importCEOProjectSeedData idx=' + idx + ': ' + e.message);
+      errors++;
+    }
   });
 
+  // Apply cell-level updates for existing DỰ ÁN profile fields
+  cellUpdates.forEach(function(u) {
+    sheet.getRange(u.sheetRow, u.col).setValue(u.value);
+  });
+
+  // Append new rows in one batch
   if (newRows.length > 0) {
-    var startRow = Math.max(sheet.getLastRow(), 1) + 1;
-    sheet.getRange(startRow, 1, newRows.length, COLUMNS.length).setValues(newRows);
+    var colCount = Math.max(COLUMNS.length, sheetCols);
+    var padded = newRows.map(function(r) {
+      while (r.length < colCount) r.push('');
+      return r.slice(0, colCount);
+    });
+    var appendAt = Math.max(sheet.getLastRow(), 1) + 1;
+    sheet.getRange(appendAt, 1, padded.length, colCount).setValues(padded);
   }
-  var msg = 'Đã thêm ' + added + ' bản ghi, bỏ qua ' + skipped + ' trùng, ' + errors + ' lỗi';
+
+  var msg = 'Thêm mới: ' + added + ' | Cập nhật hồ sơ DỰ ÁN: ' + updated + ' | Bỏ qua trùng: ' + skipped + ' | Lỗi: ' + errors;
   Logger.log('importCEOProjectSeedData: ' + msg);
-  return { added:added, skipped:skipped, errors:errors, message:msg };
+  return { added: added, updated: updated, skipped: skipped, errors: errors, message: msg };
 }
 
 function testImportCEOProjectSeedData() {
   Logger.log('=== testImportCEOProjectSeedData ===');
 
   var seedData = [
+    // ========== 8 DỰ ÁN ==========
     {
       'Loại bản ghi':                 'DỰ ÁN',
       'Mã bản ghi':                   'P1',
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P1',
-      'Tên dự án/Hạng mục/Công việc': 'Hệ thống quản lý GSP',
-      'Trạng thái':                   'Cần cập nhật'
+      'Tên dự án/Hạng mục/Công việc': 'GMS – Hệ thống quản lý GSP',
+      'Mô tả':           'Xây dựng GMS V1.0 — hệ điều hành quản trị tổng thể của GSP, gồm 12 quy tắc vận hành, 8 phụ lục thực thi, ma trận quyết định, chuỗi KPI, yêu cầu dashboard và yêu cầu logic APS.',
+      'Sản phẩm đầu ra': 'GMS V1.0: 12 quy tắc vận hành; 8 phụ lục; Ma trận RACI và Ma trận quyết định; Chuỗi KPI và chính sách trả lương hiệu suất; Checklist Gemba; Quy trình SOS; Yêu cầu dashboard; Yêu cầu logic APS.',
+      'Người phụ trách': 'Thành + Sơn',
+      'Người phối hợp':  'Thủy, Toản, Lâm',
+      'Trục công việc':  '06 Hệ thống / KPI / PMO',
+      'Giai đoạn triển khai': 'THIẾT KẾ NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'Sổ tay vận hành GSP; Hệ thống vận hành GSP; 12 quy tắc vận hành; 8 phụ lục GMS; RACI; Ma trận quyết định; Chuỗi KPI; Quy trình leo thang SOS; Checklist Gemba; Trả lương theo hiệu suất và trách nhiệm; Không có người chịu trách nhiệm = Không hành động; Tổ chức phẳng.',
+      'Ghi chú':         'Thiết kế trong 60 ngày, làm hệ điều hành mẹ. Trục triển khai: BG + BO. Cơ chế điều phối: PMO + Claude. Thứ tự ưu tiên CEO: 5/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1250,7 +1314,15 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P2',
       'Tên dự án/Hạng mục/Công việc': 'Kỷ luật nhà máy và nền tảng kho hàng',
-      'Trạng thái':                   'Cần cập nhật'
+      'Mô tả':           'Thiết lập kỷ luật vận hành tại nhà máy — chiến dịch 30 ngày đột phá + hệ thống kho hàng chuẩn hóa: kiểm soát BTP/TP/NVL, quản lý mẫu và phiên bản, tiêu chuẩn nơi làm việc, quản lý trực quan.',
+      'Sản phẩm đầu ra': 'Báo cáo kết quả chiến dịch 30 ngày; Sổ tay tiêu chuẩn kho; Quy trình kiểm soát BTP/TP/NVL; Hệ thống quản lý mẫu và phiên bản; Bộ tiêu chuẩn nơi làm việc và quản lý trực quan.',
+      'Người phụ trách': 'Thành + Thủy',
+      'Người phối hợp':  'Toản, Lâm, quản lý nhà máy',
+      'Trục công việc':  '03 Vận hành và Chất lượng',
+      'Giai đoạn triển khai': 'LÀM NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      '30 ngày tạo ra trật tự; 30 ngày dẹp hết hỗn loạn; Chuẩn hóa kho hàng; Kiểm soát BTP; Quản lý phiên bản; Không có phiên bản = Không sản xuất; Kho không trật tự = Không nhập thêm; Tiêu chuẩn nơi làm việc.',
+      'Ghi chú':         'Cần kết quả rõ trong 30 ngày đầu. Trục triển khai: BO + QA. Cơ chế điều phối: PMO + Quản lý nhà máy. Thứ tự ưu tiên CEO: 2/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1258,7 +1330,15 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P3',
       'Tên dự án/Hạng mục/Công việc': 'Nền tảng dữ liệu và nguồn dữ liệu duy nhất',
-      'Trạng thái':                   'Cần cập nhật'
+      'Mô tả':           'Xây dựng SSOT (Single Source of Truth) — danh mục chủ sở hữu dữ liệu, quy tắc khóa dữ liệu, nhóm quản trị, quy trình kiểm toán, đánh giá mức độ sẵn sàng dữ liệu cho AI.',
+      'Sản phẩm đầu ra': 'Danh mục chủ sở hữu dữ liệu; Quy tắc SSOT; Chính sách khóa dữ liệu; Quy trình kiểm toán dữ liệu; Điều lệ nhóm quản trị dữ liệu; Báo cáo mức độ sẵn sàng dữ liệu.',
+      'Người phụ trách': 'Thành',
+      'Người phối hợp':  'IT/ERP, tất cả chủ sở hữu dữ liệu',
+      'Trục công việc':  '06 Hệ thống / KPI / PMO',
+      'Giai đoạn triển khai': 'LÀM NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'Một nguồn dữ liệu duy nhất cho mọi quyết định; Không có chủ sở hữu = Không có dữ liệu sạch; SSOT là nền tảng để AI hoạt động; Dữ liệu sai = quyết định sai.',
+      'Ghi chú':         'Tiên quyết cho P7 (AI). Trục triển khai: IT/ERP + tất cả bộ phận. Cơ chế điều phối: PMO + Claude. Thứ tự ưu tiên CEO: 3/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1266,7 +1346,15 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P4',
       'Tên dự án/Hạng mục/Công việc': 'Lập kế hoạch, quản lý chuỗi cung ứng và MRP',
-      'Trạng thái':                   'Cần cập nhật'
+      'Mô tả':           'Xây dựng hệ thống lập kế hoạch sản xuất và quản lý chuỗi cung ứng: bản đồ chuỗi giá trị, SLA nội bộ, tháp lập kế hoạch S&OP, thiết kế tổ chức SCM, sổ tay MRP V1.0, chính sách tồn kho, yêu cầu logic APS.',
+      'Sản phẩm đầu ra': 'Bản đồ chuỗi giá trị hiện tại; Sổ tay SLA nội bộ; Tháp lập kế hoạch S&OP; Thiết kế tổ chức SCM; Sổ tay MRP V1.0; Chính sách tồn kho; Tài liệu yêu cầu logic APS.',
+      'Người phụ trách': 'Ly + Thành',
+      'Người phối hợp':  'IT/ERP, nhà máy, mua hàng',
+      'Trục công việc':  '03 Vận hành và Chất lượng',
+      'Giai đoạn triển khai': 'THIẾT KẾ NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'MRP là bộ não của sản xuất; Không có MRP = ước đoán; SLA nội bộ là hợp đồng giữa các bộ phận; Tồn kho = tiền mặt bị khóa; APS thay thế Excel lập kế hoạch.',
+      'Ghi chú':         'Cần SLA và dữ liệu nền sẵn sàng trước. Trục triển khai: SCM + BO + IT. Cơ chế điều phối: PMO + CLO. Thứ tự ưu tiên CEO: 4/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1274,7 +1362,15 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P5',
       'Tên dự án/Hạng mục/Công việc': 'Hệ điều hành chất lượng',
-      'Trạng thái':                   'Cần cập nhật'
+      'Mô tả':           'Xây dựng hệ thống quản lý chất lượng toàn diện: mô hình vận hành QMS, quy trình NCR/CAR/8D, CoQ/COPQ/FPY, quản lý khiếu nại, quản lý mẫu và tiêu chuẩn, lộ trình tích hợp AI.',
+      'Sản phẩm đầu ra': 'Mô hình vận hành QMS; Quy trình NCR/CAR/8D; Bảng theo dõi CoQ/COPQ/FPY; Quy trình quản lý khiếu nại và SLA; Hệ thống quản lý mẫu và tiêu chuẩn; Lộ trình sẵn sàng AI cho chất lượng.',
+      'Người phụ trách': 'Giang + Đức',
+      'Người phối hợp':  'QA, nhà máy, Thành',
+      'Trục công việc':  '03 Vận hành và Chất lượng',
+      'Giai đoạn triển khai': 'LÀM NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'Chất lượng là trách nhiệm của tất cả; FPY = tỷ lệ đúng ngay từ đầu; Khiếu nại = tín hiệu hệ thống; 8D là công cụ giải quyết vấn đề gốc rễ; CoQ đo chi phí của chất lượng kém.',
+      'Ghi chú':         'Ưu tiên xử lý lỗi nghiêm trọng trước, thiết kế hệ thống song song. Trục triển khai: QA + BO. Cơ chế điều phối: PMO + QA Lead. Thứ tự ưu tiên CEO: 7/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1282,7 +1378,15 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P6',
       'Tên dự án/Hạng mục/Công việc': 'Hệ điều hành thương mại',
-      'Trạng thái':                   'Cần cập nhật'
+      'Mô tả':           'Xây dựng hệ điều hành thương mại: quản trị Sales OS, Sales Story và Playbook, Sales Kit, CRM SSOT, War Room khách hàng chiến lược, quản trị giá và đấu thầu, phát triển kinh doanh mới.',
+      'Sản phẩm đầu ra': 'Tài liệu quản trị Sales OS; Sales Story và Playbook chuẩn; Sales Kit đầy đủ; CRM là nguồn dữ liệu duy nhất; Quy trình War Room; Chính sách giá và quy trình đấu thầu; Kế hoạch kinh doanh mới.',
+      'Người phụ trách': 'Ly + Quý + Nghĩa',
+      'Người phối hợp':  'Marketing, IT/CRM, Thành',
+      'Trục công việc':  '02 Sales / Hệ điều hành thương mại',
+      'Giai đoạn triển khai': 'LÀM NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'Sales OS là hệ điều hành thương mại; CRM là não bộ bán hàng; War Room = phòng thủ khách hàng chiến lược; Giá = quyết định chiến lược không phải tùy hứng; Sales Story = câu chuyện bán hàng chuẩn.',
+      'Ghi chú':         'Trục triển khai: Sales + Marketing + IT. Cơ chế điều phối: PMO + CCO. Thứ tự ưu tiên CEO: 6/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1290,7 +1394,15 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P7',
       'Tên dự án/Hạng mục/Công việc': 'Ứng dụng công nghệ số và trí tuệ nhân tạo',
-      'Trạng thái':                   'Cần cập nhật'
+      'Mô tả':           'Xây dựng nền tảng AI/số hóa: quản trị AI, Claude PMO, nền tảng dữ liệu AI, trung tâm điều hành, trợ lý AI nghiệp vụ, cơ sở tri thức số. Phụ thuộc vào P3 (SSOT).',
+      'Sản phẩm đầu ra': 'Chính sách quản trị AI; Claude PMO vận hành; Nền tảng dữ liệu AI (phụ thuộc P3); Trung tâm điều hành vận hành; Các trợ lý AI nghiệp vụ; Cơ sở tri thức số và cộng tác số.',
+      'Người phụ trách': 'Sơn PMO + Thành + IT/Digital/EPS',
+      'Người phối hợp':  'Tất cả bộ phận (phụ thuộc P3)',
+      'Trục công việc':  '04 Digital & AI',
+      'Giai đoạn triển khai': 'LÀM NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'AI không thay con người — AI làm việc thay phần việc không cần óc; Claude PMO là não bộ quản lý dự án; Dữ liệu sạch = AI thông minh; Trung tâm điều hành = tầm nhìn thời gian thực; Tri thức số = tổ chức không phụ thuộc vào người.',
+      'Ghi chú':         'LÀM NGAY với Claude PMO; APS/WMS/MES/AI chuyên sâu thử nghiệm sau. Phụ thuộc P3. Trục triển khai: IT/Digital + tất cả bộ phận. Cơ chế điều phối: PMO + CTO/EPS. Thứ tự ưu tiên CEO: 8/8.'
     },
     {
       'Loại bản ghi':                 'DỰ ÁN',
@@ -1298,15 +1410,111 @@ function testImportCEOProjectSeedData() {
       'Mã cấp trên':                  '',
       'Mã dự án':                     'P8',
       'Tên dự án/Hạng mục/Công việc': 'Quản trị PMO và kiểm soát tiếp nhận',
-      'Trạng thái':                   'Cần cập nhật'
-    }
+      'Mô tả':           'Thiết lập văn phòng quản trị dự án (PMO): cổng tiếp nhận, nhật ký yêu cầu CEO, Master Tracker/RAG/SOS, nhật ký quyết định và rủi ro, báo cáo CEO hằng tuần, kiểm soát phụ thuộc con người.',
+      'Sản phẩm đầu ra': 'Cổng tiếp nhận PMO vận hành; Nhật ký yêu cầu CEO; Master Tracker với RAG và SOS; Nhật ký quyết định và rủi ro; Báo cáo CEO hằng tuần; Bản đồ phụ thuộc con người.',
+      'Người phụ trách': 'Sơn PMO',
+      'Người phối hợp':  'Thành, CEO, tất cả quản lý dự án',
+      'Trục công việc':  '06 Hệ thống / KPI / PMO',
+      'Giai đoạn triển khai': 'LÀM NGAY',
+      'Trạng thái':      'Cần cập nhật',
+      'Đề bài CEO':      'PMO là hệ thần kinh trung ương; Mỗi yêu cầu CEO phải có ticket; RAG = tín hiệu sớm của vấn đề; Không có quyết định = dự án chết; Báo cáo hằng tuần = nhịp tim của dự án; Con người là điểm phụ thuộc nguy hiểm nhất.',
+      'Ghi chú':         'Ưu tiên số 1 — PMO phải vận hành trước khi các dự án khác triển khai. Trục triển khai: PMO + tất cả leads. Cơ chế điều phối: Claude PMO. Thứ tự ưu tiên CEO: 1/8.'
+    },
+
+    // ========== HẠNG MỤC P1 (5 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P1.1', 'Mã cấp trên': 'P1', 'Mã dự án': 'P1', 'Tên dự án/Hạng mục/Công việc': 'Bộ quy tắc GMS – 12 quy tắc vận hành',   'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P1.2', 'Mã cấp trên': 'P1', 'Mã dự án': 'P1', 'Tên dự án/Hạng mục/Công việc': 'Bộ 8 phụ lục GMS',                          'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P1.3', 'Mã cấp trên': 'P1', 'Mã dự án': 'P1', 'Tên dự án/Hạng mục/Công việc': 'Ma trận RACI và Ma trận quyết định',        'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P1.4', 'Mã cấp trên': 'P1', 'Mã dự án': 'P1', 'Tên dự án/Hạng mục/Công việc': 'Chuỗi KPI và trả lương theo hiệu suất',     'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P1.5', 'Mã cấp trên': 'P1', 'Mã dự án': 'P1', 'Tên dự án/Hạng mục/Công việc': 'Sổ tay vận hành / Gemba / Hệ thống SOS',   'Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P2 (5 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P2.1', 'Mã cấp trên': 'P2', 'Mã dự án': 'P2', 'Tên dự án/Hạng mục/Công việc': 'Chiến dịch 30 ngày đột phá nhà máy',        'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P2.2', 'Mã cấp trên': 'P2', 'Mã dự án': 'P2', 'Tên dự án/Hạng mục/Công việc': 'Chuẩn hóa kho hàng',                        'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P2.3', 'Mã cấp trên': 'P2', 'Mã dự án': 'P2', 'Tên dự án/Hạng mục/Công việc': 'Kiểm soát BTP / TP / NVL',                  'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P2.4', 'Mã cấp trên': 'P2', 'Mã dự án': 'P2', 'Tên dự án/Hạng mục/Công việc': 'Quản lý mẫu và phiên bản',                  'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P2.5', 'Mã cấp trên': 'P2', 'Mã dự án': 'P2', 'Tên dự án/Hạng mục/Công việc': 'Quản lý trực quan và tiêu chuẩn nơi làm việc','Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P3 (6 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P3.1', 'Mã cấp trên': 'P3', 'Mã dự án': 'P3', 'Tên dự án/Hạng mục/Công việc': 'Danh mục chủ sở hữu dữ liệu',               'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P3.2', 'Mã cấp trên': 'P3', 'Mã dự án': 'P3', 'Tên dự án/Hạng mục/Công việc': 'Quy tắc SSOT',                               'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P3.3', 'Mã cấp trên': 'P3', 'Mã dự án': 'P3', 'Tên dự án/Hạng mục/Công việc': 'Thời gian khóa dữ liệu',                     'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P3.4', 'Mã cấp trên': 'P3', 'Mã dự án': 'P3', 'Tên dự án/Hạng mục/Công việc': 'Quy trình kiểm toán dữ liệu',                'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P3.5', 'Mã cấp trên': 'P3', 'Mã dự án': 'P3', 'Tên dự án/Hạng mục/Công việc': 'Nhóm quản trị dữ liệu',                      'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P3.6', 'Mã cấp trên': 'P3', 'Mã dự án': 'P3', 'Tên dự án/Hạng mục/Công việc': 'Mức độ sẵn sàng dữ liệu',                   'Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P4 (7 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.1', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Bản đồ chuỗi giá trị',                       'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.2', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Sổ tay SLA nội bộ',                          'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.3', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Tháp lập kế hoạch (S&OP)',                   'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.4', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Thiết kế tổ chức SCM',                       'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.5', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Sổ tay MRP V1.0',                            'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.6', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Chính sách tồn kho',                         'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P4.7', 'Mã cấp trên': 'P4', 'Mã dự án': 'P4', 'Tên dự án/Hạng mục/Công việc': 'Yêu cầu logic APS',                          'Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P5 (6 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P5.1', 'Mã cấp trên': 'P5', 'Mã dự án': 'P5', 'Tên dự án/Hạng mục/Công việc': 'Mô hình vận hành QMS',                       'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P5.2', 'Mã cấp trên': 'P5', 'Mã dự án': 'P5', 'Tên dự án/Hạng mục/Công việc': 'NCR / CAR / 8D',                             'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P5.3', 'Mã cấp trên': 'P5', 'Mã dự án': 'P5', 'Tên dự án/Hạng mục/Công việc': 'CoQ / COPQ / FPY',                           'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P5.4', 'Mã cấp trên': 'P5', 'Mã dự án': 'P5', 'Tên dự án/Hạng mục/Công việc': 'Khiếu nại và SLA',                           'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P5.5', 'Mã cấp trên': 'P5', 'Mã dự án': 'P5', 'Tên dự án/Hạng mục/Công việc': 'Quản lý mẫu và tiêu chuẩn',                  'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P5.6', 'Mã cấp trên': 'P5', 'Mã dự án': 'P5', 'Tên dự án/Hạng mục/Công việc': 'Mức sẵn sàng AI cho chất lượng',             'Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P6 (7 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.1', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'Quản trị Hệ điều hành thương mại',           'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.2', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'Sales Story và Playbook',                    'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.3', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'Sales Kit',                                  'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.4', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'CRM – nguồn dữ liệu duy nhất',              'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.5', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'War Room khách hàng chiến lược',             'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.6', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'Quản trị giá và đấu thầu',                   'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P6.7', 'Mã cấp trên': 'P6', 'Mã dự án': 'P6', 'Tên dự án/Hạng mục/Công việc': 'Kinh doanh mới và đầu vào Nhà máy mới',     'Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P7 (6 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P7.1', 'Mã cấp trên': 'P7', 'Mã dự án': 'P7', 'Tên dự án/Hạng mục/Công việc': 'Quản trị AI và mô hình vận hành',            'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P7.2', 'Mã cấp trên': 'P7', 'Mã dự án': 'P7', 'Tên dự án/Hạng mục/Công việc': 'AI PMO / Claude PMO',                        'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P7.3', 'Mã cấp trên': 'P7', 'Mã dự án': 'P7', 'Tên dự án/Hạng mục/Công việc': 'Nền tảng dữ liệu và AI',                     'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P7.4', 'Mã cấp trên': 'P7', 'Mã dự án': 'P7', 'Tên dự án/Hạng mục/Công việc': 'Trung tâm điều hành vận hành',               'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P7.5', 'Mã cấp trên': 'P7', 'Mã dự án': 'P7', 'Tên dự án/Hạng mục/Công việc': 'Trợ lý AI nghiệp vụ',                        'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P7.6', 'Mã cấp trên': 'P7', 'Mã dự án': 'P7', 'Tên dự án/Hạng mục/Công việc': 'Cộng tác số và cơ sở tri thức',              'Trạng thái': 'Cần cập nhật' },
+
+    // ========== HẠNG MỤC P8 (6 hạng mục) ==========
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P8.1', 'Mã cấp trên': 'P8', 'Mã dự án': 'P8', 'Tên dự án/Hạng mục/Công việc': 'Cổng tiếp nhận PMO',                         'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P8.2', 'Mã cấp trên': 'P8', 'Mã dự án': 'P8', 'Tên dự án/Hạng mục/Công việc': 'Nhật ký yêu cầu CEO',                        'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P8.3', 'Mã cấp trên': 'P8', 'Mã dự án': 'P8', 'Tên dự án/Hạng mục/Công việc': 'Master Tracker / RAG / SOS',                 'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P8.4', 'Mã cấp trên': 'P8', 'Mã dự án': 'P8', 'Tên dự án/Hạng mục/Công việc': 'Nhật ký quyết định và rủi ro',               'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P8.5', 'Mã cấp trên': 'P8', 'Mã dự án': 'P8', 'Tên dự án/Hạng mục/Công việc': 'Báo cáo CEO hằng tuần',                      'Trạng thái': 'Cần cập nhật' },
+    { 'Loại bản ghi': 'HẠNG MỤC', 'Mã bản ghi': 'P8.6', 'Mã cấp trên': 'P8', 'Mã dự án': 'P8', 'Tên dự án/Hạng mục/Công việc': 'Kiểm soát phụ thuộc con người',              'Trạng thái': 'Cần cập nhật' }
   ];
 
+  var duAnItems = seedData.filter(function(r) { return r['Loại bản ghi'] === 'DỰ ÁN'; });
+  var hmItems   = seedData.filter(function(r) { return r['Loại bản ghi'] === 'HẠNG MỤC'; });
+  Logger.log('Tổng đầu vào: ' + seedData.length + ' bản ghi (DỰ ÁN: ' + duAnItems.length + ', HẠNG MỤC: ' + hmItems.length + ')');
+
   var result = importCEOProjectSeedData(seedData);
-  Logger.log('Kết quả: ' + JSON.stringify(result));
-  Logger.log('Đã thêm: '  + result.added   + ' dự án');
-  Logger.log('Bỏ qua: '   + result.skipped + ' (trùng Mã bản ghi)');
-  Logger.log('Lỗi: '      + result.errors);
+
+  Logger.log('--- Kết quả ---');
+  Logger.log('Thêm mới:              ' + result.added);
+  Logger.log('Cập nhật hồ sơ DỰ ÁN: ' + result.updated);
+  Logger.log('Bỏ qua trùng:          ' + result.skipped);
+  Logger.log('Lỗi:                   ' + result.errors);
+
+  Logger.log('--- Chi tiết theo dự án ---');
+  var projectDefs = [
+    {id:'P1', name:'GMS – Hệ thống quản lý GSP'},
+    {id:'P2', name:'Kỷ luật nhà máy và nền tảng kho hàng'},
+    {id:'P3', name:'Nền tảng dữ liệu và SSOT'},
+    {id:'P4', name:'Lập kế hoạch, SCM và MRP'},
+    {id:'P5', name:'Hệ điều hành chất lượng'},
+    {id:'P6', name:'Hệ điều hành thương mại'},
+    {id:'P7', name:'Ứng dụng công nghệ số và AI'},
+    {id:'P8', name:'Quản trị PMO và kiểm soát tiếp nhận'}
+  ];
+  projectDefs.forEach(function(p) {
+    var hms = hmItems.filter(function(r) { return r['Mã dự án'] === p.id; });
+    var codes = hms.map(function(r) { return r['Mã bản ghi']; }).join(', ');
+    Logger.log(p.id + ' [' + p.name + ']: ' + hms.length + ' HM — ' + codes);
+  });
+
   Logger.log('--- ' + (result.errors === 0 ? 'OK' : 'CÓ LỖI') + ' ---');
 }
 
