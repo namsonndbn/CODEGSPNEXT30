@@ -1148,8 +1148,32 @@ function setupCEOProjectTrackerSheet() {
     sheet.setColumnWidth(Number(c), widths[c]);
   });
 
+  // Wrap text toàn bộ vùng dữ liệu
+  sheet.getRange(1, 1, Math.max(sheet.getLastRow(), 2), COLUMNS.length).setWrap(true);
+
+  // Auto-filter (xóa filter cũ nếu có, tạo lại)
+  try {
+    var existingFilter = sheet.getFilter();
+    if (existingFilter) existingFilter.remove();
+  } catch(eF) {}
+  sheet.getRange(1, 1, Math.max(sheet.getLastRow(), 2), COLUMNS.length).createFilter();
+
   Logger.log('setupCEOProjectTrackerSheet: OK — "' + SHEET_NAME + '" ' + (isNew ? 'tạo mới' : 'cập nhật'));
-  return { ok: true, sheetName: SHEET_NAME, isNew: isNew };
+  return { ok: true, sheetName: SHEET_NAME, isNew: isNew, columnsCount: COLUMNS.length };
+}
+
+function testSetupCEOProjectTrackerSheet() {
+  Logger.log('=== testSetupCEOProjectTrackerSheet ===');
+  try {
+    var result = setupCEOProjectTrackerSheet();
+    Logger.log('Kết quả: ' + JSON.stringify(result));
+    Logger.log('Sheet: ' + result.sheetName);
+    Logger.log('Trạng thái: ' + (result.isNew ? 'Tạo mới' : 'Cập nhật sheet đã tồn tại'));
+    Logger.log('Số cột: ' + result.columnsCount);
+    Logger.log('--- OK ---');
+  } catch(e) {
+    Logger.log('LỖI: ' + e.message + '\n' + e.stack);
+  }
 }
 
 function importCEOProjectSeedData(seedData) {
