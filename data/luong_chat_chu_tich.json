@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "id": "CHAT-161",
+    "tenLuongChat": "GSP NEXT 30",
+    "chuDe": "Quy trình / SOP",
+    "tomTat": "Synthesis of the 16-PIC Transformation Review Tổ chức phẳng • OC/IPAM • Value Stream • Customer-Centric • People-Centric Nguồn / Source: Luồng_chat_16_PIC.docx",
+    "coKeHoachHanhDong": "Có",
+    "tomTatKeHoach": "Đây là chương trình chuyển đổi 90 ngày (D30 – D60 – D90), không phải đợt giao việc.; 3. Không có “1 người làm”: mỗi PIC đủ Owner (OC) + Co-Owner (Đồng OC) + PMO Support + Team Member. Owner và Co-Owner đồng KPI – đồng thưởng – đồng trách nhiệm. Không đổi OC nếu chưa được CEO phê duyệt.; 5. Dữ liệu & KPI: D7 có danh mục KPI – OC dữ liệu – Baseline; D30 đạt 100% KPI có định nghĩa – công thức – nguồn",
+    "coNoiDungChuTichChot": true,
+    "noiDungCanTheoDoi": "Hiện GS1 có Trung tâm In Offset (Trung – QĐ, Long – PQĐ); GS5 có Trung tâm In Offset do Hùng phụ trách (cần bổ sung vào NEXT 30); GS5 có phân xưởng làm Sách hướng dẫn; GS1 có phân xưởng Carton; và sau đó là các phân xưởng hoàn thiện.",
+    "ngayCapNhat": "2026-06-15",
+    "tenFile": "GSP_NEXT30_TongHop_16PIC.docx",
+    "duongDanFile": "data/luong_chat_chu_tich/GSP_NEXT30_TongHop_16PIC.docx",
+    "googleDocsUrl": ""
+  },
+  {
+    "id": "CHAT-211",
+    "tenLuongChat": "TÓM TẮT LUỒNG CHAT\nAPS - S&OP - KHO - SẢN XUẤT",
+    "chuDe": "Quy trình / SOP",
+    "tomTat": "Hệ thống việc cần làm thực tiễn D7 - D14 - D21 - D30 Phạm vi: Tổng hợp từ file luồng chat được cung cấp về 2 biên bản họp S&OP ngày 15/6 và APS-MES-WMS ngày 16/6. Tài liệu chỉ dùng nội dung có trong file, không bổ sung dữ liệu ngoài luồng, không tự bịa số liệu. Luồng chat chốt một hướng triển khai thực tế: chưa làm phần mềm trước; phải làm rõ dữ liệu, quy trình, Form, trách nhiệm và cách vận hành thực tế trước. Khi chạy ổn bằng Excel và hiện trường thì mới số hóa lên Bravo, APS, MES, WMS.",
+    "coKeHoachHanhDong": "Có",
+    "tomTatKeHoach": "Hệ thống việc cần làm thực tiễn D7 - D14 - D21 - D30; D7-D30 không phải làm xong phần mềm; mục tiêu là xây nền tảng quản trị vận hành chuẩn cho GSP.; CEO sẽ nghe báo cáo của các OC từ D7, D14 để phản biện logic, khả năng triển khai và kết quả chạy thử.; Từ 2 biên bản họp S&OP ngày 15/6 và APS-MES-WMS ngày 16/6, cần hệ thống lại việc cần làm thực tiễn từng bước cho APS, S&OP, kho, sản xuất, biểu mẫ",
+    "coNoiDungChuTichChot": false,
+    "noiDungCanTheoDoi": "",
+    "ngayCapNhat": "2026-06-18",
+    "tenFile": "Tom_tat_luong_chat_APS_SOP_Kho_SX_Goldsun.docx",
+    "duongDanFile": "data/luong_chat_chu_tich/Tom_tat_luong_chat_APS_SOP_Kho_SX_Goldsun.docx",
+    "googleDocsUrl": ""
+  },
+  {
+    "id": "CHAT-139",
+    "tenLuongChat": "TÓM TẮT LUỒNG CHAT DUYỆT HỦY HÀNG",
+    "chuDe": "Quy trình / SOP",
+    "tomTat": "Theo yêu cầu: chỉ sử dụng nội dung trong luồng chat/file được cung cấp GSP Next 30 | Loss Management Report (Báo cáo quản trị tổn thất) Luồng chat xoay quanh việc chuyển cách xử lý “trình ký hủy hàng” sang quản trị tổn thất theo hướng kiểm soát nguyên nhân gốc và phòng ngừa tái diễn. Trọng tâm không phải đào bới toàn bộ dữ liệu quá khứ, mà là chặn phát sinh mới, làm Daily Management (Quản trị hàng ngày), Weekly Management (Quản trị hàng tuần), xây quy trình, dữ liệu, báo cáo, Owner và KPI trong ",
+    "coKeHoachHanhDong": "Có",
+    "tomTatKeHoach": "Luồng chat xoay quanh việc chuyển cách xử lý “trình ký hủy hàng” sang quản trị tổn thất theo hướng kiểm soát nguyên nhân gốc và phòng ngừa tái diễn. Trọng tâm không phải đào bới toàn bộ dữ liệu quá khứ, mà là chặn phát sinh mới, làm Daily Management (Quản trị hàng ngày), Weekly Management (Quản trị hàng tuần), xây quy trình, dữ liệu, báo cáo, Owner và KPI trong GSP Next 30.; Nếu chưa có biểu mẫu, ",
+    "coNoiDungChuTichChot": false,
+    "noiDungCanTheoDoi": "",
+    "ngayCapNhat": "2026-06-17",
+    "tenFile": "Tom_tat_luong_chat_duyet_huy_hang_Goldsun.docx",
+    "duongDanFile": "data/luong_chat_chu_tich/Tom_tat_luong_chat_duyet_huy_hang_Goldsun.docx",
+    "googleDocsUrl": ""
+  }
+]
