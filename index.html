@@ -1769,6 +1769,49 @@
     .toa-fcard-rag.Green { background: #16a34a; }
     .toa-fcard-text { flex: 1; color: #374151; line-height: 1.35; min-width: 0; }
     .toa-fcard-meta { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+
+    /* ── LUỒNG CHAT CHỦ TỊCH (lcc-) ── */
+    .lcc-toolbar { display:flex; align-items:center; justify-content:space-between; padding:16px 24px 12px; flex-wrap:wrap; gap:10px; }
+    .lcc-toolbar h2 { margin:0; font-size:20px; font-weight:800; color:#064e3b; }
+    .lcc-count-badge { background:#064e3b; color:white; padding:3px 11px; border-radius:20px; font-size:12px; font-weight:700; }
+    .lcc-summary-bar { display:flex; gap:12px; flex-wrap:wrap; padding:0 24px 16px; }
+    .lcc-summary-card { background:white; border-radius:12px; padding:14px 20px; box-shadow:0 2px 10px rgba(0,0,0,0.07); min-width:130px; cursor:pointer; border:2px solid transparent; transition:border-color .15s; flex:1; text-align:center; }
+    .lcc-summary-card:hover { border-color:#064e3b; }
+    .lcc-summary-card.active { border-color:#064e3b; background:#f0fdf4; }
+    .lcc-summary-val { font-size:28px; font-weight:800; color:#064e3b; }
+    .lcc-summary-val.amber { color:#d97706; }
+    .lcc-summary-val.gray  { color:#9ca3af; }
+    .lcc-summary-val.blue  { color:#1d4ed8; }
+    .lcc-summary-val.green { color:#15803d; }
+    .lcc-summary-lbl { font-size:12px; color:#6b7280; margin-top:4px; font-weight:600; }
+    .lcc-filter-row { display:flex; gap:10px; flex-wrap:wrap; padding:0 24px 16px; align-items:center; }
+    .lcc-search { flex:2; min-width:200px; padding:9px 14px; border:1.5px solid #d1d5db; border-radius:10px; font-size:14px; outline:none; transition:border-color .15s; }
+    .lcc-search:focus { border-color:#064e3b; }
+    .lcc-select { flex:1; min-width:150px; padding:9px 12px; border:1.5px solid #d1d5db; border-radius:10px; font-size:13px; outline:none; background:white; cursor:pointer; }
+    .lcc-filter-clear { padding:8px 14px; border:1.5px solid #d1d5db; border-radius:10px; font-size:13px; cursor:pointer; background:white; color:#374151; white-space:nowrap; }
+    .lcc-filter-clear:hover { background:#f3f4f6; }
+    .lcc-cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px; padding:0 24px 32px; }
+    .lcc-card { background:white; border-radius:14px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,0.07); border:2px solid transparent; transition:all .18s; }
+    .lcc-card:hover { border-color:#064e3b; transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.1); }
+    .lcc-card-title { font-size:15px; font-weight:800; color:#1f2937; margin-bottom:6px; line-height:1.35; }
+    .lcc-card-meta { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+    .lcc-card-topic { font-size:12px; background:#e0f2fe; color:#0369a1; padding:3px 9px; border-radius:20px; font-weight:600; }
+    .lcc-card-date { font-size:12px; color:#6b7280; }
+    .lcc-card-summary { font-size:13px; color:#4b5563; line-height:1.55; margin-bottom:10px; display:-webkit-box; -webkit-line-clamp:3; line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .lcc-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; margin-bottom:8px; }
+    .lcc-badge.has  { background:#dcfce7; color:#15803d; }
+    .lcc-badge.none { background:#f3f4f6; color:#6b7280; }
+    .lcc-badge.unk  { background:#fef3c7; color:#b45309; }
+    .lcc-chot-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; background:#fff7ed; color:#c2410c; margin-left:6px; }
+    .lcc-action-box { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:8px 12px; margin-bottom:8px; font-size:12.5px; color:#15803d; }
+    .lcc-action-lbl { font-weight:700; margin-bottom:3px; font-size:12px; }
+    .lcc-followup-box { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:8px 12px; margin-bottom:10px; font-size:12.5px; color:#92400e; }
+    .lcc-followup-lbl { font-weight:700; margin-bottom:3px; font-size:12px; }
+    .lcc-detail-btn { display:inline-block; padding:7px 16px; background:#064e3b; color:white; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s; margin-top:4px; }
+    .lcc-detail-btn:hover { background:#047857; }
+    .lcc-empty { text-align:center; padding:48px 24px; color:#9ca3af; font-size:15px; background:white; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,0.06); grid-column:1/-1; }
+    .lcc-error  { background:#fee2e2; color:#991b1b; padding:16px 24px; border-radius:12px; margin:0 24px 16px; font-weight:bold; }
+
   </style>
 </head>
 
@@ -1796,6 +1839,7 @@
     <button class="nav-tab" data-module="risk-sos" onclick="switchModule('risk-sos',this)">🚨 Risk / SOS Center</button>
     <button class="nav-tab" data-module="ceo-decision" onclick="switchModule('ceo-decision',this)">✅ CEO Decision Board</button>
     <button class="nav-tab" data-module="data-quality" onclick="switchModule('data-quality',this)">📊 Data Quality</button>
+    <button class="nav-tab" data-module="luong-chat" onclick="switchModule('luong-chat',this)">💬 Luồng chat Chủ tịch</button>
   </nav>
 
   <!-- ===== MODULE: TỔNG QUAN ===== -->
@@ -1932,6 +1976,23 @@
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-decision" style="color:#15803d">—</div><div class="overview-stat-lbl">CEO Decision</div></div>
         </div>
         <span class="overview-badge pending" id="ov-mm-badge">⏳ Đang chờ dữ liệu</span>
+      </div>
+
+      <div class="overview-card" onclick="switchModule('luong-chat', document.querySelector('[data-module=luong-chat]'))">
+        <div class="overview-card-head">
+          <div class="overview-card-icon">💬</div>
+          <div>
+            <div class="overview-card-title">Luồng chat Chủ tịch</div>
+            <div class="overview-card-sub">Kế hoạch · Quyết định · Theo dõi</div>
+          </div>
+        </div>
+        <div class="overview-card-desc">Tổng hợp các luồng chat với Chủ tịch — kế hoạch hành động, nội dung đã chốt, nội dung cần tiếp tục theo dõi.</div>
+        <div id="ov-lcc-stats" class="overview-card-stats" style="display:none;">
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-lcc-total">—</div><div class="overview-stat-lbl">Tổng luồng</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-lcc-plan" style="color:#15803d">—</div><div class="overview-stat-lbl">Có kế hoạch</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-lcc-chot" style="color:#c2410c">—</div><div class="overview-stat-lbl">Chủ tịch chốt</div></div>
+        </div>
+        <span class="overview-badge pending" id="ov-lcc-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
     </div>
@@ -2461,6 +2522,76 @@
 
   </div><!-- /module-meeting-minutes -->
 
+  <!-- LCC-DATA-START -->
+  <script type="application/json" id="lcc-data">
+[]
+  </script>
+  <!-- LCC-DATA-END -->
+
+  <!-- ===== MODULE: LUỒNG CHAT CHỦ TỊCH ===== -->
+  <div class="module" id="module-luong-chat">
+
+    <div class="lcc-toolbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <h2>💬 Luồng chat Chủ tịch</h2>
+        <span class="lcc-count-badge" id="lcc-count-badge">—</span>
+      </div>
+      <button class="command-btn" onclick="lccLoad()">🔄 Tải lại</button>
+    </div>
+
+    <!-- KPI bar -->
+    <div class="lcc-summary-bar">
+      <div class="lcc-summary-card active" id="lcc-kpi-all" onclick="lccKpiFilter('all',this)" title="Xem toàn bộ">
+        <div class="lcc-summary-val" id="lcc-s-total">—</div>
+        <div class="lcc-summary-lbl">Tổng luồng chat</div>
+      </div>
+      <div class="lcc-summary-card" id="lcc-kpi-has" onclick="lccKpiFilter('has',this)" title="Lọc luồng có kế hoạch">
+        <div class="lcc-summary-val green" id="lcc-s-has">—</div>
+        <div class="lcc-summary-lbl">Có kế hoạch hành động</div>
+      </div>
+      <div class="lcc-summary-card" id="lcc-kpi-none" onclick="lccKpiFilter('none',this)" title="Lọc luồng không có kế hoạch">
+        <div class="lcc-summary-val gray" id="lcc-s-none">—</div>
+        <div class="lcc-summary-lbl">Không có kế hoạch</div>
+      </div>
+      <div class="lcc-summary-card" id="lcc-kpi-unk" onclick="lccKpiFilter('unk',this)" title="Lọc luồng chưa xác định">
+        <div class="lcc-summary-val amber" id="lcc-s-unk">—</div>
+        <div class="lcc-summary-lbl">Chưa xác định</div>
+      </div>
+      <div class="lcc-summary-card" id="lcc-kpi-chot" onclick="lccKpiFilter('chot',this)" title="Lọc Chủ tịch đã chốt">
+        <div class="lcc-summary-val blue" id="lcc-s-chot">—</div>
+        <div class="lcc-summary-lbl">Chủ tịch đã chốt</div>
+      </div>
+    </div>
+
+    <!-- Tìm kiếm và bộ lọc -->
+    <div class="lcc-filter-row">
+      <input class="lcc-search" id="lcc-search" type="text"
+             placeholder="Tìm theo tên luồng chat hoặc nội dung tóm tắt..."
+             oninput="lccRender()">
+      <select class="lcc-select" id="lcc-filter-topic" onchange="lccRender()">
+        <option value="">Tất cả chủ đề</option>
+      </select>
+      <select class="lcc-select" id="lcc-filter-plan" onchange="lccRender()">
+        <option value="">Tất cả kế hoạch</option>
+        <option value="Có">Có kế hoạch hành động</option>
+        <option value="Không có">Không có kế hoạch</option>
+        <option value="Chưa xác định">Chưa xác định</option>
+      </select>
+      <button class="lcc-filter-clear" onclick="lccClearFilters()">✕ Xóa lọc</button>
+    </div>
+
+    <!-- Danh sách thẻ -->
+    <div id="lcc-content">
+      <div class="lcc-cards">
+        <div class="lcc-empty">
+          Nhấn <strong>🔄 Tải lại</strong> để tải dữ liệu luồng chat.<br>
+          Hoặc chạy <code>python scripts/build_chat_threads.py</code> để tạo danh mục từ file Word.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /module-luong-chat -->
+
   <script>
     var GAS_URL = 'https://script.google.com/macros/s/AKfycbydqHgolCAEXd34rBDMvudvFET5No28uFtuI3xrXTw-k2ZPHfjBAnwXVfftQuiLMGj6cg/exec';
     var dashboardCache = null;
@@ -2472,6 +2603,9 @@
     var sosLoaded = false;
     var decLoaded = false;
     var toaLoaded = false;
+    var lccLoaded = false;
+    var lccData   = [];
+    var lccKpi    = 'all';
 
     function switchModule(moduleId, tabEl) {
       document.querySelectorAll('.module').forEach(function(m) { m.classList.remove('active'); });
@@ -2486,6 +2620,7 @@
       if (moduleId === 'risk-sos'    && !sosLoaded)   { loadRiskSOSAll(); }
       if (moduleId === 'ceo-decision'&& !decLoaded)   { loadCEODecisionsAll(); }
       if (moduleId === 'data-quality')                { refreshDataQualityModule(); }
+      if (moduleId === 'luong-chat' && !lccLoaded)   { lccLoaded = true; lccLoad(); }
     }
 
     function updateOverviewFromPMO(data) {
@@ -5985,6 +6120,222 @@
       if (s.includes('blocked') || s.includes('vướng'))    return '<span class="mod-status blocked">' + safe(status) + '</span>';
       if (status) return '<span class="mod-status pending">' + safe(status) + '</span>';
       return '';
+    }
+
+    /* =====================================================
+       LUỒNG CHAT CHỦ TỊCH
+    ===================================================== */
+
+    function lccLoad() {
+      var contentEl = document.getElementById('lcc-content');
+      contentEl.innerHTML = '<div class="loading" style="padding:32px 24px">⏳ Đang tải dữ liệu luồng chat...</div>';
+
+      // Ưu tiên đọc JSON nhúng trong HTML (được build_chat_threads.py cập nhật)
+      var inlineEl = document.getElementById('lcc-data');
+      if (inlineEl) {
+        try {
+          var parsed = JSON.parse(inlineEl.textContent || inlineEl.innerHTML);
+          if (Array.isArray(parsed)) {
+            lccData = parsed;
+            lccOnLoaded();
+            return;
+          }
+        } catch(e) { /* fall through to fetch */ }
+      }
+
+      // Dự phòng: fetch từ file (hoạt động khi mở local server)
+      fetch('./data/luong_chat_chu_tich.json')
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(function(data) {
+          lccData = Array.isArray(data) ? data : [];
+          lccOnLoaded();
+        })
+        .catch(function(err) {
+          contentEl.innerHTML =
+            '<div class="lcc-error">Không tìm thấy dữ liệu luồng chat.<br>' +
+            'Chạy: <code>python scripts/build_chat_threads.py</code> để tạo danh mục, rồi <code>clasp push --force</code>.<br>' +
+            '<small style="opacity:.7">(' + err.message + ')</small></div>';
+        });
+    }
+
+    function lccOnLoaded() {
+      var total = lccData.length;
+      var co    = 0, khong = 0, chua = 0, chot = 0;
+      lccData.forEach(function(d) {
+        if (d.coKeHoachHanhDong === 'Có')          co++;
+        else if (d.coKeHoachHanhDong === 'Không có') khong++;
+        else                                         chua++;
+        if (d.coNoiDungChuTichChot)                 chot++;
+      });
+
+      function sv(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+      sv('lcc-s-total', total);
+      sv('lcc-s-has',   co);
+      sv('lcc-s-none',  khong);
+      sv('lcc-s-unk',   chua);
+      sv('lcc-s-chot',  chot);
+      sv('lcc-count-badge', total + ' luồng');
+
+      // Cập nhật overview card
+      var ovStats = document.getElementById('ov-lcc-stats');
+      if (ovStats) {
+        ovStats.style.display = 'flex';
+        sv('ov-lcc-total', total);
+        sv('ov-lcc-plan',  co);
+        sv('ov-lcc-chot',  chot);
+        var badge = document.getElementById('ov-lcc-badge');
+        if (badge) { badge.className = 'overview-badge live'; badge.innerHTML = '● Live · ' + total + ' luồng'; }
+      }
+
+      // Xây danh sách chủ đề cho dropdown
+      var topics = {};
+      lccData.forEach(function(d) { if (d.chuDe) topics[d.chuDe] = true; });
+      var topicSel = document.getElementById('lcc-filter-topic');
+      if (topicSel) {
+        topicSel.innerHTML = '<option value="">Tất cả chủ đề</option>';
+        Object.keys(topics).sort().forEach(function(t) {
+          topicSel.innerHTML += '<option value="' + safe(t) + '">' + safe(t) + '</option>';
+        });
+      }
+
+      // Reset bộ lọc và vẽ
+      lccKpi = 'all';
+      document.querySelectorAll('.lcc-summary-card').forEach(function(c) { c.classList.remove('active'); });
+      var allCard = document.getElementById('lcc-kpi-all');
+      if (allCard) allCard.classList.add('active');
+      lccRender();
+    }
+
+    function lccKpiFilter(type, el) {
+      lccKpi = (lccKpi === type) ? 'all' : type;
+      document.querySelectorAll('.lcc-summary-card').forEach(function(c) { c.classList.remove('active'); });
+      var target = lccKpi === 'all' ? document.getElementById('lcc-kpi-all') : el;
+      if (target) target.classList.add('active');
+      lccRender();
+    }
+
+    function lccClearFilters() {
+      var s = document.getElementById('lcc-search'); if (s) s.value = '';
+      var t = document.getElementById('lcc-filter-topic'); if (t) t.value = '';
+      var p = document.getElementById('lcc-filter-plan'); if (p) p.value = '';
+      lccKpi = 'all';
+      document.querySelectorAll('.lcc-summary-card').forEach(function(c) { c.classList.remove('active'); });
+      var allCard = document.getElementById('lcc-kpi-all');
+      if (allCard) allCard.classList.add('active');
+      lccRender();
+    }
+
+    function lccRender() {
+      var query  = ((document.getElementById('lcc-search') || {}).value || '').toLowerCase();
+      var topicF = ((document.getElementById('lcc-filter-topic') || {}).value || '');
+      var planF  = ((document.getElementById('lcc-filter-plan') || {}).value || '');
+
+      var visible = lccData.filter(function(d) {
+        // Lọc KPI
+        if (lccKpi === 'has')  return d.coKeHoachHanhDong === 'Có';
+        if (lccKpi === 'none') return d.coKeHoachHanhDong === 'Không có';
+        if (lccKpi === 'unk')  return d.coKeHoachHanhDong === 'Chưa xác định';
+        if (lccKpi === 'chot') return !!d.coNoiDungChuTichChot;
+        return true;
+      }).filter(function(d) {
+        if (query) {
+          var hay = ((d.tenLuongChat || '') + ' ' + (d.tomTat || '')).toLowerCase();
+          if (hay.indexOf(query) < 0) return false;
+        }
+        if (topicF && d.chuDe !== topicF) return false;
+        if (planF  && d.coKeHoachHanhDong !== planF) return false;
+        return true;
+      });
+
+      var contentEl = document.getElementById('lcc-content');
+      if (!contentEl) return;
+
+      if (!lccData.length) {
+        contentEl.innerHTML =
+          '<div class="lcc-cards"><div class="lcc-empty">' +
+          'Chưa có luồng chat nào.<br>' +
+          'Thêm file Word vào <code>data/luong_chat_chu_tich/</code> rồi chạy:<br>' +
+          '<code>python scripts/build_chat_threads.py</code>' +
+          '</div></div>';
+        return;
+      }
+
+      if (!visible.length) {
+        contentEl.innerHTML =
+          '<div class="lcc-cards"><div class="lcc-empty">Không có luồng chat nào khớp bộ lọc.</div></div>';
+        return;
+      }
+
+      contentEl.innerHTML = '<div class="lcc-cards">' +
+        visible.map(function(d) { return lccCardHTML(d); }).join('') +
+        '</div>';
+    }
+
+    function lccCardHTML(d) {
+      var plan = d.coKeHoachHanhDong || 'Chưa xác định';
+      var planCls   = plan === 'Có' ? 'has' : (plan === 'Không có' ? 'none' : 'unk');
+      var planLabel = plan === 'Có'
+        ? '✅ Có kế hoạch hành động'
+        : (plan === 'Không có' ? '○ Không có kế hoạch' : '⚠ Chưa xác định');
+
+      var chotBadge = d.coNoiDungChuTichChot
+        ? '<span class="lcc-chot-badge">👑 Chủ tịch đã chốt</span>' : '';
+
+      var actionBox = '';
+      if (plan === 'Có' && d.tomTatKeHoach) {
+        actionBox =
+          '<div class="lcc-action-box">' +
+          '<div class="lcc-action-lbl">Kế hoạch hành động:</div>' +
+          safe(d.tomTatKeHoach) + '</div>';
+      }
+
+      var followBox = '';
+      if (d.noiDungCanTheoDoi) {
+        followBox =
+          '<div class="lcc-followup-box">' +
+          '<div class="lcc-followup-lbl">Cần theo dõi:</div>' +
+          safe(d.noiDungCanTheoDoi) + '</div>';
+      }
+
+      return '<div class="lcc-card">' +
+        '<div class="lcc-card-title">' + safe(d.tenLuongChat) + '</div>' +
+        '<div class="lcc-card-meta">' +
+          '<span class="lcc-card-topic">' + safe(d.chuDe || 'Chung') + '</span>' +
+          '<span class="lcc-card-date">Cập nhật: ' + safe(d.ngayCapNhat || '—') + '</span>' +
+        '</div>' +
+        '<div class="lcc-card-summary">' + safe(d.tomTat || '(Không có tóm tắt)') + '</div>' +
+        '<div style="margin-bottom:6px">' +
+          '<span class="lcc-badge ' + planCls + '">' + planLabel + '</span>' +
+          chotBadge +
+        '</div>' +
+        actionBox + followBox +
+        '<button class="lcc-detail-btn" onclick="lccOpenById(\'' + safeForJs(d.id) + '\')">Xem chi tiết →</button>' +
+      '</div>';
+    }
+
+    function lccOpenById(id) {
+      var d = null;
+      for (var i = 0; i < lccData.length; i++) {
+        if (lccData[i].id === id) { d = lccData[i]; break; }
+      }
+      if (!d) { alert('Không tìm thấy luồng chat.'); return; }
+
+      if (d.googleDocsUrl) {
+        window.open(d.googleDocsUrl, '_blank');
+        return;
+      }
+      if (d.duongDanFile) {
+        var url = './' + d.duongDanFile;
+        var w = window.open(url, '_blank');
+        if (!w) {
+          alert('Không thể mở file tự động.\nĐường dẫn: ' + d.duongDanFile + '\n\nHãy mở thủ công từ máy tính.');
+        }
+        return;
+      }
+      alert('Không tìm thấy file chi tiết của luồng chat.');
     }
   </script>
 </body>
