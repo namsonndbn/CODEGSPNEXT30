@@ -1577,7 +1577,28 @@
     .cpt-tag.risk    { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
     .cpt-tag.ceoq    { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
     .cpt-tag.stale   { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-    .cpt-card-update { font-size: 11px; color: #9ca3af; margin-top: 8px; line-height: 1.5; }
+    .cpt-card-desc { font-size: 12px; color: #6b7280; line-height: 1.5; margin: 4px 0 8px; }
+    .cpt-card-update { font-size: 11.5px; color: #6b7280; margin-top: 6px; line-height: 1.5; }
+    .cpt-view-full-btn {
+      display: block; width: 100%; margin-top: 12px;
+      padding: 7px 0; font-size: 12px; font-weight: 700;
+      background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0;
+      border-radius: 7px; cursor: pointer; font-family: inherit; text-align: center;
+      transition: background .15s;
+    }
+    .cpt-view-full-btn:hover { background: #dcfce7; }
+    .cpt-detail-label-section {
+      grid-column: 1 / -1; font-size: 11px; font-weight: 800;
+      color: #fff; background: #1a2e44; padding: 6px 14px;
+      border-radius: 6px; margin-bottom: 4px; letter-spacing: .5px;
+    }
+    .cpt-cn-row {
+      display: flex; gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9; font-size: 12px;
+    }
+    .cpt-cn-row:last-child { border-bottom: none; }
+    .cpt-cn-date { font-weight: 700; color: #374151; flex-shrink: 0; min-width: 90px; padding-top: 1px; }
+    .cpt-cn-body { flex: 1; color: #374151; line-height: 1.6; }
 
     .cpt-detail-view { padding: 20px 24px 32px; }
     .cpt-detail-back {
@@ -1597,6 +1618,7 @@
       background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;
     }
     .cpt-detail-section.full { grid-column: 1 / -1; }
+    .cpt-detail-label-section { grid-column: 1 / -1; }
     .cpt-detail-section.highlight { background: #fffbeb; border-color: #fde68a; }
     .cpt-detail-section.ceo-block { background: #f0fdf4; border-color: #bbf7d0; }
     .cpt-detail-section-title {
@@ -4611,43 +4633,92 @@
     }
 
     function cptProjectCardHTML(p) {
-      var ragCls = p.RAG === 'Xanh' ? 'green' : p.RAG === 'Vàng' ? 'amber' : p.RAG === 'Đỏ' ? 'red' : 'none';
-      var ragCard = p.RAG === 'Xanh' ? 'rag-green' : p.RAG === 'Vàng' ? 'rag-amber' : p.RAG === 'Đỏ' ? 'rag-red' : '';
-      var ragLabel = p.RAG === 'Xanh' ? '🟢 Xanh' : p.RAG === 'Vàng' ? '🟡 Vàng' : p.RAG === 'Đỏ' ? '🔴 Đỏ' : '— RAG';
-      var tienDo = p.TienDo !== null ? p.TienDo : (hasTextClient(p.PhanTramHT) ? parseInt(p.PhanTramHT) : null);
-      var fillCls = tienDo >= 80 ? 'green' : tienDo >= 40 ? 'amber' : 'red';
+      var ragCls   = p.RAG === 'Xanh' ? 'green' : p.RAG === 'Vàng' ? 'amber' : p.RAG === 'Đỏ' ? 'red' : 'none';
+      var ragCard  = p.RAG === 'Xanh' ? 'rag-green' : p.RAG === 'Vàng' ? 'rag-amber' : p.RAG === 'Đỏ' ? 'rag-red' : '';
+      var ragLabel = p.RAG === 'Xanh' ? '🟢 Xanh' : p.RAG === 'Vàng' ? '🟡 Vàng' : p.RAG === 'Đỏ' ? '🔴 Đỏ' : '— Chưa RAG';
+
+      // Tiến độ %: tính từ CÔNG VIỆC (không từ DỰ ÁN row)
+      var tienDoPct = p.TienDo !== null ? p.TienDo : null;
+      var fillCls   = tienDoPct >= 80 ? 'green' : tienDoPct >= 40 ? 'amber' : 'red';
+
+      // Lấy từ CẬP NHẬT mới nhất (không từ trường DỰ ÁN)
+      var lu = p.LatestUpdate || null;
+      var tienDoText  = lu && hasTextClient(lu.TienDoHienTai)    ? lu.TienDoHienTai    : '';
+      var viecDaLam   = lu && hasTextClient(lu.CongViecDaThucHien)? lu.CongViecDaThucHien : '';
+      var vuongMacLU  = lu && hasTextClient(lu.VuongMacRuiRo)    ? lu.VuongMacRuiRo   : '';
+      var ceoQuyetLU  = lu && hasTextClient(lu.NdCanCEOQuyet)    ? lu.NdCanCEOQuyet   : '';
+      var ngayCNLU    = lu && hasTextClient(lu.NgayCapNhat)       ? lu.NgayCapNhat      : '';
 
       var tags = '';
       if (p.CongViecQuaHan > 0) tags += '<span class="cpt-tag overdue">⏰ ' + p.CongViecQuaHan + ' CV quá hạn</span>';
-      if (p.SoRuiRo > 0)        tags += '<span class="cpt-tag risk">⚠️ ' + p.SoRuiRo + ' rủi ro</span>';
+      if (p.SoRuiRo > 0)        tags += '<span class="cpt-tag risk">⚠️ Có rủi ro</span>';
       if (p.SoCEOQuyetCan > 0)  tags += '<span class="cpt-tag ceoq">👑 CEO cần quyết</span>';
       if (p.NgayKhongCapNhat !== null && p.NgayKhongCapNhat > 7)
-        tags += '<span class="cpt-tag stale">📭 ' + p.NgayKhongCapNhat + ' ngày chưa CN</span>';
+        tags += '<span class="cpt-tag stale">📭 ' + p.NgayKhongCapNhat + ' ngày chưa cập nhật</span>';
 
-      var lastUpd = '';
-      if (hasTextClient(p.CapNhatGanNhat)) {
-        lastUpd = '<div class="cpt-card-update">📝 ' + safe(p.CapNhatGanNhat.slice(0, 80)) + (p.CapNhatGanNhat.length > 80 ? '…' : '') + '</div>';
-      }
+      // Mô tả ngắn từ HỒ SƠ DỰ ÁN (MoTa), không từ CẬP NHẬT
+      var moTaNgan = hasTextClient(p.MoTa)
+        ? safe(p.MoTa.slice(0, 120)) + (p.MoTa.length > 120 ? '…' : '')
+        : '';
 
-      return '<div class="cpt-project-card ' + ragCard + '" onclick="cptShowDetail(\'' + safeAttr(p.MaBanGhi) + '\')">'
+      var html = '<div class="cpt-project-card ' + ragCard + '">'
         + '<div class="cpt-card-head">'
         +   '<div class="cpt-card-id">' + safe(p.MaBanGhi) + '</div>'
         +   '<span class="cpt-card-rag ' + ragCls + '">' + ragLabel + '</span>'
         + '</div>'
-        + '<div class="cpt-card-title">' + safe(p.TenBanGhi) + '</div>'
-        + '<div class="cpt-card-meta">'
-        +   (hasTextClient(p.NguoiPhuTrach) ? '<span>👤 ' + safe(p.NguoiPhuTrach) + '</span>' : '<span style="color:#dc2626">👤 Chưa có NPT</span>')
-        +   (hasTextClient(p.ThoiHanHoanThanh) ? '<span>📅 ' + safe(p.ThoiHanHoanThanh) + '</span>' : '')
-        +   (hasTextClient(p.TrangThai) ? '<span>' + safe(p.TrangThai) + '</span>' : '')
-        + '</div>'
-        + (tienDo !== null
-            ? '<div class="cpt-progress-wrap">'
-            +   '<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:#6b7280">Tiến độ</span><span class="cpt-progress-pct">' + tienDo + '%</span></div>'
-            +   '<div class="cpt-progress-bar"><div class="cpt-progress-fill ' + fillCls + '" style="width:' + Math.min(tienDo, 100) + '%"></div></div>'
-            + '</div>' : '')
-        + (tags ? '<div class="cpt-card-tags">' + tags + '</div>' : '')
-        + lastUpd
+        + '<div class="cpt-card-title">' + safe(p.TenBanGhi) + '</div>';
+
+      if (moTaNgan) {
+        html += '<div class="cpt-card-desc">' + moTaNgan + '</div>';
+      }
+
+      html += '<div class="cpt-card-meta">'
+        + (hasTextClient(p.NguoiPhuTrach) ? '<span>👤 ' + safe(p.NguoiPhuTrach) + '</span>' : '<span style="color:#dc2626">👤 Chưa có NPT</span>')
+        + (hasTextClient(p.GiaiDoan) ? '<span>🏗️ ' + safe(p.GiaiDoan) + '</span>' : '')
         + '</div>';
+
+      // Tiến độ từ CÔNG VIỆC
+      if (tienDoPct !== null) {
+        html += '<div class="cpt-progress-wrap">'
+          + '<div style="display:flex;justify-content:space-between">'
+          +   '<span style="font-size:11px;color:#6b7280">Tiến độ CV (' + p.CongViecHoanThanh + '/' + p.TongCongViec + ')</span>'
+          +   '<span class="cpt-progress-pct">' + tienDoPct + '%</span>'
+          + '</div>'
+          + '<div class="cpt-progress-bar"><div class="cpt-progress-fill ' + fillCls + '" style="width:' + Math.min(tienDoPct, 100) + '%"></div></div>'
+          + '</div>';
+      } else {
+        html += '<div style="font-size:11px;color:#9ca3af;margin:6px 0">Chưa đủ dữ liệu để tính tiến độ</div>';
+      }
+
+      // Tiến độ text từ CẬP NHẬT
+      if (tienDoText) {
+        html += '<div class="cpt-card-update" style="color:#374151"><strong>Tiến độ hiện tại:</strong> ' + safe(tienDoText.slice(0, 80)) + (tienDoText.length > 80 ? '…' : '') + '</div>';
+      }
+
+      // Cập nhật gần nhất từ CẬP NHẬT (không từ DỰ ÁN)
+      if (viecDaLam) {
+        html += '<div class="cpt-card-update">📝 '
+          + (ngayCNLU ? '<span style="color:#6b7280">' + safe(ngayCNLU) + '</span> — ' : '')
+          + safe(viecDaLam.slice(0, 80)) + (viecDaLam.length > 80 ? '…' : '') + '</div>';
+      } else if (!lu) {
+        html += '<div class="cpt-card-update" style="color:#9ca3af">Chưa có cập nhật tiến độ</div>';
+      }
+
+      // Vướng mắc chính từ CẬP NHẬT
+      if (vuongMacLU) {
+        html += '<div class="cpt-card-update" style="color:#92400e">⚠️ ' + safe(vuongMacLU.slice(0, 80)) + (vuongMacLU.length > 80 ? '…' : '') + '</div>';
+      }
+
+      // CEO cần quyết từ CẬP NHẬT
+      if (ceoQuyetLU && ceoQuyetLU !== 'Không') {
+        html += '<div class="cpt-card-update" style="color:#15803d">👑 ' + safe(ceoQuyetLU.slice(0, 80)) + (ceoQuyetLU.length > 80 ? '…' : '') + '</div>';
+      }
+
+      if (tags) html += '<div class="cpt-card-tags">' + tags + '</div>';
+
+      html += '<button class="cpt-view-full-btn" onclick="event.stopPropagation();cptShowDetail(\'' + safeAttr(p.MaBanGhi) + '\')">Xem đầy đủ dự án →</button>';
+      html += '</div>';
+      return html;
     }
 
     function cptShowDetail(projectId) {
@@ -4659,135 +4730,233 @@
       if (!p) return;
       cptDetailId = projectId;
 
-      var hms  = (cptCache.hangMucs  || []).filter(function(h) { return h.MaCapTren === projectId || h.MaDuAn === projectId; });
-      var cvs  = (cptCache.congViecs || []).filter(function(c) { return c.MaDuAn === projectId; });
-      var cns  = (cptCache.capNhats  || []).filter(function(u) { return u.MaDuAn === projectId || u.MaCapTren === projectId; })
-                   .sort(function(a, b) { return (b.NgayCapNhat||'').localeCompare(a.NgayCapNhat||''); });
-      var qds  = (cptCache.quyetDinhs|| []).filter(function(q) { return q.MaDuAn === projectId || q.MaCapTren === projectId; });
+      var hms = (cptCache.hangMucs  || []).filter(function(h) { return h.MaCapTren === projectId || h.MaDuAn === projectId; });
+      var cvs = (cptCache.congViecs || []).filter(function(c) { return c.MaDuAn === projectId; });
+      var hmIds = hms.map(function(h) { return h.MaBanGhi; });
+      var cnsAll = (cptCache.capNhats || []).filter(function(u) {
+        return u.MaDuAn === projectId || u.MaCapTren === projectId || hmIds.indexOf(u.MaCapTren) !== -1;
+      }).sort(function(a, b) { return (b.NgayCapNhat||'').localeCompare(a.NgayCapNhat||''); });
+      var qds = (cptCache.quyetDinhs || []).filter(function(q) {
+        return q.MaDuAn === projectId || q.MaCapTren === projectId || hmIds.indexOf(q.MaCapTren) !== -1;
+      });
+
+      var lu = p.LatestUpdate || null;
 
       var ragCls   = p.RAG === 'Xanh' ? 'green' : p.RAG === 'Vàng' ? 'amber' : p.RAG === 'Đỏ' ? 'red' : 'none';
-      var ragLabel = p.RAG === 'Xanh' ? '🟢 Xanh' : p.RAG === 'Vàng' ? '🟡 Vàng' : p.RAG === 'Đỏ' ? '🔴 Đỏ' : '—';
+      var ragLabel = p.RAG === 'Xanh' ? '🟢 Xanh' : p.RAG === 'Vàng' ? '🟡 Vàng' : p.RAG === 'Đỏ' ? '🔴 Đỏ' : '— Chưa RAG';
 
-      function row(lbl, val, cls) {
+      // Helpers
+      function row(lbl, val, extraCls) {
         var v = hasTextClient(val) ? safe(val) : '<span class="cpt-detail-empty">—</span>';
-        return '<div class="cpt-detail-row"><div class="cpt-detail-label">' + lbl + '</div>'
-          + '<div class="cpt-detail-val' + (cls ? ' ' + cls : '') + '">' + v + '</div></div>';
+        return '<div class="cpt-detail-row">'
+          + '<div class="cpt-detail-label">' + lbl + '</div>'
+          + '<div class="cpt-detail-val' + (extraCls ? ' ' + extraCls : '') + '">' + v + '</div></div>';
       }
-      function section(title, content, extra) {
+      function rowLink(lbl, url, txt) {
+        if (!hasTextClient(url)) return row(lbl, '');
+        return '<div class="cpt-detail-row"><div class="cpt-detail-label">' + lbl + '</div>'
+          + '<div class="cpt-detail-val"><a href="' + safeAttr(url) + '" target="_blank" style="color:#1d4ed8">🔗 ' + safe(txt||'Mở tài liệu') + '</a></div></div>';
+      }
+      function sec(title, content, extra) {
         return '<div class="cpt-detail-section' + (extra ? ' ' + extra : '') + '">'
           + '<div class="cpt-detail-section-title">' + title + '</div>' + content + '</div>';
       }
-
-      // Sub-tables
+      function secLabel(title) {
+        return '<div class="cpt-detail-section-label">' + title + '</div>';
+      }
       function cvTable(list) {
-        if (!list.length) return '<div class="cpt-detail-empty">Không có công việc</div>';
-        var h = '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Tên công việc</th><th>Người PT</th><th>Hạn</th><th>Trạng thái</th><th>RAG</th></tr></thead><tbody>';
-        list.forEach(function(c) {
-          var isOD = c.IsOverdue;
-          h += '<tr' + (isOD ? ' style="background:#fff8f8"' : '') + '>'
+        var active = list.filter(function(c) { return !/hoàn thành|đã hủy/i.test(c.TrangThai); });
+        var src = active.length ? active : list;
+        if (!src.length) return '<div class="cpt-detail-empty">Chưa có công việc</div>';
+        var h = '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Tên công việc</th><th>Người PT</th><th>Hạn</th><th>Trạng thái</th></tr></thead><tbody>';
+        src.forEach(function(c) {
+          h += '<tr' + (c.IsOverdue ? ' style="background:#fff8f8"' : '') + '>'
             + '<td>' + safe(c.MaBanGhi) + '</td><td>' + safe(c.TenBanGhi) + '</td>'
             + '<td>' + safe(c.NguoiPhuTrach||'—') + '</td><td>' + safe(c.ThoiHanHoanThanh||'—') + '</td>'
-            + '<td>' + safe(c.TrangThai||'—') + '</td><td>' + modRagBadge(c.RAG) + '</td></tr>';
+            + '<td>' + safe(c.TrangThai||'—') + '</td></tr>';
         });
         h += '</tbody></table>';
+        if (active.length && list.length > active.length) {
+          h += '<div style="font-size:11px;color:#6b7280;margin-top:4px">Hiện ' + active.length + ' công việc chưa hoàn thành / Tổng ' + list.length + '</div>';
+        }
         return h;
       }
-      function cnList(list) {
-        if (!list.length) return '<div class="cpt-detail-empty">Chưa có cập nhật</div>';
-        var h = '';
-        list.slice(0, 5).forEach(function(u) {
-          h += '<div class="cpt-qs-item">'
-            + '<span class="cpt-qs-item-sub">' + safe(u.NgayCapNhat||'') + '</span>'
-            + '<span class="cpt-qs-item-ten">' + safe(u.CapNhatMoiNhat || u.CongViecDaThucHien || u.TenBanGhi || '') + '</span>'
-            + '</div>';
-        });
-        return h;
+      function cnRow(u) {
+        var text = u.CongViecDaThucHien || u.CapNhatMoiNhat || u.TenBanGhi || '';
+        return '<div class="cpt-cn-row">'
+          + '<div class="cpt-cn-date">' + safe(u.NgayCapNhat||'—') + '</div>'
+          + '<div class="cpt-cn-body">'
+          + (text ? '<div>' + safe(text) + '</div>' : '')
+          + (hasTextClient(u.ViecDangTrienKhai) ? '<div style="color:#374151">▶ Đang làm: ' + safe(u.ViecDangTrienKhai) + '</div>' : '')
+          + (hasTextClient(u.TienDoHienTai)    ? '<div style="color:#374151">📊 Tiến độ: '  + safe(u.TienDoHienTai) + '</div>' : '')
+          + (hasTextClient(u.KetQuaDatDuoc)    ? '<div style="color:#15803d">✅ Kết quả: '  + safe(u.KetQuaDatDuoc) + '</div>' : '')
+          + (hasTextClient(u.VuongMacRuiRo)    ? '<div style="color:#92400e">⚠️ Vướng mắc: ' + safe(u.VuongMacRuiRo) + '</div>' : '')
+          + (hasTextClient(u.KeHoachTiepTheo)  ? '<div style="color:#6b7280">→ Kế hoạch: '  + safe(u.KeHoachTiepTheo) + '</div>' : '')
+          + (hasTextClient(u.NguoiCapNhat)      ? '<div style="color:#9ca3af;font-size:11px">Người cập nhật: ' + safe(u.NguoiCapNhat) + '</div>' : '')
+          + '</div></div>';
       }
 
-      var tienDo = p.TienDo !== null ? p.TienDo : (hasTextClient(p.PhanTramHT) ? parseInt(p.PhanTramHT) : null);
-      var fillCls = tienDo >= 80 ? 'green' : tienDo >= 40 ? 'amber' : 'red';
+      // Progress bar
+      var tienDoPct = p.TienDo;
+      var fillCls   = tienDoPct >= 80 ? 'green' : tienDoPct >= 40 ? 'amber' : 'red';
 
       var html = '<div class="cpt-detail-view">';
-      html += '<button class="cpt-detail-back" onclick="cptBackToGrid()">← Quay lại</button>';
-      html += '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:6px">'
-        + '<div style="flex:1"><div class="cpt-detail-title">' + safe(p.TenBanGhi) + '</div></div>'
-        + '<span class="cpt-card-rag ' + ragCls + '" style="font-size:13px;padding:4px 12px">' + ragLabel + '</span>'
+      html += '<button class="cpt-detail-back" onclick="cptBackToGrid()">← Danh sách dự án</button>';
+
+      // Header
+      html += '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:8px">'
+        + '<div style="flex:1">'
+        +   '<div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:4px">' + safe(p.MaBanGhi) + '</div>'
+        +   '<div class="cpt-detail-title">' + safe(p.TenBanGhi) + '</div>'
+        + '</div>'
+        + '<span class="cpt-card-rag ' + ragCls + '" style="font-size:13px;padding:4px 14px">' + ragLabel + '</span>'
         + '</div>';
+
       html += '<div class="cpt-detail-meta">'
-        + '<span>📌 ' + safe(p.MaBanGhi) + '</span>'
-        + (hasTextClient(p.TrangThai) ? '<span>⚡ ' + safe(p.TrangThai) + '</span>' : '')
-        + (hasTextClient(p.GiaiDoan)  ? '<span>🏗️ ' + safe(p.GiaiDoan) + '</span>' : '')
-        + (hasTextClient(p.MucDoUuTien) ? '<span>🎯 Ưu tiên: ' + safe(p.MucDoUuTien) + '</span>' : '')
+        + (hasTextClient(p.TrangThai)    ? '<span>⚡ ' + safe(p.TrangThai) + '</span>' : '')
+        + (hasTextClient(p.GiaiDoan)     ? '<span>🏗️ ' + safe(p.GiaiDoan) + '</span>' : '')
+        + (hasTextClient(p.MucDoUuTien)  ? '<span>🎯 ' + safe(p.MucDoUuTien) + '</span>' : '')
+        + (hasTextClient(p.TrucCongViec) ? '<span>📂 ' + safe(p.TrucCongViec) + '</span>' : '')
+        + (hasTextClient(p.NgayCapNhatGanNhat) ? '<span>🕐 Cập nhật ' + safe(p.NgayCapNhatGanNhat) + '</span>' : '<span style="color:#dc2626">🕐 Chưa có cập nhật</span>')
         + '</div>';
 
-      if (tienDo !== null) {
-        html += '<div style="margin-bottom:16px">'
-          + '<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
-          +   '<span style="font-size:12px;font-weight:600;color:#374151">Tiến độ tổng thể</span>'
-          +   '<span style="font-size:13px;font-weight:800">' + tienDo + '%</span>'
-          + '</div>'
-          + '<div class="cpt-progress-bar" style="height:10px"><div class="cpt-progress-fill ' + fillCls + '" style="width:' + Math.min(tienDo, 100) + '%"></div></div>'
-          + '<div style="font-size:11px;color:#6b7280;margin-top:4px">' + p.CongViecHoanThanh + '/' + p.TongCongViec + ' công việc hoàn thành</div>'
-          + '</div>';
-      }
+      // Progress
+      html += '<div style="margin:12px 0 18px">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+        +   '<span style="font-size:12px;font-weight:600;color:#374151">Tiến độ công việc (' + p.CongViecHoanThanh + '/' + p.TongCongViec + ')</span>'
+        +   (tienDoPct !== null ? '<span style="font-size:14px;font-weight:800">' + tienDoPct + '%</span>' : '<span style="font-size:12px;color:#9ca3af">Chưa đủ dữ liệu để tính tiến độ</span>')
+        + '</div>'
+        + (tienDoPct !== null ? '<div class="cpt-progress-bar" style="height:10px"><div class="cpt-progress-fill ' + fillCls + '" style="width:' + Math.min(tienDoPct, 100) + '%"></div></div>' : '')
+        + (lu && hasTextClient(lu.TienDoHienTai) ? '<div style="font-size:12px;color:#374151;margin-top:6px"><strong>Tiến độ hiện tại:</strong> ' + safe(lu.TienDoHienTai) + '</div>' : '')
+        + '</div>';
 
+      html += '<div class="cpt-detail-label-section">PHẦN A — HỒ SƠ DỰ ÁN</div>';
       html += '<div class="cpt-detail-grid">';
-      html += section('Thông tin cơ bản',
-        row('Người phụ trách', p.NguoiPhuTrach)
+
+      // 1. Hồ sơ dự án
+      html += sec('1. Hồ sơ dự án',
+        row('Mô tả / Vai trò', p.MoTa)
+        + row('Bối cảnh', p.BoiCanh)
+        + row('Mục tiêu quản trị', p.MucTieu)
+        + row('Phạm vi', p.PhamVi)
+        + row('Owner / Lead', p.NguoiPhuTrach)
         + row('Người phối hợp', p.NguoiPhoiHop)
         + row('Trục công việc', p.TrucCongViec)
+        + row('Giai đoạn ưu tiên', p.GiaiDoan)
+        + row('Mức độ ưu tiên', p.MucDoUuTien)
         + row('Ngày bắt đầu', p.NgayBatDau)
         + row('Hạn hoàn thành', p.ThoiHanHoanThanh)
-        + row('Cập nhật lần cuối', p.NgayCapNhatGanNhat || p.NgayCapNhat));
-      html += section('Mô tả & Mục tiêu',
-        row('Mô tả', p.MoTa)
-        + row('Bối cảnh', p.BoiCanh)
-        + row('Mục tiêu', p.MucTieu)
-        + row('Phạm vi', p.PhamVi)
-        + row('Sản phẩm đầu ra', p.SanPhamDauRa));
-      html += section('Cập nhật mới nhất',
-        row('Đã thực hiện', p.CongViecDaThucHien)
-        + row('Kết quả đạt được', p.KetQuaDatDuoc)
-        + row('Cập nhật', p.CapNhatGanNhat)
-        + row('Kế hoạch tiếp', p.KeHoachTiepTheo));
-      html += section('Vướng mắc / Rủi ro',
-        row('Vướng mắc/Rủi ro', p.VuongMacRuiRo)
-        + row('Hướng xử lý', p.HuongXuLy), 'highlight');
-      if (hasTextClient(p.NdCEOCanBiet) || hasTextClient(p.NdCanCEOQuyet)) {
-        html += section('👑 Thông tin cho CEO',
-          row('CEO cần biết', p.NdCEOCanBiet)
-          + row('CEO cần quyết', p.NdCanCEOQuyet)
-          + row('Các phương án', p.CacPhuongAn)
-          + row('Quyết định CEO', p.QuyetDinhCEO), 'ceo-block');
-      }
-      if (hasTextClient(p.GhiChu) || hasTextClient(p.LinkFile)) {
-        html += section('Ghi chú & Tài liệu',
-          row('Ghi chú', p.GhiChu)
-          + (hasTextClient(p.LinkFile) ? '<div class="cpt-detail-row"><div class="cpt-detail-label">Link/File</div><div class="cpt-detail-val"><a href="' + safeAttr(p.LinkFile) + '" target="_blank" style="color:#1d4ed8">🔗 Mở tài liệu</a></div></div>' : ''));
-      }
-      if (cns.length > 0) {
-        html += '<div class="cpt-detail-section"><div class="cpt-detail-section-title">📋 Lịch sử cập nhật (mới nhất)</div>' + cnList(cns) + '</div>';
-      }
-      if (qds.length > 0) {
-        html += '<div class="cpt-detail-section"><div class="cpt-detail-section-title">👑 Quyết định CEO</div>'
-          + '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Nội dung</th><th>Quyết định</th><th>Trạng thái</th></tr></thead><tbody>';
-        qds.forEach(function(q) {
-          html += '<tr><td>' + safe(q.MaBanGhi) + '</td><td>' + safe(q.TenBanGhi) + '</td>'
-            + '<td>' + safe(q.QuyetDinhCEO||'—') + '</td><td>' + safe(q.NdCanCEOQuyet||'—') + '</td></tr>';
-        });
-        html += '</tbody></table></div>';
-      }
-      html += '<div class="cpt-detail-section full"><div class="cpt-detail-section-title">📌 Danh sách công việc (' + cvs.length + ')</div>' + cvTable(cvs) + '</div>';
-      if (hms.length > 0) {
-        html += '<div class="cpt-detail-section full"><div class="cpt-detail-section-title">🗂️ Hạng mục (' + hms.length + ')</div>'
-          + '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Tên hạng mục</th><th>Người PT</th><th>Trạng thái</th></tr></thead><tbody>';
+      );
+
+      // 2. Đề bài CEO
+      html += sec('2. Đề bài CEO',
+        hasTextClient(p.DebaiCEO)
+          ? '<div class="cpt-detail-val" style="white-space:pre-wrap">' + safe(p.DebaiCEO) + '</div>'
+          : '<div class="cpt-detail-empty">Chưa có đề bài CEO</div>'
+      );
+
+      // 3. Sản phẩm đầu ra chính
+      html += sec('3. Sản phẩm đầu ra chính',
+        hasTextClient(p.SanPhamDauRa)
+          ? '<div class="cpt-detail-val" style="white-space:pre-wrap">' + safe(p.SanPhamDauRa) + '</div>'
+          : '<div class="cpt-detail-empty">Chưa xác định sản phẩm đầu ra</div>'
+      );
+
+      // 4. Hạng mục dự án
+      var hmContent = '';
+      if (hms.length) {
+        hmContent = '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Tên hạng mục</th><th>Người PT</th><th>Trạng thái</th></tr></thead><tbody>';
         hms.forEach(function(h) {
-          html += '<tr><td>' + safe(h.MaBanGhi) + '</td><td>' + safe(h.TenBanGhi) + '</td>'
+          hmContent += '<tr><td>' + safe(h.MaBanGhi) + '</td><td>' + safe(h.TenBanGhi) + '</td>'
             + '<td>' + safe(h.NguoiPhuTrach||'—') + '</td><td>' + safe(h.TrangThai||'—') + '</td></tr>';
         });
-        html += '</tbody></table></div>';
+        hmContent += '</tbody></table>';
+      } else {
+        hmContent = '<div class="cpt-detail-empty">Chưa có hạng mục</div>';
       }
-      html += '</div>'; // cpt-detail-grid
+      html += sec('4. Hạng mục dự án (' + hms.length + ')', hmContent, 'full');
+
+      // 5. Công việc đang triển khai
+      html += sec('5. Công việc đang triển khai (' + cvs.filter(function(c){ return !/hoàn thành|đã hủy/i.test(c.TrangThai); }).length + ')', cvTable(cvs), 'full');
+
+      html += '</div>'; // end grid part A
+
+      html += '<div class="cpt-detail-label-section" style="margin-top:20px">PHẦN B — TÌNH HÌNH HIỆN TẠI</div>';
+      html += '<div class="cpt-detail-grid">';
+
+      // 6. Cập nhật mới nhất (từ CẬP NHẬT, không từ DỰ ÁN)
+      if (lu) {
+        html += sec('6. Cập nhật mới nhất — ' + safe(lu.NgayCapNhat||''),
+          row('Việc đã thực hiện', lu.CongViecDaThucHien)
+          + row('Kết quả đạt được', lu.KetQuaDatDuoc)
+          + row('Việc đang triển khai', lu.ViecDangTrienKhai)
+          + row('Tiến độ hiện tại', lu.TienDoHienTai)
+          + row('Kế hoạch tiếp theo', lu.KeHoachTiepTheo)
+          + row('Người cập nhật', lu.NguoiCapNhat),
+          'full'
+        );
+      } else {
+        html += sec('6. Cập nhật mới nhất',
+          '<div class="cpt-detail-empty">Chưa có cập nhật tiến độ. Hãy thêm dòng CẬP NHẬT vào sheet THEO_DOI_DU_AN_CEO.</div>',
+          'full'
+        );
+      }
+
+      // 7. Lịch sử cập nhật
+      var histContent = '';
+      if (cnsAll.length) {
+        histContent = cnsAll.map(cnRow).join('');
+      } else {
+        histContent = '<div class="cpt-detail-empty">Chưa có lịch sử cập nhật</div>';
+      }
+      html += sec('7. Lịch sử cập nhật (' + cnsAll.length + ' lần)', histContent, 'full');
+
+      // 8. Vướng mắc / Rủi ro (từ CẬP NHẬT mới nhất; fallback từ DỰ ÁN nếu không có CẬP NHẬT)
+      var vmLU = lu && hasTextClient(lu.VuongMacRuiRo) ? lu.VuongMacRuiRo : '';
+      var hxLU = lu && hasTextClient(lu.HuongXuLy)     ? lu.HuongXuLy     : '';
+      html += sec('8. Vướng mắc / Rủi ro',
+        (vmLU
+          ? row('Vướng mắc/Rủi ro', vmLU) + row('Hướng xử lý', hxLU)
+          : (hasTextClient(p.VuongMacRuiRo)
+              ? row('Vướng mắc/Rủi ro', p.VuongMacRuiRo) + row('Hướng xử lý', p.HuongXuLy)
+              + '<div style="font-size:11px;color:#9ca3af;margin-top:4px">(Lấy từ hồ sơ dự án — chưa có CẬP NHẬT)</div>'
+              : '<div class="cpt-detail-empty">Không có vướng mắc</div>'
+            )
+        ), 'highlight'
+      );
+
+      // 9. Nội dung cần CEO quyết (từ QUYẾT ĐỊNH rows)
+      var ceoContent = '';
+      if (qds.length) {
+        ceoContent = '<table class="cpt-sub-table"><thead><tr><th>Mã</th><th>Nội dung</th><th>Phương án đề xuất</th><th>Quyết định CEO</th><th>Trạng thái</th></tr></thead><tbody>';
+        qds.forEach(function(q) {
+          ceoContent += '<tr><td>' + safe(q.MaBanGhi) + '</td><td>' + safe(q.TenBanGhi) + '</td>'
+            + '<td>' + safe(q.CacPhuongAn||'—') + '</td>'
+            + '<td>' + safe(q.QuyetDinhCEO||'—') + '</td>'
+            + '<td>' + safe(q.NdCanCEOQuyet||'—') + '</td></tr>';
+        });
+        ceoContent += '</tbody></table>';
+      } else if (lu && hasTextClient(lu.NdCanCEOQuyet) && lu.NdCanCEOQuyet !== 'Không') {
+        ceoContent = row('CEO cần quyết', lu.NdCanCEOQuyet)
+          + row('CEO cần biết', lu.NdCEOCanBiet);
+      } else {
+        ceoContent = '<div class="cpt-detail-empty">Không có nội dung cần CEO quyết</div>';
+      }
+      html += sec('9. Nội dung cần CEO quyết', ceoContent, 'ceo-block full');
+
+      // 10. File nguồn
+      var fileContent = '';
+      if (hasTextClient(p.LinkFile)) {
+        fileContent = rowLink('File nguồn dự án', p.LinkFile, 'Mở file/link');
+      }
+      if (lu && hasTextClient(lu.LinkFile)) {
+        fileContent += rowLink('Link cập nhật gần nhất', lu.LinkFile, 'Mở link bằng chứng');
+      }
+      if (!fileContent) fileContent = '<div class="cpt-detail-empty">Chưa có file nguồn</div>';
+      html += sec('10. File nguồn', fileContent, hasTextClient(p.GhiChu) ? '' : '');
+      if (hasTextClient(p.GhiChu)) html += sec('Ghi chú', row('Ghi chú', p.GhiChu));
+
+      html += '</div>'; // end grid part B
       html += '</div>'; // cpt-detail-view
 
       var contentEl = document.getElementById('cpt-content');

@@ -1101,7 +1101,8 @@ function setupCEOProjectTrackerSheet() {
     'Cập nhật mới nhất', 'Kết quả đạt được', 'Vướng mắc/Rủi ro',
     'Hướng xử lý', 'Kế hoạch tiếp theo', 'Nội dung CEO cần biết',
     'Nội dung cần CEO quyết', 'Các phương án đề xuất', 'Quyết định của CEO',
-    'Ngày cập nhật', 'Người cập nhật', 'Link bằng chứng/File nguồn', 'Ghi chú'
+    'Ngày cập nhật', 'Người cập nhật', 'Link bằng chứng/File nguồn', 'Ghi chú',
+    'Đề bài CEO', 'Việc đang triển khai', 'Tiến độ hiện tại'
   ];
 
   var sheet = ss.getSheetByName(SHEET_NAME);
@@ -1123,7 +1124,8 @@ function setupCEOProjectTrackerSheet() {
     });
   }
 
-  sheet.getRange(1, 1, 1, COLUMNS.length)
+  var totalHdrCols = sheet.getLastColumn();
+  sheet.getRange(1, 1, 1, totalHdrCols)
     .setBackground('#1a2e44').setFontColor('#ffffff').setFontWeight('bold');
   sheet.setFrozenRows(1);
 
@@ -1143,23 +1145,24 @@ function setupCEOProjectTrackerSheet() {
   var widths = {1:120,2:100,3:100,4:90,5:220,6:200,7:180,8:180,9:180,10:200,
                11:150,12:150,13:150,14:140,15:120,16:110,17:120,18:140,19:90,
                20:80,21:220,22:220,23:200,24:200,25:200,26:200,27:200,28:150,
-               29:200,30:200,31:110,32:130,33:200,34:180};
+               29:200,30:200,31:110,32:130,33:200,34:180,35:220,36:220,37:160};
   Object.keys(widths).forEach(function(c) {
     sheet.setColumnWidth(Number(c), widths[c]);
   });
 
   // Wrap text toàn bộ vùng dữ liệu
-  sheet.getRange(1, 1, Math.max(sheet.getLastRow(), 2), COLUMNS.length).setWrap(true);
+  var totalCols = sheet.getLastColumn();
+  sheet.getRange(1, 1, Math.max(sheet.getLastRow(), 2), totalCols).setWrap(true);
 
   // Auto-filter (xóa filter cũ nếu có, tạo lại)
   try {
     var existingFilter = sheet.getFilter();
     if (existingFilter) existingFilter.remove();
   } catch(eF) {}
-  sheet.getRange(1, 1, Math.max(sheet.getLastRow(), 2), COLUMNS.length).createFilter();
+  sheet.getRange(1, 1, Math.max(sheet.getLastRow(), 2), sheet.getLastColumn()).createFilter();
 
   Logger.log('setupCEOProjectTrackerSheet: OK — "' + SHEET_NAME + '" ' + (isNew ? 'tạo mới' : 'cập nhật'));
-  return { ok: true, sheetName: SHEET_NAME, isNew: isNew, columnsCount: COLUMNS.length };
+  return { ok: true, sheetName: SHEET_NAME, isNew: isNew, columnsCount: sheet.getLastColumn() };
 }
 
 function testSetupCEOProjectTrackerSheet() {
@@ -1343,9 +1346,12 @@ function normalizeCPTRow_(r, i) {
     QuyetDinhCEO:      String(r['Quyết định của CEO'] || '').trim(),
     NgayCapNhat:       formatDate(r['Ngày cập nhật'] || ''),
     NguoiCapNhat:      String(r['Người cập nhật'] || '').trim(),
-    LinkFile:          String(r['Link bằng chứng/File nguồn'] || '').trim(),
-    GhiChu:            String(r['Ghi chú'] || '').trim(),
-    IsOverdue:         isPastDeadline(deadline, status)
+    LinkFile:            String(r['Link bằng chứng/File nguồn'] || '').trim(),
+    GhiChu:              String(r['Ghi chú'] || '').trim(),
+    DebaiCEO:            String(r['Đề bài CEO'] || '').trim(),
+    ViecDangTrienKhai:   String(r['Việc đang triển khai'] || '').trim(),
+    TienDoHienTai:       String(r['Tiến độ hiện tại'] || '').trim(),
+    IsOverdue:           isPastDeadline(deadline, status)
   };
 }
 
@@ -1391,33 +1397,48 @@ function getCEOProjectTrackerData() {
       if (!c.ThoiHanHoanThanh || /hoàn thành|đã hủy/i.test(c.TrangThai)) return false;
       return new Date(c.ThoiHanHoanThanh) < today;
     }).length;
-    var soRuiRo = (hasText(p.VuongMacRuiRo) ? 1 : 0)
-      + hms.filter(function(h) { return hasText(h.VuongMacRuiRo); }).length
-      + cvs.filter(function(c) { return hasText(c.VuongMacRuiRo); }).length;
     var soQDCan = quyetDinhs.filter(function(q) {
       return (q.MaDuAn === pid || q.MaCapTren === pid || hmIds.indexOf(q.MaCapTren) !== -1)
         && /cần quyết định/i.test(q.NdCanCEOQuyet);
     }).length;
 
+    // Tất cả CẬP NHẬT của dự án này, mới nhất trước
     var projCNs = capNhats.filter(function(u) {
       return u.MaDuAn === pid || u.MaCapTren === pid || hmIds.indexOf(u.MaCapTren) !== -1;
     }).sort(function(a, b) { return (b.NgayCapNhat || '').localeCompare(a.NgayCapNhat || ''); });
-    var lastCN    = projCNs[0] || null;
-    var lastDate  = lastCN ? lastCN.NgayCapNhat : p.NgayCapNhat;
+    var lastCN    = projCNs[0] || null;  // Bản ghi CẬP NHẬT mới nhất
+
+    // Ngày cập nhật lần cuối (từ CẬP NHẬT, không lấy từ trường DỰ ÁN)
+    var lastDate  = lastCN ? lastCN.NgayCapNhat : '';
     var daysSince = null;
     if (lastDate) {
       try { daysSince = Math.floor((today - new Date(lastDate)) / msDay); } catch(e2) {}
     }
+
+    // Tính RAG hiệu lực: ưu tiên lấy từ DỰ ÁN, nếu trống thì từ CẬP NHẬT mới nhất
+    var effectiveRAG = hasText(p.RAG) ? p.RAG : (lastCN && hasText(lastCN.RAG) ? lastCN.RAG : '');
+
+    // Rủi ro: từ DỰ ÁN + CẬP NHẬT mới nhất + HẠNG MỤC + CÔNG VIỆC
+    var soRuiRoFull = (hasText(p.VuongMacRuiRo) ? 1 : 0)
+      + (lastCN && hasText(lastCN.VuongMacRuiRo) ? 1 : 0)
+      + hms.filter(function(h) { return hasText(h.VuongMacRuiRo); }).length
+      + cvs.filter(function(c) { return hasText(c.VuongMacRuiRo); }).length;
+
     return Object.assign({}, p, {
+      // Số liệu tổng hợp
       SoHangMuc:          hms.length,
       TongCongViec:       cvs.length,
       CongViecHoanThanh:  cvDone,
       CongViecQuaHan:     cvOverdue,
-      SoRuiRo:            soRuiRo,
+      SoRuiRo:            soRuiRoFull,
       SoCEOQuyetCan:      soQDCan,
       TienDo:             cvs.length > 0 ? Math.round(cvDone / cvs.length * 100) : null,
-      CapNhatGanNhat:     lastCN ? (lastCN.CapNhatMoiNhat || lastCN.CongViecDaThucHien || '') : '',
-      NgayCapNhatGanNhat: lastDate || '',
+      RAG:                effectiveRAG,
+
+      // Cập nhật mới nhất (object đầy đủ — không thay thế hồ sơ dự án)
+      LatestUpdate:       lastCN,
+      UpdateHistory:      projCNs,
+      NgayCapNhatGanNhat: lastDate,
       NgayKhongCapNhat:   daysSince
     });
   });
