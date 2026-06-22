@@ -2234,10 +2234,10 @@
         var topicsLen = cc.meetingsTopicsTotal || (data.meetingTopics || []).length || 0;
         st('ov-mm-topics',   topicsLen);
         st('ov-mm-total',    cc.meetingsTotal);
-        st('ov-mm-pending',  cc.meetingsPending);
-        st('ov-mm-ceo',      cc.meetingsWithCEO);
+        st('ov-mm-pending',  cc.meetingsPendingApproval);
+        st('ov-mm-ceo',      cc.meetingsWithCEOInstruction);
         st('ov-mm-action',   cc.meetingsWithActions || 0);
-        st('ov-mm-decision', cc.meetingsWithDecision);
+        st('ov-mm-decision', cc.meetingsWithCEODecision);
         activate('ov-mm-stats', 'ov-mm-badge');
       }
     }

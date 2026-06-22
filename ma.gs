@@ -1878,6 +1878,37 @@ function getMeetingCenterData() {
   return { topics: topics, minutes: minutes, actions: actions };
 }
 
+/* ── Test function — run manually from Apps Script editor ── */
+function testGetMeetingCenterData() {
+  try {
+    var data = getMeetingCenterData();
+    var topics  = data.topics  || [];
+    var minutes = data.minutes || [];
+    var actions = data.actions || [];
+
+    Logger.log('=== testGetMeetingCenterData ===');
+    Logger.log('Topics  (' + topics.length  + '):');
+    topics.forEach(function(t, i) {
+      Logger.log('  [' + (i+1) + '] ' + t.TopicID + ' | ' + t.TopicName + ' | ' + t.Module + ' | ' + t.Status);
+    });
+    Logger.log('Minutes (' + minutes.length + '):');
+    minutes.slice(0, 5).forEach(function(m, i) {
+      Logger.log('  [' + (i+1) + '] ' + m.MeetingID + ' | TopicID=' + m.TopicID + ' | ' + m.Date + ' | ' + m.Topic.substring(0,40));
+    });
+    if (minutes.length > 5) Logger.log('  … (' + (minutes.length - 5) + ' biên bản còn lại không hiển thị)');
+    Logger.log('Actions (' + actions.length + '):');
+    actions.slice(0, 5).forEach(function(a, i) {
+      Logger.log('  [' + (i+1) + '] ' + a.ActionID + ' | MtgID=' + a.MeetingID + ' | ' + a.Owner + ' | ' + a.Status + ' | ' + a.RAG);
+    });
+    if (actions.length > 5) Logger.log('  … (' + (actions.length - 5) + ' action còn lại không hiển thị)');
+
+    Logger.log('--- OK ---');
+    Logger.log('Kết quả: ' + topics.length + ' topic | ' + minutes.length + ' biên bản | ' + actions.length + ' action');
+  } catch(e) {
+    Logger.log('LỖI testGetMeetingCenterData: ' + e.message + '\n' + e.stack);
+  }
+}
+
 function normalizeCEODecision_(r, i) {
   var deadline = formatDate(r['Deadline'] || r['Hạn chốt'] || '');
   var status   = String(r['Trạng thái'] || r['Status'] || '');
@@ -2011,13 +2042,13 @@ function buildCommandCenterSummary(data) {
     toActionsRed:     toRed,
 
     // Meetings
-    meetingsTopicsTotal:  topics.length,
-    meetingsTotal:        mm.length,
-    meetingsPending:      mmPending,
-    meetingsWithCEO:      mmHasCEO,
-    meetingsWithRisk:     mmHasRisk,
-    meetingsWithActions:  mmHasActions,
-    meetingsWithDecision: mmHasDecision,
+    meetingsTopicsTotal:        topics.length,
+    meetingsTotal:              mm.length,
+    meetingsPendingApproval:    mmPending,
+    meetingsWithCEOInstruction: mmHasCEO,
+    meetingsWithRisk:           mmHasRisk,
+    meetingsWithActions:        mmHasActions,
+    meetingsWithCEODecision:    mmHasDecision,
 
     // CEO Decisions
     decisionsTotal:   decs.length,
@@ -2051,7 +2082,7 @@ function testGetCommandCenterData() {
   Logger.log('PMO: ' + data.pmoActions.length + ' actions | Overdue: ' + s.pmoOverdue + ' | Red: ' + s.pmoRed);
   Logger.log('Projects: ' + data.ceoProjects.length + ' | Active: ' + s.projectsActive + ' | Overdue: ' + s.projectsOverdue);
   Logger.log('TO Actions: ' + data.toActions.length + ' | Overdue: ' + s.toActionsOverdue);
-  Logger.log('Meetings: ' + data.meetingMinutes.length + ' | Pending: ' + s.meetingsPending);
+  Logger.log('Meetings: Topics=' + (data.meetingTopics||[]).length + ' | Minutes=' + data.meetingMinutes.length + ' | PendingApproval: ' + s.meetingsPendingApproval);
   Logger.log('Decisions: ' + data.ceoDecisions.length + ' | Pending: ' + s.decisionsPending);
   Logger.log('Risks: ' + data.riskSos.length + ' | Open: ' + s.risksOpen + ' | Red: ' + s.risksRed);
   Logger.log('Overall Health: ' + s.overallHealth + ' | DQ Score: ' + s.dataQualityScore + '%');
