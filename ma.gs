@@ -1841,7 +1841,9 @@ function normalizeMeetingMinutesFull_(r, i) {
     FileAudio:    String(r['File ghi âm/transcript']   || r['File ghi âm'] || r['File transcript'] || '').trim(),
     RecordedBy:   String(r['Người nhập']               || r['Người lập biên bản'] || '').trim(),
     UpdatedAt:    formatDate(r['Ngày cập nhật']        || ''),
-    Note:         String(r['Ghi chú']                 || '').trim()
+    Note:         String(r['Ghi chú']                 || '').trim(),
+    FullContent:  String(r['Nội dung biên bản đầy đủ'] || '').trim(),
+    DetailURL:    String(r['Full Detail URL']          || r['Link xem chi tiết'] || '').trim()
   };
 }
 

@@ -1343,11 +1343,123 @@
     .mm-acts-table { overflow-x: auto; }
     .mm-acts-table .mm-table { min-width: 720px; }
 
+    /* ── KPI card interaction ── */
+    .mm-summary-card { cursor: pointer; }
+    .mm-summary-card.kpi-active {
+      background: #064e3b; border-color: #064e3b;
+      box-shadow: 0 4px 16px rgba(6,78,59,.2);
+    }
+    .mm-summary-card.kpi-active .mm-summary-card-val { color: #fff; }
+    .mm-summary-card.kpi-active .mm-summary-card-lbl { color: #a7f3d0; }
+
+    /* ── Filter info bar ── */
+    .mm-filter-bar {
+      display: none; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 8px 32px; background: #fffbeb;
+      border-bottom: 1px solid #fde68a; font-size: 12px;
+    }
+    .mm-filter-bar.visible { display: flex; }
+    .mm-filter-text { flex: 1; color: #92400e; font-weight: 600; }
+    .mm-clear-filter-btn {
+      padding: 4px 12px; font-size: 12px; font-weight: 600;
+      border: 1px solid #d97706; border-radius: 6px; background: #fff;
+      color: #92400e; cursor: pointer; font-family: inherit;
+    }
+    .mm-clear-filter-btn:hover { background: #fef3c7; }
+
+    /* ── Meeting card buttons ── */
+    .mm-meeting-card-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+    .mm-view-detail-btn {
+      padding: 5px 12px; font-size: 11.5px; font-weight: 600;
+      background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;
+      border-radius: 5px; cursor: pointer; font-family: inherit;
+    }
+    .mm-view-detail-btn:hover { background: #dcfce7; }
+    .mm-open-full-btn {
+      padding: 5px 12px; font-size: 11.5px; font-weight: 600;
+      background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+      border-radius: 5px; cursor: pointer; font-family: inherit;
+    }
+    .mm-open-full-btn:hover { background: #dbeafe; }
+
+    /* ── Full detail modal ── */
+    .mm-modal-overlay {
+      position: fixed; inset: 0; z-index: 9100;
+      background: rgba(0,0,0,.5); display: flex;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .mm-modal {
+      background: #fff; border-radius: 14px;
+      width: 90vw; max-width: 900px; height: 90vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 64px rgba(0,0,0,.3); overflow: hidden;
+    }
+    .mm-modal-hdr {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 16px 20px; border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb; flex-shrink: 0;
+    }
+    .mm-modal-hdr-left { flex: 1; min-width: 0; }
+    .mm-modal-hdr-mid { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    .mm-modal-title { font-size: 15px; font-weight: 800; color: #064e3b; margin-bottom: 2px; word-break: break-word; }
+    .mm-modal-hdr-right { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    .mm-modal-file-btn {
+      padding: 6px 14px; font-size: 12px; font-weight: 600;
+      border-radius: 7px; border: 1px solid #e5e7eb; background: #fff;
+      color: #374151; cursor: pointer; text-decoration: none; display: inline-flex;
+      align-items: center; gap: 5px; font-family: inherit; white-space: nowrap;
+    }
+    .mm-modal-file-btn:hover { background: #f3f4f6; }
+    .mm-modal-file-btn.primary { background: #064e3b; color: #fff; border-color: #064e3b; }
+    .mm-modal-file-btn.primary:hover { background: #065f46; }
+    .mm-modal-close {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid #e5e7eb; background: #fff;
+      cursor: pointer; font-size: 18px; font-family: inherit;
+      display: flex; align-items: center; justify-content: center;
+      color: #6b7280; flex-shrink: 0;
+    }
+    .mm-modal-close:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+    .mm-modal-body { flex: 1; overflow-y: auto; padding: 20px 24px 28px; }
+    .mm-modal-section { margin-bottom: 24px; }
+    .mm-modal-section-title {
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px; color: #6b7280; margin-bottom: 10px;
+      padding-bottom: 5px; border-bottom: 1px solid #f1f5f9;
+    }
+    .mm-modal-row {
+      display: grid; grid-template-columns: 150px 1fr;
+      gap: 3px 12px; margin-bottom: 10px; align-items: start;
+    }
+    .mm-modal-label { font-size: 12px; font-weight: 600; color: #6b7280; padding-top: 2px; }
+    .mm-modal-val {
+      font-size: 13px; color: #111827; line-height: 1.6;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .mm-modal-val.ceo-block {
+      background: #fef9c3; border-left: 3px solid #d97706;
+      padding: 8px 12px; border-radius: 0 6px 6px 0; white-space: pre-wrap;
+    }
+    .mm-modal-val.dec-block {
+      background: #f0fdf4; border-left: 3px solid #16a34a;
+      padding: 8px 12px; border-radius: 0 6px 6px 0; white-space: pre-wrap;
+    }
+    .mm-modal-val.full-block {
+      background: #f8fafc; border: 1px solid #e5e7eb;
+      padding: 10px 14px; border-radius: 8px; white-space: pre-wrap; max-height: 260px; overflow-y: auto;
+    }
+    .mm-modal-empty { color: #9ca3af; font-style: italic; font-size: 12px; }
+    .mm-modal-link { color: #1d4ed8; text-decoration: none; font-weight: 600; }
+    .mm-modal-link:hover { text-decoration: underline; }
+
     @media (max-width: 800px) {
       .mm-group-bar { padding: 12px 16px 0; }
       .mm-topic-grid { grid-template-columns: 1fr; padding: 14px 16px; }
       .mm-timeline { padding: 12px 16px 24px; }
       .mm-detail-header { padding: 14px 16px 0; }
+      .mm-filter-bar { padding: 8px 16px; }
+      .mm-modal { width: 100%; height: 100%; border-radius: 0; }
+      .mm-modal-row { grid-template-columns: 120px 1fr; }
     }
 
     /* ── TO ACTION CENTER ── */
@@ -2075,30 +2187,36 @@
     </div>
 
     <div class="mm-summary-bar">
-      <div class="mm-summary-card">
+      <div class="mm-summary-card" id="mm-kpi-topics" onclick="mmClickKpi('topics')" title="Reset về danh sách Topic">
         <div class="mm-summary-card-val" id="mm-s-topics">—</div>
         <div class="mm-summary-card-lbl">Tổng Topic</div>
       </div>
-      <div class="mm-summary-card">
+      <div class="mm-summary-card" id="mm-kpi-total" onclick="mmClickKpi('total')" title="Xem toàn bộ biên bản">
         <div class="mm-summary-card-val" id="mm-s-total">—</div>
         <div class="mm-summary-card-lbl">Tổng biên bản</div>
       </div>
-      <div class="mm-summary-card">
+      <div class="mm-summary-card" id="mm-kpi-pending" onclick="mmClickKpi('pending')" title="Lọc biên bản chờ duyệt">
         <div class="mm-summary-card-val amber" id="mm-s-pending">—</div>
         <div class="mm-summary-card-lbl">Chờ duyệt</div>
       </div>
-      <div class="mm-summary-card">
+      <div class="mm-summary-card" id="mm-kpi-ceo" onclick="mmClickKpi('ceo')" title="Lọc biên bản có chỉ đạo CEO">
         <div class="mm-summary-card-val" id="mm-s-ceo">—</div>
         <div class="mm-summary-card-lbl">Có chỉ đạo CEO</div>
       </div>
-      <div class="mm-summary-card">
+      <div class="mm-summary-card" id="mm-kpi-action" onclick="mmClickKpi('action')" title="Lọc biên bản có action phát sinh">
         <div class="mm-summary-card-val blue" id="mm-s-action">—</div>
         <div class="mm-summary-card-lbl">Có action phát sinh</div>
       </div>
-      <div class="mm-summary-card">
+      <div class="mm-summary-card" id="mm-kpi-decision" onclick="mmClickKpi('decision')" title="Lọc biên bản có CEO Decision">
         <div class="mm-summary-card-val green" id="mm-s-decision">—</div>
         <div class="mm-summary-card-lbl">Có CEO Decision</div>
       </div>
+    </div>
+
+    <!-- Filter info bar (shown when KPI filter active) -->
+    <div class="mm-filter-bar" id="mm-filter-bar">
+      <span class="mm-filter-text" id="mm-filter-text">Đang lọc: —</span>
+      <button class="mm-clear-filter-btn" onclick="mmClearKpiFilter()">✕ Xóa bộ lọc</button>
     </div>
 
     <div id="mm-content">
@@ -3628,13 +3746,25 @@
 
     /* =====================================================
        MEETING MINUTES MODULE — topic-first hierarchy
+       v2: KPI filter + full-detail modal
     ===================================================== */
 
-    var mmCache       = null; // { topics, minutes, actions }
-    var mmActiveGroup = 'all';
-    var mmAllRecords  = []; // backward-compat stub
+    var mmCache         = null;  // { topics, minutes, actions }
+    var mmActiveGroup   = 'all';
+    var mmActiveKpi     = null;  // null | 'total' | 'pending' | 'ceo' | 'action' | 'decision'
+    var mmViewMode      = 'topics'; // 'topics' | 'timeline'
+    var mmActiveTopicId = null;  // null = top level, string = topicId in detail
+    var mmAllRecords    = [];    // backward-compat
 
-    /* ── Entry point: called by toolbar button ── */
+    var MM_KPI_LABEL = {
+      total:    'Tổng biên bản',
+      pending:  'Chờ duyệt',
+      ceo:      'Có chỉ đạo CEO',
+      action:   'Có action phát sinh',
+      decision: 'Có CEO Decision'
+    };
+
+    /* ── Entry point ── */
     function loadMeetingCenter() {
       var el = document.getElementById('mm-content');
       if (el) el.innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280;font-size:13px">⏳ Đang tải dữ liệu…</div>';
@@ -3642,36 +3772,32 @@
         .then(function(data) { renderMeetingCenter(data); })
         .catch(function(e) {
           var el2 = document.getElementById('mm-content');
-          if (el2) el2.innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:13px">❌ Lỗi tải dữ liệu: ' + safe(String(e && e.message || e)) + '</div>';
+          if (el2) el2.innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:13px">❌ Lỗi tải: ' + safe(String(e && e.message || e)) + '</div>';
         });
     }
-
-    /* Backward-compat alias — some buttons may still call this */
     function loadMeetingMinutesData() { loadMeetingCenter(); }
 
-    /* ── Main render: called with { topics, minutes, actions } ── */
+    /* ── Main render ── */
     function renderMeetingCenter(data) {
       if (!data) return;
-
-      var topics  = data.topics  || [];
-      var minutes = (data.minutes || data.meetingMinutes || []);
+      var topics  = data.topics || [];
+      var minutes = data.minutes || data.meetingMinutes || [];
       if (!Array.isArray(minutes)) minutes = [];
       var actions = data.actions || [];
-
-      /* If dashboard pushes old format {meetingMinutes:{records:[…]}} */
       if (!data.topics && data.meetingMinutes && data.meetingMinutes.records) {
         minutes = data.meetingMinutes.records;
       }
 
       mmCache = { topics: topics, minutes: minutes, actions: actions };
       mmAllRecords = minutes;
+      mmActiveKpi = null; mmViewMode = 'topics'; mmActiveTopicId = null;
 
-      /* ── Summary stats ── */
-      var st = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-      var pending  = minutes.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
-      var hasCEO   = minutes.filter(function(r) { return hasTextClient(r.CEODirective); }).length;
-      var hasAct   = minutes.filter(function(r) { return hasTextClient(r.Actions); }).length;
-      var hasDec   = minutes.filter(function(r) { return hasTextClient(r.CEODecision); }).length;
+      var st = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+      var hasActFn = function(r) { return hasTextClient(r.Actions) || actions.some(function(a) { return a.MeetingID === r.MeetingID; }); };
+      var pending = minutes.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
+      var hasCEO  = minutes.filter(function(r) { return hasTextClient(r.CEODirective); }).length;
+      var hasAct  = minutes.filter(hasActFn).length;
+      var hasDec  = minutes.filter(function(r) { return hasTextClient(r.CEODecision); }).length;
 
       st('mm-s-topics',   topics.length);
       st('mm-s-total',    minutes.length);
@@ -3681,90 +3807,191 @@
       st('mm-s-decision', hasDec);
       st('mm-count-badge', topics.length + ' topic · ' + minutes.length + ' biên bản');
 
-      /* ── Update overview card ── */
       var badge = document.getElementById('ov-mm-badge');
       if (badge) { badge.className = 'overview-badge live'; badge.textContent = '● Live · ' + topics.length + ' topic'; }
       var oStats = document.getElementById('ov-mm-stats');
       if (oStats) oStats.style.display = 'flex';
-      st('ov-mm-topics',   topics.length);
-      st('ov-mm-total',    minutes.length);
-      st('ov-mm-pending',  pending);
-      st('ov-mm-ceo',      hasCEO);
-      st('ov-mm-action',   hasAct);
-      st('ov-mm-decision', hasDec);
+      st('ov-mm-topics', topics.length); st('ov-mm-total', minutes.length);
+      st('ov-mm-pending', pending); st('ov-mm-ceo', hasCEO);
+      st('ov-mm-action', hasAct);   st('ov-mm-decision', hasDec);
 
-      /* ── Show filter bar ── */
       var gb = document.getElementById('mm-group-bar');
       if (gb) gb.style.display = 'flex';
 
-      /* ── Render topic cards ── */
+      mmUpdateKpiUI(null);
+      mmUpdateFilterBar(null);
       mmRenderTopicCards(topics, minutes, actions, mmActiveGroup);
     }
+    function renderMeetingMinutes(data) { renderMeetingCenter(data || {}); }
 
-    /* Backward-compat: called by old renderDashboard paths */
-    function renderMeetingMinutes(data) {
-      renderMeetingCenter(data || {});
-    }
-
-    /* ── Group filter tab click ── */
+    /* ── Group filter ── */
     function mmSetGroupFilter(group, el) {
       mmActiveGroup = group;
       document.querySelectorAll('.mm-gtab').forEach(function(b) { b.classList.remove('active'); });
       if (el) el.classList.add('active');
-      if (mmCache) {
-        mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, group);
-      }
+      if (!mmCache) return;
+      mmActiveKpi = null; mmViewMode = 'topics'; mmActiveTopicId = null;
+      mmUpdateKpiUI(null); mmUpdateFilterBar(null);
+      mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, group);
     }
 
     function mmMatchGroup(topic, group) {
       if (group === 'all') return true;
       var m = String((topic.Module || topic.TopicName || '') + ' ' + (topic.Desc || '')).toLowerCase();
-      var HE_DIEU_HANH = /hệ điều hành|he dieu hanh|end.to.end|s&op|scm|aps|mes|wms|erp|bravo|dashboard|qms|forecast|điều độ|dieu do/;
-      var TO_HT = /\bto\b|hiện trường|hien truong|nhà máy|nha may/;
-      if (group === 'hd')    return HE_DIEU_HANH.test(m);
-      if (group === 'to')    return TO_HT.test(m);
+      var HE = /hệ điều hành|he dieu hanh|end.to.end|s&op|scm|aps|mes|wms|erp|bravo|dashboard|qms|forecast|điều độ/;
+      var TO = /\bto\b|hiện trường|hien truong|nhà máy|nha may/;
+      if (group === 'hd')    return HE.test(m);
+      if (group === 'to')    return TO.test(m);
       if (group === 'pmo')   return /pmo/.test(m);
       if (group === 'ceo')   return /ceo|chỉ đạo|chi dao|direction/.test(m);
-      if (group === 'other') return !HE_DIEU_HANH.test(m) && !TO_HT.test(m) && !/pmo|ceo|chỉ đạo|direction/.test(m);
+      if (group === 'other') return !HE.test(m) && !TO.test(m) && !/pmo|ceo|chỉ đạo|direction/.test(m);
       return true;
+    }
+
+    /* Return minutes for all topics matching current group filter */
+    function mmGetGroupFilteredMinutes() {
+      if (!mmCache) return [];
+      var groupTopicIds = mmCache.topics
+        .filter(function(t) { return mmMatchGroup(t, mmActiveGroup); })
+        .map(function(t) { return t.TopicID; });
+      if (mmCache.topics.length === 0) return mmCache.minutes; // no topics → all
+      return mmCache.minutes.filter(function(m) {
+        return groupTopicIds.indexOf(m.TopicID) !== -1 || !m.TopicID;
+      });
+    }
+
+    /* ── KPI filter helpers ── */
+    function mmHasAction(m, allActions) {
+      return hasTextClient(m.Actions) || (allActions || []).some(function(a) { return a.MeetingID === m.MeetingID; });
+    }
+
+    function mmApplyKpiFilter(minutes, actions, kpi) {
+      if (!kpi || kpi === 'total') return minutes;
+      if (kpi === 'pending')  return minutes.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); });
+      if (kpi === 'ceo')      return minutes.filter(function(r) { return hasTextClient(r.CEODirective); });
+      if (kpi === 'action')   return minutes.filter(function(r) { return mmHasAction(r, actions); });
+      if (kpi === 'decision') return minutes.filter(function(r) { return hasTextClient(r.CEODecision); });
+      return minutes;
+    }
+
+    function mmUpdateKpiUI(activeKpi) {
+      var kpis = ['topics', 'total', 'pending', 'ceo', 'action', 'decision'];
+      kpis.forEach(function(k) {
+        var card = document.getElementById('mm-kpi-' + k);
+        if (card) card.classList.toggle('kpi-active', k === activeKpi);
+      });
+    }
+
+    function mmUpdateFilterBar(kpi, count, total) {
+      var bar  = document.getElementById('mm-filter-bar');
+      var text = document.getElementById('mm-filter-text');
+      if (!bar) return;
+      if (!kpi) {
+        bar.classList.remove('visible');
+        return;
+      }
+      bar.classList.add('visible');
+      var label = MM_KPI_LABEL[kpi] || kpi;
+      var msg = 'Đang lọc: ' + label;
+      if (typeof count !== 'undefined') msg += ' — ' + count + ' biên bản';
+      if (typeof total !== 'undefined' && total !== count) msg += ' / ' + total;
+      if (text) text.textContent = msg;
+    }
+
+    /* ── KPI card click ── */
+    function mmClickKpi(kpi) {
+      if (!mmCache) return;
+
+      /* "Tổng Topic": reset to topic grid */
+      if (kpi === 'topics') {
+        mmActiveKpi = null; mmViewMode = 'topics'; mmActiveTopicId = null;
+        mmUpdateKpiUI(null); mmUpdateFilterBar(null);
+        mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, mmActiveGroup);
+        mmUpdateBadge(mmCache.topics.length, mmCache.minutes.length);
+        return;
+      }
+
+      /* Toggle: click same card → clear filter */
+      if (mmActiveKpi === kpi) {
+        mmActiveKpi = null;
+        mmUpdateKpiUI(null); mmUpdateFilterBar(null);
+        if (mmActiveTopicId) {
+          /* Re-render topic detail without filter */
+          var t = mmCache.topics.filter(function(x) { return x.TopicID === mmActiveTopicId; })[0];
+          var mins = mmCache.minutes.filter(function(r) { return r.TopicID === mmActiveTopicId; })
+                       .slice().sort(function(a, b) { return (b.Date||'').localeCompare(a.Date||''); });
+          mmRenderTimeline(mins, mmCache.actions, mmTopicHeader(t, true));
+          mmUpdateBadge(null, mins.length);
+        } else {
+          /* Return to topic grid */
+          mmViewMode = 'topics';
+          mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, mmActiveGroup);
+          mmUpdateBadge(mmCache.topics.length, mmCache.minutes.length);
+        }
+        return;
+      }
+
+      /* Set new KPI, switch to timeline */
+      mmActiveKpi = kpi; mmViewMode = 'timeline';
+      mmUpdateKpiUI(kpi);
+
+      var base = mmActiveTopicId
+        ? mmCache.minutes.filter(function(r) { return r.TopicID === mmActiveTopicId; })
+        : mmGetGroupFilteredMinutes();
+
+      var filtered = mmApplyKpiFilter(base, mmCache.actions, kpi)
+                       .slice().sort(function(a, b) { return (b.Date||'').localeCompare(a.Date||''); });
+      mmUpdateFilterBar(kpi, filtered.length, base.length);
+      mmUpdateBadge(null, filtered.length);
+
+      var header = mmActiveTopicId
+        ? mmTopicHeader(mmCache.topics.filter(function(x) { return x.TopicID === mmActiveTopicId; })[0], true)
+        : '';
+      mmRenderTimeline(filtered, mmCache.actions, header);
+    }
+
+    function mmClearKpiFilter() { if (mmCache) mmClickKpi(mmActiveKpi || 'topics'); }
+
+    function mmUpdateBadge(topicCount, minuteCount) {
+      var el = document.getElementById('mm-count-badge');
+      if (!el) return;
+      if (topicCount !== null && topicCount !== undefined) {
+        el.textContent = topicCount + ' topic · ' + minuteCount + ' biên bản';
+      } else {
+        el.textContent = minuteCount + ' biên bản' + (mmActiveKpi ? ' (đang lọc)' : '');
+      }
     }
 
     /* ── Topic card grid ── */
     function mmRenderTopicCards(topics, minutes, actions, group) {
       var el = document.getElementById('mm-content');
       if (!el) return;
-
       var filtered = (topics || []).filter(function(t) { return mmMatchGroup(t, group || 'all'); });
 
       if (!filtered.length && !minutes.length) {
-        el.innerHTML = '<div style="padding:48px;text-align:center;color:#9ca3af;font-size:14px">'
-          + 'Chưa có dữ liệu. Kết nối sheet MEETING_TOPICS, MEETING_MINUTES, MEETING_ACTIONS.</div>';
+        el.innerHTML = '<div style="padding:48px;text-align:center;color:#9ca3af;font-size:14px">Chưa có dữ liệu. Kết nối sheet MEETING_TOPICS, MEETING_MINUTES, MEETING_ACTIONS.</div>';
         return;
       }
-
-      /* If no topics but has minutes — show all minutes as timeline */
       if (!filtered.length && minutes.length) {
-        var html0 = '<div style="padding:12px 32px 4px"><div class="mm-detail-title">Tất cả biên bản</div></div>'
-          + '<div class="mm-timeline">';
-        minutes.slice().sort(function(a, b) { return (b.Date || '').localeCompare(a.Date || ''); })
-          .forEach(function(m) { html0 += mmMinuteCardHTML(m, actions); });
-        html0 += '</div>';
-        el.innerHTML = html0;
+        /* No topics but has minutes */
+        var sorted = minutes.slice().sort(function(a,b) { return (b.Date||'').localeCompare(a.Date||''); });
+        mmRenderTimeline(sorted, actions, '<div style="padding:12px 32px 4px"><div class="mm-detail-title">Tất cả biên bản</div></div>');
         return;
       }
 
       var html = '<div class="mm-topic-grid">';
       filtered.forEach(function(topic) {
-        var topicMins = minutes.filter(function(m) { return m.TopicID === topic.TopicID; });
+        var topicMins = minutes.filter(function(r) { return r.TopicID === topic.TopicID; });
         var topicActs = actions.filter(function(a) { return a.TopicID === topic.TopicID; });
-        var ceoPending = topicMins.filter(function(m) { return hasTextClient(m.CEODecision); }).length;
-        var statusCls  = /hoàn|kết thúc|đóng/i.test(topic.Status) ? 'closed'
-                       : /tạm dừng/i.test(topic.Status) ? 'paused' : '';
+        var ceoPending = topicMins.filter(function(r) { return hasTextClient(r.CEODecision); }).length;
+        var sCls = /hoàn|kết thúc|đóng/i.test(topic.Status) ? 'closed'
+                 : /tạm dừng/i.test(topic.Status) ? 'paused' : '';
+        var tid = String(topic.TopicID).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 
-        html += '<div class="mm-topic-card ' + statusCls + '">'
+        html += '<div class="mm-topic-card ' + sCls + '">'
           + '<div class="mm-topic-card-header">'
           + '<div class="mm-topic-name">' + safe(topic.TopicName) + '</div>'
-          + '<span class="mm-topic-status ' + statusCls + '">' + safe(topic.Status || 'Đang diễn ra') + '</span>'
+          + '<span class="mm-topic-status ' + sCls + '">' + safe(topic.Status || 'Đang diễn ra') + '</span>'
           + '</div>'
           + (topic.Module ? '<div class="mm-topic-module">📁 ' + safe(topic.Module) + '</div>' : '')
           + (topic.Summary ? '<div class="mm-topic-summary">' + safe(topic.Summary) + '</div>' : '')
@@ -3774,44 +4001,60 @@
           + '<div class="mm-ts"><span class="mm-ts-val' + (ceoPending > 0 ? ' mm-ts-alert' : '') + '">' + ceoPending + '</span><span class="mm-ts-lbl">CEO chốt</span></div>'
           + '</div>'
           + (topic.Owner ? '<div class="mm-topic-owner">👤 ' + safe(topic.Owner) + '</div>' : '')
-          + '<button class="mm-detail-btn" onclick="mmShowTopicDetail(\'' + String(topic.TopicID).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + '\')">Xem chi tiết →</button>'
+          + '<button class="mm-detail-btn" onclick="mmShowTopicDetail(\'' + tid + '\')">Xem chi tiết →</button>'
           + '</div>';
       });
       html += '</div>';
       el.innerHTML = html;
     }
 
-    /* ── Topic detail: timeline of meetings ── */
-    function mmShowTopicDetail(topicId) {
-      if (!mmCache) return;
-      var topic   = mmCache.topics.filter(function(t) { return t.TopicID === topicId; })[0];
-      var minutes = mmCache.minutes.filter(function(m) { return m.TopicID === topicId; })
-                      .slice().sort(function(a, b) { return (b.Date || '').localeCompare(a.Date || ''); });
+    /* ── Timeline renderer (reused for topic detail + KPI filtered views) ── */
+    function mmRenderTimeline(minutes, actions, headerHTML) {
       var el = document.getElementById('mm-content');
       if (!el) return;
-
-      var topicName = topic ? topic.TopicName : topicId;
-      var html = '<div class="mm-detail-header">'
-        + '<button class="mm-back-btn" onclick="mmBackToTopics()">← Danh sách Topic</button>'
-        + '<div class="mm-detail-title">' + safe(topicName) + '</div>'
-        + (topic && topic.Module ? '<div class="mm-detail-summary">📁 ' + safe(topic.Module) + '</div>' : '')
-        + (topic && topic.Summary ? '<div class="mm-detail-summary">' + safe(topic.Summary) + '</div>' : '')
-        + '</div>'
-        + '<div class="mm-timeline">';
-
+      var body = headerHTML || '';
+      body += '<div class="mm-timeline">';
       if (!minutes.length) {
-        html += '<div style="padding:32px;text-align:center;color:#9ca3af;font-size:14px">Chưa có biên bản nào thuộc topic này.</div>';
+        body += '<div style="padding:32px;text-align:center;color:#9ca3af;font-size:14px">Không có biên bản nào phù hợp.</div>';
       } else {
-        minutes.forEach(function(m) { html += mmMinuteCardHTML(m, mmCache.actions); });
+        minutes.forEach(function(m) { body += mmMinuteCardHTML(m, actions); });
       }
-      html += '</div>';
-      el.innerHTML = html;
+      body += '</div>';
+      el.innerHTML = body;
+    }
+
+    function mmTopicHeader(topic, withBack) {
+      var h = '<div class="mm-detail-header">';
+      if (withBack) h += '<button class="mm-back-btn" onclick="mmBackToTopics()">← Danh sách Topic</button>';
+      if (topic) {
+        h += '<div class="mm-detail-title">' + safe(topic.TopicName) + '</div>';
+        if (topic.Module) h += '<div class="mm-detail-summary">📁 ' + safe(topic.Module) + '</div>';
+        if (topic.Summary) h += '<div class="mm-detail-summary">' + safe(topic.Summary) + '</div>';
+      }
+      h += '</div>';
+      return h;
+    }
+
+    /* ── Topic detail view ── */
+    function mmShowTopicDetail(topicId) {
+      if (!mmCache) return;
+      mmActiveTopicId = topicId; mmViewMode = 'timeline';
+      mmActiveKpi = null; mmUpdateKpiUI(null); mmUpdateFilterBar(null);
+
+      var topic   = mmCache.topics.filter(function(t) { return t.TopicID === topicId; })[0];
+      var minutes = mmCache.minutes.filter(function(r) { return r.TopicID === topicId; })
+                      .slice().sort(function(a, b) { return (b.Date||'').localeCompare(a.Date||''); });
+
+      mmUpdateBadge(null, minutes.length);
+      mmRenderTimeline(minutes, mmCache.actions, mmTopicHeader(topic, true));
     }
 
     function mmBackToTopics() {
-      if (mmCache) {
-        mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, mmActiveGroup);
-      }
+      if (!mmCache) return;
+      mmActiveTopicId = null; mmActiveKpi = null; mmViewMode = 'topics';
+      mmUpdateKpiUI(null); mmUpdateFilterBar(null);
+      mmUpdateBadge(mmCache.topics.length, mmCache.minutes.length);
+      mmRenderTopicCards(mmCache.topics, mmCache.minutes, mmCache.actions, mmActiveGroup);
     }
 
     /* ── Single meeting card HTML ── */
@@ -3820,10 +4063,11 @@
       var hasCEO = hasTextClient(m.CEODirective);
       var hasDec = hasTextClient(m.CEODecision);
       var s = String(m.Status || '').toLowerCase();
-      var statusCls = (s.includes('duyệt') && !s.includes('chờ')) ? 'approved'
-                    : s.includes('chờ') ? 'pending'
-                    : s.includes('lưu trữ') || s.includes('archive') ? 'archived' : 'draft';
+      var statusCls = (s.indexOf('duyệt') !== -1 && s.indexOf('chờ') === -1) ? 'approved'
+                    : s.indexOf('chờ') !== -1 ? 'pending'
+                    : (s.indexOf('lưu trữ') !== -1 || s.indexOf('archive') !== -1) ? 'archived' : 'draft';
       var mid = String(m.MeetingID || '').replace(/[^a-zA-Z0-9\-_]/g, '');
+      var midEsc = String(m.MeetingID || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 
       var html = '<div class="mm-meeting-card">'
         + '<div class="mm-meeting-header">'
@@ -3840,9 +4084,11 @@
         + '<div class="mm-meeting-footer">'
         + '<span class="mm-meeting-id">' + safe(m.MeetingID) + '</span>'
         + '<span class="mm-meeting-acnt">' + meetingActs.length + ' action</span>'
-        + (m.FileMinutes ? '<a class="mm-link" href="' + safe(m.FileMinutes) + '" target="_blank">📄 Mở biên bản</a>' : '')
-        + (m.FileAudio   ? '<a class="mm-link" href="' + safe(m.FileAudio)   + '" target="_blank">🎙 Transcript</a>' : '')
         + (meetingActs.length ? '<button class="mm-action-toggle-btn" onclick="mmToggleActions(\'' + mid + '\')">📋 Xem action (' + meetingActs.length + ')</button>' : '')
+        + '</div>'
+        + '<div class="mm-meeting-card-btns">'
+        + '<button class="mm-view-detail-btn" onclick="mmOpenDetailModal(\'' + midEsc + '\')">🔍 Xem chi tiết</button>'
+        + '<button class="mm-open-full-btn" onclick="mmOpenFullMinutes(\'' + midEsc + '\')">📂 Mở toàn bộ biên bản</button>'
         + '</div>';
 
       if (meetingActs.length) {
@@ -3865,7 +4111,7 @@
         html += '</tbody></table></div></div>';
       }
 
-      html += '</div>'; // end .mm-meeting-card
+      html += '</div>';
       return html;
     }
 
@@ -3877,12 +4123,167 @@
       var card = el.closest('.mm-meeting-card');
       if (card) {
         var btn = card.querySelector('.mm-action-toggle-btn');
-        if (btn && isHidden) btn.textContent = btn.textContent.replace('Xem action', 'Ẩn action');
-        if (btn && !isHidden) btn.textContent = btn.textContent.replace('Ẩn action', 'Xem action');
+        if (btn) btn.textContent = isHidden
+          ? btn.textContent.replace('Xem action', 'Ẩn action')
+          : btn.textContent.replace('Ẩn action', 'Xem action');
       }
     }
 
-    function filterMeetingMinutes() {} /* stub — no longer used */
+    /* ── "Mở toàn bộ biên bản" logic ── */
+    function mmOpenFullMinutes(meetingId) {
+      if (!mmCache) return;
+      var m = mmCache.minutes.filter(function(r) { return r.MeetingID === meetingId; })[0];
+      if (!m) return;
+      /* Priority: DetailURL → FileMinutes → modal with notice */
+      if (hasTextClient(m.DetailURL)) {
+        window.open(m.DetailURL, '_blank'); return;
+      }
+      if (hasTextClient(m.FileMinutes)) {
+        window.open(m.FileMinutes, '_blank'); return;
+      }
+      /* No file — open modal with notice */
+      mmOpenDetailModal(meetingId, true);
+    }
+
+    /* ── Full detail modal ── */
+    function mmOpenDetailModal(meetingId, noFileNotice) {
+      if (!mmCache) return;
+      var m = mmCache.minutes.filter(function(r) { return r.MeetingID === meetingId; })[0];
+      if (!m) return;
+      var acts = mmCache.actions.filter(function(a) { return a.MeetingID === meetingId; });
+
+      /* Remove any existing modal */
+      var old = document.getElementById('mm-modal-overlay');
+      if (old) old.remove();
+
+      var overlay = document.createElement('div');
+      overlay.id = 'mm-modal-overlay';
+      overlay.className = 'mm-modal-overlay';
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) mmCloseModal(); });
+
+      var fileBtn = hasTextClient(m.DetailURL)
+        ? '<a class="mm-modal-file-btn primary" href="' + safe(m.DetailURL) + '" target="_blank">📂 Mở toàn bộ biên bản</a>'
+        : (hasTextClient(m.FileMinutes)
+          ? '<a class="mm-modal-file-btn primary" href="' + safe(m.FileMinutes) + '" target="_blank">📄 Mở file biên bản</a>'
+          : '<span style="font-size:11px;color:#9ca3af;font-style:italic">Chưa có file biên bản</span>');
+      var audioBtn = hasTextClient(m.FileAudio)
+        ? '<a class="mm-modal-file-btn" href="' + safe(m.FileAudio) + '" target="_blank">🎙 Transcript</a>' : '';
+
+      var noFileNote = (noFileNotice && !hasTextClient(m.DetailURL) && !hasTextClient(m.FileMinutes))
+        ? '<div style="background:#fef3c7;border-left:3px solid #d97706;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12px;color:#92400e;margin-bottom:12px">⚠️ Chưa có file biên bản đầy đủ. Hiển thị thông tin đã nhập.</div>' : '';
+
+      overlay.innerHTML =
+        '<div class="mm-modal">'
+        + '<div class="mm-modal-hdr">'
+        +   '<div class="mm-modal-hdr-left">'
+        +     '<div class="mm-modal-title">' + safe(m.Topic || m.MeetingID) + '</div>'
+        +     '<div class="mm-modal-hdr-mid">' + safe(m.MeetingID) + (m.Date ? ' &nbsp;·&nbsp; 📅 ' + safe(m.Date) : '') + (m.Module ? ' &nbsp;·&nbsp; 📁 ' + safe(m.Module) : '') + '</div>'
+        +   '</div>'
+        +   '<div class="mm-modal-hdr-right">'
+        +     fileBtn + audioBtn
+        +     '<button class="mm-modal-close" onclick="mmCloseModal()" title="Đóng">✕</button>'
+        +   '</div>'
+        + '</div>'
+        + '<div class="mm-modal-body">'
+        +   noFileNote
+        +   mmRenderModalBody(m, acts)
+        + '</div>'
+        + '</div>';
+
+      document.body.appendChild(overlay);
+    }
+
+    function mmCloseModal() {
+      var el = document.getElementById('mm-modal-overlay');
+      if (el) el.remove();
+    }
+
+    function mmModalRow(label, value, cls) {
+      var val = hasTextClient(value)
+        ? '<div class="mm-modal-val' + (cls ? ' ' + cls : '') + '">' + safe(value) + '</div>'
+        : '<div class="mm-modal-empty">—</div>';
+      return '<div class="mm-modal-row"><div class="mm-modal-label">' + label + '</div>' + val + '</div>';
+    }
+    function mmModalLink(label, url, linkLabel) {
+      var val = hasTextClient(url)
+        ? '<div class="mm-modal-val"><a class="mm-modal-link" href="' + safe(url) + '" target="_blank">🔗 ' + safe(linkLabel || url) + '</a></div>'
+        : '<div class="mm-modal-empty">—</div>';
+      return '<div class="mm-modal-row"><div class="mm-modal-label">' + label + '</div>' + val + '</div>';
+    }
+
+    function mmRenderModalBody(m, acts) {
+      var html = '';
+
+      /* ── Thông tin cơ bản ── */
+      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Thông tin biên bản</div>'
+        + mmModalRow('Meeting ID',         m.MeetingID)
+        + mmModalRow('Ngày họp',           m.Date)
+        + mmModalRow('Chủ đề',             m.Topic)
+        + mmModalRow('Nhóm/Module',        m.Module)
+        + mmModalRow('Người chủ trì',      m.Chair)
+        + mmModalRow('Thành phần tham dự', m.Attendees)
+        + mmModalRow('Trạng thái',         m.Status)
+        + mmModalRow('Người nhập',         m.RecordedBy)
+        + mmModalRow('Ngày cập nhật',      m.UpdatedAt)
+        + mmModalRow('Ghi chú',            m.Note)
+        + '</div>';
+
+      /* ── Nội dung ── */
+      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Nội dung cuộc họp</div>'
+        + mmModalRow('Tóm tắt nhanh',      m.Summary)
+        + (hasTextClient(m.FullContent)
+            ? '<div class="mm-modal-row"><div class="mm-modal-label">Nội dung đầy đủ</div><div class="mm-modal-val full-block">' + safe(m.FullContent) + '</div></div>'
+            : '<div class="mm-modal-row"><div class="mm-modal-label">Nội dung đầy đủ</div><div class="mm-modal-empty">Chưa có</div></div>')
+        + (hasTextClient(m.CEODirective)
+            ? '<div class="mm-modal-row"><div class="mm-modal-label">Chỉ đạo CEO</div><div class="mm-modal-val ceo-block">' + safe(m.CEODirective) + '</div></div>'
+            : mmModalRow('Chỉ đạo CEO', ''))
+        + (hasTextClient(m.CEODecision)
+            ? '<div class="mm-modal-row"><div class="mm-modal-label">CEO cần chốt</div><div class="mm-modal-val dec-block">' + safe(m.CEODecision) + '</div></div>'
+            : mmModalRow('CEO cần chốt', ''))
+        + '</div>';
+
+      /* ── File ── */
+      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">File đính kèm</div>'
+        + mmModalLink('File biên bản',        m.FileMinutes, 'Mở file biên bản')
+        + mmModalLink('File ghi âm/transcript', m.FileAudio, 'Mở transcript')
+        + mmModalLink('Full Detail URL',       m.DetailURL,  'Xem chi tiết đầy đủ')
+        + '</div>';
+
+      /* ── Action list ── */
+      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Action phát sinh (' + acts.length + ')</div>';
+      if (!acts.length) {
+        html += '<div style="color:#9ca3af;font-size:13px;font-style:italic">Không có action nào trong MEETING_ACTIONS.</div>';
+        if (hasTextClient(m.Actions)) {
+          html += '<div style="margin-top:8px"><strong style="font-size:12px">Action ghi nhận trong biên bản:</strong><div style="font-size:13px;margin-top:4px;line-height:1.6;white-space:pre-wrap">' + safe(m.Actions) + '</div></div>';
+        }
+      } else {
+        html += '<div style="overflow-x:auto"><table class="mm-table" style="min-width:680px"><thead><tr>'
+          + '<th>Nội dung action</th><th>Owner/PIC</th><th>Phối hợp</th><th>Deadline</th>'
+          + '<th>Đầu ra kỳ vọng</th><th>Trạng thái</th><th>RAG</th><th>CEO cần chốt</th>'
+          + '</tr></thead><tbody>';
+        acts.forEach(function(a) {
+          html += '<tr>'
+            + '<td>' + safe(a.Action) + '</td>'
+            + '<td>' + safe(a.Owner) + '</td>'
+            + '<td style="font-size:11.5px">' + safe(a.CoOwner) + '</td>'
+            + '<td style="white-space:nowrap">' + safe(a.Deadline) + '</td>'
+            + '<td style="font-size:11px;color:#6b7280">' + safe(a.Output) + '</td>'
+            + '<td>' + modStatusBadge(a.Status) + '</td>'
+            + '<td>' + modRagBadge(a.RAG) + '</td>'
+            + '<td style="font-size:12px">' + safe(a.CEODecision) + '</td>'
+            + '</tr>';
+        });
+        html += '</tbody></table></div>';
+        if (hasTextClient(m.Actions)) {
+          html += '<div style="margin-top:10px;font-size:12px;color:#6b7280"><strong>Ghi nhận từ biên bản:</strong> ' + safe(m.Actions) + '</div>';
+        }
+      }
+      html += '</div>';
+
+      return html;
+    }
+
+    function filterMeetingMinutes() {} /* stub */
 
     /* =====================================================
        CEO PROJECT TRACKER MODULE
