@@ -1878,6 +1878,52 @@
     .toa-back-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#f0fdf4; border:1px solid #a7f3d0; border-radius:6px; color:#064e3b; font-size:12px; cursor:pointer; font-weight:600; }
     .toa-back-btn:hover { background:#d1fae5; }
 
+    /* ── TO Action Center — Update Form Modal ── */
+    .toau-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:2000; display:flex; align-items:flex-start; justify-content:center; padding:40px 16px 20px; overflow-y:auto; }
+    .toau-modal   { background:#fff; border-radius:16px; width:100%; max-width:740px; box-shadow:0 8px 32px rgba(0,0,0,.18); flex-shrink:0; }
+    .toau-modal-hdr { display:flex; align-items:center; justify-content:space-between; padding:18px 24px 14px; border-bottom:1px solid #e5e7eb; }
+    .toau-modal-title { font-size:17px; font-weight:800; color:#064e3b; }
+    .toau-modal-close { width:32px; height:32px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; }
+    .toau-modal-close:hover { background:#fee2e2; }
+    /* Step 1 — choose form type */
+    .toau-step1 { padding:24px; }
+    .toau-step1-title { font-size:14px; color:#374151; margin-bottom:16px; }
+    .toau-type-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .toau-type-card { border:2px solid #e5e7eb; border-radius:12px; padding:20px 16px; cursor:pointer; transition:border-color .15s,background .15s; }
+    .toau-type-card:hover { border-color:#064e3b; background:#f0fdf4; }
+    .toau-type-card.selected { border-color:#064e3b; background:#f0fdf4; }
+    .toau-type-icon { font-size:28px; margin-bottom:8px; }
+    .toau-type-lbl  { font-size:14px; font-weight:700; color:#111827; margin-bottom:4px; }
+    .toau-type-sub  { font-size:12px; color:#6b7280; }
+    .toau-step1-next { margin-top:18px; text-align:right; }
+    /* Step 2 — actual form */
+    .toau-form-wrap { padding:0 24px 24px; max-height:72vh; overflow-y:auto; }
+    .toau-form-section { border-top:1px solid #f3f4f6; padding-top:14px; margin-top:14px; }
+    .toau-form-section:first-child { border-top:none; padding-top:16px; margin-top:0; }
+    .toau-form-sec-title { font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; }
+    .toau-form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+    .toau-form-row.full { grid-template-columns:1fr; }
+    .toau-field { display:flex; flex-direction:column; gap:4px; }
+    .toau-label { font-size:12px; font-weight:600; color:#374151; display:flex; align-items:center; gap:6px; }
+    .toau-warn-badge { font-size:10px; font-weight:600; padding:1px 6px; border-radius:4px; background:#fef3c7; color:#92400e; white-space:nowrap; }
+    .toau-input, .toau-select, .toau-textarea { width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:7px; font-size:13px; color:#111827; background:#fff; }
+    .toau-input:focus, .toau-select:focus, .toau-textarea:focus { outline:none; border-color:#064e3b; box-shadow:0 0 0 2px rgba(6,78,59,.1); }
+    .toau-input[readonly] { background:#f9fafb; color:#6b7280; }
+    .toau-textarea { min-height:72px; resize:vertical; }
+    .toau-autofill { font-size:11px; color:#059669; font-style:italic; margin-top:2px; }
+    /* Issue picker */
+    .toau-issue-select { border:1px solid #d1d5db; border-radius:7px; padding:7px 10px; font-size:12.5px; width:100%; background:#fff; }
+    .toau-issue-select option { padding:4px 0; }
+    /* Footer */
+    .toau-footer { display:flex; align-items:center; justify-content:space-between; padding:14px 24px; border-top:1px solid #e5e7eb; background:#f9fafb; border-radius:0 0 16px 16px; gap:10px; }
+    .toau-footer-note { font-size:11.5px; color:#d97706; font-weight:600; flex:1; }
+    .toau-btn-back { padding:8px 16px; border:1px solid #d1d5db; border-radius:7px; background:#fff; cursor:pointer; font-size:13px; color:#374151; }
+    .toau-btn-back:hover { background:#f3f4f6; }
+    .toau-btn-save { padding:8px 20px; border-radius:7px; font-size:13px; font-weight:700; cursor:not-allowed; opacity:.5; background:#064e3b; color:#fff; border:none; }
+    .toau-btn-save.enabled { cursor:pointer; opacity:1; }
+    .toau-btn-save.enabled:hover { background:#047857; }
+    .toau-step-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; background:#f0fdf4; border-radius:20px; font-size:12px; color:#064e3b; font-weight:600; margin-bottom:14px; }
+
     /* ── LUỒNG CHAT CHỦ TỊCH (lcc-) ── */
     .lcc-toolbar { display:flex; align-items:center; justify-content:space-between; padding:16px 24px 12px; flex-wrap:wrap; gap:10px; }
     .lcc-toolbar h2 { margin:0; font-size:20px; font-weight:800; color:#064e3b; }
@@ -2974,6 +3020,7 @@
           <option value="Blocked">Vướng mắc</option>
           <option value="Not Started">Chưa bắt đầu</option>
         </select>
+        <button class="command-btn" onclick="toaOpenUpdateForm()" style="background:#064e3b;color:#fff">📝 Cập nhật TO</button>
         <button class="command-btn" onclick="loadTOActions()">🔄 Làm mới dữ liệu</button>
       </div>
     </div>
@@ -3022,6 +3069,361 @@
         <h2>TO Action Center</h2>
         <p>Theo dõi vấn đề hiện trường và action xử lý. Kết nối sheet <strong>TO_ISSUES</strong> và <strong>TO_ACTIONS</strong>.</p>
         <div class="module-placeholder-badge">⏳ Nhấn 🔄 Làm mới dữ liệu để tải</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TO ACTION CENTER — UPDATE FORM MODAL ===== -->
+  <div id="toau-overlay" class="toau-overlay" style="display:none" onclick="toauOverlayClick(event)">
+    <div class="toau-modal" onclick="event.stopPropagation()">
+      <div class="toau-modal-hdr">
+        <span class="toau-modal-title" id="toau-modal-title">📝 Cập nhật TO</span>
+        <button class="toau-modal-close" onclick="toaCloseUpdateForm()">✕</button>
+      </div>
+
+      <!-- STEP 1: Choose form type -->
+      <div id="toau-step1">
+        <div class="toau-step1">
+          <div class="toau-step1-title">Chọn loại cập nhật:</div>
+          <div class="toau-type-cards">
+            <div class="toau-type-card" id="toau-card-issue" onclick="toauSelectType('issue')">
+              <div class="toau-type-icon">🔍</div>
+              <div class="toau-type-lbl">A. Ghi nhận vấn đề mới</div>
+              <div class="toau-type-sub">Thêm một vấn đề hiện trường vào sheet TO_ISSUES</div>
+            </div>
+            <div class="toau-type-card" id="toau-card-action" onclick="toauSelectType('action')">
+              <div class="toau-type-icon">⚡</div>
+              <div class="toau-type-lbl">B. Giao / Cập nhật công việc</div>
+              <div class="toau-type-sub">Tạo mới hoặc cập nhật công việc trong TO_ACTIONS</div>
+            </div>
+          </div>
+          <div class="toau-step1-next">
+            <button class="command-btn" onclick="toauGoStep2()" style="background:#064e3b;color:#fff">Tiếp theo →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2A: Issue form -->
+      <div id="toau-step2-issue" style="display:none">
+        <div class="toau-form-wrap">
+          <div class="toau-step-badge">📋 Ghi nhận vào sheet TO_ISSUES</div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Thông tin cơ bản</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Issue ID</label>
+                <input class="toau-input" id="toau-iss-id" readonly placeholder="Tự sinh khi lưu (ISS-GS1-YYYYMMDD-001)">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Nhà máy <span style="color:#dc2626">*</span></label>
+                <select class="toau-select" id="toau-iss-factory" onchange="toauPreviewIssueID()">
+                  <option value="">— Chọn nhà máy —</option>
+                  <option value="GS1">GS1</option>
+                  <option value="GS5">GS5</option>
+                </select>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Người ghi nhận <span style="color:#dc2626">*</span></label>
+                <input class="toau-input" id="toau-iss-reporter" placeholder="Tên người ghi nhận">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Ngày ghi nhận <span style="color:#dc2626">*</span></label>
+                <input class="toau-input" type="date" id="toau-iss-date">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">File nguồn / Bằng chứng</label>
+                <input class="toau-input" id="toau-iss-file" placeholder="URL hoặc tên file">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Khu vực</label>
+                <input class="toau-input" id="toau-iss-area" placeholder="Khu vực liên quan">
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Phân loại vấn đề</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Workstream</label>
+                <select class="toau-select" id="toau-iss-workstream">
+                  <option value="">— Chọn workstream —</option>
+                  <option>Sản xuất</option><option>Kinh doanh</option>
+                  <option>Nhân sự</option><option>Kỹ thuật</option>
+                  <option>An toàn</option><option>Chất lượng</option><option>Khác</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Loại vấn đề</label>
+                <select class="toau-select" id="toau-iss-type">
+                  <option value="">— Chọn loại —</option>
+                  <option>Vận hành</option><option>Kinh doanh</option>
+                  <option>Con người</option><option>Hệ thống</option>
+                  <option>Chất lượng</option><option>An toàn</option><option>Khác</option>
+                </select>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Mức độ</label>
+                <select class="toau-select" id="toau-iss-level">
+                  <option value="">—</option>
+                  <option>Cao</option><option>Trung bình</option><option>Thấp</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">RAG</label>
+                <select class="toau-select" id="toau-iss-rag">
+                  <option value="">—</option>
+                  <option value="Green">🟢 Green (Bình thường)</option>
+                  <option value="Amber">🟡 Amber (Cần theo dõi)</option>
+                  <option value="Red">🔴 Red (Nghiêm trọng)</option>
+                </select>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Trạng thái</label>
+                <select class="toau-select" id="toau-iss-status">
+                  <option>Mới</option><option>Đang xử lý</option>
+                  <option>Đã xử lý</option><option>Đóng</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Nội dung vấn đề</div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Mô tả vấn đề <span style="color:#dc2626">*</span></label>
+                <textarea class="toau-textarea" id="toau-iss-desc" placeholder="Mô tả cụ thể vấn đề hiện trường..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Nguyên nhân</label>
+                <textarea class="toau-textarea" id="toau-iss-cause" placeholder="Nguyên nhân gốc rễ..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Ảnh hưởng</label>
+                <textarea class="toau-textarea" id="toau-iss-impact" placeholder="Ảnh hưởng đến sản xuất/kinh doanh..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Ghi chú</label>
+                <textarea class="toau-textarea" style="min-height:54px" id="toau-iss-note" placeholder="Ghi chú thêm..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toau-footer">
+          <span class="toau-footer-note">⚠ Chưa bật lưu thật — chờ xác nhận cấu trúc sheet</span>
+          <button class="toau-btn-back" onclick="toauBackToStep1()">← Quay lại</button>
+          <button class="toau-btn-save" disabled title="Cần xác nhận cấu trúc GAS trước khi bật">💾 Lưu vào TO_ISSUES</button>
+        </div>
+      </div>
+
+      <!-- STEP 2B: Action form -->
+      <div id="toau-step2-action" style="display:none">
+        <div class="toau-form-wrap">
+          <div class="toau-step-badge">⚡ Ghi nhận vào sheet TO_ACTIONS</div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Định danh công việc</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Action ID</label>
+                <input class="toau-input" id="toau-act-id" placeholder="Tự sinh khi tạo mới (TOA-GS1-YYYYMMDD-001)" oninput="toauLookupAction(this.value)">
+                <span class="toau-autofill" id="toau-act-id-hint"></span>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Issue ID liên quan</label>
+                <select class="toau-issue-select" id="toau-act-issue" onchange="toauFillFromIssue(this.value)">
+                  <option value="">— Chọn vấn đề (tùy chọn) —</option>
+                </select>
+                <span class="toau-autofill" id="toau-act-issue-hint"></span>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Nhà máy <span style="color:#dc2626">*</span></label>
+                <select class="toau-select" id="toau-act-factory" onchange="toauPreviewActionID()">
+                  <option value="">— Chọn nhà máy —</option>
+                  <option value="GS1">GS1</option>
+                  <option value="GS5">GS5</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Khu vực</label>
+                <input class="toau-input" id="toau-act-area" placeholder="Khu vực">
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Thông tin ghi nhận</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Người ghi nhận</label>
+                <input class="toau-input" id="toau-act-reporter" placeholder="Người tạo công việc">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Ngày ghi nhận</label>
+                <input class="toau-input" type="date" id="toau-act-repdate">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Ngày phát sinh</label>
+                <input class="toau-input" type="date" id="toau-act-issuedate">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Cuộc họp / Bối cảnh</label>
+                <input class="toau-input" id="toau-act-context" placeholder="Họp TO, kiểm tra hiện trường...">
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Nội dung &amp; Phân công</div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Nội dung công việc <span style="color:#dc2626">*</span></label>
+                <textarea class="toau-textarea" id="toau-act-action" placeholder="Mô tả chi tiết công việc cần thực hiện..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">PIC thực hiện <span style="color:#dc2626">*</span></label>
+                <input class="toau-input" id="toau-act-pic" placeholder="Người thực hiện chính">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Owner theo dõi</label>
+                <input class="toau-input" id="toau-act-owner" placeholder="Người chịu trách nhiệm">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Người phối hợp <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <input class="toau-input" id="toau-act-coowner" placeholder="Người hỗ trợ phối hợp">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Deadline <span style="color:#dc2626">*</span></label>
+                <input class="toau-input" type="date" id="toau-act-deadline">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Loại kế hoạch</label>
+                <select class="toau-select" id="toau-act-plantype">
+                  <option value="">—</option>
+                  <option>Xử lý ngay (24h)</option>
+                  <option>Xử lý khẩn (72h)</option>
+                  <option>Kế hoạch dài hạn</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Mức độ ưu tiên</label>
+                <select class="toau-select" id="toau-act-priority">
+                  <option value="">—</option>
+                  <option>Cao</option><option>Trung bình</option><option>Thấp</option>
+                </select>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Trạng thái</label>
+                <select class="toau-select" id="toau-act-status">
+                  <option>Chờ phân công</option><option>Chưa xử lý</option>
+                  <option>Đang xử lý</option><option>Hoàn thành</option><option>Quá hạn</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">RAG</label>
+                <select class="toau-select" id="toau-act-rag">
+                  <option value="">—</option>
+                  <option value="Green">🟢 Green (Đúng tiến độ)</option>
+                  <option value="Amber">🟡 Amber (Cần theo dõi)</option>
+                  <option value="Red">🔴 Red (Có vấn đề)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Kết quả &amp; Tiến độ</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">% Hoàn thành <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <input class="toau-input" type="number" id="toau-act-pct" min="0" max="100" placeholder="0–100">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Ngày cập nhật <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <input class="toau-input" type="date" id="toau-act-upddate">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Người cập nhật <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <input class="toau-input" id="toau-act-updby" placeholder="Người cập nhật kết quả">
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Kết quả thực tế <span style="font-size:11px;color:#6b7280">(ghi vào cột "Kết quả / Output")</span></label>
+                <textarea class="toau-textarea" id="toau-act-output" placeholder="Kết quả đã đạt được..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Bằng chứng / Link <span style="font-size:11px;color:#6b7280">(ghi vào cột "File nguồn")</span></label>
+                <input class="toau-input" id="toau-act-evidence" placeholder="URL ảnh, video, báo cáo...">
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Vướng mắc / Cần hỗ trợ <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <textarea class="toau-textarea" style="min-height:54px" id="toau-act-vuong" placeholder="Mô tả vướng mắc cần hỗ trợ..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Thông tin CEO</div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">CEO cần biết <span style="font-size:11px;color:#6b7280">(ghi vào cột "CEO cần biết")</span></label>
+                <textarea class="toau-textarea" style="min-height:54px" id="toau-act-ceonote" placeholder="Thông tin CEO cần được báo cáo..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">CEO cần chốt <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <textarea class="toau-textarea" style="min-height:54px" id="toau-act-ceodec" placeholder="Quyết định CEO cần phê duyệt..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Ghi chú</label>
+                <textarea class="toau-textarea" style="min-height:54px" id="toau-act-note" placeholder="Ghi chú thêm..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toau-footer">
+          <span class="toau-footer-note">⚠ Chưa bật lưu thật — chờ xác nhận cấu trúc sheet &amp; GAS</span>
+          <button class="toau-btn-back" onclick="toauBackToStep1()">← Quay lại</button>
+          <button class="toau-btn-save" disabled title="Cần xác nhận cấu trúc GAS trước khi bật">💾 Lưu vào TO_ACTIONS</button>
+        </div>
       </div>
     </div>
   </div>
@@ -6945,6 +7347,142 @@ APS - S&OP - KHO - SẢN XUẤT",
 
     // Legacy alias — giữ lại để không vỡ nếu code cũ vẫn gọi
     function filterTOActions(kw) { toaApplyFilters(); }
+
+    /* ── TO Action Center — Update Form Logic ── */
+    var toauType = ''; // 'issue' | 'action'
+
+    function toaOpenUpdateForm() {
+      toauType = '';
+      document.getElementById('toau-card-issue').classList.remove('selected');
+      document.getElementById('toau-card-action').classList.remove('selected');
+      document.getElementById('toau-step1').style.display = '';
+      document.getElementById('toau-step2-issue').style.display = 'none';
+      document.getElementById('toau-step2-action').style.display = 'none';
+      document.getElementById('toau-modal-title').textContent = '📝 Cập nhật TO';
+      document.getElementById('toau-overlay').style.display = 'flex';
+      // Set default dates to today
+      var today = new Date().toISOString().slice(0,10);
+      var df = function(id){ var el=document.getElementById(id); if(el&&el.type==='date'&&!el.value) el.value=today; };
+      df('toau-iss-date'); df('toau-act-repdate'); df('toau-act-upddate');
+      // Populate issue selector
+      toauPopulateIssueSelector();
+    }
+
+    function toaCloseUpdateForm() {
+      document.getElementById('toau-overlay').style.display = 'none';
+    }
+
+    function toauOverlayClick(e) {
+      if (e.target === document.getElementById('toau-overlay')) toaCloseUpdateForm();
+    }
+
+    function toauSelectType(type) {
+      toauType = type;
+      document.getElementById('toau-card-issue').classList.toggle('selected', type==='issue');
+      document.getElementById('toau-card-action').classList.toggle('selected', type==='action');
+    }
+
+    function toauGoStep2() {
+      if (!toauType) { alert('Vui lòng chọn loại cập nhật (A hoặc B).'); return; }
+      document.getElementById('toau-step1').style.display = 'none';
+      if (toauType === 'issue') {
+        document.getElementById('toau-modal-title').textContent = '🔍 Ghi nhận vấn đề mới';
+        document.getElementById('toau-step2-issue').style.display = '';
+        toauPreviewIssueID();
+      } else {
+        document.getElementById('toau-modal-title').textContent = '⚡ Giao / Cập nhật công việc';
+        document.getElementById('toau-step2-action').style.display = '';
+        toauPreviewActionID();
+      }
+    }
+
+    function toauBackToStep1() {
+      document.getElementById('toau-step2-issue').style.display = 'none';
+      document.getElementById('toau-step2-action').style.display = 'none';
+      document.getElementById('toau-step1').style.display = '';
+      document.getElementById('toau-modal-title').textContent = '📝 Cập nhật TO';
+    }
+
+    function toauTodayStr() {
+      var d = new Date();
+      return String(d.getFullYear()) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+    }
+
+    function toauPreviewIssueID() {
+      var factory = (document.getElementById('toau-iss-factory')||{}).value || 'XX';
+      var el = document.getElementById('toau-iss-id');
+      if (el) el.placeholder = 'ISS-'+factory+'-'+toauTodayStr()+'-001';
+    }
+
+    function toauPreviewActionID() {
+      var factory = (document.getElementById('toau-act-factory')||{}).value || 'XX';
+      var el = document.getElementById('toau-act-id');
+      if (el && !el.value) el.placeholder = 'TOA-'+factory+'-'+toauTodayStr()+'-001 (tự sinh khi lưu)';
+    }
+
+    function toauPopulateIssueSelector() {
+      var sel = document.getElementById('toau-act-issue');
+      if (!sel) return;
+      while (sel.options.length > 1) sel.remove(1);
+      var issues = (toaCache && toaCache.issues) ? toaCache.issues : [];
+      // Only show open issues
+      var open = issues.filter(function(r){ return !/đã xử lý|đóng/i.test(r.Status||''); });
+      open.forEach(function(r){
+        var opt = document.createElement('option');
+        opt.value = r.IssueID || '';
+        var label = (r.IssueID||'?')+' · '+(r.Factory||'')+' · '+(r.Area||'')+' · '+(r.Description||r.IssueType||'').slice(0,40);
+        opt.textContent = label;
+        sel.appendChild(opt);
+      });
+    }
+
+    function toauFillFromIssue(issueId) {
+      if (!issueId || !toaCache) return;
+      var issue = (toaCache.issues||[]).find(function(r){ return r.IssueID===issueId; });
+      if (!issue) return;
+      var hint = document.getElementById('toau-act-issue-hint');
+      if (hint) hint.textContent = '✅ Tự điền nhà máy, khu vực, người ghi nhận từ vấn đề này';
+      // Auto-fill related fields
+      var f = function(id, val){ var el=document.getElementById(id); if(el&&!el.value) el.value=val||''; };
+      f('toau-act-factory',  issue.Factory  || '');
+      f('toau-act-area',     issue.Area     || '');
+      f('toau-act-reporter', issue.Reporter || '');
+    }
+
+    function toauLookupAction(actionId) {
+      var hint = document.getElementById('toau-act-id-hint');
+      if (!actionId || !toaCache) { if(hint) hint.textContent=''; return; }
+      var act = (toaCache.actions||[]).find(function(r){ return r.ActionID===actionId; });
+      if (!act) { if(hint) hint.textContent='⬜ Không tìm thấy — sẽ tạo mới'; return; }
+      if (hint) hint.textContent = '✅ Tìm thấy — điền sẵn để cập nhật';
+      // Pre-fill all fields
+      var fv = function(id, val){ var el=document.getElementById(id); if(el) el.value=val||''; };
+      fv('toau-act-factory',  act.Factory  || '');
+      fv('toau-act-area',     act.Area     || '');
+      fv('toau-act-reporter', act.Reporter || '');
+      fv('toau-act-context',  act.Source   || '');
+      fv('toau-act-action',   act.Action   || '');
+      fv('toau-act-pic',      act.PIC      || '');
+      fv('toau-act-owner',    act.Owner    || '');
+      fv('toau-act-plantype', act.PlanType || '');
+      fv('toau-act-priority', act.Priority || '');
+      fv('toau-act-status',   act.Status   || '');
+      fv('toau-act-rag',      act.RAG      || '');
+      fv('toau-act-output',   act.Output   || '');
+      fv('toau-act-evidence', act.EvidenceLink || '');
+      fv('toau-act-ceonote',  act.CEONote  || '');
+      fv('toau-act-note',     act.Note     || '');
+      // Deadline: convert dd/MM/yyyy → yyyy-MM-dd for input[type=date]
+      if (act.Deadline) {
+        var m = String(act.Deadline).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (m) fv('toau-act-deadline', m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));
+      }
+      // Issue ID link
+      if (act.IssueIDRef) {
+        var selI = document.getElementById('toau-act-issue');
+        if (selI) { for(var i=0;i<selI.options.length;i++){ if(selI.options[i].value===act.IssueIDRef){selI.selectedIndex=i;break;} } }
+      }
+    }
 
     /* =====================================================
        RISK / SOS CENTER MODULE
