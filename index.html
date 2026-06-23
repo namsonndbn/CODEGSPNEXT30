@@ -2621,7 +2621,7 @@
   <div class="module" id="module-pmo">
   <div class="container">
     <div class="command-bar">
-      <button class="command-btn" onclick="loadDashboard()">🔄 Cập nhật dữ liệu</button>
+      <button class="command-btn" onclick="loadDashboard()">🔄 Làm mới dữ liệu</button>
       <button class="command-btn secondary" onclick="copyCEOBrief()">📋 Copy báo cáo CEO</button>
       <button class="command-btn warning" onclick="toggleMeetingMode()">🎯 Chế độ họp</button>
       <button class="command-btn secondary" onclick="scrollToSection('sec-critical')">⚡ Việc trọng yếu</button>
@@ -2631,7 +2631,7 @@
     </div>
 
     <div class="top-control-row">
-      <button class="refresh-btn" onclick="loadDashboard()">Refresh / Cập nhật dữ liệu</button>
+      <button class="refresh-btn" onclick="loadDashboard()">🔄 Làm mới dữ liệu</button>
       <div id="sixAxisMiniDashboard" class="six-axis-mini-dashboard"></div>
     </div>
 
@@ -2897,8 +2897,8 @@
       <div class="module-placeholder">
         <div class="module-placeholder-icon">📊</div>
         <h2>Theo dõi dự án CEO</h2>
-        <p>Theo dõi tiến độ 8 dự án chiến lược CEO trực tiếp dẫn dắt. Nhấn <strong>Cập nhật</strong> để tải dữ liệu từ sheet <strong>THEO_DOI_DU_AN_CEO</strong>.</p>
-        <div class="module-placeholder-badge">⏳ Nhấn 🔄 Cập nhật để bắt đầu</div>
+        <p>Theo dõi tiến độ 8 dự án chiến lược CEO trực tiếp dẫn dắt. Nhấn <strong>🔄 Làm mới dữ liệu</strong> để tải dữ liệu từ sheet <strong>THEO_DOI_DU_AN_CEO</strong>.</p>
+        <div class="module-placeholder-badge">⏳ Nhấn 🔄 Làm mới dữ liệu để bắt đầu</div>
       </div>
     </div>
   </div>
@@ -2971,7 +2971,7 @@
         <div class="module-placeholder-icon">⚡</div>
         <h2>TO Action Center</h2>
         <p>Theo dõi vấn đề hiện trường và action xử lý. Kết nối sheet <strong>TO_ISSUES</strong> và <strong>TO_ACTIONS</strong>.</p>
-        <div class="module-placeholder-badge">⏳ Nhấn "Cập nhật" để tải dữ liệu</div>
+        <div class="module-placeholder-badge">⏳ Nhấn 🔄 Làm mới dữ liệu để tải</div>
       </div>
     </div>
   </div>
@@ -3134,7 +3134,7 @@
       <div class="module-placeholder">
         <div class="module-placeholder-icon">📄</div>
         <h2>Biên bản họp</h2>
-        <p>Đang chờ dữ liệu từ sheet <strong>MEETING_TOPICS</strong>, <strong>MEETING_MINUTES</strong> và <strong>MEETING_ACTIONS</strong>. Nhấn <strong>🔄 Cập nhật</strong> để tải.</p>
+        <p>Đang tự động tải dữ liệu từ sheet <strong>MEETING_TOPICS</strong>, <strong>MEETING_MINUTES</strong> và <strong>MEETING_ACTIONS</strong>. Hoặc nhấn <strong>🔄 Làm mới dữ liệu</strong> để tải thủ công.</p>
         <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu</div>
       </div>
     </div>
@@ -3458,6 +3458,7 @@ APS - S&OP - KHO - SẢN XUẤT",
     window.onload = function() {
       ovInit();
       loadDashboard();
+      loadMeetingCenter(); // auto-populate mmCache cho overview KPIs
 
       setInterval(function() {
         if (!isUserWritingComment() && !isSendingComment) {
@@ -4824,6 +4825,24 @@ APS - S&OP - KHO - SẢN XUẤT",
       mmAllRecords = minutes;
       mmActiveKpi = null; mmViewMode = 'topics'; mmActiveTopicId = null;
 
+      // Console log xác nhận 6 trường P-U đọc được
+      if (actions.length > 0) {
+        var s0 = actions[0];
+        console.log('[Meeting @' + actions.length + '] action[0] P-U fields:', {
+          ActionID:      s0.ActionID,
+          KetQuaThucTe:  s0.KetQuaThucTe,
+          PctHoanThanh:  s0.PctHoanThanh,
+          NgayCapNhat:   s0.NgayCapNhat,
+          NguoiCapNhat:  s0.NguoiCapNhat,
+          BangChung:     s0.BangChung,
+          VuongMac:      s0.VuongMac,
+          IsOverdue:     s0.IsOverdue
+        });
+      }
+
+      // Re-trigger overview KPIs với mmCache đã có dữ liệu
+      if (dashboardCache) ovRefreshSections(dashboardCache);
+
       var st = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
       var hasActFn = function(r) { return hasTextClient(r.Actions) || actions.some(function(a) { return a.MeetingID === r.MeetingID; }); };
       var pending = minutes.filter(function(r) { return /chờ|pending/i.test(r.Status || ''); }).length;
@@ -5298,8 +5317,8 @@ APS - S&OP - KHO - SẢN XUẤT",
           var rowCls = a.IsOverdue ? 'class="mm-tag-overdue-row"' : '';
           var slowTag = '';
           if (hasTextClient(a.NgayCapNhat)) {
-            var diff = today - new Date(a.NgayCapNhat);
-            if (diff > 3 * 86400000 && (a.PctHoanThanh || 0) < 100) slowTag = ' <span class="mm-tag-slow">Chậm CĐ</span>';
+            var _upd = parseViDate(a.NgayCapNhat);
+            if (_upd && (today - _upd) > 3 * 86400000 && (a.PctHoanThanh || 0) < 100) slowTag = ' <span class="mm-tag-slow">Chậm CĐ</span>';
           }
           var detId = 'mmad-' + mid + '-' + idx;
           /* Detail panel content */
