@@ -2506,28 +2506,38 @@ function normalizeMeetingMinutesFull_(r, i) {
   };
 }
 
-/* ── Normalize MEETING_ACTIONS ── */
+/* ── Normalize MEETING_ACTIONS ── (Cột A–O: giữ nguyên; P–U: mới) */
 function normalizeMeetingAction_(r, i) {
   var rag      = normalizeRag(r['RAG'] || '');
   var deadline = formatDate(r['Deadline'] || '');
   var status   = String(r['Trạng thái'] || 'Chưa bắt đầu').trim();
+  var pctRaw   = r['% hoàn thành'] || r['% Hoàn thành'] || '';
+  var pct      = parseInt(String(pctRaw).replace('%', '').trim(), 10);
+  if (isNaN(pct) || pct < 0) pct = 0;
+  if (pct > 100) pct = 100;
   return {
-    ActionID:    String(r['Action ID']         || ('MACT-' + String(i + 1).padStart(3, '0'))),
-    TopicID:     String(r['Topic ID']          || '').trim(),
-    MeetingID:   String(r['Meeting ID']        || '').trim(),
-    Date:        formatDate(r['Ngày họp']      || ''),
-    Module:      String(r['Nhóm/Module']       || '').trim(),
-    Action:      String(r['Nội dung action']   || '').trim(),
-    Owner:       String(r['Owner/PIC']         || r['PIC'] || '').trim(),
-    CoOwner:     String(r['Phối hợp']          || '').trim(),
-    Deadline:    deadline,
-    Output:      String(r['Đầu ra kỳ vọng']    || '').trim(),
-    Status:      status,
-    RAG:         rag,
-    CEODecision: String(r['CEO cần chốt']      || '').trim(),
-    FileMinutes: String(r['File biên bản']     || '').trim(),
-    Note:        String(r['Ghi chú']           || '').trim(),
-    IsOverdue:   isPastDeadline(deadline, status)
+    ActionID:       String(r['Action ID']         || ('MACT-' + String(i + 1).padStart(3, '0'))),
+    TopicID:        String(r['Topic ID']          || '').trim(),
+    MeetingID:      String(r['Meeting ID']        || '').trim(),
+    Date:           formatDate(r['Ngày họp']      || ''),
+    Module:         String(r['Nhóm/Module']       || '').trim(),
+    Action:         String(r['Nội dung action']   || '').trim(),
+    Owner:          String(r['Owner/PIC']         || r['PIC'] || '').trim(),
+    CoOwner:        String(r['Phối hợp']          || '').trim(),
+    Deadline:       deadline,
+    Output:         String(r['Đầu ra kỳ vọng']    || '').trim(),
+    Status:         status,
+    RAG:            rag,
+    CEODecision:    String(r['CEO cần chốt']      || '').trim(),
+    FileMinutes:    String(r['File biên bản']     || '').trim(),
+    Note:           String(r['Ghi chú']           || '').trim(),
+    KetQuaThucTe:  String(r['Kết quả thực tế']            || '').trim(),
+    PctHoanThanh:  pct,
+    NgayCapNhat:   formatDate(r['Ngày cập nhật']           || ''),
+    NguoiCapNhat:  String(r['Người cập nhật']              || '').trim(),
+    BangChung:     String(r['Bằng chứng/Link']             || '').trim(),
+    VuongMac:      String(r['Vướng mắc/Hỗ trợ cần thiết'] || '').trim(),
+    IsOverdue:     isPastDeadline(deadline, status)
   };
 }
 

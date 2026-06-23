@@ -1452,6 +1452,50 @@
     .mm-modal-link { color: #1d4ed8; text-decoration: none; font-weight: 600; }
     .mm-modal-link:hover { text-decoration: underline; }
 
+    /* ── Action stats bar (inside meeting cards) ── */
+    .mm-act-stats {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      margin-top: 8px; padding: 7px 10px;
+      background: #f8fafc; border-radius: 7px; border: 1px solid #e5e7eb;
+      font-size: 11.5px;
+    }
+    .mm-act-stat { display: flex; align-items: center; gap: 3px; }
+    .mm-act-stat-num { font-weight: 700; color: #111827; }
+    .mm-act-stat-lbl { color: #6b7280; }
+    .mm-act-stat.overdue .mm-act-stat-num { color: #dc2626; }
+    .mm-act-stat.done .mm-act-stat-num { color: #16a34a; }
+    .mm-act-stat-sep { color: #d1d5db; }
+
+    /* ── Progress bar ── */
+    .mm-pbar-wrap { width: 100%; background: #e5e7eb; border-radius: 4px; height: 6px; overflow: hidden; }
+    .mm-pbar-fill { height: 100%; border-radius: 4px; transition: width .3s; }
+    .mm-pbar-fill.done { background: #16a34a; }
+    .mm-pbar-fill.normal { background: #3b82f6; }
+    .mm-pbar-fill.overdue { background: #dc2626; }
+    .mm-pct-label { font-size: 10.5px; color: #6b7280; white-space: nowrap; }
+
+    /* ── Action filter pills (inside modal) ── */
+    .mm-act-filter-bar {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;
+      padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;
+    }
+    .mm-af-pill {
+      padding: 4px 11px; font-size: 11.5px; font-weight: 600;
+      border: 1px solid #e5e7eb; border-radius: 20px; background: #f9fafb;
+      color: #374151; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .mm-af-pill:hover { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+    .mm-af-pill.active { background: #064e3b; border-color: #064e3b; color: #fff; }
+
+    /* ── Action detail rows in modal table ── */
+    .mm-tag-slow { display: inline-block; padding: 1px 7px; font-size: 10px; font-weight: 700;
+      background: #fef3c7; color: #92400e; border-radius: 10px; border: 1px solid #fde68a; }
+    .mm-tag-noresult { display: inline-block; padding: 1px 7px; font-size: 10px; font-weight: 700;
+      background: #fff7ed; color: #c2410c; border-radius: 10px; border: 1px solid #fed7aa; }
+    .mm-tag-overdue-row { background: #fff5f5 !important; }
+    .mm-evidence-link { color: #1d4ed8; text-decoration: none; font-weight: 600; }
+    .mm-evidence-link:hover { text-decoration: underline; }
+
     @media (max-width: 800px) {
       .mm-group-bar { padding: 12px 16px 0; }
       .mm-topic-grid { grid-template-columns: 1fr; padding: 14px 16px; }
@@ -4923,6 +4967,106 @@ APS - S&OP - KHO - SẢN XUẤT",
     }
 
     /* ── Topic card grid ── */
+    /* ── Action stats helpers ── */
+    var mmModalActsCache = [];
+    var mmModalActionFilter = 'all';
+
+    function mmActionStats(actions) {
+      var total = actions.length;
+      var done = 0, inProgress = 0, notStarted = 0, overdue = 0, noResult = 0, needCEO = 0;
+      var totalPct = 0, latestUpdate = '';
+      actions.forEach(function(a) {
+        var s = String(a.Status || '').toLowerCase();
+        var pct = a.PctHoanThanh || 0;
+        if (pct >= 100 || s.indexOf('hoàn') !== -1) done++;
+        else if (s.indexOf('đang') !== -1) inProgress++;
+        else notStarted++;
+        if (a.IsOverdue) overdue++;
+        if (!hasTextClient(a.KetQuaThucTe)) noResult++;
+        if (hasTextClient(a.CEODecision)) needCEO++;
+        totalPct += pct;
+        if (a.NgayCapNhat && a.NgayCapNhat > latestUpdate) latestUpdate = a.NgayCapNhat;
+      });
+      return {
+        total: total, done: done, inProgress: inProgress, notStarted: notStarted,
+        overdue: overdue, noResult: noResult, needCEO: needCEO,
+        avgPct: total ? Math.round(totalPct / total) : 0,
+        latestUpdate: latestUpdate
+      };
+    }
+
+    function mmProgressBar(pct, isOverdue) {
+      var cls = pct >= 100 ? 'done' : (isOverdue ? 'overdue' : 'normal');
+      return '<div style="display:flex;align-items:center;gap:6px">'
+        + '<div class="mm-pbar-wrap" style="width:80px"><div class="mm-pbar-fill ' + cls + '" style="width:' + pct + '%"></div></div>'
+        + '<span class="mm-pct-label">' + pct + '%</span>'
+        + '</div>';
+    }
+
+    function mmRenderActsTable(acts, filter) {
+      var filtered = acts.filter(function(a) {
+        if (filter === 'all') return true;
+        var s = String(a.Status || '').toLowerCase();
+        var pct = a.PctHoanThanh || 0;
+        if (filter === 'notStarted') return s.indexOf('chưa') !== -1 || (!s && pct === 0 && !a.IsOverdue);
+        if (filter === 'inProgress') return s.indexOf('đang') !== -1 && pct < 100 && !a.IsOverdue;
+        if (filter === 'done') return pct >= 100 || s.indexOf('hoàn') !== -1;
+        if (filter === 'overdue') return !!a.IsOverdue;
+        if (filter === 'noResult') return !hasTextClient(a.KetQuaThucTe);
+        if (filter === 'ceo') return hasTextClient(a.CEODecision);
+        return true;
+      });
+      if (!filtered.length) return '<div style="color:#9ca3af;font-size:13px;font-style:italic;padding:12px 0">Không có action nào phù hợp bộ lọc.</div>';
+
+      var today = new Date();
+      var html = '<div style="overflow-x:auto"><table class="mm-table" style="min-width:950px"><thead><tr>'
+        + '<th>Nội dung action</th><th>Owner/PIC</th><th>Phối hợp</th><th>Deadline</th>'
+        + '<th>Trạng thái</th><th>RAG</th><th>% HT</th><th>Kết quả thực tế</th>'
+        + '<th>Ngày/Người CĐ</th><th>Bằng chứng</th><th>Vướng mắc</th><th>CEO cần chốt</th>'
+        + '</tr></thead><tbody>';
+
+      filtered.forEach(function(a) {
+        var slowTag = '';
+        if (hasTextClient(a.NgayCapNhat)) {
+          var diffMs = today - new Date(a.NgayCapNhat);
+          if (diffMs > 3 * 86400000 && (a.PctHoanThanh || 0) < 100) slowTag = ' <span class="mm-tag-slow">Chậm CĐ</span>';
+        }
+        var noResultTag = !hasTextClient(a.KetQuaThucTe) ? '<span class="mm-tag-noresult">Chưa có KQ</span>' : '';
+        var rowCls = a.IsOverdue ? 'class="mm-tag-overdue-row"' : '';
+        var deadlineHtml = safe(a.Deadline) + (a.IsOverdue ? ' <span style="color:#dc2626;font-size:10px;font-weight:700">QH</span>' : '');
+        var evidenceHtml = hasTextClient(a.BangChung)
+          ? '<a class="mm-evidence-link" href="' + safe(a.BangChung) + '" target="_blank">🔗 Link</a>'
+          : '<span style="color:#9ca3af;font-size:11px">—</span>';
+        var capNhatHtml = [safe(a.NgayCapNhat), safe(a.NguoiCapNhat)].filter(Boolean).join('<br>');
+
+        html += '<tr ' + rowCls + '>'
+          + '<td>' + safe(a.Action) + slowTag + '</td>'
+          + '<td>' + safe(a.Owner) + '</td>'
+          + '<td style="font-size:11.5px">' + safe(a.CoOwner) + '</td>'
+          + '<td style="white-space:nowrap">' + deadlineHtml + '</td>'
+          + '<td>' + modStatusBadge(a.Status) + '</td>'
+          + '<td>' + modRagBadge(a.RAG) + '</td>'
+          + '<td style="min-width:110px">' + mmProgressBar(a.PctHoanThanh || 0, a.IsOverdue) + '</td>'
+          + '<td>' + (hasTextClient(a.KetQuaThucTe) ? safe(a.KetQuaThucTe) : noResultTag) + '</td>'
+          + '<td style="font-size:11px">' + capNhatHtml + '</td>'
+          + '<td>' + evidenceHtml + '</td>'
+          + '<td style="font-size:11.5px">' + safe(a.VuongMac) + '</td>'
+          + '<td style="font-size:12px">' + safe(a.CEODecision) + '</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+      return html;
+    }
+
+    function mmSetActionFilter(f) {
+      mmModalActionFilter = f;
+      document.querySelectorAll('.mm-af-pill').forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-filter') === f);
+      });
+      var container = document.getElementById('mm-modal-acts-body');
+      if (container) container.innerHTML = mmRenderActsTable(mmModalActsCache, f);
+    }
+
     function mmRenderTopicCards(topics, minutes, actions, group) {
       var el = document.getElementById('mm-content');
       if (!el) return;
@@ -4960,6 +5104,18 @@ APS - S&OP - KHO - SẢN XUẤT",
           + '<div class="mm-ts"><span class="mm-ts-val">' + topicActs.length + '</span><span class="mm-ts-lbl">Action</span></div>'
           + '<div class="mm-ts"><span class="mm-ts-val' + (ceoPending > 0 ? ' mm-ts-alert' : '') + '">' + ceoPending + '</span><span class="mm-ts-lbl">CEO chốt</span></div>'
           + '</div>'
+          + (function() {
+              if (!topicActs.length) return '';
+              var st = mmActionStats(topicActs);
+              return '<div class="mm-act-stats">'
+                + '<span class="mm-act-stat done"><span class="mm-act-stat-num">' + st.done + '</span><span class="mm-act-stat-lbl"> HT</span></span>'
+                + '<span class="mm-act-stat-sep">·</span>'
+                + '<span class="mm-act-stat overdue"><span class="mm-act-stat-num">' + st.overdue + '</span><span class="mm-act-stat-lbl"> QH</span></span>'
+                + '<span class="mm-act-stat-sep">·</span>'
+                + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + st.avgPct + '%</span><span class="mm-act-stat-lbl"> TB</span></span>'
+                + (st.noResult ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-num" style="color:#c2410c">' + st.noResult + '</span><span class="mm-act-stat-lbl"> chưa có KQ</span></span>' : '')
+                + '</div>';
+            })()
           + (topic.Owner ? '<div class="mm-topic-owner">👤 ' + safe(topic.Owner) + '</div>' : '')
           + '<button class="mm-detail-btn" onclick="mmShowTopicDetail(\'' + tid + '\')">Xem chi tiết →</button>'
           + '</div>';
@@ -5041,11 +5197,23 @@ APS - S&OP - KHO - SẢN XUẤT",
         + (m.Summary ? '<div class="mm-meeting-summary"><strong>Tóm tắt:</strong> ' + safe(m.Summary) + '</div>' : '')
         + (hasCEO ? '<div class="mm-meeting-directive"><span class="mm-directive-label">👑 Chỉ đạo CEO:</span> ' + safe(m.CEODirective) + '</div>' : '')
         + (hasDec ? '<div class="mm-meeting-decision"><span class="mm-decision-label">✅ CEO cần chốt:</span> ' + safe(m.CEODecision) + '</div>' : '')
-        + '<div class="mm-meeting-footer">'
-        + '<span class="mm-meeting-id">' + safe(m.MeetingID) + '</span>'
-        + '<span class="mm-meeting-acnt">' + meetingActs.length + ' action</span>'
-        + (meetingActs.length ? '<button class="mm-action-toggle-btn" onclick="mmToggleActions(\'' + mid + '\')">📋 Xem action (' + meetingActs.length + ')</button>' : '')
-        + '</div>'
+        + (function() {
+            if (!meetingActs.length) return '<div class="mm-meeting-footer"><span class="mm-meeting-id">' + safe(m.MeetingID) + '</span><span class="mm-meeting-acnt">0 action</span></div>';
+            var st = mmActionStats(meetingActs);
+            return '<div class="mm-act-stats" style="margin-top:6px">'
+              + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + st.total + '</span><span class="mm-act-stat-lbl"> action</span></span>'
+              + '<span class="mm-act-stat-sep">·</span>'
+              + '<span class="mm-act-stat done"><span class="mm-act-stat-num">' + st.done + '</span><span class="mm-act-stat-lbl"> HT</span></span>'
+              + '<span class="mm-act-stat-sep">·</span>'
+              + '<span class="mm-act-stat overdue"><span class="mm-act-stat-num">' + st.overdue + '</span><span class="mm-act-stat-lbl"> QH</span></span>'
+              + '<span class="mm-act-stat-sep">·</span>'
+              + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + st.avgPct + '%</span><span class="mm-act-stat-lbl"> TB</span></span>'
+              + (st.latestUpdate ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-lbl">CĐ gần nhất:</span> <span class="mm-act-stat-num" style="font-size:11px">' + safe(st.latestUpdate) + '</span></span>' : '')
+              + '</div>'
+              + '<div class="mm-meeting-footer"><span class="mm-meeting-id">' + safe(m.MeetingID) + '</span>'
+              + '<button class="mm-action-toggle-btn" onclick="mmToggleActions(\'' + mid + '\')">📋 Xem action (' + st.total + ')</button>'
+              + '</div>';
+          })()
         + '<div class="mm-meeting-card-btns">'
         + '<button class="mm-view-detail-btn" onclick="mmOpenDetailModal(\'' + midEsc + '\')">🔍 Xem chi tiết</button>'
         + '<button class="mm-open-full-btn" onclick="mmOpenFullMinutes(\'' + midEsc + '\')">📂 Mở toàn bộ biên bản</button>'
@@ -5055,17 +5223,21 @@ APS - S&OP - KHO - SẢN XUẤT",
         html += '<div class="mm-actions-list" id="mm-acts-' + mid + '" style="display:none">'
           + '<div class="mm-acts-table"><table class="mm-table"><thead><tr>'
           + '<th>Nội dung action</th><th>Owner/PIC</th><th>Deadline</th>'
-          + '<th>Trạng thái</th><th>RAG</th><th>CEO cần chốt</th><th>Đầu ra kỳ vọng</th>'
+          + '<th>Trạng thái</th><th>RAG</th><th>% HT</th><th>Kết quả thực tế</th><th>CEO cần chốt</th>'
           + '</tr></thead><tbody>';
         meetingActs.forEach(function(a) {
-          html += '<tr>'
+          var noResultTag = !hasTextClient(a.KetQuaThucTe) ? '<span class="mm-tag-noresult">Chưa có KQ</span>' : '';
+          var deadlineHtml = safe(a.Deadline) + (a.IsOverdue ? ' <span style="color:#dc2626;font-size:10px;font-weight:700">QH</span>' : '');
+          var rowCls = a.IsOverdue ? 'class="mm-tag-overdue-row"' : '';
+          html += '<tr ' + rowCls + '>'
             + '<td>' + safe(a.Action) + '</td>'
             + '<td>' + safe(a.Owner) + '</td>'
-            + '<td style="white-space:nowrap">' + safe(a.Deadline) + '</td>'
+            + '<td style="white-space:nowrap">' + deadlineHtml + '</td>'
             + '<td>' + modStatusBadge(a.Status) + '</td>'
             + '<td>' + modRagBadge(a.RAG) + '</td>'
-            + '<td>' + safe(a.CEODecision) + '</td>'
-            + '<td style="font-size:11px;color:#6b7280">' + safe(a.Output) + '</td>'
+            + '<td style="min-width:100px">' + mmProgressBar(a.PctHoanThanh || 0, a.IsOverdue) + '</td>'
+            + '<td>' + (hasTextClient(a.KetQuaThucTe) ? safe(a.KetQuaThucTe) : noResultTag) + '</td>'
+            + '<td style="font-size:12px">' + safe(a.CEODecision) + '</td>'
             + '</tr>';
         });
         html += '</tbody></table></div></div>';
@@ -5209,31 +5381,39 @@ APS - S&OP - KHO - SẢN XUẤT",
         + mmModalLink('Full Detail URL',       m.DetailURL,  'Xem chi tiết đầy đủ')
         + '</div>';
 
-      /* ── Action list ── */
-      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Action phát sinh (' + acts.length + ')</div>';
+      /* ── Action list (full 13-field + filter bar) ── */
+      mmModalActsCache = acts;
+      mmModalActionFilter = 'all';
+      var actSt = mmActionStats(acts);
+      var actSummaryHtml = acts.length
+        ? '<div class="mm-act-stats" style="margin-bottom:10px">'
+          + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + actSt.total + '</span><span class="mm-act-stat-lbl"> tổng</span></span>'
+          + '<span class="mm-act-stat-sep">·</span>'
+          + '<span class="mm-act-stat done"><span class="mm-act-stat-num">' + actSt.done + '</span><span class="mm-act-stat-lbl"> HT</span></span>'
+          + '<span class="mm-act-stat-sep">·</span>'
+          + '<span class="mm-act-stat overdue"><span class="mm-act-stat-num">' + actSt.overdue + '</span><span class="mm-act-stat-lbl"> QH</span></span>'
+          + '<span class="mm-act-stat-sep">·</span>'
+          + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + actSt.avgPct + '%</span><span class="mm-act-stat-lbl"> TB</span></span>'
+          + (actSt.noResult ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-num" style="color:#c2410c">' + actSt.noResult + '</span><span class="mm-act-stat-lbl"> chưa có KQ</span></span>' : '')
+          + (actSt.needCEO ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-num" style="color:#d97706">' + actSt.needCEO + '</span><span class="mm-act-stat-lbl"> cần CEO chốt</span></span>' : '')
+          + '</div>' : '';
+      var filterBarHtml = acts.length
+        ? '<div class="mm-act-filter-bar">'
+          + ['all:Tất cả', 'notStarted:Chưa bắt đầu', 'inProgress:Đang TH', 'done:Hoàn thành',
+             'overdue:Quá hạn', 'noResult:Chưa có KQ', 'ceo:Cần CEO chốt'].map(function(item) {
+              var p = item.split(':'); var k = p[0]; var label = p[1];
+              return '<button class="mm-af-pill' + (k === 'all' ? ' active' : '') + '" data-filter="' + k + '" onclick="mmSetActionFilter(\'' + k + '\')">' + label + '</button>';
+            }).join('')
+          + '</div>' : '';
+      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Action phát sinh (' + acts.length + ')</div>'
+        + actSummaryHtml + filterBarHtml;
       if (!acts.length) {
         html += '<div style="color:#9ca3af;font-size:13px;font-style:italic">Không có action nào trong MEETING_ACTIONS.</div>';
         if (hasTextClient(m.Actions)) {
           html += '<div style="margin-top:8px"><strong style="font-size:12px">Action ghi nhận trong biên bản:</strong><div style="font-size:13px;margin-top:4px;line-height:1.6;white-space:pre-wrap">' + safe(m.Actions) + '</div></div>';
         }
       } else {
-        html += '<div style="overflow-x:auto"><table class="mm-table" style="min-width:680px"><thead><tr>'
-          + '<th>Nội dung action</th><th>Owner/PIC</th><th>Phối hợp</th><th>Deadline</th>'
-          + '<th>Đầu ra kỳ vọng</th><th>Trạng thái</th><th>RAG</th><th>CEO cần chốt</th>'
-          + '</tr></thead><tbody>';
-        acts.forEach(function(a) {
-          html += '<tr>'
-            + '<td>' + safe(a.Action) + '</td>'
-            + '<td>' + safe(a.Owner) + '</td>'
-            + '<td style="font-size:11.5px">' + safe(a.CoOwner) + '</td>'
-            + '<td style="white-space:nowrap">' + safe(a.Deadline) + '</td>'
-            + '<td style="font-size:11px;color:#6b7280">' + safe(a.Output) + '</td>'
-            + '<td>' + modStatusBadge(a.Status) + '</td>'
-            + '<td>' + modRagBadge(a.RAG) + '</td>'
-            + '<td style="font-size:12px">' + safe(a.CEODecision) + '</td>'
-            + '</tr>';
-        });
-        html += '</tbody></table></div>';
+        html += '<div id="mm-modal-acts-body">' + mmRenderActsTable(acts, 'all') + '</div>';
         if (hasTextClient(m.Actions)) {
           html += '<div style="margin-top:10px;font-size:12px;color:#6b7280"><strong>Ghi nhận từ biên bản:</strong> ' + safe(m.Actions) + '</div>';
         }
