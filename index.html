@@ -1002,7 +1002,8 @@
     }
     .mod-rag.green { background: #d1fae5; color: #065f46; }
     .mod-rag.amber { background: #fef3c7; color: #92400e; }
-    .mod-rag.red { background: #fee2e2; color: #991b1b; }
+    .mod-rag.red   { background: #fee2e2; color: #991b1b; }
+    .mod-rag.gray  { background: #f3f4f6; color: #6b7280; }
     .mod-status {
       display: inline-block; padding: 2px 9px; border-radius: 10px;
       font-size: 11px; font-weight: 700;
@@ -2216,7 +2217,7 @@
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-total">—</div><div class="overview-stat-lbl">Tổng biên bản</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-pending" style="color:#b45309">—</div><div class="overview-stat-lbl">Chờ duyệt</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-ceo" style="color:#92400e">—</div><div class="overview-stat-lbl">Có chỉ đạo CEO</div></div>
-          <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-action" style="color:#1d4ed8">—</div><div class="overview-stat-lbl">Có action</div></div>
+          <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-action" style="color:#1d4ed8">—</div><div class="overview-stat-lbl">Có công việc</div></div>
           <div class="overview-stat"><div class="overview-stat-val" id="ov-mm-decision" style="color:#15803d">—</div><div class="overview-stat-lbl">CEO Decision</div></div>
         </div>
         <span class="overview-badge pending" id="ov-mm-badge">⏳ Đang chờ dữ liệu</span>
@@ -3114,9 +3115,9 @@
         <div class="mm-summary-card-val" id="mm-s-ceo">—</div>
         <div class="mm-summary-card-lbl">Có chỉ đạo CEO</div>
       </div>
-      <div class="mm-summary-card" id="mm-kpi-action" onclick="mmClickKpi('action')" title="Lọc biên bản có action phát sinh">
+      <div class="mm-summary-card" id="mm-kpi-action" onclick="mmClickKpi('action')" title="Lọc biên bản có công việc phát sinh">
         <div class="mm-summary-card-val blue" id="mm-s-action">—</div>
-        <div class="mm-summary-card-lbl">Có action phát sinh</div>
+        <div class="mm-summary-card-lbl">Có công việc phát sinh</div>
       </div>
       <div class="mm-summary-card" id="mm-kpi-decision" onclick="mmClickKpi('decision')" title="Lọc biên bản có CEO Decision">
         <div class="mm-summary-card-val green" id="mm-s-decision">—</div>
@@ -4793,7 +4794,7 @@ APS - S&OP - KHO - SẢN XUẤT",
       total:    'Tổng biên bản',
       pending:  'Chờ duyệt',
       ceo:      'Có chỉ đạo CEO',
-      action:   'Có action phát sinh',
+      action:   'Có công việc phát sinh',
       decision: 'Có CEO Decision'
     };
 
@@ -5080,11 +5081,11 @@ APS - S&OP - KHO - SẢN XUẤT",
         if (filter === 'ceo') return hasTextClient(a.CEODecision);
         return true;
       });
-      if (!filtered.length) return '<div style="color:#9ca3af;font-size:13px;font-style:italic;padding:12px 0">Không có action nào phù hợp bộ lọc.</div>';
+      if (!filtered.length) return '<div style="color:#9ca3af;font-size:13px;font-style:italic;padding:12px 0">Không có công việc nào phù hợp bộ lọc.</div>';
 
       var today = new Date();
       var html = '<div style="overflow-x:auto"><table class="mm-table" style="min-width:950px"><thead><tr>'
-        + '<th>Nội dung action</th><th>Owner/PIC</th><th>Phối hợp</th><th>Deadline</th>'
+        + '<th>Nội dung công việc</th><th>Owner/PIC</th><th>Phối hợp</th><th>Deadline</th>'
         + '<th>Trạng thái</th><th>RAG</th><th>% HT</th><th>Kết quả thực tế</th>'
         + '<th>Ngày/Người CĐ</th><th>Bằng chứng</th><th>Vướng mắc</th><th>CEO cần chốt</th>'
         + '</tr></thead><tbody>';
@@ -5092,15 +5093,16 @@ APS - S&OP - KHO - SẢN XUẤT",
       filtered.forEach(function(a) {
         var slowTag = '';
         if (hasTextClient(a.NgayCapNhat)) {
-          var diffMs = today - new Date(a.NgayCapNhat);
-          if (diffMs > 3 * 86400000 && (a.PctHoanThanh || 0) < 100) slowTag = ' <span class="mm-tag-slow">Chậm CĐ</span>';
+          var _upd2 = parseViDate(a.NgayCapNhat);
+          if (_upd2 && (today - _upd2) > 3 * 86400000 && (a.PctHoanThanh || 0) < 100) slowTag = ' <span class="mm-tag-slow">Chậm CĐ</span>';
         }
-        var noResultTag = !hasTextClient(a.KetQuaThucTe) ? '<span class="mm-tag-noresult">Chưa có KQ</span>' : '';
+        var noResultTag = !hasTextClient(a.KetQuaThucTe) ? '<span class="mm-tag-noresult">Chưa cập nhật kết quả</span>' : '';
         var rowCls = a.IsOverdue ? 'class="mm-tag-overdue-row"' : '';
         var deadlineHtml = safe(a.Deadline) + (a.IsOverdue ? ' <span style="color:#dc2626;font-size:10px;font-weight:700">QH</span>' : '');
         var evidenceHtml = hasTextClient(a.BangChung)
           ? '<a class="mm-evidence-link" href="' + safe(a.BangChung) + '" target="_blank">🔗 Link</a>'
-          : '<span style="color:#9ca3af;font-size:11px">—</span>';
+          : '<span style="color:#9ca3af;font-size:11px;font-style:italic">Chưa có bằng chứng</span>';
+        var vuongHtml = hasTextClient(a.VuongMac) ? safe(a.VuongMac) : '<span style="color:#9ca3af;font-size:11px;font-style:italic">Không ghi nhận</span>';
         var capNhatHtml = [safe(a.NgayCapNhat), safe(a.NguoiCapNhat)].filter(Boolean).join('<br>');
 
         html += '<tr ' + rowCls + '>'
@@ -5109,12 +5111,12 @@ APS - S&OP - KHO - SẢN XUẤT",
           + '<td style="font-size:11.5px">' + safe(a.CoOwner) + '</td>'
           + '<td style="white-space:nowrap">' + deadlineHtml + '</td>'
           + '<td>' + modStatusBadge(a.Status) + '</td>'
-          + '<td>' + modRagBadge(a.RAG) + '</td>'
+          + '<td>' + mmRagBadge(a) + '</td>'
           + '<td style="min-width:110px">' + mmProgressBar(a.PctHoanThanh || 0, a.IsOverdue) + '</td>'
           + '<td>' + (hasTextClient(a.KetQuaThucTe) ? safe(a.KetQuaThucTe) : noResultTag) + '</td>'
           + '<td style="font-size:11px">' + capNhatHtml + '</td>'
           + '<td>' + evidenceHtml + '</td>'
-          + '<td style="font-size:11.5px">' + safe(a.VuongMac) + '</td>'
+          + '<td style="font-size:11.5px">' + vuongHtml + '</td>'
           + '<td style="font-size:12px">' + safe(a.CEODecision) + '</td>'
           + '</tr>';
       });
@@ -5283,10 +5285,10 @@ APS - S&OP - KHO - SẢN XUẤT",
         + (hasCEO ? '<div class="mm-meeting-directive"><span class="mm-directive-label">👑 Chỉ đạo CEO:</span> ' + safe(m.CEODirective) + '</div>' : '')
         + (hasDec ? '<div class="mm-meeting-decision"><span class="mm-decision-label">✅ CEO cần chốt:</span> ' + safe(m.CEODecision) + '</div>' : '')
         + (function() {
-            if (!meetingActs.length) return '<div class="mm-meeting-footer"><span class="mm-meeting-id">' + safe(m.MeetingID) + '</span><span class="mm-meeting-acnt">0 action</span></div>';
+            if (!meetingActs.length) return '<div class="mm-meeting-footer"><span class="mm-meeting-id">' + safe(m.MeetingID) + '</span><span class="mm-meeting-acnt">0 công việc</span></div>';
             var st = mmActionStats(meetingActs);
             return '<div class="mm-act-stats" style="margin-top:6px">'
-              + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + st.total + '</span><span class="mm-act-stat-lbl"> action</span></span>'
+              + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + st.total + '</span><span class="mm-act-stat-lbl"> công việc</span></span>'
               + '<span class="mm-act-stat-sep">·</span>'
               + '<span class="mm-act-stat done"><span class="mm-act-stat-num">' + st.done + '</span><span class="mm-act-stat-lbl"> HT</span></span>'
               + '<span class="mm-act-stat-sep">·</span>'
@@ -5296,7 +5298,7 @@ APS - S&OP - KHO - SẢN XUẤT",
               + (st.latestUpdate ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-lbl">CĐ gần nhất:</span> <span class="mm-act-stat-num" style="font-size:11px">' + safe(st.latestUpdate) + '</span></span>' : '')
               + '</div>'
               + '<div class="mm-meeting-footer"><span class="mm-meeting-id">' + safe(m.MeetingID) + '</span>'
-              + '<button class="mm-action-toggle-btn" onclick="mmToggleActions(\'' + mid + '\')">📋 Xem action (' + st.total + ')</button>'
+              + '<button class="mm-action-toggle-btn" onclick="mmToggleActions(\'' + mid + '\')">📋 Xem công việc (' + st.total + ')</button>'
               + '</div>';
           })()
         + '<div class="mm-meeting-card-btns">'
@@ -5308,11 +5310,11 @@ APS - S&OP - KHO - SẢN XUẤT",
         var today = new Date();
         html += '<div class="mm-actions-list" id="mm-acts-' + mid + '" style="display:none">'
           + '<div class="mm-acts-table"><table class="mm-table"><thead><tr>'
-          + '<th>Nội dung action</th><th>Owner/PIC</th><th>Deadline</th>'
+          + '<th>Nội dung công việc</th><th>Owner/PIC</th><th>Deadline</th>'
           + '<th>Trạng thái</th><th>RAG</th><th>% HT</th><th>Kết quả thực tế</th><th></th>'
           + '</tr></thead><tbody>';
         meetingActs.forEach(function(a, idx) {
-          var noResultTag = !hasTextClient(a.KetQuaThucTe) ? '<span class="mm-tag-noresult">Chưa có KQ</span>' : '';
+          var noResultTag = !hasTextClient(a.KetQuaThucTe) ? '<span class="mm-tag-noresult">Chưa cập nhật kết quả</span>' : '';
           var deadlineHtml = safe(a.Deadline) + (a.IsOverdue ? ' <span style="color:#dc2626;font-size:10px;font-weight:700">QH</span>' : '');
           var rowCls = a.IsOverdue ? 'class="mm-tag-overdue-row"' : '';
           var slowTag = '';
@@ -5321,22 +5323,26 @@ APS - S&OP - KHO - SẢN XUẤT",
             if (_upd && (today - _upd) > 3 * 86400000 && (a.PctHoanThanh || 0) < 100) slowTag = ' <span class="mm-tag-slow">Chậm CĐ</span>';
           }
           var detId = 'mmad-' + mid + '-' + idx;
-          /* Detail panel content */
-          var detParts = [];
-          if (hasTextClient(a.CoOwner))      detParts.push('<div><span class="dp-label">Phối hợp:</span> ' + safe(a.CoOwner) + '</div>');
-          if (hasTextClient(a.NgayCapNhat))  detParts.push('<div><span class="dp-label">Ngày CĐ:</span> ' + safe(a.NgayCapNhat) + '</div>');
-          if (hasTextClient(a.NguoiCapNhat)) detParts.push('<div><span class="dp-label">Người CĐ:</span> ' + safe(a.NguoiCapNhat) + '</div>');
-          if (hasTextClient(a.BangChung))    detParts.push('<div><span class="dp-label">Bằng chứng:</span> <a class="mm-evidence-link" href="' + safe(a.BangChung) + '" target="_blank">🔗 Mở link</a></div>');
-          if (hasTextClient(a.VuongMac))     detParts.push('<div class="dp-wide"><span class="dp-label">Vướng mắc:</span> ' + safe(a.VuongMac) + '</div>');
-          if (hasTextClient(a.CEODecision))  detParts.push('<div class="dp-wide"><span class="dp-label" style="color:#d97706">CEO cần chốt:</span> ' + safe(a.CEODecision) + '</div>');
-          if (!detParts.length)              detParts.push('<div style="color:#9ca3af;font-style:italic">Chưa có thông tin bổ sung.</div>');
+          /* Detail panel — hiện đủ 9 trường */
+          var gray = function(t) { return '<span style="color:#9ca3af;font-style:italic">' + t + '</span>'; };
+          var detParts = [
+            '<div><span class="dp-label">Phối hợp:</span> ' + (hasTextClient(a.CoOwner) ? safe(a.CoOwner) : gray('—')) + '</div>',
+            (hasTextClient(a.Output) ? '<div class="dp-wide"><span class="dp-label">Đầu ra kỳ vọng:</span> ' + safe(a.Output) + '</div>' : ''),
+            '<div class="dp-wide"><span class="dp-label">Kết quả thực tế:</span> ' + (hasTextClient(a.KetQuaThucTe) ? safe(a.KetQuaThucTe) : gray('Chưa cập nhật kết quả')) + '</div>',
+            '<div><span class="dp-label">Ngày cập nhật:</span> ' + (hasTextClient(a.NgayCapNhat) ? safe(a.NgayCapNhat) : gray('—')) + '</div>',
+            '<div><span class="dp-label">Người cập nhật:</span> ' + (hasTextClient(a.NguoiCapNhat) ? safe(a.NguoiCapNhat) : gray('—')) + '</div>',
+            '<div class="dp-wide"><span class="dp-label">Bằng chứng/Link:</span> ' + (hasTextClient(a.BangChung) ? '<a class="mm-evidence-link" href="' + safe(a.BangChung) + '" target="_blank">🔗 Mở link</a>' : gray('Chưa có bằng chứng')) + '</div>',
+            '<div class="dp-wide"><span class="dp-label">Vướng mắc/Hỗ trợ cần thiết:</span> ' + (hasTextClient(a.VuongMac) ? safe(a.VuongMac) : gray('Không ghi nhận vướng mắc')) + '</div>',
+            (hasTextClient(a.CEODecision) ? '<div class="dp-wide"><span class="dp-label" style="color:#d97706">CEO cần chốt:</span> ' + safe(a.CEODecision) + '</div>' : ''),
+            (hasTextClient(a.Note) ? '<div class="dp-wide"><span class="dp-label">Ghi chú:</span> ' + safe(a.Note) + '</div>' : '')
+          ].filter(Boolean);
 
           html += '<tr ' + rowCls + '>'
             + '<td>' + safe(a.Action) + slowTag + '</td>'
             + '<td>' + safe(a.Owner) + '</td>'
             + '<td style="white-space:nowrap">' + deadlineHtml + '</td>'
             + '<td>' + modStatusBadge(a.Status) + '</td>'
-            + '<td>' + modRagBadge(a.RAG) + '</td>'
+            + '<td>' + mmRagBadge(a) + '</td>'
             + '<td style="min-width:110px">' + mmProgressBar(a.PctHoanThanh || 0, a.IsOverdue) + '</td>'
             + '<td>' + (hasTextClient(a.KetQuaThucTe) ? safe(a.KetQuaThucTe) : noResultTag) + '</td>'
             + '<td><button class="mm-expand-btn" onclick="mmToggleActDetail(\'' + detId + '\',this)" title="Chi tiết">▼</button></td>'
@@ -5361,8 +5367,8 @@ APS - S&OP - KHO - SẢN XUẤT",
       if (card) {
         var btn = card.querySelector('.mm-action-toggle-btn');
         if (btn) btn.textContent = isHidden
-          ? btn.textContent.replace('Xem action', 'Ẩn action')
-          : btn.textContent.replace('Ẩn action', 'Xem action');
+          ? btn.textContent.replace('Xem công việc', 'Ẩn công việc')
+          : btn.textContent.replace('Ẩn công việc', 'Xem công việc');
       }
     }
 
@@ -5507,21 +5513,21 @@ APS - S&OP - KHO - SẢN XUẤT",
           + '<span class="mm-act-stat overdue"><span class="mm-act-stat-num">' + actSt.overdue + '</span><span class="mm-act-stat-lbl"> QH</span></span>'
           + '<span class="mm-act-stat-sep">·</span>'
           + '<span class="mm-act-stat"><span class="mm-act-stat-num">' + actSt.avgPct + '%</span><span class="mm-act-stat-lbl"> TB</span></span>'
-          + (actSt.noResult ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-num" style="color:#c2410c">' + actSt.noResult + '</span><span class="mm-act-stat-lbl"> chưa có KQ</span></span>' : '')
+          + (actSt.noResult ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-num" style="color:#c2410c">' + actSt.noResult + '</span><span class="mm-act-stat-lbl"> chưa CĐ KQ</span></span>' : '')
           + (actSt.needCEO ? '<span class="mm-act-stat-sep">·</span><span class="mm-act-stat"><span class="mm-act-stat-num" style="color:#d97706">' + actSt.needCEO + '</span><span class="mm-act-stat-lbl"> cần CEO chốt</span></span>' : '')
           + '</div>' : '';
       var filterBarHtml = acts.length
         ? '<div class="mm-act-filter-bar">'
           + ['all:Tất cả', 'notStarted:Chưa bắt đầu', 'inProgress:Đang TH', 'done:Hoàn thành',
-             'overdue:Quá hạn', 'noResult:Chưa có KQ', 'ceo:Cần CEO chốt'].map(function(item) {
+             'overdue:Quá hạn', 'noResult:Chưa CĐ kết quả', 'ceo:Cần CEO chốt'].map(function(item) {
               var p = item.split(':'); var k = p[0]; var label = p[1];
               return '<button class="mm-af-pill' + (k === 'all' ? ' active' : '') + '" data-filter="' + k + '" onclick="mmSetActionFilter(\'' + k + '\')">' + label + '</button>';
             }).join('')
           + '</div>' : '';
-      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Action phát sinh (' + acts.length + ')</div>'
+      html += '<div class="mm-modal-section"><div class="mm-modal-section-title">Công việc phát sinh (' + acts.length + ')</div>'
         + actSummaryHtml + filterBarHtml;
       if (!acts.length) {
-        html += '<div style="color:#9ca3af;font-size:13px;font-style:italic">Không có action nào trong MEETING_ACTIONS.</div>';
+        html += '<div style="color:#9ca3af;font-size:13px;font-style:italic">Không có công việc nào trong MEETING_ACTIONS.</div>';
         if (hasTextClient(m.Actions)) {
           html += '<div style="margin-top:8px"><strong style="font-size:12px">Action ghi nhận trong biên bản:</strong><div style="font-size:13px;margin-top:4px;line-height:1.6;white-space:pre-wrap">' + safe(m.Actions) + '</div></div>';
         }
@@ -6994,10 +7000,41 @@ APS - S&OP - KHO - SẢN XUẤT",
        SHARED MOD BADGE HELPERS
     ===================================================== */
     function modRagBadge(rag) {
-      var r = String(rag || '').toLowerCase();
-      if (r.includes('green') || r.includes('xanh')) return '<span class="mod-rag green">🟢 Green</span>';
-      if (r.includes('red') || r.includes('đỏ'))    return '<span class="mod-rag red">🔴 Red</span>';
-      return '<span class="mod-rag amber">🟡 Amber</span>';
+      var r = String(rag || '').trim();
+      if (!r) return '<span class="mod-rag gray">⬜ Chưa đánh giá</span>';
+      var rl = r.toLowerCase();
+      if (rl === 'chưa đánh giá' || rl === 'n/a' || rl === '—') return '<span class="mod-rag gray">⬜ Chưa đánh giá</span>';
+      if (rl.includes('green') || rl.includes('xanh')) return '<span class="mod-rag green">🟢 Xanh</span>';
+      if (rl.includes('red')   || rl.includes('đỏ'))   return '<span class="mod-rag red">🔴 Đỏ</span>';
+      if (rl.includes('amber') || rl.includes('vàng') || rl.includes('yellow')) return '<span class="mod-rag amber">🟡 Vàng</span>';
+      return '<span class="mod-rag gray">⬜ ' + safe(r) + '</span>';
+    }
+
+    /* RAG badge cho meeting actions — tự tính khi ô sheet trống */
+    function mmRagBadge(a) {
+      var r = String(a.RAG || '').trim();
+      if (r) {
+        var rl = r.toLowerCase();
+        if (rl === 'chưa đánh giá' || rl === 'n/a' || rl === '—') return '<span class="mod-rag gray">⬜ Chưa đánh giá</span>';
+        if (rl.includes('green') || rl.includes('xanh')) return '<span class="mod-rag green">🟢 Xanh</span>';
+        if (rl.includes('red')   || rl.includes('đỏ'))   return '<span class="mod-rag red">🔴 Đỏ</span>';
+        if (rl.includes('amber') || rl.includes('vàng') || rl.includes('yellow')) return '<span class="mod-rag amber">🟡 Vàng</span>';
+        return '<span class="mod-rag gray">⬜ ' + safe(r) + '</span>';
+      }
+      /* Tự tính RAG khi ô sheet trống */
+      var pct  = a.PctHoanThanh || 0;
+      var now  = new Date();
+      var dl   = parseViDate(a.Deadline);
+      var upd  = parseViDate(a.NgayCapNhat);
+      var hasVuong = a.VuongMac && String(a.VuongMac).trim();
+      var nearDl   = dl && !a.IsOverdue && ((dl - now) / 86400000) <= 3 && pct < 100;
+      var slowUpd  = upd && (now - upd) > 3 * 86400000 && pct < 100;
+      if (a.IsOverdue && pct < 100)  return '<span class="mod-rag red">🔴 Đỏ</span>';
+      if (hasVuong)                  return '<span class="mod-rag amber">🟡 Vàng</span>';
+      if (nearDl)                    return '<span class="mod-rag amber">🟡 Vàng</span>';
+      if (slowUpd)                   return '<span class="mod-rag amber">🟡 Vàng</span>';
+      if (upd && !hasVuong)          return '<span class="mod-rag green">🟢 Xanh</span>';
+      return '<span class="mod-rag gray">⬜ Chưa đánh giá</span>';
     }
 
     function modStatusBadge(status) {
