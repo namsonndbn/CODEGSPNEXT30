@@ -1812,6 +1812,83 @@
     .lcc-empty { text-align:center; padding:48px 24px; color:#9ca3af; font-size:15px; background:white; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,0.06); grid-column:1/-1; }
     .lcc-error  { background:#fee2e2; color:#991b1b; padding:16px 24px; border-radius:12px; margin:0 24px 16px; font-weight:bold; }
 
+    /* ─── OVERVIEW ENHANCEMENTS ─── */
+    .ov-header-row { display:flex; align-items:center; gap:12px; padding:16px 24px 8px; flex-wrap:wrap; background:white; border-bottom:1px solid #e5e7eb; }
+    .ov-header-title { flex:1; min-width:200px; }
+    .ov-header-title h2 { margin:0; font-size:20px; font-weight:800; color:#064e3b; }
+    .ov-header-title p  { margin:4px 0 0; font-size:12.5px; color:#6b7280; }
+    .ov-header-date { font-size:13px; color:#6b7280; font-weight:600; white-space:nowrap; background:#f9fafb; padding:6px 12px; border-radius:8px; }
+    .ov-btn-newsletter { padding:8px 16px; background:#064e3b; color:white; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s; white-space:nowrap; }
+    .ov-btn-newsletter:hover { background:#047857; }
+    .ov-btn-copy { padding:8px 16px; background:white; color:#064e3b; border:2px solid #064e3b; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; white-space:nowrap; }
+    .ov-btn-copy:hover { background:#f0fdf4; }
+
+    .ov-exec-bar { display:flex; gap:10px; flex-wrap:wrap; padding:14px 24px; background:#f8fffe; border-bottom:1px solid #d1fae5; }
+    .ov-kpi-chip { display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+    .ov-kpi-chip:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.12); }
+    .ov-kpi-chip.chip-amber  { background:#fffbeb; color:#b45309; }
+    .ov-kpi-chip.chip-red    { background:#fef2f2; color:#dc2626; }
+    .ov-kpi-chip.chip-purple { background:#faf5ff; color:#7c3aed; }
+    .ov-kpi-chip.chip-blue   { background:#eff6ff; color:#1d4ed8; }
+    .ov-kpi-chip.chip-gray   { background:#f3f4f6; color:#374151; }
+    .ov-kpi-num { font-size:24px; line-height:1; font-weight:800; }
+    .ov-kpi-lbl { font-size:11.5px; font-weight:600; line-height:1.3; max-width:90px; }
+
+    .ov-section { padding:0 24px 24px; }
+    .ov-section-hdr { display:flex; align-items:center; justify-content:space-between; padding:18px 0 12px; border-top:1px solid #f3f4f6; }
+    .ov-section-title { font-size:16px; font-weight:800; color:#1f2937; }
+    .ov-section-toggle { background:none; border:1px solid #d1d5db; border-radius:8px; padding:4px 12px; font-size:12px; cursor:pointer; color:#6b7280; }
+    .ov-section-toggle:hover { background:#f3f4f6; }
+
+    .ov-priority-list { display:flex; flex-direction:column; gap:8px; }
+    .ov-priority-item { display:grid; grid-template-columns:26px 1fr 100px 110px 90px auto auto; gap:10px; align-items:center; background:white; border-radius:10px; padding:10px 14px; box-shadow:0 1px 6px rgba(0,0,0,0.06); border-left:4px solid #e5e7eb; }
+    .ov-priority-item.prio-ceo     { border-left-color:#7c3aed; }
+    .ov-priority-item.prio-overdue { border-left-color:#f59e0b; }
+    .ov-priority-item.prio-red     { border-left-color:#ef4444; }
+    .ov-priority-item.prio-other   { border-left-color:#9ca3af; }
+    .ov-pi-num      { font-size:13px; font-weight:800; color:#9ca3af; text-align:center; }
+    .ov-pi-name     { font-size:13px; font-weight:700; color:#1f2937; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+    .ov-pi-module   { font-size:11px; background:#dbeafe; color:#1d4ed8; padding:3px 8px; border-radius:10px; font-weight:700; white-space:nowrap; text-align:center; }
+    .ov-pi-owner    { font-size:12px; color:#6b7280; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ov-pi-deadline { font-size:12px; color:#6b7280; white-space:nowrap; }
+    .ov-pi-reason   { font-size:11px; padding:3px 8px; border-radius:10px; font-weight:700; white-space:nowrap; text-align:center; }
+    .ov-pi-reason.r-ceo     { background:#ede9fe; color:#5b21b6; }
+    .ov-pi-reason.r-overdue { background:#fef3c7; color:#92400e; }
+    .ov-pi-reason.r-red     { background:#fee2e2; color:#dc2626; }
+    .ov-pi-reason.r-other   { background:#f3f4f6; color:#4b5563; }
+    .ov-pi-btn { padding:5px 12px; background:#064e3b; color:white; border:none; border-radius:7px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .ov-pi-btn:hover { background:#047857; }
+    @media (max-width:900px) {
+      .ov-priority-item { grid-template-columns:26px 1fr auto auto; }
+      .ov-pi-module,.ov-pi-owner,.ov-pi-deadline { display:none; }
+    }
+
+    .ov-activity-list { display:flex; flex-direction:column; gap:6px; }
+    .ov-activity-item { display:flex; gap:12px; align-items:center; background:white; border-radius:10px; padding:10px 14px; box-shadow:0 1px 6px rgba(0,0,0,0.05); }
+    .ov-act-time    { font-size:12px; color:#9ca3af; white-space:nowrap; min-width:80px; }
+    .ov-act-badge   { font-size:11px; padding:2px 8px; border-radius:10px; font-weight:700; white-space:nowrap; background:#dbeafe; color:#1d4ed8; }
+    .ov-act-content { flex:1; font-size:13px; color:#374151; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+    .ov-act-owner   { font-size:12px; color:#9ca3af; white-space:nowrap; max-width:100px; overflow:hidden; text-overflow:ellipsis; }
+    .ov-act-btn     { padding:4px 10px; background:#064e3b; color:white; border:none; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .ov-act-btn:hover { background:#047857; }
+
+    .overview-stat.ov-clickable { cursor:pointer; border-radius:8px; padding:4px 6px; margin:-4px -6px; transition:background .12s; }
+    .overview-stat.ov-clickable:hover { background:#f0fdf4; }
+
+    .ov-modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.55); z-index:2000; }
+    .ov-modal-overlay.open { display:flex; align-items:center; justify-content:center; padding:24px; }
+    .ov-modal { background:white; border-radius:16px; max-width:740px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .ov-modal-header { padding:20px 24px 14px; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:white; z-index:1; }
+    .ov-modal-title { font-size:17px; font-weight:800; color:#1f2937; }
+    .ov-modal-close { background:none; border:none; font-size:22px; cursor:pointer; color:#9ca3af; padding:2px 8px; border-radius:8px; }
+    .ov-modal-close:hover { background:#f3f4f6; color:#374151; }
+    .ov-modal-body { padding:20px 24px; }
+    .ov-modal-section { margin-bottom:20px; }
+    .ov-modal-section-title { font-size:14px; font-weight:800; color:#064e3b; margin-bottom:8px; }
+    .ov-modal-text { font-size:13px; color:#374151; line-height:1.7; white-space:pre-wrap; background:#f9fafb; border-radius:8px; padding:12px; }
+    .ov-modal-footer { padding:12px 24px 20px; border-top:1px solid #e5e7eb; display:flex; gap:10px; flex-wrap:wrap; }
+    .ov-empty-state { padding:24px; text-align:center; color:#9ca3af; background:white; border-radius:10px; font-size:14px; }
+
   </style>
 </head>
 
@@ -1844,10 +1921,53 @@
 
   <!-- ===== MODULE: TỔNG QUAN ===== -->
   <div class="module active" id="module-overview">
-    <div class="overview-header">
-      <h2>CEO Command Center — Tổng quan hệ thống</h2>
-      <p>Chọn module bên dưới để xem chi tiết · Dữ liệu tải tự động khi vào trang</p>
+    <!-- Enhanced header -->
+    <div class="ov-header-row">
+      <div class="ov-header-title">
+        <h2>CEO Command Center — Tổng quan hệ thống</h2>
+        <p>Dữ liệu tải tự động · Nhấn KPI để mở module chi tiết</p>
+      </div>
+      <span id="ov-today-date" class="ov-header-date"></span>
+      <button class="ov-btn-newsletter" onclick="ovShowNewsletter()">📰 Bản tin hôm nay</button>
+      <button class="ov-btn-copy" onclick="ovCopyNewsletter()">📋 Sao chép</button>
     </div>
+
+    <!-- Tóm tắt điều hành hôm nay -->
+    <div class="ov-exec-bar" id="ov-exec-bar">
+      <div class="ov-kpi-chip chip-amber" title="Tổng mục cần chú ý (quá hạn + RAG đỏ + CEO cần quyết)">
+        <div class="ov-kpi-num" id="ov-chip-attention">—</div>
+        <div class="ov-kpi-lbl">Cần chú ý</div>
+      </div>
+      <div class="ov-kpi-chip chip-red" onclick="switchModule('pmo', document.querySelector('[data-module=pmo]'))" title="Tổng việc quá hạn — nhấn để xem PMO">
+        <div class="ov-kpi-num" id="ov-chip-overdue">—</div>
+        <div class="ov-kpi-lbl">Quá hạn</div>
+      </div>
+      <div class="ov-kpi-chip chip-red" onclick="switchModule('pmo', document.querySelector('[data-module=pmo]'))" title="Việc RAG Đỏ — nhấn để xem PMO">
+        <div class="ov-kpi-num" id="ov-chip-red">—</div>
+        <div class="ov-kpi-lbl">RAG 🔴</div>
+      </div>
+      <div class="ov-kpi-chip chip-purple" onclick="switchModule('ceo-decision', document.querySelector('[data-module=ceo-decision]'))" title="Cần CEO quyết — nhấn để xem">
+        <div class="ov-kpi-num" id="ov-chip-ceo">—</div>
+        <div class="ov-kpi-lbl">CEO cần quyết</div>
+      </div>
+      <div class="ov-kpi-chip chip-amber" onclick="switchModule('ceo-tracker', document.querySelector('[data-module=ceo-tracker]'))" title="Dự án chưa cập nhật >3 ngày">
+        <div class="ov-kpi-num" id="ov-chip-noupdate">—</div>
+        <div class="ov-kpi-lbl">Chưa cập nhật</div>
+      </div>
+      <div class="ov-kpi-chip chip-blue" onclick="switchModule('meeting-minutes', document.querySelector('[data-module=meeting-minutes]'))" title="Action từ biên bản họp — nhấn để xem">
+        <div class="ov-kpi-num" id="ov-chip-mmaction">—</div>
+        <div class="ov-kpi-lbl">Action biên bản</div>
+      </div>
+      <div class="ov-kpi-chip chip-gray" onclick="switchModule('luong-chat', document.querySelector('[data-module=luong-chat]'))" title="Luồng chat Chủ tịch — nhấn để xem">
+        <div class="ov-kpi-num" id="ov-chip-lcc">—</div>
+        <div class="ov-kpi-lbl">Luồng chat</div>
+      </div>
+      <div class="ov-kpi-chip chip-red" onclick="switchModule('risk-sos', document.querySelector('[data-module=risk-sos]'))" title="Risk/SOS đang mở — nhấn để xem">
+        <div class="ov-kpi-num" id="ov-chip-risk">—</div>
+        <div class="ov-kpi-lbl">Risk/SOS mở</div>
+      </div>
+    </div>
+
     <div class="overview-grid">
 
       <div class="overview-card" onclick="switchModule('pmo', document.querySelector('[data-module=pmo]'))">
@@ -1995,6 +2115,48 @@
         <span class="overview-badge pending" id="ov-lcc-badge">⏳ Đang chờ dữ liệu</span>
       </div>
 
+    </div><!-- /overview-grid -->
+
+    <!-- Việc Chủ tịch cần xem hôm nay -->
+    <div class="ov-section">
+      <div class="ov-section-hdr">
+        <span class="ov-section-title">🎯 Việc Chủ tịch cần xem hôm nay</span>
+        <button class="ov-section-toggle" onclick="ovToggleSection('ov-priority-body',this)">Thu gọn ▲</button>
+      </div>
+      <div id="ov-priority-body">
+        <div class="ov-priority-list" id="ov-priority-list">
+          <div class="ov-empty-state">Đang chờ dữ liệu tải từ hệ thống...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cập nhật mới nhất -->
+    <div class="ov-section">
+      <div class="ov-section-hdr">
+        <span class="ov-section-title">🕐 Cập nhật mới nhất</span>
+        <button class="ov-section-toggle" onclick="ovToggleSection('ov-activity-body',this)">Thu gọn ▲</button>
+      </div>
+      <div id="ov-activity-body">
+        <div class="ov-activity-list" id="ov-activity-list">
+          <div class="ov-empty-state">Đang chờ dữ liệu tải từ hệ thống...</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /module-overview -->
+
+  <!-- Bản tin CEO — modal -->
+  <div class="ov-modal-overlay" id="ov-newsletter-modal" onclick="if(event.target===this)ovCloseNewsletter()">
+    <div class="ov-modal">
+      <div class="ov-modal-header">
+        <span class="ov-modal-title">📰 Bản tin CEO hôm nay</span>
+        <button class="ov-modal-close" onclick="ovCloseNewsletter()">✕</button>
+      </div>
+      <div class="ov-modal-body" id="ov-newsletter-body">Đang tổng hợp...</div>
+      <div class="ov-modal-footer">
+        <button class="ov-btn-newsletter" onclick="ovCopyNewsletter()">📋 Sao chép nội dung</button>
+        <button class="ov-btn-copy" onclick="ovCloseNewsletter()">Đóng</button>
+      </div>
     </div>
   </div>
 
@@ -2768,6 +2930,8 @@ APS - S&OP - KHO - SẢN XUẤT",
         st('ov-mm-decision', cc.meetingsWithCEODecision);
         activate('ov-mm-stats', 'ov-mm-badge');
       }
+
+      ovRefreshSections(data);
     }
 
     function gasGet(action) {
@@ -2835,6 +2999,7 @@ APS - S&OP - KHO - SẢN XUẤT",
     }
 
     window.onload = function() {
+      ovInit();
       loadDashboard();
 
       setInterval(function() {
@@ -6251,6 +6416,11 @@ APS - S&OP - KHO - SẢN XUẤT",
       var allCard = document.getElementById('lcc-kpi-all');
       if (allCard) allCard.classList.add('active');
       lccRender();
+
+      // Sync overview chip + rebuild priority list if main data loaded
+      var lccChip = document.getElementById('ov-chip-lcc');
+      if (lccChip) lccChip.textContent = total;
+      if (dashboardCache) ovBuildPriorityList(dashboardCache);
     }
 
     function lccKpiFilter(type, el) {
@@ -6381,6 +6551,444 @@ APS - S&OP - KHO - SẢN XUẤT",
       }
       alert('Không tìm thấy file chi tiết của luồng chat.');
     }
+
+    /* =====================================================================
+       OVERVIEW ENHANCEMENTS — Tổng quan điều hành
+    ===================================================================== */
+
+    function ovInit() {
+      // Hiển thị ngày hôm nay
+      var now = new Date();
+      var days = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+      var el = document.getElementById('ov-today-date');
+      if (el) el.textContent = '📅 ' + days[now.getDay()] + ' — ' + now.getDate() + '/' + (now.getMonth()+1) + '/' + now.getFullYear();
+
+      // Gắn onclick cho các stat clickable trên overview cards
+      ovBindStatClicks();
+
+      // Đọc LCC từ inline JSON nếu có (trước khi lccLoad chạy)
+      var inlineEl = document.getElementById('lcc-data');
+      if (inlineEl && !lccData.length) {
+        try {
+          var parsed = JSON.parse(inlineEl.textContent || inlineEl.innerHTML);
+          if (Array.isArray(parsed) && parsed.length) {
+            lccData = parsed;
+            var chip = document.getElementById('ov-chip-lcc');
+            if (chip) chip.textContent = parsed.length;
+          }
+        } catch(e) {}
+      }
+    }
+
+    function ovBindStatClicks() {
+      var map = [
+        {id:'ov-overdue',      mod:'pmo'},
+        {id:'ov-red',          mod:'pmo'},
+        {id:'ov-proj-overdue', mod:'ceo-tracker'},
+        {id:'ov-proj-red',     mod:'ceo-tracker'},
+        {id:'ov-to-overdue',   mod:'to-action'},
+        {id:'ov-to-noowner',   mod:'to-action'},
+        {id:'ov-risk-open',    mod:'risk-sos'},
+        {id:'ov-risk-red',     mod:'risk-sos'},
+        {id:'ov-dec-pending',  mod:'ceo-decision'},
+        {id:'ov-mm-pending',   mod:'meeting-minutes'},
+        {id:'ov-mm-ceo',       mod:'meeting-minutes'},
+        {id:'ov-lcc-plan',     mod:'luong-chat'}
+      ];
+      map.forEach(function(b) {
+        var valEl = document.getElementById(b.id);
+        if (!valEl) return;
+        var statEl = valEl.parentElement;
+        statEl.classList.add('ov-clickable');
+        statEl.title = 'Nhấn để mở module ' + b.mod;
+        statEl.onclick = function(e) {
+          e.stopPropagation();
+          var tab = document.querySelector('[data-module=' + b.mod + ']');
+          switchModule(b.mod, tab);
+        };
+      });
+    }
+
+    function ovRefreshSections(data) {
+      var cc = data.commandCenterSummary || {};
+      function sv(id, v) { var e = document.getElementById(id); if (e) e.textContent = (v !== undefined && v !== null) ? v : '—'; }
+
+      var totalOverdue = (cc.toActionsOverdue || 0) + (cc.risksOverdue || 0) + (cc.decisionsOverdue || 0) + (cc.projectsOverdue || 0);
+      var totalRed     = (cc.red || 0) + (cc.risksRed || 0) + (cc.projectsRed || 0);
+      var decPending   = cc.decisionsPending || 0;
+      var mmActions    = cc.meetingsWithActions || 0;
+      var riskOpen     = cc.risksOpen || 0;
+      var totalAttention = totalOverdue + totalRed + decPending;
+
+      // Dự án chưa cập nhật >3 ngày
+      var projNoUpdate = 0;
+      (data.ceoProjects || []).forEach(function(p) {
+        if (parseInt(p.NgayKhongCapNhat || 0, 10) > 3) projNoUpdate++;
+      });
+
+      sv('ov-chip-attention', totalAttention);
+      sv('ov-chip-overdue',   totalOverdue);
+      sv('ov-chip-red',       totalRed);
+      sv('ov-chip-ceo',       decPending);
+      sv('ov-chip-noupdate',  projNoUpdate);
+      sv('ov-chip-mmaction',  mmActions);
+      sv('ov-chip-lcc',       lccData.length || '—');
+      sv('ov-chip-risk',      riskOpen);
+
+      ovBuildPriorityList(data);
+      ovBuildActivityFeed(data);
+    }
+
+    function ovBuildPriorityList(data) {
+      var cc  = data.commandCenterSummary || {};
+      var now = new Date();
+      var items = [];
+
+      function isOverdue(dl) {
+        if (!dl) return false;
+        var d = new Date(dl);
+        return !isNaN(d) && d < now;
+      }
+      function isRed(rag) {
+        var r = String(rag || '').toLowerCase();
+        return r.includes('red') || r.includes('đỏ') || r.includes('🔴');
+      }
+
+      // CEO Decisions — chờ quyết
+      (data.decisions || []).forEach(function(d) {
+        var st = String(d.Status || d.TrangThai || '').toLowerCase();
+        if (st && !st.includes('chờ') && !st.includes('pending') && !st.includes('cần')) return;
+        items.push({
+          priority:100, type:'ceo', icon:'✅',
+          name: d.Decision || d.TenQuyetDinh || d.NoiDung || 'CEO Decision',
+          module:'CEO Decision', moduleId:'ceo-decision',
+          owner: d.Owner || d.PIC || '', deadline: d.Deadline || '',
+          reason:'CEO cần quyết'
+        });
+      });
+
+      // PMO — quá hạn hoặc RAG đỏ
+      (data.pmoActions || []).forEach(function(a) {
+        var st = String(a.TrangThai || a.Status || '').toLowerCase();
+        if (st.includes('done') || st.includes('hoàn thành')) return;
+        var dl = a.Deadline || a.NgayHoanThanh || '';
+        var rag = a.RAG || '';
+        if (isOverdue(dl)) {
+          items.push({ priority:90, type:'overdue', icon:'⏰',
+            name: a.TenCongViec || a.ActionItem || 'PMO Action',
+            module:'PMO', moduleId:'pmo',
+            owner: a.Owner || a.PIC || '', deadline: dl, reason:'Quá hạn' });
+        } else if (isRed(rag)) {
+          items.push({ priority:80, type:'red', icon:'🔴',
+            name: a.TenCongViec || a.ActionItem || 'PMO Action',
+            module:'PMO', moduleId:'pmo',
+            owner: a.Owner || a.PIC || '', deadline: dl, reason:'RAG Đỏ' });
+        }
+      });
+
+      // Risk/SOS — đang mở + quá hạn/đỏ
+      (data.risks || []).forEach(function(r) {
+        var st = String(r.TrangThai || r.Status || '').toLowerCase();
+        if (st.includes('đã xử') || st.includes('closed') || st.includes('done')) return;
+        var dl = r.Deadline || r.NgayXuLy || '';
+        var rag = r.RAG || '';
+        if (isOverdue(dl) || isRed(rag)) {
+          items.push({ priority:85, type:'red', icon:'🚨',
+            name: r.TenRuiRo || r.VanDe || 'Risk/SOS',
+            module:'Risk/SOS', moduleId:'risk-sos',
+            owner: r.NguoiXuLy || r.Owner || '', deadline: dl,
+            reason: isOverdue(dl) ? 'Risk quá hạn' : 'Risk RAG Đỏ' });
+        }
+      });
+
+      // TO Actions — quá hạn hoặc chưa owner
+      (data.toActions || []).forEach(function(a) {
+        var st = String(a.Status || a.TrangThai || '').toLowerCase();
+        if (st.includes('done') || st.includes('hoàn')) return;
+        var dl = a.DueDate || a.Deadline || '';
+        var pic = String(a.PIC || a.Owner || '').trim().toLowerCase();
+        if (isOverdue(dl)) {
+          items.push({ priority:88, type:'overdue', icon:'⏰',
+            name: a.ActionItem || a.TenAction || 'TO Action',
+            module:'TO Action', moduleId:'to-action',
+            owner: a.PIC || a.Owner || '', deadline: dl, reason:'Quá hạn' });
+        } else if (!pic || pic === 'tbd' || pic === 'cần phân công') {
+          items.push({ priority:70, type:'other', icon:'👤',
+            name: a.ActionItem || a.TenAction || 'TO Action',
+            module:'TO Action', moduleId:'to-action',
+            owner:'Chưa có Owner', deadline: dl, reason:'Thiếu Owner' });
+        }
+      });
+
+      // CEO Projects — chưa cập nhật >7 ngày
+      (data.ceoProjects || []).forEach(function(p) {
+        var days = parseInt(p.NgayKhongCapNhat || 0, 10);
+        if (days > 7) {
+          items.push({ priority:65, type:'other', icon:'📊',
+            name: p.TenBanGhi || p.TenDuAn || 'Dự án CEO',
+            module:'CEO Tracker', moduleId:'ceo-tracker',
+            owner: p.NguoiPhuTrach || '', deadline:'',
+            reason:'Chưa cập nhật ' + days + 'n' });
+        }
+      });
+
+      // Meeting actions — mới nhất
+      (data.meetingActions || []).slice(0, 3).forEach(function(a) {
+        var st = String(a.Status || a.TrangThai || '').toLowerCase();
+        if (st.includes('done') || st.includes('hoàn')) return;
+        items.push({ priority:50, type:'other', icon:'📄',
+          name: a.ActionItem || a.NoiDung || 'Meeting Action',
+          module:'Biên bản họp', moduleId:'meeting-minutes',
+          owner: a.Owner || a.PIC || '', deadline: a.Deadline || '', reason:'Action họp' });
+      });
+
+      // LCC — có kế hoạch hành động
+      lccData.filter(function(d) { return d.coKeHoachHanhDong === 'Có'; }).slice(0, 3).forEach(function(d) {
+        items.push({ priority:30, type:'other', icon:'💬',
+          name: d.tenLuongChat, module:'Luồng chat', moduleId:'luong-chat',
+          owner:'', deadline: d.ngayCapNhat || '', reason:'Có kế hoạch HD' });
+      });
+
+      items.sort(function(a, b) { return b.priority - a.priority; });
+      items = items.slice(0, 10);
+
+      var listEl = document.getElementById('ov-priority-list');
+      if (!listEl) return;
+
+      if (!items.length) {
+        listEl.innerHTML = '<div class="ov-empty-state">✅ Không có mục ưu tiên nào đang chờ xử lý.</div>';
+        return;
+      }
+
+      listEl.innerHTML = items.map(function(item, idx) {
+        var tc = item.type === 'ceo' ? 'prio-ceo' : item.type === 'overdue' ? 'prio-overdue' : item.type === 'red' ? 'prio-red' : 'prio-other';
+        var rc = item.type === 'ceo' ? 'r-ceo' : item.type === 'overdue' ? 'r-overdue' : item.type === 'red' ? 'r-red' : 'r-other';
+        var mod = item.moduleId;
+        return '<div class="ov-priority-item ' + tc + '">' +
+          '<div class="ov-pi-num">' + (idx+1) + '</div>' +
+          '<div class="ov-pi-name" title="' + safe(item.name) + '">' + item.icon + ' ' + safe(item.name) + '</div>' +
+          '<div class="ov-pi-module">' + safe(item.module) + '</div>' +
+          '<div class="ov-pi-owner" title="' + safe(item.owner) + '">' + safe(item.owner || '—') + '</div>' +
+          '<div class="ov-pi-deadline">' + safe(item.deadline || '—') + '</div>' +
+          '<span class="ov-pi-reason ' + rc + '">' + safe(item.reason) + '</span>' +
+          '<button class="ov-pi-btn" onclick="switchModule(\'' + safeForJs(mod) + '\',document.querySelector(\'[data-module=' + mod + ']\'))">Xem →</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function ovBuildActivityFeed(data) {
+      var activities = [];
+      var now = new Date();
+
+      function parseDate(s) { if (!s) return null; var d = new Date(s); return isNaN(d) ? null : d; }
+      function fmtAgo(d) {
+        var m = Math.floor((now - d) / 60000);
+        if (m < 60) return m + ' phút trước';
+        m = Math.floor(m / 60);
+        if (m < 24) return m + ' giờ trước';
+        return Math.floor(m / 24) + ' ngày trước';
+      }
+
+      (data.pmoActions || []).forEach(function(a) {
+        var d = parseDate(a.NgayCapNhat || a.UpdatedAt);
+        if (d) activities.push({ date:d, badge:'PMO', content: a.TenCongViec || a.ActionItem || 'PMO Action', owner: a.Owner || a.PIC || '', mod:'pmo' });
+      });
+
+      (data.ceoProjects || []).forEach(function(p) {
+        var d = parseDate(p.NgayCapNhatGanNhat || p.NgayCapNhat);
+        if (d) activities.push({ date:d, badge:'CEO Tracker', content: p.TenBanGhi || p.TenDuAn || 'Dự án', owner: p.NguoiPhuTrach || '', mod:'ceo-tracker' });
+      });
+
+      (data.meetingMinutes || []).forEach(function(m) {
+        var d = parseDate(m.NgayHop || m.CreatedAt || m.NgayTao);
+        if (d) activities.push({ date:d, badge:'Biên bản', content: m.TenBienBan || m.Topic || m.TieuDe || 'Biên bản họp', owner: m.NguoiTao || '', mod:'meeting-minutes' });
+      });
+
+      (data.risks || []).forEach(function(r) {
+        var d = parseDate(r.NgayCapNhat || r.CreatedAt);
+        if (d) activities.push({ date:d, badge:'Risk/SOS', content: r.TenRuiRo || r.VanDe || 'Risk/SOS', owner: r.NguoiXuLy || '', mod:'risk-sos' });
+      });
+
+      (data.decisions || []).forEach(function(d) {
+        var dt = parseDate(d.NgayCapNhat || d.CreatedAt);
+        if (dt) activities.push({ date:dt, badge:'CEO Decision', content: d.Decision || d.TenQuyetDinh || 'Decision', owner: d.Owner || '', mod:'ceo-decision' });
+      });
+
+      lccData.forEach(function(d) {
+        var dt = parseDate(d.ngayCapNhat);
+        if (dt) activities.push({ date:dt, badge:'Luồng chat', content: d.tenLuongChat, owner:'', mod:'luong-chat' });
+      });
+
+      activities.sort(function(a, b) { return b.date - a.date; });
+      activities = activities.slice(0, 10);
+
+      var listEl = document.getElementById('ov-activity-list');
+      if (!listEl) return;
+
+      if (!activities.length) {
+        listEl.innerHTML = '<div class="ov-empty-state">Chưa có dữ liệu cập nhật gần đây.</div>';
+        return;
+      }
+
+      listEl.innerHTML = activities.map(function(a) {
+        var mod = a.mod;
+        return '<div class="ov-activity-item">' +
+          '<span class="ov-act-time">' + safe(fmtAgo(a.date)) + '</span>' +
+          '<span class="ov-act-badge">' + safe(a.badge) + '</span>' +
+          '<div class="ov-act-content" title="' + safe(a.content) + '">' + safe(a.content) + '</div>' +
+          '<span class="ov-act-owner">' + safe(a.owner) + '</span>' +
+          '<button class="ov-act-btn" onclick="switchModule(\'' + safeForJs(mod) + '\',document.querySelector(\'[data-module=' + mod + ']\'))">Xem</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function ovToggleSection(bodyId, btn) {
+      var body = document.getElementById(bodyId);
+      if (!body) return;
+      var collapsed = body.style.display === 'none';
+      body.style.display = collapsed ? '' : 'none';
+      btn.textContent = collapsed ? 'Thu gọn ▲' : 'Mở rộng ▼';
+    }
+
+    function ovShowNewsletter() {
+      var modal = document.getElementById('ov-newsletter-modal');
+      if (!modal) return;
+      modal.classList.add('open');
+      document.getElementById('ov-newsletter-body').innerHTML = ovBuildNewsletterHTML();
+    }
+
+    function ovCloseNewsletter() {
+      var modal = document.getElementById('ov-newsletter-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function ovBuildNewsletterHTML() {
+      var data = dashboardCache || {};
+      var cc   = data.commandCenterSummary || {};
+      var now  = new Date();
+      var dateStr = now.getDate() + '/' + (now.getMonth()+1) + '/' + now.getFullYear();
+      var totalOverdue = (cc.toActionsOverdue||0)+(cc.risksOverdue||0)+(cc.decisionsOverdue||0)+(cc.projectsOverdue||0);
+      var totalRed     = (cc.red||0)+(cc.risksRed||0)+(cc.projectsRed||0);
+      var decPending   = cc.decisionsPending || 0;
+      var lccCo = lccData.filter(function(d){ return d.coKeHoachHanhDong==='Có'; }).length;
+      var lccChot = lccData.filter(function(d){ return d.coNoiDungChuTichChot; }).length;
+
+      var sections = [];
+
+      sections.push({ title:'📊 Tình hình chung — ' + dateStr, lines:[
+        'Tổng action đang theo dõi: ' + (cc.totalActions || '—'),
+        'Việc quá hạn: ' + totalOverdue,
+        'RAG Đỏ: ' + totalRed,
+        'CEO cần quyết: ' + decPending,
+        'Dự án Risk/SOS đang mở: ' + (cc.risksOpen || 0),
+        'Luồng chat: ' + lccData.length + ' luồng (' + lccCo + ' có kế hoạch · ' + lccChot + ' đã Chủ tịch chốt)'
+      ]});
+
+      var ceoPend = (data.decisions||[]).filter(function(d){ var s=String(d.Status||d.TrangThai||'').toLowerCase(); return !s||s.includes('chờ')||s.includes('pending'); });
+      if (ceoPend.length) {
+        sections.push({ title:'✅ CEO cần quyết (' + ceoPend.length + ' mục)', lines: ceoPend.slice(0,5).map(function(d,i){ return (i+1)+'. '+(d.Decision||d.TenQuyetDinh||'Decision')+(d.Deadline?' — Hạn: '+d.Deadline:''); }) });
+      }
+
+      var overdueItems = [];
+      (data.pmoActions||[]).forEach(function(a){ if(a.Deadline&&new Date(a.Deadline)<now&&!String(a.TrangThai||'').toLowerCase().includes('done')) overdueItems.push('[PMO] '+(a.TenCongViec||a.ActionItem||'PMO Action')); });
+      (data.toActions||[]).forEach(function(a){ var dl=a.DueDate||a.Deadline||''; if(dl&&new Date(dl)<now&&!String(a.Status||'').toLowerCase().includes('done')) overdueItems.push('[TO] '+(a.ActionItem||a.TenAction||'TO Action')); });
+      if (overdueItems.length) {
+        sections.push({ title:'⏰ Việc quá hạn (' + overdueItems.length + ' mục)', lines: overdueItems.slice(0,6).map(function(s,i){ return (i+1)+'. '+s; }) });
+      }
+
+      var atRiskProj = (data.ceoProjects||[]).filter(function(p){ var days=parseInt(p.NgayKhongCapNhat||0,10); var rag=String(p.RAG||'').toLowerCase(); return days>7||rag.includes('red')||rag.includes('đỏ'); });
+      if (atRiskProj.length) {
+        sections.push({ title:'🔴 Dự án cần chú ý (' + atRiskProj.length + ')', lines: atRiskProj.slice(0,5).map(function(p,i){ var d=parseInt(p.NgayKhongCapNhat||0,10); return (i+1)+'. '+(p.TenBanGhi||p.TenDuAn||'Dự án')+(d>7?' — Chưa CN '+d+'n':'')+(p.RAG?' — '+p.RAG:''); }) });
+      }
+
+      var openRisks = (data.risks||[]).filter(function(r){ var s=String(r.TrangThai||r.Status||'').toLowerCase(); return !s.includes('đã xử')&&!s.includes('closed'); });
+      if (openRisks.length) {
+        sections.push({ title:'🚨 Risk/SOS đang mở (' + openRisks.length + ')', lines: openRisks.slice(0,5).map(function(r,i){ return (i+1)+'. '+(r.TenRuiRo||r.VanDe||'Risk')+' — '+(r.TrangThai||'Đang mở'); }) });
+      }
+
+      if (lccData.length) {
+        sections.push({ title:'💬 Luồng chat Chủ tịch (' + lccData.length + ')', lines: lccData.slice(0,5).map(function(d,i){ return (i+1)+'. '+d.tenLuongChat+(d.coNoiDungChuTichChot?' [Đã chốt]':'')+(d.coKeHoachHanhDong==='Có'?' [Có KH]':''); }) });
+      }
+
+      if (!sections.length) return '<div class="ov-empty-state">Chưa có dữ liệu. Vui lòng tải lại trang.</div>';
+
+      return sections.map(function(s) {
+        return '<div class="ov-modal-section">' +
+          '<div class="ov-modal-section-title">' + safe(s.title) + '</div>' +
+          '<div class="ov-modal-text">' + s.lines.map(safe).join('\n') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function ovCopyNewsletter() {
+      var data = dashboardCache || {};
+      var cc   = data.commandCenterSummary || {};
+      var now  = new Date();
+      var days = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+      var dateStr = days[now.getDay()] + ' ' + now.getDate() + '/' + (now.getMonth()+1) + '/' + now.getFullYear();
+
+      var totalOverdue = (cc.toActionsOverdue||0)+(cc.risksOverdue||0)+(cc.decisionsOverdue||0)+(cc.projectsOverdue||0);
+      var totalRed     = (cc.red||0)+(cc.risksRed||0)+(cc.projectsRed||0);
+      var decPending   = cc.decisionsPending || 0;
+      var lccCo   = lccData.filter(function(d){ return d.coKeHoachHanhDong==='Có'; }).length;
+      var lccChot = lccData.filter(function(d){ return d.coNoiDungChuTichChot; }).length;
+
+      var sep = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+      var txt = '📰 BẢN TIN CEO — GSP NEXT 30\n';
+      txt += '📅 ' + dateStr + '\n' + sep + '\n\n';
+
+      txt += '📊 TÌNH HÌNH CHUNG\n';
+      txt += '• Tổng action: ' + (cc.totalActions||'—') + '\n';
+      txt += '• Quá hạn: ' + totalOverdue + '\n';
+      txt += '• RAG Đỏ: ' + totalRed + '\n';
+      txt += '• CEO cần quyết: ' + decPending + '\n';
+      txt += '• Risk/SOS mở: ' + (cc.risksOpen||0) + '\n';
+      txt += '• Luồng chat: ' + lccData.length + ' (' + lccCo + ' có KH · ' + lccChot + ' đã chốt)\n\n';
+
+      var ceoPend = (data.decisions||[]).filter(function(d){ var s=String(d.Status||d.TrangThai||'').toLowerCase(); return !s||s.includes('chờ')||s.includes('pending'); });
+      if (ceoPend.length) {
+        txt += '✅ CEO CẦN QUYẾT (' + ceoPend.length + ')\n';
+        ceoPend.slice(0,5).forEach(function(d,i){ txt += (i+1)+'. '+(d.Decision||d.TenQuyetDinh||'Decision')+(d.Deadline?' — Hạn: '+d.Deadline:'')+'\n'; });
+        txt += '\n';
+      }
+
+      var od = [];
+      (data.pmoActions||[]).forEach(function(a){ if(a.Deadline&&new Date(a.Deadline)<now&&!String(a.TrangThai||'').toLowerCase().includes('done')) od.push('[PMO] '+(a.TenCongViec||a.ActionItem||'Action')); });
+      (data.toActions||[]).forEach(function(a){ var dl=a.DueDate||a.Deadline||''; if(dl&&new Date(dl)<now&&!String(a.Status||'').toLowerCase().includes('done')) od.push('[TO] '+(a.ActionItem||a.TenAction||'Action')); });
+      if (od.length) {
+        txt += '⏰ VIỆC QUÁ HẠN (' + od.length + ')\n';
+        od.slice(0,6).forEach(function(s,i){ txt += (i+1)+'. '+s+'\n'; });
+        txt += '\n';
+      }
+
+      var risks = (data.risks||[]).filter(function(r){ var s=String(r.TrangThai||r.Status||'').toLowerCase(); return !s.includes('đã xử')&&!s.includes('closed'); });
+      if (risks.length) {
+        txt += '🚨 RISK/SOS ĐANG MỞ (' + risks.length + ')\n';
+        risks.slice(0,5).forEach(function(r,i){ txt += (i+1)+'. '+(r.TenRuiRo||r.VanDe||'Risk')+' — '+(r.TrangThai||'Đang mở')+'\n'; });
+        txt += '\n';
+      }
+
+      if (lccData.length) {
+        txt += '💬 LUỒNG CHAT CHỦ TỊCH\n';
+        lccData.slice(0,5).forEach(function(d,i){ txt += (i+1)+'. '+d.tenLuongChat+(d.coNoiDungChuTichChot?' [Đã chốt]':'')+(d.coKeHoachHanhDong==='Có'?' [Có KH]':'')+'\n'; });
+        txt += '\n';
+      }
+
+      txt += sep + '\n🏭 GSP NEXT 30 · CEO Command Center';
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(txt).then(function(){ alert('✅ Đã sao chép bản tin CEO vào clipboard!'); });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('✅ Đã sao chép bản tin CEO!');
+      }
+    }
+
   </script>
 </body>
 </html>
