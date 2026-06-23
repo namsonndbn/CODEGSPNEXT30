@@ -1829,6 +1829,55 @@
     .toa-fcard-text { flex: 1; color: #374151; line-height: 1.35; min-width: 0; }
     .toa-fcard-meta { font-size: 10px; color: #9ca3af; margin-top: 1px; }
 
+    /* ── TO Action Center — Factory Panel view ── */
+    .toa-factory-panels { display:flex; flex-direction:column; gap:16px; padding-bottom:16px; }
+    .toa-factory-panel  { border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .toa-fp-hdr { display:flex; align-items:center; gap:12px; padding:14px 20px; background:#f8fafc; cursor:pointer; border-bottom:1px solid #e5e7eb; user-select:none; }
+    .toa-fp-hdr:hover { background:#f0fdf4; }
+    .toa-fp-name { font-size:16px; font-weight:800; min-width:56px; flex-shrink:0; }
+    .toa-fp-chips { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+    .toa-fp-chip { display:inline-flex; align-items:center; gap:3px; padding:3px 9px; border-radius:20px; font-size:11.5px; font-weight:700; white-space:nowrap; }
+    .toa-fp-chip.fc-red    { background:#fee2e2; color:#991b1b; }
+    .toa-fp-chip.fc-amber  { background:#fef3c7; color:#92400e; }
+    .toa-fp-chip.fc-green  { background:#d1fae5; color:#065f46; }
+    .toa-fp-chip.fc-gray   { background:#f3f4f6; color:#374151; }
+    .toa-fp-chip.fc-purple { background:#f5f3ff; color:#5b21b6; }
+    .toa-fp-toggle { margin-left:auto; padding:4px 10px; border:1px solid #d1d5db; border-radius:6px; background:#fff; font-size:12px; cursor:pointer; color:#6b7280; white-space:nowrap; flex-shrink:0; }
+    .toa-fp-body { padding:16px 20px; display:flex; flex-direction:column; gap:14px; }
+    .toa-fp-summary { display:flex; flex-wrap:wrap; gap:8px 16px; padding:10px 14px; background:#f8fffe; border-radius:8px; border:1px solid #d1fae5; font-size:12px; color:#374151; }
+    .toa-fps-item strong { color:#064e3b; }
+    .toa-fp-sec { border-top:1px solid #f3f4f6; padding-top:12px; }
+    .toa-fp-sec-title { font-size:13px; font-weight:700; color:#374151; margin-bottom:8px; }
+    .toa-issue-cards { display:flex; flex-direction:column; gap:5px; }
+    .toa-issue-card { display:grid; grid-template-columns:80px 1fr auto auto; gap:8px; align-items:start; padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fafafa; font-size:12px; }
+    .toa-issue-card.ic-red   { border-left:3px solid #dc2626; background:#fff5f5; }
+    .toa-issue-card.ic-amber { border-left:3px solid #d97706; background:#fffbeb; }
+    .toa-issue-card.ic-green { border-left:3px solid #059669; background:#f0fdf4; }
+    .toa-issue-card.ic-gray  { border-left:3px solid #9ca3af; }
+    .toa-ic-area { font-size:11px; font-weight:600; color:#374151; padding-top:2px; }
+    .toa-ic-desc { font-weight:600; color:#111827; line-height:1.35; }
+    .toa-ic-meta { font-size:11px; color:#6b7280; margin-top:2px; }
+    .toa-banto-box { background:#f0fdf4; border-radius:8px; border:1px solid #a7f3d0; padding:10px 14px; font-size:12.5px; color:#374151; }
+    .toa-banto-row { padding:3px 0; border-bottom:1px solid #d1fae5; }
+    .toa-banto-row:last-child { border-bottom:none; }
+    .toa-banto-empty { color:#9ca3af; font-style:italic; font-size:12.5px; }
+    .toa-action-list { display:flex; flex-direction:column; gap:4px; }
+    .toa-action-row { display:grid; grid-template-columns:1fr auto auto auto; gap:6px; align-items:center; padding:7px 12px; border-radius:7px; border:1px solid #e5e7eb; font-size:12.5px; background:#fff; }
+    .toa-action-row.ar-overdue { background:#fff5f5; border-left:3px solid #dc2626; }
+    .toa-action-row.ar-noowner { background:#fffbeb; border-left:3px solid #d97706; }
+    .toa-action-row.ar-ceo     { background:#faf5ff; border-left:3px solid #7c3aed; }
+    .toa-ar-name { font-weight:600; color:#111827; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .toa-ar-sub  { font-size:11px; color:#6b7280; margin-top:1px; }
+    .toa-ceo-panel { background:#faf5ff; border-radius:8px; padding:10px 14px; border:1px solid #ddd6fe; }
+    .toa-ceo-panel-title { font-size:11.5px; font-weight:700; margin-bottom:6px; }
+    .toa-ceo-row { padding:5px 0; border-bottom:1px solid #ede9fe; font-size:12px; line-height:1.4; }
+    .toa-ceo-row:last-child { border-bottom:none; }
+    .toa-see-all { margin-top:8px; display:inline-block; padding:5px 14px; background:#f0fdf4; border:1px solid #a7f3d0; border-radius:6px; color:#064e3b; font-size:12px; font-weight:600; cursor:pointer; }
+    .toa-see-all:hover { background:#d1fae5; }
+    .toa-back-bar { margin-bottom:12px; }
+    .toa-back-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#f0fdf4; border:1px solid #a7f3d0; border-radius:6px; color:#064e3b; font-size:12px; cursor:pointer; font-weight:600; }
+    .toa-back-btn:hover { background:#d1fae5; }
+
     /* ── LUỒNG CHAT CHỦ TỊCH (lcc-) ── */
     .lcc-toolbar { display:flex; align-items:center; justify-content:space-between; padding:16px 24px 12px; flex-wrap:wrap; gap:10px; }
     .lcc-toolbar h2 { margin:0; font-size:20px; font-weight:800; color:#064e3b; }
@@ -2942,14 +2991,14 @@
     </div>
     <div id="toa-area-grid" class="toa-area-grid"></div>
 
-    <div class="toa-section-hdr">⚡ Tình hình xử lý action</div>
+    <div class="toa-section-hdr">⚡ Tình hình xử lý công việc</div>
     <div class="mod-summary-bar">
-      <div class="mod-summary-card"><div class="mod-summary-val" id="toa-act-total">—</div><div class="mod-summary-lbl">Tổng action</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val" id="toa-act-total">—</div><div class="mod-summary-lbl">Tổng công việc</div></div>
       <div class="mod-summary-card"><div class="mod-summary-val blue" id="toa-act-inprogress">—</div><div class="mod-summary-lbl">🔵 Đang xử lý</div></div>
       <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-overdue">—</div><div class="mod-summary-lbl">⏰ Quá hạn</div></div>
       <div class="mod-summary-card"><div class="mod-summary-val green" id="toa-act-done">—</div><div class="mod-summary-lbl">✅ Hoàn thành</div></div>
       <div class="mod-summary-card"><div class="mod-summary-val red" id="toa-act-noowner">—</div><div class="mod-summary-lbl">❓ Chờ phân công</div></div>
-      <div class="mod-summary-card"><div class="mod-summary-val gold" id="toa-act-ceo">—</div><div class="mod-summary-lbl">👑 CEO cần chốt</div></div>
+      <div class="mod-summary-card"><div class="mod-summary-val gold" id="toa-act-ceo">—</div><div class="mod-summary-lbl">👑 CEO cần biết</div></div>
     </div>
 
     <div class="toa-factory-bar" id="toa-factory-bar">
@@ -6088,6 +6137,7 @@ APS - S&OP - KHO - SẢN XUẤT",
     var toaCache          = null;
     var toaActiveTab      = 'all';
     var toaActiveFactory  = 'all';
+    var toaPanelView      = true;
 
     function loadTOActions() {
       var contentEl = document.getElementById('toa-content');
@@ -6212,6 +6262,8 @@ APS - S&OP - KHO - SẢN XUẤT",
 
       // ── Update all summary cards (respects factory filter) ──
       toaUpdateFactoryCounts();
+      // ── Render factory panels (replaces old table/tab view) ──
+      toaRenderFactoryPanels(data);
     }
 
     // Lọc records theo nhà máy đang active
@@ -6352,6 +6404,7 @@ APS - S&OP - KHO - SẢN XUẤT",
       document.querySelectorAll('.toa-ftab').forEach(function(b) { b.classList.remove('active'); });
       if (el) el.classList.add('active');
       toaUpdateFactoryCounts();
+      if (toaPanelView) toaRenderFactoryPanels(toaCache);
     }
 
     function toaRenderAreaGrid(byArea) {
@@ -6498,6 +6551,260 @@ APS - S&OP - KHO - SẢN XUẤT",
         html += '</div>'; // toa-factory-card
       });
       grid.innerHTML = html;
+    }
+
+    /* ── TO Action Center — Factory Panel functions ── */
+
+    function toaRenderFactoryPanels(data) {
+      toaPanelView = true;
+      // Hide old CEO quick view section and tab bar in panel mode
+      var cqvHdr = document.getElementById('toa-cqv-hdr');
+      var cqv    = document.getElementById('toa-ceo-quick-view');
+      var tabs   = document.querySelector('.toa-tabs');
+      if (cqvHdr) cqvHdr.style.display = 'none';
+      if (cqv)    cqv.style.display    = 'none';
+      if (tabs)   tabs.style.display   = 'none';
+
+      var el = document.getElementById('toa-content');
+      if (!el) return;
+
+      var d         = data || toaCache || {};
+      var allIssues = d.issues  || [];
+      var allActions= d.actions || [];
+
+      // Build factory list — always show GS1 and GS5 if they have data
+      var factories = (d.factories && d.factories.length) ? d.factories.slice() : [];
+      ['GS1','GS5'].forEach(function(f) {
+        if (factories.indexOf(f) < 0) {
+          var has = allIssues.some(function(r){ return String(r.Factory||'').trim()===f; })
+                 || allActions.some(function(r){ return String(r.Factory||'').trim()===f; });
+          if (has) factories.push(f);
+        }
+      });
+
+      var showFact = toaActiveFactory === 'all' ? factories : [toaActiveFactory];
+      if (!showFact.length) {
+        el.innerHTML = '<div style="padding:32px;text-align:center;color:#9ca3af;font-size:13px">Không có dữ liệu cho nhà máy này.</div>';
+        return;
+      }
+
+      var html = '<div class="toa-factory-panels">';
+      showFact.forEach(function(factory) {
+        var fIss = allIssues.filter(function(r){ return String(r.Factory||'').trim()===factory; });
+        var fAct = allActions.filter(function(r){ return String(r.Factory||'').trim()===factory; });
+        html += toaBuildFactoryPanel(factory, fIss, fAct);
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    function toaBuildFactoryPanel(factory, issues, actions) {
+      var nameColor = factory === 'GS1' ? '#064e3b' : '#1d4ed8';
+
+      function isNoOwn(r){ var p=String(r.PIC||'').trim().toLowerCase(); return !p||p==='cần phân công'||p==='tbd'||p==='chưa có'||p==='chua co'; }
+      function hasCEO(r){ var n=String(r.CEONote||'').trim().toLowerCase(); return n&&n!=='không'&&n!=='no'; }
+
+      var redIss  = issues.filter(function(r){ return /red|đỏ/i.test(r.RAG||''); }).length;
+      var ovActs  = actions.filter(function(r){ return r.IsOverdue; }).length;
+      var noOwn   = actions.filter(isNoOwn).length;
+      var ceoActs = actions.filter(hasCEO).length;
+
+      var chips = '';
+      if (redIss  > 0) chips += '<span class="toa-fp-chip fc-red">🔴 '+redIss+' vấn đề nghiêm trọng</span>';
+      if (ovActs  > 0) chips += '<span class="toa-fp-chip fc-red">⏰ '+ovActs+' quá hạn</span>';
+      if (noOwn   > 0) chips += '<span class="toa-fp-chip fc-amber">⚠ '+noOwn+' chưa phân công</span>';
+      if (ceoActs > 0) chips += '<span class="toa-fp-chip fc-purple">👑 '+ceoActs+' cần CEO</span>';
+      if (!chips)      chips  = '<span class="toa-fp-chip fc-green">✅ Không có cảnh báo</span>';
+
+      return '<div class="toa-factory-panel" id="toa-panel-'+factory+'">'
+        + '<div class="toa-fp-hdr" onclick="toaTogglePanel(\''+factory+'\')">'
+        + '<span class="toa-fp-name" style="color:'+nameColor+'">🏭 '+factory+'</span>'
+        + '<div class="toa-fp-chips">'+chips+'</div>'
+        + '<button class="toa-fp-toggle" id="toa-fp-tog-'+factory+'">Thu gọn ▲</button>'
+        + '</div>'
+        + '<div class="toa-fp-body" id="toa-fpb-'+factory+'">'
+        + toaBuildFpSummary(factory, issues, actions)
+        + toaBuildFpTopIssues(factory, issues)
+        + toaBuildFpBanTO(factory, issues, actions)
+        + toaBuildFpPriorityActions(factory, actions)
+        + toaBuildFpCEO(factory, actions)
+        + '</div>'
+        + '</div>';
+    }
+
+    function toaBuildFpSummary(factory, issues, actions) {
+      var reporters = {}, areas = [], latestDate = '';
+      issues.forEach(function(r) {
+        if (r.Reporter) reporters[r.Reporter] = 1;
+        if (r.Area && areas.indexOf(r.Area) < 0) areas.push(r.Area);
+        if (r.ReportDate && String(r.ReportDate) > latestDate) latestDate = String(r.ReportDate);
+      });
+      function isNoOwn(r){ var p=String(r.PIC||'').trim().toLowerCase(); return !p||p==='cần phân công'||p==='tbd'||p==='chưa có'; }
+      var repList = Object.keys(reporters);
+      var redIss  = issues.filter(function(r){ return /red|đỏ/i.test(r.RAG||''); }).length;
+      var done    = actions.filter(function(r){ return /done|hoàn thành|hoan thanh/i.test(r.Status||''); }).length;
+      var overdue = actions.filter(function(r){ return r.IsOverdue; }).length;
+      var noOwn   = actions.filter(isNoOwn).length;
+      var ceoN    = actions.filter(function(r){ var n=String(r.CEONote||'').trim().toLowerCase(); return n&&n!=='không'&&n!=='no'; }).length;
+
+      var items = [];
+      if (repList.length) items.push('<span class="toa-fps-item">👷 <strong>Người ghi nhận:</strong> '+safe(repList.join(', '))+'</span>');
+      if (latestDate)     items.push('<span class="toa-fps-item">📅 <strong>Gần nhất:</strong> '+safe(latestDate)+'</span>');
+      if (areas.length)   items.push('<span class="toa-fps-item">📍 <strong>Khu vực:</strong> '+safe(areas.slice(0,4).join(', '))+(areas.length>4?'…':'')+'</span>');
+      items.push('<span class="toa-fps-item">🔍 <strong>Vấn đề:</strong> '+issues.length+(redIss?' <span style="color:#dc2626">('+redIss+' đỏ)</span>':'')+'</span>');
+      items.push('<span class="toa-fps-item">⚡ <strong>Công việc:</strong> '+actions.length+'</span>');
+      if (overdue) items.push('<span class="toa-fps-item" style="color:#dc2626">⏰ <strong>Quá hạn:</strong> '+overdue+'</span>');
+      if (noOwn)   items.push('<span class="toa-fps-item" style="color:#d97706">⚠ <strong>Chưa phân công:</strong> '+noOwn+'</span>');
+      items.push('<span class="toa-fps-item" style="color:#15803d">✅ <strong>Xong:</strong> '+done+'</span>');
+      if (ceoN)    items.push('<span class="toa-fps-item" style="color:#7c3aed">👑 <strong>CEO cần biết:</strong> '+ceoN+'</span>');
+
+      return '<div class="toa-fp-summary">'+items.join('<span style="color:#d1d5db;padding:0 4px">·</span>')+'</div>';
+    }
+
+    function toaBuildFpTopIssues(factory, issues) {
+      var sorted = issues.slice().sort(function(a,b){
+        var w={Red:0,Amber:1,Green:2};
+        return (w[a.RAG]!==undefined?w[a.RAG]:1)-(w[b.RAG]!==undefined?w[b.RAG]:1);
+      });
+      var top = sorted.slice(0,5);
+      var html = '<div class="toa-fp-sec">'
+        + '<div class="toa-fp-sec-title">🔍 Vấn đề nổi bật ('+issues.length+' vấn đề)</div>'
+        + '<div class="toa-issue-cards">';
+      if (!top.length) {
+        html += '<div class="toa-banto-empty">Chưa có vấn đề nào được ghi nhận.</div>';
+      } else {
+        top.forEach(function(r){
+          var rc = /red|đỏ/i.test(r.RAG||'')?'ic-red':(/amber|vàng/i.test(r.RAG||'')?'ic-amber':(/green|xanh/i.test(r.RAG||'')?'ic-green':'ic-gray'));
+          html += '<div class="toa-issue-card '+rc+'">'
+            + '<span class="toa-ic-area">'+safe(r.Area||'—')+'</span>'
+            + '<div><div class="toa-ic-desc">'+safe(r.Description||r.IssueType||'—')+'</div>'
+            + '<div class="toa-ic-meta">'
+            +(r.Reporter?'👤 '+safe(r.Reporter)+' · ':'')
+            +(r.ReportDate?safe(r.ReportDate):'')
+            +(r.ActionIDRef?' · 📋 '+safe(r.ActionIDRef):' · Chưa có công việc liên kết')
+            +'</div></div>'
+            + modRagBadge(r.RAG)
+            + modStatusBadge(r.Status)
+            + '</div>';
+        });
+      }
+      html += '</div>';
+      if (issues.length > 5) {
+        html += '<button class="toa-see-all" onclick="toaShowAllIssues(\''+factory+'\')">Xem tất cả vấn đề '+factory+' ('+issues.length+') →</button>';
+      }
+      return html + '</div>';
+    }
+
+    function toaBuildFpBanTO(factory, issues, actions) {
+      var activities = [];
+      var areas = {}, reporters = {};
+      issues.forEach(function(r){ if(r.Area) areas[r.Area]=(areas[r.Area]||0)+1; if(r.Reporter) reporters[r.Reporter]=1; });
+      var areaList = Object.keys(areas), repList = Object.keys(reporters);
+      var doneActs = actions.filter(function(r){ return /done|hoàn thành/i.test(r.Status||''); });
+      if (areaList.length) activities.push('🔍 Khảo sát '+areaList.length+' khu vực: '+areaList.slice(0,3).join(', ')+(areaList.length>3?'…':''));
+      if (repList.length)  activities.push('👷 Người ghi nhận: '+repList.join(', '));
+      if (issues.length)   activities.push('📋 Ghi nhận '+issues.length+' vấn đề, giao '+actions.length+' công việc xử lý');
+      if (doneActs.length) activities.push('✅ Đã hoàn thành '+doneActs.length+' công việc');
+      var html = '<div class="toa-fp-sec"><div class="toa-fp-sec-title">👷 Ban TO đã làm gì</div><div class="toa-banto-box">';
+      if (!activities.length) {
+        html += '<div class="toa-banto-empty">Chưa cập nhật hoạt động xử lý của Ban TO.</div>';
+      } else {
+        activities.slice(0,3).forEach(function(a){ html += '<div class="toa-banto-row">'+safe(a)+'</div>'; });
+      }
+      return html + '</div></div>';
+    }
+
+    function toaBuildFpPriorityActions(factory, actions) {
+      function isNoOwn(r){ var p=String(r.PIC||'').trim().toLowerCase(); return !p||p==='cần phân công'||p==='tbd'||p==='chưa có'; }
+      function hasCEO(r){ var n=String(r.CEONote||'').trim().toLowerCase(); return n&&n!=='không'&&n!=='no'; }
+      var notDone = actions.filter(function(r){ return !/done|hoàn thành|hoan thanh/i.test(r.Status||''); });
+      var priority = notDone.filter(function(r){
+        return r.IsOverdue||isNoOwn(r)||/red|đỏ/i.test(r.RAG||'')||/blocked|vướng/i.test(r.Status||'')||hasCEO(r);
+      }).sort(function(a,b){
+        var sa=a.IsOverdue?0:(isNoOwn(a)?1:(/red|đỏ/i.test(a.RAG||'')?2:3));
+        var sb=b.IsOverdue?0:(isNoOwn(b)?1:(/red|đỏ/i.test(b.RAG||'')?2:3));
+        return sa-sb;
+      });
+      var show = priority.slice(0,5);
+      var html = '<div class="toa-fp-sec"><div class="toa-fp-sec-title">⚡ Công việc cần chú ý ('+actions.length+' tổng)</div><div class="toa-action-list">';
+      if (!show.length) {
+        html += '<div class="toa-banto-empty">Không có công việc nào cần ưu tiên xử lý.</div>';
+      } else {
+        show.forEach(function(r){
+          var rc=r.IsOverdue?'ar-overdue':(isNoOwn(r)?'ar-noowner':(hasCEO(r)?'ar-ceo':''));
+          html += '<div class="toa-action-row '+rc+'">'
+            + '<div><div class="toa-ar-name">'+safe(r.Action)+'</div>'
+            + '<div class="toa-ar-sub">'+safe(r.Area||'')+(r.PIC?' · 👤 '+safe(r.PIC):'')+'</div></div>'
+            + '<span style="font-size:11.5px;color:#374151;white-space:nowrap">'+safe(r.Deadline||'—')+(r.IsOverdue?' <span style="color:#dc2626;font-size:10px;font-weight:700">QH</span>':'')+'</span>'
+            + modRagBadge(r.RAG)
+            + modStatusBadge(r.Status)
+            + '</div>';
+        });
+      }
+      html += '</div>';
+      if (actions.length > 5 || priority.length > 5) {
+        html += '<button class="toa-see-all" onclick="toaShowAllActions(\''+factory+'\')">Xem tất cả công việc '+factory+' ('+actions.length+') →</button>';
+      }
+      return html + '</div>';
+    }
+
+    function toaBuildFpCEO(factory, actions) {
+      function hasCEONote(r){ var n=String(r.CEONote||'').trim().toLowerCase(); return n&&n!=='không'&&n!=='no'; }
+      function hasCEODec(r){ var n=String(r.CEODecision||'').trim().toLowerCase(); return n&&n!=='không'&&n!=='no'; }
+      var notes = actions.filter(hasCEONote).slice(0,3);
+      var decs  = actions.filter(hasCEODec).slice(0,3);
+      if (!notes.length && !decs.length) return '';
+      var html = '<div class="toa-fp-sec"><div class="toa-ceo-panel">';
+      if (notes.length) {
+        html += '<div class="toa-ceo-panel-title" style="color:#7c3aed">📢 CEO cần biết ('+notes.length+'):</div>';
+        notes.forEach(function(r){
+          html += '<div class="toa-ceo-row"><strong>'+safe(r.Action)+'</strong><br>'
+            + '<span style="color:#5b21b6">'+safe(r.CEONote)+'</span>'
+            + '<span style="color:#9ca3af;font-size:11px;margin-left:8px">· '+safe(r.PIC||'—')+' · '+safe(r.Deadline||'—')+'</span>'
+            + '</div>';
+        });
+      }
+      if (decs.length) {
+        html += '<div class="toa-ceo-panel-title" style="color:#d97706;margin-top:8px">✅ CEO cần chốt ('+decs.length+'):</div>';
+        decs.forEach(function(r){
+          html += '<div class="toa-ceo-row"><strong>'+safe(r.Action)+'</strong><br>'
+            + '<span style="color:#b45309">'+safe(r.CEODecision)+'</span>'
+            + '<span style="color:#9ca3af;font-size:11px;margin-left:8px">· '+safe(r.PIC||'—')+' · '+safe(r.Deadline||'—')+'</span>'
+            + '</div>';
+        });
+      }
+      return html + '</div></div>';
+    }
+
+    function toaTogglePanel(factory) {
+      var body = document.getElementById('toa-fpb-'+factory);
+      var btn  = document.getElementById('toa-fp-tog-'+factory);
+      if (!body||!btn) return;
+      var hidden = body.style.display === 'none';
+      body.style.display = hidden ? '' : 'none';
+      btn.textContent    = hidden ? 'Thu gọn ▲' : 'Mở rộng ▼';
+    }
+
+    function toaShowAllIssues(factory) {
+      toaPanelView = false;
+      var el = document.getElementById('toa-content');
+      if (!el||!toaCache) return;
+      var issues = (toaCache.issues||[]).filter(function(r){ return String(r.Factory||'').trim()===factory; });
+      toaRenderIssuesTable(issues);
+      el.innerHTML = '<div class="toa-back-bar"><button class="toa-back-btn" onclick="toaGoBack()">← Quay lại</button></div>' + el.innerHTML;
+    }
+
+    function toaShowAllActions(factory) {
+      toaPanelView = false;
+      var el = document.getElementById('toa-content');
+      if (!el||!toaCache) return;
+      var acts = (toaCache.actions||[]).filter(function(r){ return String(r.Factory||'').trim()===factory; });
+      toaRenderActionsTable(acts, '📋 Tất cả công việc '+factory);
+      el.innerHTML = '<div class="toa-back-bar"><button class="toa-back-btn" onclick="toaGoBack()">← Quay lại</button></div>' + el.innerHTML;
+    }
+
+    function toaGoBack() {
+      toaRenderFactoryPanels(toaCache);
     }
 
     function toaSwitchTab(tab, el) {
