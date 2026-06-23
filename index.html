@@ -1889,6 +1889,57 @@
     .ov-modal-footer { padding:12px 24px 20px; border-top:1px solid #e5e7eb; display:flex; gap:10px; flex-wrap:wrap; }
     .ov-empty-state { padding:24px; text-align:center; color:#9ca3af; background:white; border-radius:10px; font-size:14px; }
 
+    /* ─── HƯỚNG DẪN NHẬP DỮ LIỆU MODAL ─── */
+    .guide-modal { background:white; border-radius:16px; max-width:900px; width:100%; max-height:92vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .guide-modal-header { padding:18px 24px 0; border-bottom:1px solid #e5e7eb; flex-shrink:0; }
+    .guide-modal-title-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .guide-modal-title { font-size:17px; font-weight:800; color:#1f2937; }
+    .guide-tabs { display:flex; gap:4px; flex-wrap:wrap; padding-bottom:0; }
+    .guide-tab { padding:8px 16px; border:none; background:none; font-size:13px; font-weight:600; color:#6b7280; cursor:pointer; border-bottom:3px solid transparent; transition:all .15s; border-radius:8px 8px 0 0; }
+    .guide-tab:hover { color:#064e3b; background:#f0fdf4; }
+    .guide-tab.active { color:#064e3b; border-bottom-color:#064e3b; font-weight:800; }
+    .guide-tab .gtab-count { display:inline-block; background:#f3f4f6; color:#6b7280; border-radius:10px; padding:1px 7px; font-size:11px; font-weight:700; margin-left:5px; }
+    .guide-tab.active .gtab-count { background:#dcfce7; color:#15803d; }
+    .guide-modal-body { overflow-y:auto; flex:1; padding:0; }
+
+    .guide-section { padding:20px 24px; }
+    .guide-legend { display:flex; gap:16px; flex-wrap:wrap; padding:12px 24px; background:#f9fafb; border-bottom:1px solid #e5e7eb; font-size:12px; }
+    .guide-legend-item { display:flex; align-items:center; gap:6px; font-weight:600; color:#374151; }
+    .guide-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .guide-dot.green  { background:#15803d; }
+    .guide-dot.blue   { background:#1d4ed8; }
+    .guide-dot.gray   { background:#9ca3af; }
+    .guide-dot.amber  { background:#b45309; }
+    .guide-dot.orange { background:#c2410c; }
+
+    .guide-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .guide-table th { background:#f9fafb; padding:10px 12px; text-align:left; font-weight:700; color:#374151; border-bottom:2px solid #e5e7eb; font-size:12px; white-space:nowrap; }
+    .guide-table td { padding:10px 12px; border-bottom:1px solid #f3f4f6; vertical-align:top; }
+    .guide-table tr:hover td { background:#f8fffe; }
+    .guide-sheet-name { font-family:monospace; font-size:12px; background:#f3f4f6; padding:2px 7px; border-radius:5px; white-space:nowrap; font-weight:600; }
+    .guide-sheet-name.green  { background:#dcfce7; color:#15803d; }
+    .guide-sheet-name.blue   { background:#dbeafe; color:#1d4ed8; }
+    .guide-sheet-name.gray   { background:#f3f4f6; color:#6b7280; }
+    .guide-sheet-name.amber  { background:#fef3c7; color:#92400e; }
+    .guide-sheet-name.orange { background:#ffedd5; color:#c2410c; }
+    .guide-badge { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+    .guide-badge.input  { background:#dcfce7; color:#15803d; }
+    .guide-badge.system { background:#dbeafe; color:#1d4ed8; }
+    .guide-badge.ref    { background:#f3f4f6; color:#6b7280; }
+    .guide-badge.unk    { background:#fef3c7; color:#92400e; }
+    .guide-badge.legacy { background:#ffedd5; color:#c2410c; }
+    .guide-warn { font-size:11px; color:#dc2626; font-weight:700; }
+    .guide-ok   { font-size:11px; color:#15803d; font-weight:700; }
+    .guide-freq { font-size:11px; color:#6b7280; }
+    .guide-group-header { font-size:13px; font-weight:800; color:#064e3b; padding:14px 24px 6px; background:#f0fdf4; border-top:2px solid #d1fae5; border-bottom:1px solid #d1fae5; }
+    .guide-group-header.blue-hdr { background:#eff6ff; border-color:#bfdbfe; color:#1e40af; border-top-color:#93c5fd; }
+    .guide-group-header.gray-hdr { background:#f9fafb; border-color:#e5e7eb; color:#374151; border-top-color:#d1d5db; }
+    .guide-group-header.amber-hdr { background:#fffbeb; border-color:#fde68a; color:#92400e; border-top-color:#fcd34d; }
+    .guide-group-header.orange-hdr { background:#fff7ed; border-color:#fed7aa; color:#c2410c; border-top-color:#fdba74; }
+    .guide-ov-wrap { overflow-x:auto; }
+    .guide-modal-footer { padding:12px 24px 16px; border-top:1px solid #e5e7eb; display:flex; gap:10px; align-items:center; flex-shrink:0; background:white; }
+    .guide-footer-note { flex:1; font-size:12px; color:#9ca3af; }
+
   </style>
 </head>
 
@@ -1928,6 +1979,7 @@
         <p>Dữ liệu tải tự động · Nhấn KPI để mở module chi tiết</p>
       </div>
       <span id="ov-today-date" class="ov-header-date"></span>
+      <button class="ov-btn-copy" onclick="guideOpen()" title="Hướng dẫn nhập dữ liệu vào từng sheet">📖 Hướng dẫn nhập liệu</button>
       <button class="ov-btn-newsletter" onclick="ovShowNewsletter()">📰 Bản tin hôm nay</button>
       <button class="ov-btn-copy" onclick="ovCopyNewsletter()">📋 Sao chép</button>
     </div>
@@ -2156,6 +2208,339 @@
       <div class="ov-modal-footer">
         <button class="ov-btn-newsletter" onclick="ovCopyNewsletter()">📋 Sao chép nội dung</button>
         <button class="ov-btn-copy" onclick="ovCloseNewsletter()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hướng dẫn nhập dữ liệu — modal -->
+  <div class="ov-modal-overlay" id="ov-guide-modal" onclick="if(event.target===this)guideClose()">
+    <div class="guide-modal">
+      <div class="guide-modal-header">
+        <div class="guide-modal-title-row">
+          <span class="guide-modal-title">📖 Hướng dẫn nhập dữ liệu — Bản đồ sheet hệ thống</span>
+          <button class="ov-modal-close" onclick="guideClose()">✕</button>
+        </div>
+        <div class="guide-tabs">
+          <button class="guide-tab active" onclick="guideSwitchTab('nhap',this)">🟢 Cần nhập <span class="gtab-count">16</span></button>
+          <button class="guide-tab" onclick="guideSwitchTab('he-thong',this)">🔵 Hệ thống <span class="gtab-count">20</span></button>
+          <button class="guide-tab" onclick="guideSwitchTab('tham-chieu',this)">⚫ Tham chiếu <span class="gtab-count">3</span></button>
+          <button class="guide-tab" onclick="guideSwitchTab('chua-xd',this)">❓ Chưa xác định <span class="gtab-count">3</span></button>
+          <button class="guide-tab" onclick="guideSwitchTab('co-the-cu',this)">🟠 Có thể cũ <span class="gtab-count">3</span></button>
+        </div>
+      </div>
+
+      <div class="guide-modal-body">
+        <div class="guide-legend">
+          <div class="guide-legend-item"><div class="guide-dot green"></div> Cần nhập thủ công</div>
+          <div class="guide-legend-item"><div class="guide-dot blue"></div> GAS tự ghi — KHÔNG nhập</div>
+          <div class="guide-legend-item"><div class="guide-dot gray"></div> Tham chiếu — nhập 1 lần</div>
+          <div class="guide-legend-item"><div class="guide-dot amber"></div> Chưa xác định trong code</div>
+          <div class="guide-legend-item"><div class="guide-dot orange"></div> Có thể là sheet cũ</div>
+        </div>
+
+        <!-- TAB: NHẬP DỮ LIỆU -->
+        <div id="guide-tab-nhap">
+          <div class="guide-group-header">📋 PMO GSP NEXT 30 — Workstream sheets</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module hiển thị</th><th>Nhập gì</th><th>Người cập nhật</th><th>Tần suất</th><th>Lưu ý</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name green">01_Brand</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Action, Owner, Deadline, RAG, Status, Risk/SOS, CEO Decision</td>
+              <td>PIC01 – Kinh Doanh</td>
+              <td><span class="guide-freq">Hàng tuần</span></td>
+              <td class="guide-ok">✅ Mở trực tiếp Google Sheets để nhập</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">02_Sales</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Như trên</td>
+              <td>PIC02 – Sales Tech</td>
+              <td><span class="guide-freq">Hàng tuần</span></td>
+              <td class="guide-ok">✅ Header ở hàng 3, data từ hàng 4</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">03_Operation</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Như trên</td>
+              <td>PIC03-06 – SCM/Mua Hàng/CĐ/QA</td>
+              <td><span class="guide-freq">Hàng tuần</span></td>
+              <td class="guide-ok">✅ Header ở hàng 3, data từ hàng 4</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">04_Digital_AI</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Như trên</td>
+              <td>PIC05/07 – CôngNghệ/IT/ERP</td>
+              <td><span class="guide-freq">Hàng tuần</span></td>
+              <td class="guide-ok">✅ Header ở hàng 3, data từ hàng 4</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">05_People_Culture</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Như trên</td>
+              <td>PIC09/12 – PC/HCNS</td>
+              <td><span class="guide-freq">Hàng tuần</span></td>
+              <td class="guide-ok">✅ Header ở hàng 3, data từ hàng 4</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">06_System_KPI</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Như trên</td>
+              <td>PMO tổng hợp</td>
+              <td><span class="guide-freq">Hàng tuần</span></td>
+              <td class="guide-ok">✅ Header ở hàng 3, data từ hàng 4</td>
+            </tr>
+          </table>
+          </div>
+
+          <div class="guide-group-header">🎯 CEO Project Tracker</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module hiển thị</th><th>Nhập gì</th><th>Người cập nhật</th><th>Tần suất</th><th>Lưu ý</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name green">THEO_DOI_DU_AN_CEO</span></td>
+              <td>CEO Project Tracker</td>
+              <td>Loại bản ghi (DỰ ÁN/HẠNG MỤC/CÔNG VIỆC/CẬP NHẬT/QUYẾT ĐỊNH), tên, mô tả, owner, deadline, RAG, % HT, ghi chú CEO</td>
+              <td>PMO + PIC Lead + CEO</td>
+              <td><span class="guide-freq">Hàng ngày / sau mỗi update</span></td>
+              <td class="guide-warn">⚠️ 37 cột — Header hàng 1. Không xóa cột, không thêm cột tự ý.</td>
+            </tr>
+          </table>
+          </div>
+
+          <div class="guide-group-header">📄 Biên bản họp</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module hiển thị</th><th>Nhập gì</th><th>Người cập nhật</th><th>Tần suất</th><th>Lưu ý</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name green">MEETING_TOPICS</span></td>
+              <td>Biên bản họp</td>
+              <td>Topic ID, Tên topic, Nhóm/Module, Mô tả, Owner, Trạng thái</td>
+              <td>PMO</td>
+              <td><span class="guide-freq">Trước/sau họp</span></td>
+              <td class="guide-ok">✅ Tạo mỗi topic theo chủ đề họp</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">MEETING_MINUTES</span></td>
+              <td>Biên bản họp, Risk/SOS, CEO Decision</td>
+              <td>Meeting ID, Ngày họp, Chủ đề, Chỉ đạo CEO, Quyết định chốt, Action phát sinh, Risk/SOS, File biên bản, Trạng thái</td>
+              <td>PMO</td>
+              <td><span class="guide-freq">Sau mỗi cuộc họp</span></td>
+              <td class="guide-warn">⚠️ Cột "Chỉ đạo CEO" và "CEO cần quyết tiếp" ảnh hưởng CEO Decision Board</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">MEETING_ACTIONS</span></td>
+              <td>Biên bản họp</td>
+              <td>Action ID, Topic/Meeting ID, Nội dung action, Owner/PIC, Deadline, RAG, Trạng thái, CEO cần chốt</td>
+              <td>PMO</td>
+              <td><span class="guide-freq">Sau mỗi cuộc họp</span></td>
+              <td class="guide-ok">✅ Mỗi action một dòng</td>
+            </tr>
+          </table>
+          </div>
+
+          <div class="guide-group-header">🚨 Risk/SOS · ✅ CEO Decision</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module hiển thị</th><th>Nhập gì</th><th>Người cập nhật</th><th>Tần suất</th><th>Lưu ý</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name green">RISK_SOS</span></td>
+              <td>Risk/SOS Center</td>
+              <td>Risk ID, Mô tả rủi ro, PIC xử lý, Mức độ, RAG, Deadline, Trạng thái, Biện pháp, CEO cần biết</td>
+              <td>PIC/PMO khi phát sinh rủi ro</td>
+              <td><span class="guide-freq">Khi phát sinh</span></td>
+              <td class="guide-warn">⚠️ Risk/SOS còn được trích xuất từ MEETING_MINUTES và CEO_PROJECTS</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name green">CEO_DECISIONS</span></td>
+              <td>CEO Decision Board</td>
+              <td>Decision ID, Nguồn, Nội dung cần chốt, PIC đề xuất, Deadline, Trạng thái, Quyết định CEO, Ngày chốt</td>
+              <td>PMO (nhập) · CEO (điền cột Quyết định + Ngày chốt)</td>
+              <td><span class="guide-freq">Khi cần CEO quyết</span></td>
+              <td class="guide-warn">⚠️ CEO Decision còn được trích từ MEETING_MINUTES và CEO_PROJECTS</td>
+            </tr>
+          </table>
+          </div>
+
+          <div class="guide-group-header">📊 Danh mục</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module hiển thị</th><th>Nhập gì</th><th>Người cập nhật</th><th>Tần suất</th><th>Lưu ý</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name green">MASTER_PIC</span></td>
+              <td>Data Quality, Command Center</td>
+              <td>Tên PIC, Workstream, Nhà máy, Email, SĐT, Vai trò</td>
+              <td>Admin hệ thống</td>
+              <td><span class="guide-freq">Khi có PIC mới/nghỉ</span></td>
+              <td class="guide-ok">✅ Có thể ẩn tab sau khi nhập đủ</td>
+            </tr>
+          </table>
+          </div>
+        </div><!-- /guide-tab-nhap -->
+
+        <!-- TAB: HỆ THỐNG -->
+        <div id="guide-tab-he-thong" style="display:none">
+          <div class="guide-group-header blue-hdr">⚠️ KHÔNG nhập thủ công vào các sheet dưới đây — GAS sẽ ghi đè</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module</th><th>GAS ghi khi nào</th><th>Hàm ghi</th><th>Có thể ẩn</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">CEO_Comments</span></td>
+              <td>PMO (comment bar)</td>
+              <td>Khi user post comment trên dashboard</td>
+              <td><code>saveDashboardComment</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">PMO_ALL_ACTIONS</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Chạy <code>syncPicSheetsToPmoAllActions()</code> từ Apps Script editor</td>
+              <td><code>syncPicSheetsToPmoAllActions</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">PIC01_KinhDoanh</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Chạy <code>testImportPIC01()</code> — import từ Google Sheet của PIC01</td>
+              <td><code>importPicPlanToDatabase</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">PIC02 … PIC16_GS6</span></td>
+              <td>PMO GSP NEXT 30</td>
+              <td>Chạy <code>testImportPIC02()</code> … <code>testImportPIC16()</code></td>
+              <td><code>importPicPlanToDatabase</code></td>
+              <td class="guide-ok">✅ Có thể ẩn (15 sheets)</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">TO_ACTIONS</span></td>
+              <td>TO Action Center</td>
+              <td>Chạy <code>importToReportToDatabase(url, ...)</code> từ file TO report của nhà máy</td>
+              <td><code>importKHHDToActions_</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">TO_ISSUES</span></td>
+              <td>TO Action Center</td>
+              <td>Chạy <code>importToReportToDatabase(url, ...)</code> từ file TO report của nhà máy</td>
+              <td><code>importHienTrangToIssues_</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">PMO_IMPORT_LOG</span></td>
+              <td>— (log nội bộ)</td>
+              <td>Tự động sau mỗi lần import PIC</td>
+              <td><code>pmoLogImport_</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name blue">PMO_SOURCE_FILES</span></td>
+              <td>— (tracking nội bộ)</td>
+              <td>Tự động sau mỗi lần import PIC — lưu URL + ngày import</td>
+              <td><code>pmoUpdateSourceFiles_</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+          </table>
+          </div>
+        </div><!-- /guide-tab-he-thong -->
+
+        <!-- TAB: THAM CHIẾU -->
+        <div id="guide-tab-tham-chieu" style="display:none">
+          <div class="guide-group-header gray-hdr">⚫ Sheet tham chiếu — nhập 1 lần, ít thay đổi, có thể ẩn</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Dữ liệu</th><th>Ai quản lý</th><th>Hàm đọc</th><th>Có thể ẩn</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name gray">MASTER_STATUS</span></td>
+              <td>22 dòng: trạng thái + màu HEX RAG (Xanh/Vàng/Đỏ/Xám)</td>
+              <td>Admin hệ thống (GAS seed sẵn 22 dòng)</td>
+              <td><code>getCommandCenterData</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name gray">CONFIG</span></td>
+              <td>8 key-value: APP_VERSION, TIMEZONE, PMO_REVIEW_DAY, CEO_REVIEW_DAY, RAG_RED_THRESHOLD, v.v.</td>
+              <td>Admin hệ thống</td>
+              <td><code>getCommandCenterData</code></td>
+              <td class="guide-ok">✅ Có thể ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name gray">MASTER_PIC</span></td>
+              <td>Danh mục PIC: Tên, Workstream, Email, SĐT, Vai trò</td>
+              <td>Admin hệ thống (cập nhật khi PIC thay đổi)</td>
+              <td><code>getCommandCenterData</code></td>
+              <td class="guide-ok">✅ Có thể ẩn sau khi đã nhập đủ</td>
+            </tr>
+          </table>
+          </div>
+        </div><!-- /guide-tab-tham-chieu -->
+
+        <!-- TAB: CHƯA XÁC ĐỊNH -->
+        <div id="guide-tab-chua-xd" style="display:none">
+          <div class="guide-group-header amber-hdr">❓ Sheet không tìm thấy trong code — cần xác nhận trước khi ẩn/xóa</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Tình trạng</th><th>Rủi ro nếu xóa</th><th>Khuyến nghị</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name amber">00_Dashboard_CEO</span></td>
+              <td>Không có trong <code>ma.gs</code> hay <code>index.html</code></td>
+              <td>Không ảnh hưởng hệ thống hiện tại</td>
+              <td>PMO xác nhận còn dùng không trước khi ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name amber">AI_Review_Input</span></td>
+              <td>Không có trong code — có thể là thử nghiệm AI cũ</td>
+              <td>Không ảnh hưởng hệ thống hiện tại</td>
+              <td>Xác nhận với team AI/Digital trước khi ẩn</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name amber">AI_Review_Output</span></td>
+              <td>Không có trong code — có thể là thử nghiệm AI cũ</td>
+              <td>Không ảnh hưởng hệ thống hiện tại</td>
+              <td>Xác nhận với team AI/Digital trước khi ẩn</td>
+            </tr>
+          </table>
+          </div>
+        </div><!-- /guide-tab-chua-xd -->
+
+        <!-- TAB: CÓ THỂ CŨ -->
+        <div id="guide-tab-co-the-cu" style="display:none">
+          <div class="guide-group-header orange-hdr">🟠 Sheet có thể trùng chức năng hoặc không còn là nguồn chính — cần xác nhận</div>
+          <div class="guide-ov-wrap">
+          <table class="guide-table">
+            <tr><th>Sheet</th><th>Module đọc</th><th>Nghi ngờ vì</th><th>Rủi ro nếu ẩn/xóa</th><th>Khuyến nghị</th></tr>
+            <tr>
+              <td><span class="guide-sheet-name orange">CEO_PROJECTS</span></td>
+              <td>Risk/SOS, CEO Decision (nguồn phụ)</td>
+              <td>Có thể trùng với <code>THEO_DOI_DU_AN_CEO</code> — chức năng tương tự</td>
+              <td>Risk/SOS và CEO Decision mất một nguồn phụ</td>
+              <td>Xác nhận PMO còn nhập vào đây không. Nếu không → có thể ẩn.</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name orange">CEO_PROJECT_UPDATES</span></td>
+              <td>Command Center (phụ)</td>
+              <td>Bản cập nhật dự án có thể đã gộp vào <code>THEO_DOI_DU_AN_CEO</code> (loại CẬP NHẬT)</td>
+              <td>Thấp — GAS đọc nhưng ít ảnh hưởng nếu trống</td>
+              <td>Xác nhận. Nếu THEO_DOI_DU_AN_CEO đã đủ → có thể ẩn.</td>
+            </tr>
+            <tr>
+              <td><span class="guide-sheet-name orange">PMO_90D_ACTIONS</span></td>
+              <td>Command Center (nguồn phụ)</td>
+              <td>Không rõ đang được dùng thực tế không — <code>PMO_ALL_ACTIONS</code> là nguồn chính</td>
+              <td>Thấp — GAS đọc nhưng ít ảnh hưởng nếu trống</td>
+              <td>Xác nhận. Nếu không nhập thì có thể ẩn.</td>
+            </tr>
+          </table>
+          </div>
+        </div><!-- /guide-tab-co-the-cu -->
+
+      </div><!-- /guide-modal-body -->
+
+      <div class="guide-modal-footer">
+        <span class="guide-footer-note">📄 Tài liệu đầy đủ: <strong>DATA_MAP.md</strong> trong thư mục dự án · Rà soát 2026-06-23 · Tổng: 36 sheet trong code + 3 chưa xác định</span>
+        <button class="ov-btn-copy" onclick="guideClose()">Đóng</button>
       </div>
     </div>
   </div>
@@ -6550,6 +6935,31 @@ APS - S&OP - KHO - SẢN XUẤT",
         return;
       }
       alert('Không tìm thấy file chi tiết của luồng chat.');
+    }
+
+    /* =====================================================================
+       HƯỚNG DẪN NHẬP DỮ LIỆU — Guide Modal
+    ===================================================================== */
+    function guideOpen() {
+      var modal = document.getElementById('ov-guide-modal');
+      if (modal) modal.classList.add('open');
+    }
+    function guideClose() {
+      var modal = document.getElementById('ov-guide-modal');
+      if (modal) modal.classList.remove('open');
+    }
+    function guideSwitchTab(tabKey, btn) {
+      // Hide all tab panels
+      ['nhap','he-thong','tham-chieu','chua-xd','co-the-cu'].forEach(function(k) {
+        var el = document.getElementById('guide-tab-' + k);
+        if (el) el.style.display = 'none';
+      });
+      // Show target
+      var target = document.getElementById('guide-tab-' + tabKey);
+      if (target) target.style.display = '';
+      // Update active tab
+      document.querySelectorAll('.guide-tab').forEach(function(t) { t.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
     }
 
     /* =====================================================================
