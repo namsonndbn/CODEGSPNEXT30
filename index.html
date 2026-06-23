@@ -3089,12 +3089,17 @@
             <div class="toau-type-card" id="toau-card-issue" onclick="toauSelectType('issue')">
               <div class="toau-type-icon">🔍</div>
               <div class="toau-type-lbl">A. Ghi nhận vấn đề mới</div>
-              <div class="toau-type-sub">Thêm một vấn đề hiện trường vào sheet TO_ISSUES</div>
+              <div class="toau-type-sub">Thêm vấn đề hiện trường mới vào sheet TO_ISSUES</div>
             </div>
             <div class="toau-type-card" id="toau-card-action" onclick="toauSelectType('action')">
               <div class="toau-type-icon">⚡</div>
-              <div class="toau-type-lbl">B. Giao / Cập nhật công việc</div>
-              <div class="toau-type-sub">Tạo mới hoặc cập nhật công việc trong TO_ACTIONS</div>
+              <div class="toau-type-lbl">B. Giao công việc xử lý</div>
+              <div class="toau-type-sub">Tạo dòng công việc mới trong TO_ACTIONS</div>
+            </div>
+            <div class="toau-type-card" id="toau-card-update" onclick="toauSelectType('update')" style="grid-column:1/-1">
+              <div class="toau-type-icon">✏️</div>
+              <div class="toau-type-lbl">C. Cập nhật kết quả công việc</div>
+              <div class="toau-type-sub">Tìm Action ID có sẵn và cập nhật kết quả, tiến độ, bằng chứng, vướng mắc</div>
             </div>
           </div>
           <div class="toau-step1-next">
@@ -3226,9 +3231,9 @@
           </div>
         </div>
         <div class="toau-footer">
-          <span class="toau-footer-note">⚠ Chưa bật lưu thật — chờ xác nhận cấu trúc sheet</span>
+          <span class="toau-footer-note" id="toau-iss-fnote"></span>
           <button class="toau-btn-back" onclick="toauBackToStep1()">← Quay lại</button>
-          <button class="toau-btn-save" disabled title="Cần xác nhận cấu trúc GAS trước khi bật">💾 Lưu vào TO_ISSUES</button>
+          <button class="toau-btn-save enabled" id="toau-iss-save" onclick="toauSaveNewIssue()">💾 Lưu vào TO_ISSUES</button>
         </div>
       </div>
 
@@ -3420,9 +3425,123 @@
           </div>
         </div>
         <div class="toau-footer">
-          <span class="toau-footer-note">⚠ Chưa bật lưu thật — chờ xác nhận cấu trúc sheet &amp; GAS</span>
+          <span class="toau-footer-note" id="toau-act-fnote"></span>
           <button class="toau-btn-back" onclick="toauBackToStep1()">← Quay lại</button>
-          <button class="toau-btn-save" disabled title="Cần xác nhận cấu trúc GAS trước khi bật">💾 Lưu vào TO_ACTIONS</button>
+          <button class="toau-btn-save enabled" id="toau-act-save" onclick="toauSaveNewAction()">💾 Lưu vào TO_ACTIONS</button>
+        </div>
+      </div>
+
+      <!-- STEP 2C: Update existing action -->
+      <div id="toau-step2-update" style="display:none">
+        <div class="toau-form-wrap">
+          <div class="toau-step-badge">✏️ Cập nhật dòng có sẵn trong TO_ACTIONS</div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Tìm công việc cần cập nhật</div>
+            <div class="toau-form-row">
+              <div class="toau-field" style="grid-column:1/-1">
+                <label class="toau-label">Action ID</label>
+                <div style="display:flex;gap:8px">
+                  <input class="toau-input" id="toau-upd-search" placeholder="Nhập Action ID (VD: TOA-GS1-20260611-001)" style="flex:1">
+                  <button class="command-btn" onclick="toauSearchAction()" style="white-space:nowrap">🔍 Tìm</button>
+                </div>
+                <span id="toau-upd-hint" style="font-size:11.5px;margin-top:3px;display:block"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Read-only info: shown after action found -->
+          <div id="toau-upd-readonly" style="display:none">
+            <div class="toau-form-section">
+              <div class="toau-form-sec-title" style="color:#6b7280">📋 Thông tin không thể thay đổi trên web</div>
+              <div class="toau-form-row">
+                <div class="toau-field"><label class="toau-label">Action ID</label><input class="toau-input" id="toau-upd-id" readonly></div>
+                <div class="toau-field"><label class="toau-label">Nhà máy</label><input class="toau-input" id="toau-upd-fac" readonly></div>
+              </div>
+              <div class="toau-form-row">
+                <div class="toau-field"><label class="toau-label">Issue ID liên quan</label><input class="toau-input" id="toau-upd-iss" readonly></div>
+                <div class="toau-field"><label class="toau-label">Ngày phát sinh</label><input class="toau-input" id="toau-upd-date" readonly></div>
+              </div>
+              <div class="toau-form-row">
+                <div class="toau-field"><label class="toau-label">Người ghi nhận</label><input class="toau-input" id="toau-upd-rep" readonly></div>
+                <div class="toau-field"><label class="toau-label">Nội dung công việc</label><input class="toau-input" id="toau-upd-action" readonly></div>
+              </div>
+            </div>
+
+            <div class="toau-form-section">
+              <div class="toau-form-sec-title">Phân công &amp; Tiến độ (có thể chỉnh)</div>
+              <div class="toau-form-row">
+                <div class="toau-field"><label class="toau-label">PIC thực hiện</label><input class="toau-input" id="toau-upd-pic"></div>
+                <div class="toau-field"><label class="toau-label">Owner theo dõi</label><input class="toau-input" id="toau-upd-owner"></div>
+              </div>
+              <div class="toau-form-row">
+                <div class="toau-field"><label class="toau-label">Người phối hợp</label><input class="toau-input" id="toau-upd-coowner"></div>
+                <div class="toau-field"><label class="toau-label">Deadline</label><input class="toau-input" type="date" id="toau-upd-deadline"></div>
+              </div>
+              <div class="toau-form-row">
+                <div class="toau-field">
+                  <label class="toau-label">Trạng thái</label>
+                  <select class="toau-select" id="toau-upd-status">
+                    <option>Chờ phân công</option><option>Chưa xử lý</option>
+                    <option>Đang xử lý</option><option>Hoàn thành</option><option>Quá hạn</option>
+                  </select>
+                </div>
+                <div class="toau-field">
+                  <label class="toau-label">RAG</label>
+                  <select class="toau-select" id="toau-upd-rag">
+                    <option value="">—</option>
+                    <option value="Green">🟢 Green</option>
+                    <option value="Amber">🟡 Amber</option>
+                    <option value="Red">🔴 Red</option>
+                  </select>
+                </div>
+              </div>
+              <div class="toau-form-row">
+                <div class="toau-field">
+                  <label class="toau-label">% Hoàn thành</label>
+                  <input class="toau-input" type="number" id="toau-upd-pct" min="0" max="100" placeholder="0–100">
+                </div>
+                <div class="toau-field">
+                  <label class="toau-label">Ngày cập nhật</label>
+                  <input class="toau-input" type="date" id="toau-upd-upddate">
+                </div>
+              </div>
+              <div class="toau-form-row">
+                <div class="toau-field"><label class="toau-label">Người cập nhật</label><input class="toau-input" id="toau-upd-updby" placeholder="Tên người cập nhật kết quả"></div>
+              </div>
+            </div>
+
+            <div class="toau-form-section">
+              <div class="toau-form-sec-title">Kết quả &amp; Bằng chứng</div>
+              <div class="toau-form-row full">
+                <div class="toau-field"><label class="toau-label">Kết quả thực tế</label><textarea class="toau-textarea" id="toau-upd-ketqua" placeholder="Kết quả đã đạt được..."></textarea></div>
+              </div>
+              <div class="toau-form-row full">
+                <div class="toau-field"><label class="toau-label">Bằng chứng / Link</label><input class="toau-input" id="toau-upd-bangchung" placeholder="URL ảnh, video, tài liệu..."></div>
+              </div>
+              <div class="toau-form-row full">
+                <div class="toau-field"><label class="toau-label">Vướng mắc / Hỗ trợ cần thiết</label><textarea class="toau-textarea" style="min-height:54px" id="toau-upd-vuong" placeholder="Vướng mắc cần hỗ trợ giải quyết..."></textarea></div>
+              </div>
+            </div>
+
+            <div class="toau-form-section">
+              <div class="toau-form-sec-title">Thông tin CEO</div>
+              <div class="toau-form-row full">
+                <div class="toau-field"><label class="toau-label">CEO cần biết</label><textarea class="toau-textarea" style="min-height:54px" id="toau-upd-ceonote" placeholder="Thông tin CEO cần được báo cáo..."></textarea></div>
+              </div>
+              <div class="toau-form-row full">
+                <div class="toau-field"><label class="toau-label">CEO cần chốt</label><textarea class="toau-textarea" style="min-height:54px" id="toau-upd-ceodec" placeholder="Quyết định CEO cần phê duyệt..."></textarea></div>
+              </div>
+              <div class="toau-form-row full">
+                <div class="toau-field"><label class="toau-label">Ghi chú</label><textarea class="toau-textarea" style="min-height:54px" id="toau-upd-note"></textarea></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toau-footer">
+          <span class="toau-footer-note" id="toau-upd-fnote"></span>
+          <button class="toau-btn-back" onclick="toauBackToStep1()">← Quay lại</button>
+          <button class="toau-btn-save" id="toau-upd-save" disabled onclick="toauSaveUpdate()">💾 Lưu cập nhật</button>
         </div>
       </div>
     </div>
@@ -3886,6 +4005,24 @@ APS - S&OP - KHO - SẢN XUẤT",
         mode: 'no-cors',
         body: JSON.stringify({ action: action, payload: payload })
       }).then(function() { return { success: true }; });
+    }
+
+    // gasPostJSON: POST với CORS để đọc response từ GAS (dùng text/plain để tránh preflight)
+    function gasPostJSON(action, payload) {
+      return fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, payload: payload })
+      }).then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      }).catch(function() {
+        // Fallback no-cors: ghi vẫn xảy ra nhưng không đọc được response
+        return fetch(GAS_URL, {
+          method: 'POST', mode: 'no-cors',
+          body: JSON.stringify({ action: action, payload: payload })
+        }).then(function() { return { success: true, noCors: true }; });
+      });
     }
 
     function loadDashboard() {
@@ -7349,21 +7486,24 @@ APS - S&OP - KHO - SẢN XUẤT",
     function filterTOActions(kw) { toaApplyFilters(); }
 
     /* ── TO Action Center — Update Form Logic ── */
-    var toauType = ''; // 'issue' | 'action'
+    var toauType = ''; // 'issue' | 'action' | 'update'
 
     function toaOpenUpdateForm() {
       toauType = '';
-      document.getElementById('toau-card-issue').classList.remove('selected');
-      document.getElementById('toau-card-action').classList.remove('selected');
+      ['issue','action','update'].forEach(function(t){
+        var c = document.getElementById('toau-card-'+t); if(c) c.classList.remove('selected');
+      });
       document.getElementById('toau-step1').style.display = '';
       document.getElementById('toau-step2-issue').style.display = 'none';
       document.getElementById('toau-step2-action').style.display = 'none';
+      document.getElementById('toau-step2-update').style.display = 'none';
       document.getElementById('toau-modal-title').textContent = '📝 Cập nhật TO';
       document.getElementById('toau-overlay').style.display = 'flex';
       // Set default dates to today
       var today = new Date().toISOString().slice(0,10);
       var df = function(id){ var el=document.getElementById(id); if(el&&el.type==='date'&&!el.value) el.value=today; };
       df('toau-iss-date'); df('toau-act-repdate'); df('toau-act-upddate');
+      df('toau-upd-upddate');
       // Populate issue selector
       toauPopulateIssueSelector();
     }
@@ -7378,27 +7518,33 @@ APS - S&OP - KHO - SẢN XUẤT",
 
     function toauSelectType(type) {
       toauType = type;
-      document.getElementById('toau-card-issue').classList.toggle('selected', type==='issue');
-      document.getElementById('toau-card-action').classList.toggle('selected', type==='action');
+      ['issue','action','update'].forEach(function(t){
+        var c = document.getElementById('toau-card-'+t);
+        if(c) c.classList.toggle('selected', t===type);
+      });
     }
 
     function toauGoStep2() {
-      if (!toauType) { alert('Vui lòng chọn loại cập nhật (A hoặc B).'); return; }
+      if (!toauType) { alert('Vui lòng chọn loại cập nhật (A, B hoặc C).'); return; }
       document.getElementById('toau-step1').style.display = 'none';
       if (toauType === 'issue') {
         document.getElementById('toau-modal-title').textContent = '🔍 Ghi nhận vấn đề mới';
         document.getElementById('toau-step2-issue').style.display = '';
         toauPreviewIssueID();
-      } else {
-        document.getElementById('toau-modal-title').textContent = '⚡ Giao / Cập nhật công việc';
+      } else if (toauType === 'action') {
+        document.getElementById('toau-modal-title').textContent = '⚡ Giao công việc xử lý';
         document.getElementById('toau-step2-action').style.display = '';
         toauPreviewActionID();
+      } else {
+        document.getElementById('toau-modal-title').textContent = '✏️ Cập nhật kết quả công việc';
+        document.getElementById('toau-step2-update').style.display = '';
       }
     }
 
     function toauBackToStep1() {
       document.getElementById('toau-step2-issue').style.display = 'none';
       document.getElementById('toau-step2-action').style.display = 'none';
+      document.getElementById('toau-step2-update').style.display = 'none';
       document.getElementById('toau-step1').style.display = '';
       document.getElementById('toau-modal-title').textContent = '📝 Cập nhật TO';
     }
@@ -7455,7 +7601,6 @@ APS - S&OP - KHO - SẢN XUẤT",
       var act = (toaCache.actions||[]).find(function(r){ return r.ActionID===actionId; });
       if (!act) { if(hint) hint.textContent='⬜ Không tìm thấy — sẽ tạo mới'; return; }
       if (hint) hint.textContent = '✅ Tìm thấy — điền sẵn để cập nhật';
-      // Pre-fill all fields
       var fv = function(id, val){ var el=document.getElementById(id); if(el) el.value=val||''; };
       fv('toau-act-factory',  act.Factory  || '');
       fv('toau-act-area',     act.Area     || '');
@@ -7472,16 +7617,215 @@ APS - S&OP - KHO - SẢN XUẤT",
       fv('toau-act-evidence', act.EvidenceLink || '');
       fv('toau-act-ceonote',  act.CEONote  || '');
       fv('toau-act-note',     act.Note     || '');
-      // Deadline: convert dd/MM/yyyy → yyyy-MM-dd for input[type=date]
       if (act.Deadline) {
         var m = String(act.Deadline).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
         if (m) fv('toau-act-deadline', m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));
       }
-      // Issue ID link
       if (act.IssueIDRef) {
         var selI = document.getElementById('toau-act-issue');
         if (selI) { for(var i=0;i<selI.options.length;i++){ if(selI.options[i].value===act.IssueIDRef){selI.selectedIndex=i;break;} } }
       }
+    }
+
+    // Form C — search action by ID and pre-fill update form
+    function toauSearchAction() {
+      var searchId = String((document.getElementById('toau-upd-search')||{}).value||'').trim();
+      var hint = document.getElementById('toau-upd-hint');
+      var ro   = document.getElementById('toau-upd-readonly');
+      var saveBtn = document.getElementById('toau-upd-save');
+      if (!searchId) { if(hint) hint.innerHTML='<span style="color:#dc2626">Vui lòng nhập Action ID.</span>'; return; }
+      if (!toaCache || !toaCache.actions) {
+        if(hint) hint.innerHTML='<span style="color:#d97706">Chưa tải dữ liệu TO. Nhấn Làm mới dữ liệu trước.</span>';
+        return;
+      }
+      var act = toaCache.actions.find(function(r){
+        return String(r.ActionID||'').trim().toLowerCase() === searchId.toLowerCase();
+      });
+      if (!act) {
+        if(hint) hint.innerHTML='<span style="color:#dc2626">❌ Không tìm thấy Action ID "'+safe(searchId)+'" trong dữ liệu đã tải. Thử làm mới dữ liệu hoặc kiểm tra lại ID.</span>';
+        if(ro) ro.style.display='none';
+        if(saveBtn) saveBtn.disabled=true;
+        return;
+      }
+      if(hint) hint.innerHTML='<span style="color:#15803d">✅ Tìm thấy — điền sẵn các trường bên dưới để chỉnh sửa.</span>';
+      if(ro) ro.style.display='';
+      if(saveBtn) { saveBtn.disabled=false; saveBtn.className='toau-btn-save enabled'; }
+      var fv = function(id, val){ var el=document.getElementById(id); if(el) el.value=val||''; };
+      // Read-only fields
+      fv('toau-upd-id',     act.ActionID   || '');
+      fv('toau-upd-fac',    act.Factory    || '');
+      fv('toau-upd-iss',    act.IssueIDRef || '— (không liên kết)');
+      fv('toau-upd-date',   act.Date       || act.ReportDate || '');
+      fv('toau-upd-rep',    act.Reporter   || '');
+      fv('toau-upd-action', act.Action     || '');
+      // Editable fields
+      fv('toau-upd-pic',    act.PIC        || '');
+      fv('toau-upd-owner',  act.Owner      || '');
+      fv('toau-upd-coowner',act.CoOwner    || '');
+      fv('toau-upd-status', act.Status     || '');
+      fv('toau-upd-rag',    act.RAG        || '');
+      fv('toau-upd-pct',    act.PctHoanThanh > 0 ? String(act.PctHoanThanh) : '');
+      fv('toau-upd-updby',  act.NguoiCapNhat || '');
+      fv('toau-upd-ketqua', act.KetQuaThucTe || act.Output || '');
+      fv('toau-upd-bangchung', act.BangChung || act.EvidenceLink || '');
+      fv('toau-upd-vuong',  act.VuongMac   || '');
+      fv('toau-upd-ceonote',act.CEONote    || '');
+      fv('toau-upd-ceodec', act.CEODecision|| '');
+      fv('toau-upd-note',   act.Note       || '');
+      // Deadline dd/MM/yyyy → yyyy-MM-dd
+      var dlConv = function(dlStr, targetId) {
+        if (!dlStr) return;
+        var mm = String(dlStr).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (mm) { var el=document.getElementById(targetId); if(el) el.value=mm[3]+'-'+mm[2].padStart(2,'0')+'-'+mm[1].padStart(2,'0'); }
+      };
+      dlConv(act.Deadline, 'toau-upd-deadline');
+      dlConv(act.NgayCapNhat, 'toau-upd-upddate');
+    }
+
+    // Helper: convert html date input (yyyy-MM-dd) to GAS format (dd/MM/yyyy)
+    function toauToGASDate(s) {
+      if (!s) return '';
+      var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      return m ? m[3]+'/'+m[2]+'/'+m[1] : s;
+    }
+
+    function toauSetNote(id, msg, color) {
+      var el = document.getElementById(id); if (!el) return;
+      el.innerHTML = '<span style="color:'+color+'">'+msg+'</span>';
+    }
+
+    function toauSetBusy(saveId, noteId, msg) {
+      var btn = document.getElementById(saveId);
+      if (btn) { btn.disabled=true; btn.textContent='⏳ Đang lưu...'; }
+      toauSetNote(noteId, msg, '#6b7280');
+    }
+
+    function toauSetDone(saveId, noteId, msg, isErr) {
+      var btn = document.getElementById(saveId);
+      if (btn) { btn.disabled=false; btn.textContent = isErr ? '⚠ Thử lại' : '✅ Đã lưu'; if(!isErr) btn.className='toau-btn-save'; }
+      toauSetNote(noteId, msg, isErr ? '#dc2626' : '#15803d');
+    }
+
+    function toauSaveNewIssue() {
+      var factory = (document.getElementById('toau-iss-factory')||{}).value||'';
+      var desc    = ((document.getElementById('toau-iss-desc')||{}).value||'').trim();
+      var reporter= ((document.getElementById('toau-iss-reporter')||{}).value||'').trim();
+      if (!factory) { toauSetNote('toau-iss-fnote','❌ Chưa chọn Nhà máy.','#dc2626'); return; }
+      if (!desc)    { toauSetNote('toau-iss-fnote','❌ Chưa nhập Mô tả vấn đề.','#dc2626'); return; }
+      if (!reporter){ toauSetNote('toau-iss-fnote','❌ Chưa nhập Người ghi nhận.','#dc2626'); return; }
+      var confirmMsg = 'Xác nhận ghi vấn đề mới vào sheet TO_ISSUES?\n\nNhà máy: '+factory+'\nMô tả: '+desc.slice(0,80);
+      if (!confirm(confirmMsg)) return;
+      toauSetBusy('toau-iss-save','toau-iss-fnote','Đang gửi đến GAS...');
+      var payload = {
+        factory:     factory,
+        reporter:    reporter,
+        reportDate:  toauToGASDate((document.getElementById('toau-iss-date')||{}).value||''),
+        fileSource:  ((document.getElementById('toau-iss-file')||{}).value||'').trim(),
+        area:        ((document.getElementById('toau-iss-area')||{}).value||'').trim(),
+        workstream:  ((document.getElementById('toau-iss-workstream')||{}).value||'').trim(),
+        issueType:   ((document.getElementById('toau-iss-type')||{}).value||'').trim(),
+        description: desc,
+        rootCause:   ((document.getElementById('toau-iss-cause')||{}).value||'').trim(),
+        impact:      ((document.getElementById('toau-iss-impact')||{}).value||'').trim(),
+        level:       ((document.getElementById('toau-iss-level')||{}).value||'').trim(),
+        rag:         ((document.getElementById('toau-iss-rag')||{}).value||'').trim(),
+        status:      ((document.getElementById('toau-iss-status')||{}).value||'').trim(),
+        note:        ((document.getElementById('toau-iss-note')||{}).value||'').trim()
+      };
+      gasPostJSON('toWriteIssue', payload).then(function(res) {
+        if (res && res.success) {
+          toauSetDone('toau-iss-save','toau-iss-fnote','✅ '+( res.message || 'Đã lưu thành công.'), false);
+          setTimeout(function(){ toaCloseUpdateForm(); loadTOActions(); }, 1800);
+        } else {
+          toauSetDone('toau-iss-save','toau-iss-fnote','❌ Lỗi: '+(res && res.error ? res.error : 'Không rõ lỗi'), true);
+        }
+      });
+    }
+
+    function toauSaveNewAction() {
+      var factory  = (document.getElementById('toau-act-factory')||{}).value||'';
+      var action   = ((document.getElementById('toau-act-action')||{}).value||'').trim();
+      var pic      = ((document.getElementById('toau-act-pic')||{}).value||'').trim();
+      var deadline = toauToGASDate((document.getElementById('toau-act-deadline')||{}).value||'');
+      if (!factory)  { toauSetNote('toau-act-fnote','❌ Chưa chọn Nhà máy.','#dc2626'); return; }
+      if (!action)   { toauSetNote('toau-act-fnote','❌ Chưa nhập Nội dung công việc.','#dc2626'); return; }
+      if (!pic)      { toauSetNote('toau-act-fnote','❌ Chưa nhập PIC thực hiện.','#dc2626'); return; }
+      if (!deadline) { toauSetNote('toau-act-fnote','❌ Chưa chọn Deadline.','#dc2626'); return; }
+      var issRef = (document.getElementById('toau-act-issue')||{}).value||'';
+      var confirmMsg = 'Xác nhận tạo công việc mới vào TO_ACTIONS?\n\nNhà máy: '+factory+'\nNội dung: '+action.slice(0,80)+'\nPIC: '+pic+'\nDeadline: '+deadline+(issRef?'\nIssue liên quan: '+issRef:'');
+      if (!confirm(confirmMsg)) return;
+      toauSetBusy('toau-act-save','toau-act-fnote','Đang gửi đến GAS...');
+      var payload = {
+        factory:    factory,
+        reporter:   ((document.getElementById('toau-act-reporter')||{}).value||'').trim(),
+        reportDate: toauToGASDate((document.getElementById('toau-act-repdate')||{}).value||''),
+        issueDate:  toauToGASDate((document.getElementById('toau-act-issuedate')||{}).value||''),
+        context:    ((document.getElementById('toau-act-context')||{}).value||'').trim(),
+        issueIdRef: issRef,
+        area:       ((document.getElementById('toau-act-area')||{}).value||'').trim(),
+        action:     action,
+        pic:        pic,
+        owner:      ((document.getElementById('toau-act-owner')||{}).value||'').trim(),
+        coOwner:    ((document.getElementById('toau-act-coowner')||{}).value||'').trim(),
+        deadline:   deadline,
+        planType:   ((document.getElementById('toau-act-plantype')||{}).value||'').trim(),
+        status:     ((document.getElementById('toau-act-status')||{}).value||'').trim(),
+        priority:   ((document.getElementById('toau-act-priority')||{}).value||'').trim(),
+        rag:        ((document.getElementById('toau-act-rag')||{}).value||'').trim(),
+        output:     ((document.getElementById('toau-act-output')||{}).value||'').trim(),
+        fileSource: ((document.getElementById('toau-act-evidence')||{}).value||'').trim(),
+        ceoNote:    ((document.getElementById('toau-act-ceonote')||{}).value||'').trim(),
+        vuongMac:   ((document.getElementById('toau-act-vuong')||{}).value||'').trim(),
+        pct:        ((document.getElementById('toau-act-pct')||{}).value||'').trim(),
+        updDate:    toauToGASDate((document.getElementById('toau-act-upddate')||{}).value||''),
+        note:       ''
+      };
+      gasPostJSON('toWriteAction', payload).then(function(res) {
+        if (res && res.success) {
+          toauSetDone('toau-act-save','toau-act-fnote','✅ '+(res.message||'Đã tạo công việc thành công.'), false);
+          setTimeout(function(){ toaCloseUpdateForm(); loadTOActions(); }, 1800);
+        } else {
+          toauSetDone('toau-act-save','toau-act-fnote','❌ Lỗi: '+(res&&res.error?res.error:'Không rõ lỗi'), true);
+        }
+      });
+    }
+
+    function toauSaveUpdate() {
+      var actionId = ((document.getElementById('toau-upd-id')||{}).value||'').trim();
+      if (!actionId) { toauSetNote('toau-upd-fnote','❌ Không có Action ID.','#dc2626'); return; }
+      var ketqua = ((document.getElementById('toau-upd-ketqua')||{}).value||'').trim();
+      var pct    = ((document.getElementById('toau-upd-pct')||{}).value||'').trim();
+      var confirmMsg = 'Xác nhận cập nhật công việc '+actionId+'?'
+        + (ketqua ? '\nKết quả: '+ketqua.slice(0,60) : '')
+        + (pct    ? '\n% Hoàn thành: '+pct+'%' : '');
+      if (!confirm(confirmMsg)) return;
+      toauSetBusy('toau-upd-save','toau-upd-fnote','Đang gửi đến GAS...');
+      var payload = {
+        actionId:     actionId,
+        pic:          ((document.getElementById('toau-upd-pic')||{}).value||'').trim()||undefined,
+        owner:        ((document.getElementById('toau-upd-owner')||{}).value||'').trim()||undefined,
+        coOwner:      ((document.getElementById('toau-upd-coowner')||{}).value||'').trim()||undefined,
+        deadline:     toauToGASDate((document.getElementById('toau-upd-deadline')||{}).value)||undefined,
+        status:       ((document.getElementById('toau-upd-status')||{}).value||'').trim()||undefined,
+        rag:          ((document.getElementById('toau-upd-rag')||{}).value||'').trim()||undefined,
+        pct:          pct !== '' ? pct : undefined,
+        updDate:      toauToGASDate((document.getElementById('toau-upd-upddate')||{}).value)||undefined,
+        updBy:        ((document.getElementById('toau-upd-updby')||{}).value||'').trim()||undefined,
+        ketQua:       ketqua||undefined,
+        bangChung:    ((document.getElementById('toau-upd-bangchung')||{}).value||'').trim()||undefined,
+        vuongMac:     ((document.getElementById('toau-upd-vuong')||{}).value||'').trim()||undefined,
+        ceoNote:      ((document.getElementById('toau-upd-ceonote')||{}).value||'').trim()||undefined,
+        ceoDecision:  ((document.getElementById('toau-upd-ceodec')||{}).value||'').trim()||undefined,
+        note:         ((document.getElementById('toau-upd-note')||{}).value||'').trim()||undefined
+      };
+      gasPostJSON('toUpdateAction', payload).then(function(res) {
+        if (res && res.success) {
+          toauSetDone('toau-upd-save','toau-upd-fnote','✅ '+(res.message||'Đã cập nhật thành công.'), false);
+          setTimeout(function(){ toaCloseUpdateForm(); loadTOActions(); }, 1800);
+        } else {
+          toauSetDone('toau-upd-save','toau-upd-fnote','❌ Lỗi: '+(res&&res.error?res.error:'Không rõ lỗi — dữ liệu có thể đã được ghi. Kiểm tra sheet.'), true);
+        }
+      });
     }
 
     /* =====================================================

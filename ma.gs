@@ -87,6 +87,15 @@ function doPost(e) {
       result = likeDashboardComment(payload);
     } else if (action === 'deleteDashboardComment') {
       result = deleteDashboardComment(payload);
+    } else if (action === 'toWriteIssue') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      result = toWriteNewIssue_(ss, payload);
+    } else if (action === 'toWriteAction') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      result = toWriteNewAction_(ss, payload);
+    } else if (action === 'toUpdateAction') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      result = toUpdateExistingAction_(ss, payload);
     } else {
       result = { success: false, error: 'Unknown action' };
     }
@@ -4294,6 +4303,14 @@ function normalizeTOActionFull_(r, i) {
     EvidenceLink: String(r['File nguồn']              || r['Evidence Link'] || '').trim(),
     RowUrl:       String(r['Link biên bản']            || r['Link'] || '').trim(),
     Note:         String(r['Ghi chú']                 || '').trim(),
+    CoOwner:      String(r['Người phối hợp']           || '').trim(),
+    PctHoanThanh: r['% hoàn thành'] !== '' && r['% hoàn thành'] !== undefined ? (Number(r['% hoàn thành']) || 0) : 0,
+    KetQuaThucTe: String(r['Kết quả thực tế']          || '').trim(),
+    NgayCapNhat:  formatDate(r['Ngày cập nhật']         || ''),
+    NguoiCapNhat: String(r['Người cập nhật']            || '').trim(),
+    BangChung:    String(r['Bằng chứng/Link']           || '').trim(),
+    VuongMac:     String(r['Vướng mắc/Hỗ trợ cần thiết'] || '').trim(),
+    CEODecision:  String(r['CEO cần chốt']              || '').trim(),
     IsOverdue:    isPastDeadline(deadline, status)
   };
 }
@@ -4519,6 +4536,257 @@ function appendRowByHeaders_(sheet, dataObj) {
     .map(function(h) { return String(h || '').trim(); });
   var row = headers.map(function(h) { return dataObj.hasOwnProperty(h) ? dataObj[h] : ''; });
   sheet.appendRow(row);
+}
+
+/* ────────────────────────────────────────────────────────
+   TO ACTION CENTER — WRITE FUNCTIONS
+   - ensureTOActionNewCols_   : thêm 8 cột mới nếu chưa có
+   - generateNextIssueID_     : sinh Issue ID tiếp theo
+   - generateNextActionID_    : sinh Action ID tiếp theo
+   - toWriteNewIssue_         : ghi dòng mới vào TO_ISSUES
+   - toWriteNewAction_        : ghi dòng mới vào TO_ACTIONS
+   - toUpdateExistingAction_  : cập nhật dòng có sẵn trong TO_ACTIONS
+──────────────────────────────────────────────────────── */
+
+function ensureTOActionNewCols_(ss) {
+  var sheet = ss.getSheetByName('TO_ACTIONS');
+  if (!sheet) return [];
+  var newCols = [
+    'Người phối hợp', '% hoàn thành', 'Kết quả thực tế',
+    'Ngày cập nhật', 'Người cập nhật', 'Bằng chứng/Link',
+    'Vướng mắc/Hỗ trợ cần thiết', 'CEO cần chốt'
+  ];
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) return [];
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0]
+    .map(function(h) { return String(h || '').trim(); });
+  var added = [];
+  newCols.forEach(function(col) {
+    if (headers.indexOf(col) < 0) {
+      lastCol++;
+      sheet.getRange(1, lastCol).setValue(col);
+      headers.push(col);
+      added.push(col);
+    }
+  });
+  if (added.length) SpreadsheetApp.flush();
+  return added;
+}
+
+function idExistsInSheet_(sheet, id) {
+  if (!sheet) return false;
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+  var ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+  var target = String(id).trim().toLowerCase();
+  for (var i = 0; i < ids.length; i++) {
+    if (String(ids[i][0] || '').trim().toLowerCase() === target) return true;
+  }
+  return false;
+}
+
+function generateNextIssueID_(ss, factory) {
+  var sheet = ss.getSheetByName('TO_ISSUES');
+  var prefix = 'TOI-' + factory + '-';
+  var prefixLc = prefix.toLowerCase();
+  var lastRow = sheet ? sheet.getLastRow() : 1;
+  var ids = lastRow >= 2
+    ? sheet.getRange(2, 1, lastRow - 1, 1).getValues().map(function(r){ return String(r[0]||'').trim(); })
+    : [];
+  var matched = ids.filter(function(id){ return id.toLowerCase().startsWith(prefixLc); });
+  var maxSeq = 0;
+  matched.forEach(function(id) {
+    var parts = id.split('-');
+    var last = parseInt(parts[parts.length - 1]) || 0;
+    if (last > maxSeq) maxSeq = last;
+  });
+  var seq = String(maxSeq + 1).padStart(3, '0');
+  // Detect pattern: with date component if sample has 4+ parts with 8-digit date
+  var hasDate = matched.some(function(id) {
+    var parts = id.split('-'); return parts.length >= 4 && /^\d{8}$/.test(parts[2]);
+  });
+  if (hasDate) {
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd');
+    return 'TOI-' + factory + '-' + today + '-' + seq;
+  }
+  return 'TOI-' + factory + '-' + seq;
+}
+
+function generateNextActionID_(ss, factory) {
+  var sheet = ss.getSheetByName('TO_ACTIONS');
+  var prefix = 'TOA-' + factory + '-';
+  var prefixLc = prefix.toLowerCase();
+  var lastRow = sheet ? sheet.getLastRow() : 1;
+  var ids = lastRow >= 2
+    ? sheet.getRange(2, 1, lastRow - 1, 1).getValues().map(function(r){ return String(r[0]||'').trim(); })
+    : [];
+  var matched = ids.filter(function(id){ return id.toLowerCase().startsWith(prefixLc); });
+  var maxSeq = 0;
+  matched.forEach(function(id) {
+    var parts = id.split('-');
+    var last = parseInt(parts[parts.length - 1]) || 0;
+    if (last > maxSeq) maxSeq = last;
+  });
+  var seq = String(maxSeq + 1).padStart(3, '0');
+  var hasDate = matched.some(function(id) {
+    var parts = id.split('-'); return parts.length >= 4 && /^\d{8}$/.test(parts[2]);
+  });
+  if (hasDate) {
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd');
+    return 'TOA-' + factory + '-' + today + '-' + seq;
+  }
+  return 'TOA-' + factory + '-' + seq;
+}
+
+function toWriteNewIssue_(ss, payload) {
+  try {
+    var sheet = ss.getSheetByName('TO_ISSUES');
+    if (!sheet) return { success: false, error: 'Sheet TO_ISSUES không tồn tại.' };
+    var factory = String(payload.factory || '').trim();
+    if (!factory) return { success: false, error: 'Thiếu thông tin Nhà máy.' };
+    if (!String(payload.description || '').trim()) return { success: false, error: 'Thiếu Mô tả vấn đề.' };
+    var issueId = generateNextIssueID_(ss, factory);
+    var tries = 0;
+    while (idExistsInSheet_(sheet, issueId) && tries < 20) {
+      var p = issueId.split('-'); var n = parseInt(p[p.length-1])||0;
+      p[p.length-1] = String(n+1).padStart(3,'0'); issueId = p.join('-'); tries++;
+    }
+    if (tries >= 20) return { success: false, error: 'Không thể sinh Issue ID không trùng.' };
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+    var data = {
+      'Issue ID':            issueId,
+      'Nhà máy':             factory,
+      'Người ghi nhận':      String(payload.reporter   || '').trim(),
+      'Ngày ghi nhận':       String(payload.reportDate || today).trim(),
+      'File nguồn':          String(payload.fileSource || '').trim(),
+      'Khu vực':             String(payload.area       || '').trim(),
+      'Workstream':          String(payload.workstream || '').trim(),
+      'Loại vấn đề':         String(payload.issueType  || '').trim(),
+      'Mô tả vấn đề':        String(payload.description|| '').trim(),
+      'Nguyên nhân':         String(payload.rootCause  || '').trim(),
+      'Ảnh hưởng':           String(payload.impact     || '').trim(),
+      'Mức độ':              String(payload.level      || '').trim(),
+      'RAG':                 String(payload.rag        || '').trim(),
+      'Trạng thái':          String(payload.status     || 'Mới').trim(),
+      'Action ID liên quan': '',
+      'Ghi chú':             String(payload.note       || '').trim()
+    };
+    appendRowByHeaders_(sheet, data);
+    SpreadsheetApp.flush();
+    return { success: true, issueId: issueId, message: 'Đã ghi nhận vấn đề ' + issueId };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+function toWriteNewAction_(ss, payload) {
+  try {
+    ensureTOActionNewCols_(ss);
+    var sheet = ss.getSheetByName('TO_ACTIONS');
+    if (!sheet) return { success: false, error: 'Sheet TO_ACTIONS không tồn tại.' };
+    var factory = String(payload.factory || '').trim();
+    if (!factory) return { success: false, error: 'Thiếu Nhà máy.' };
+    if (!String(payload.action || '').trim()) return { success: false, error: 'Thiếu Nội dung công việc.' };
+    if (!String(payload.pic || '').trim()) return { success: false, error: 'Thiếu PIC thực hiện.' };
+    if (!String(payload.deadline || '').trim()) return { success: false, error: 'Thiếu Deadline.' };
+    var actionId = generateNextActionID_(ss, factory);
+    var tries = 0;
+    while (idExistsInSheet_(sheet, actionId) && tries < 20) {
+      var p = actionId.split('-'); var n = parseInt(p[p.length-1])||0;
+      p[p.length-1] = String(n+1).padStart(3,'0'); actionId = p.join('-'); tries++;
+    }
+    if (tries >= 20) return { success: false, error: 'Không thể sinh Action ID không trùng.' };
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+    var data = {
+      'Action ID':                    actionId,
+      'Nhà máy':                      factory,
+      'Người ghi nhận':               String(payload.reporter    || '').trim(),
+      'Ngày ghi nhận':                String(payload.reportDate  || today).trim(),
+      'Ngày phát sinh':               String(payload.issueDate   || '').trim(),
+      'Meeting ID':                   '',
+      'Cuộc họp / Bối cảnh':         String(payload.context     || '').trim(),
+      'Issue ID liên quan':           String(payload.issueIdRef  || '').trim(),
+      'Khu vực':                      String(payload.area        || '').trim(),
+      'Nội dung action':              String(payload.action      || '').trim(),
+      'PIC thực hiện':                String(payload.pic         || '').trim(),
+      'Owner theo dõi':               String(payload.owner       || '').trim(),
+      'Deadline':                     String(payload.deadline    || '').trim(),
+      'Loại kế hoạch':                String(payload.planType    || '').trim(),
+      'Trạng thái':                   String(payload.status      || 'Chưa xử lý').trim(),
+      'Mức độ ưu tiên':               String(payload.priority    || '').trim(),
+      'RAG':                          String(payload.rag         || '').trim(),
+      'Kết quả / Output':             String(payload.output      || '').trim(),
+      'CEO cần biết':                 String(payload.ceoNote     || '').trim(),
+      'File nguồn':                   String(payload.fileSource  || '').trim(),
+      'Link biên bản':                String(payload.rowUrl      || '').trim(),
+      'Ghi chú':                      String(payload.note        || '').trim(),
+      'Người phối hợp':               String(payload.coOwner     || '').trim(),
+      '% hoàn thành':                 payload.pct !== undefined && payload.pct !== '' ? Number(payload.pct) : '',
+      'Kết quả thực tế':              String(payload.ketQua      || '').trim(),
+      'Ngày cập nhật':                String(payload.updDate     || '').trim(),
+      'Người cập nhật':               String(payload.updBy       || '').trim(),
+      'Bằng chứng/Link':              String(payload.bangChung   || '').trim(),
+      'Vướng mắc/Hỗ trợ cần thiết':  String(payload.vuongMac    || '').trim(),
+      'CEO cần chốt':                 String(payload.ceoDecision || '').trim()
+    };
+    appendRowByHeaders_(sheet, data);
+    SpreadsheetApp.flush();
+    return { success: true, actionId: actionId, message: 'Đã tạo công việc ' + actionId };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+function toUpdateExistingAction_(ss, payload) {
+  try {
+    ensureTOActionNewCols_(ss);
+    var sheet = ss.getSheetByName('TO_ACTIONS');
+    if (!sheet) return { success: false, error: 'Sheet TO_ACTIONS không tồn tại.' };
+    var actionId = String(payload.actionId || '').trim();
+    if (!actionId) return { success: false, error: 'Thiếu Action ID.' };
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return { success: false, error: 'Không tìm thấy Action ID ' + actionId + '.' };
+    var ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    var rowIndex = -1;
+    for (var i = 0; i < ids.length; i++) {
+      if (String(ids[i][0] || '').trim().toLowerCase() === actionId.toLowerCase()) {
+        rowIndex = i + 2; break;
+      }
+    }
+    if (rowIndex < 0) return { success: false, error: 'Không tìm thấy Action ID ' + actionId + ' trong TO_ACTIONS.' };
+    var lastCol = sheet.getLastColumn();
+    var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0]
+      .map(function(h) { return String(h || '').trim(); });
+    var allowed = {
+      'PIC thực hiện':                payload.pic,
+      'Owner theo dõi':               payload.owner,
+      'Deadline':                     payload.deadline,
+      'Trạng thái':                   payload.status,
+      'RAG':                          payload.rag,
+      'Kết quả / Output':             payload.output,
+      'CEO cần biết':                 payload.ceoNote,
+      'Ghi chú':                      payload.note,
+      'Người phối hợp':               payload.coOwner,
+      '% hoàn thành':                 payload.pct !== undefined && payload.pct !== '' ? Number(payload.pct) : undefined,
+      'Kết quả thực tế':              payload.ketQua,
+      'Ngày cập nhật':                payload.updDate,
+      'Người cập nhật':               payload.updBy,
+      'Bằng chứng/Link':              payload.bangChung,
+      'Vướng mắc/Hỗ trợ cần thiết':  payload.vuongMac,
+      'CEO cần chốt':                 payload.ceoDecision
+    };
+    var updated = [];
+    headers.forEach(function(hdr, ci) {
+      if (allowed.hasOwnProperty(hdr) && allowed[hdr] !== undefined && allowed[hdr] !== null) {
+        sheet.getRange(rowIndex, ci + 1).setValue(allowed[hdr]);
+        updated.push(hdr);
+      }
+    });
+    SpreadsheetApp.flush();
+    return { success: true, actionId: actionId, updatedFields: updated, message: 'Đã cập nhật ' + actionId + ' (' + updated.length + ' trường)' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
 }
 
 // Đọc sheet với header dòng đầu có nội dung (flexible)
