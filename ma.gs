@@ -4123,12 +4123,15 @@ function testGetPicPmoData() {
 ================================================================ */
 
 function getToActionCenterData() {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
   var now   = new Date();
   var in24h = new Date(now.getTime() + 24 * 3600 * 1000);
   var in72h = new Date(now.getTime() + 72 * 3600 * 1000);
 
-  var issues  = readSheetSafe('TO_ISSUES').map(normalizeToIssue_);
-  var actions = readSheetSafe('TO_ACTIONS').map(normalizeTOActionFull_);
+  var issues    = readSheetSafe('TO_ISSUES').map(normalizeToIssue_);
+  var actions   = readSheetSafe('TO_ACTIONS').map(normalizeTOActionFull_);
+  var meetings  = getTOMeetings_(ss);
+  var hotIssues = getToHotIssues_(ss);
 
   // ── Urgency buckets ──
   var urgent24h = [];
@@ -4224,7 +4227,9 @@ function getToActionCenterData() {
     noOwnerList: noOwner,
     ceoList:     ceoList,
     issues:      issues,
-    actions:     actions
+    actions:     actions,
+    meetings:    meetings,
+    hotIssues:   hotIssues
   }));
 }
 
@@ -4315,6 +4320,87 @@ function normalizeTOActionFull_(r, i) {
   };
 }
 
+
+/* ── Normalize TO_MEETINGS row ── */
+function normalizeTOMeeting_(r) {
+  return {
+    MeetingID:   String(r['Meeting ID']    || '').trim(),
+    NgayHop:     formatDate(r['Ngày họp']  || ''),
+    TieuDe:      String(r['Tiêu đề']       || '').trim(),
+    LoaiHop:     String(r['Loại họp']      || '').trim(),
+    DiaDiem:     String(r['Địa điểm']      || '').trim(),
+    ThanhPhan:   String(r['Thành phần']    || '').trim(),
+    ChuTri:      String(r['Chủ trì']       || '').trim(),
+    ThuKy:       String(r['Thư ký']        || '').trim(),
+    TomTat:      String(r['Tóm tắt']       || '').trim(),
+    CanLamRo:    String(r['Cần làm rõ']    || '').trim(),
+    CanCEO:      String(r['Cần CEO']       || '').trim(),
+    FileBienBan: String(r['File biên bản'] || '').trim(),
+    RAG:         normalizeRag(r['RAG']     || ''),
+    TrangThai:   String(r['Trạng thái']    || '').trim()
+  };
+}
+
+/* ── Normalize TO_HOT_ISSUES row ── */
+function normalizeToHotIssue_(r) {
+  return {
+    HotIssueID:   String(r['Hot Issue ID']  || '').trim(),
+    MeetingID:    String(r['Meeting ID']    || '').trim(),
+    Factory:      String(r['Nhà máy']       || '').trim(),
+    Category:     String(r['Category']      || '').trim(),
+    TieuDe:       String(r['Tiêu đề']       || '').trim(),
+    MoTa:         String(r['Mô tả']         || '').trim(),
+    Owner:        String(r['Owner']         || '').trim(),
+    Deadline:     formatDate(r['Deadline']  || ''),
+    RAG:          normalizeRag(r['RAG']     || ''),
+    TrangThai:    String(r['Trạng thái']    || '').trim(),
+    PctHoanThanh: r['% Hoàn thành'] !== '' && r['% Hoàn thành'] !== undefined
+                    ? (Number(r['% Hoàn thành']) || 0) : 0,
+    GhiChu:       String(r['Ghi chú']       || '').trim()
+  };
+}
+
+/* ── Đọc TO_MEETINGS — tự tạo sheet nếu chưa tồn tại ── */
+function getTOMeetings_(ss) {
+  var sheet = ss.getSheetByName('TO_MEETINGS');
+  if (!sheet) {
+    sheet = ss.insertSheet('TO_MEETINGS');
+    var headers = [
+      'Meeting ID', 'Ngày họp', 'Tiêu đề', 'Loại họp', 'Địa điểm',
+      'Thành phần', 'Chủ trì', 'Thư ký', 'Tóm tắt',
+      'Cần làm rõ', 'Cần CEO', 'File biên bản', 'RAG', 'Trạng thái'
+    ];
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length)
+      .setBackground('#064e3b').setFontColor('#ffffff').setFontWeight('bold');
+    SpreadsheetApp.flush();
+    return [];
+  }
+  var rows = readSheetSafe('TO_MEETINGS');
+  return rows.map(normalizeTOMeeting_).filter(function(r) { return r.MeetingID; });
+}
+
+/* ── Đọc TO_HOT_ISSUES — tự tạo sheet nếu chưa tồn tại ── */
+function getToHotIssues_(ss) {
+  var sheet = ss.getSheetByName('TO_HOT_ISSUES');
+  if (!sheet) {
+    sheet = ss.insertSheet('TO_HOT_ISSUES');
+    var headers = [
+      'Hot Issue ID', 'Meeting ID', 'Nhà máy', 'Category',
+      'Tiêu đề', 'Mô tả', 'Owner', 'Deadline',
+      'RAG', 'Trạng thái', '% Hoàn thành', 'Ghi chú'
+    ];
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length)
+      .setBackground('#064e3b').setFontColor('#ffffff').setFontWeight('bold');
+    SpreadsheetApp.flush();
+    return [];
+  }
+  var rows = readSheetSafe('TO_HOT_ISSUES');
+  return rows.map(normalizeToHotIssue_).filter(function(r) { return r.HotIssueID; });
+}
 
 /* ================================================================
    IMPORT TO REPORT → DATABASE
