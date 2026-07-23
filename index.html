@@ -2194,12 +2194,12 @@
   <nav class="nav-bar">
     <button class="nav-tab active" data-module="overview" onclick="switchModule('overview',this)">🏠 Tổng quan</button>
     <button class="nav-tab" data-module="pmo" onclick="switchModule('pmo',this)">📋 PMO GSP NEXT 30</button>
-    <button class="nav-tab" data-module="ceo-tracker" onclick="switchModule('ceo-tracker',this)">🎯 CEO Project Tracker</button>
-    <button class="nav-tab" data-module="to-action" onclick="switchModule('to-action',this)">⚡ TO Action Center</button>
+    <button class="nav-tab" data-module="ceo-tracker" onclick="switchModule('ceo-tracker',this)">🎯 Theo dõi dự án CEO</button>
+    <button class="nav-tab" data-module="to-action" onclick="switchModule('to-action',this)">⚡ Trung tâm hành động Ban TO</button>
     <button class="nav-tab" data-module="meeting-minutes" onclick="switchModule('meeting-minutes',this)">📄 Biên bản họp</button>
     <button class="nav-tab" data-module="risk-sos" onclick="switchModule('risk-sos',this)">🚨 Risk / SOS Center</button>
-    <button class="nav-tab" data-module="ceo-decision" onclick="switchModule('ceo-decision',this)">✅ CEO Decision Board</button>
-    <button class="nav-tab" data-module="data-quality" onclick="switchModule('data-quality',this)">📊 Data Quality</button>
+    <button class="nav-tab" data-module="ceo-decision" onclick="switchModule('ceo-decision',this)">✅ Bảng quyết định CEO</button>
+    <button class="nav-tab" data-module="data-quality" onclick="switchModule('data-quality',this)">📊 Chất lượng dữ liệu</button>
     <button class="nav-tab" data-module="luong-chat" onclick="switchModule('luong-chat',this)">💬 Luồng chat Chủ tịch</button>
   </nav>
 
@@ -2277,7 +2277,7 @@
         <div class="overview-card-head">
           <div class="overview-card-icon">🎯</div>
           <div>
-            <div class="overview-card-title">CEO Project Tracker</div>
+            <div class="overview-card-title">Theo dõi dự án CEO</div>
             <div class="overview-card-sub">Dự án chiến lược trực tiếp CEO dẫn dắt</div>
           </div>
         </div>
@@ -2295,7 +2295,7 @@
         <div class="overview-card-head">
           <div class="overview-card-icon">⚡</div>
           <div>
-            <div class="overview-card-title">TO Action Center</div>
+            <div class="overview-card-title">Trung tâm hành động Ban TO</div>
             <div class="overview-card-sub">Hành động từ các buổi họp TO</div>
           </div>
         </div>
@@ -2528,7 +2528,7 @@
           </table>
           </div>
 
-          <div class="guide-group-header">🎯 CEO Project Tracker</div>
+          <div class="guide-group-header">🎯 Theo dõi dự án CEO</div>
           <div class="guide-ov-wrap">
           <table class="guide-table">
             <tr><th>Sheet</th><th>Module hiển thị</th><th>Nhập gì</th><th>Người cập nhật</th><th>Tần suất</th><th>Lưu ý</th></tr>
@@ -2930,7 +2930,7 @@
 
       <div class="collapsible-section hide-in-meeting" id="sec-data-quality">
         <div class="collapse-header" onclick="toggleSection('sec-data-quality')">
-          <h2>Data Quality Score / Chất lượng dữ liệu</h2>
+          <h2>Chất lượng dữ liệu</h2>
           <span class="collapse-toggle">−</span>
         </div>
         <div class="collapse-content">
@@ -3069,7 +3069,7 @@
   <div class="module" id="module-to-action">
     <div class="mod-toolbar">
       <div class="mod-toolbar-left">
-        <h2>⚡ TO Action Center</h2>
+        <h2>⚡ Trung tâm hành động Ban TO</h2>
         <span class="mod-count-badge" id="toa-badge">—</span>
       </div>
       <div class="mod-toolbar-right">
@@ -3078,64 +3078,66 @@
       </div>
     </div>
 
-    <!-- §1 Factory View -->
+    <!-- §1 CEO cần quyết ngay -->
     <div class="toa-section-block" id="toa-s1">
       <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s1')">
-        <span class="toa-sb-title">🏭 Factory View</span>
+        <span class="toa-sb-title">👑 CEO cần quyết ngay</span>
         <span class="toa-sb-meta" id="toa-s1-meta"></span>
         <button class="toa-sb-tog" id="toa-s1-tog">Thu gọn ▲</button>
       </div>
       <div class="toa-sb-body" id="toa-s1-body">
         <div id="toa-s1-content">
-          <div class="module-placeholder"><div class="module-placeholder-icon">🏭</div><p>Nhấn 🔄 Làm mới để tải dữ liệu.</p></div>
+          <div class="module-placeholder"><div class="module-placeholder-icon">👑</div><p>Nhấn 🔄 Làm mới để tải dữ liệu.</p></div>
         </div>
       </div>
     </div>
 
-    <!-- §2 Họp Ban TO -->
+    <!-- §2 Vấn đề nóng GS1 -->
     <div class="toa-section-block" id="toa-s2">
       <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s2')">
-        <span class="toa-sb-title">📋 Họp Ban TO</span>
+        <span class="toa-sb-title">🔴 Vấn đề nóng GS1</span>
         <span class="toa-sb-meta" id="toa-s2-meta"></span>
         <button class="toa-sb-tog" id="toa-s2-tog">Thu gọn ▲</button>
       </div>
       <div class="toa-sb-body" id="toa-s2-body">
         <div id="toa-s2-content">
-          <div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Đang tải cuộc họp...</div>
+          <div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Đang tải vấn đề GS1...</div>
         </div>
       </div>
     </div>
 
-    <!-- §3 Vấn đề nóng -->
+    <!-- §3 Vấn đề nóng GS5 -->
     <div class="toa-section-block" id="toa-s3">
       <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s3')">
-        <span class="toa-sb-title">🔥 Vấn đề nóng</span>
+        <span class="toa-sb-title">🔴 Vấn đề nóng GS5</span>
         <span class="toa-sb-meta" id="toa-s3-meta"></span>
         <button class="toa-sb-tog" id="toa-s3-tog">Thu gọn ▲</button>
       </div>
       <div class="toa-sb-body" id="toa-s3-body">
         <div id="toa-s3-content">
-          <div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Đang tải vấn đề nóng...</div>
+          <div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Đang tải vấn đề GS5...</div>
         </div>
       </div>
     </div>
 
-    <!-- §4 CEO cần quyết định -->
+    <!-- §4 Cuộc họp gần nhất -->
     <div class="toa-section-block" id="toa-s4">
       <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s4')">
-        <span class="toa-sb-title">👑 CEO cần quyết định</span>
+        <span class="toa-sb-title">📋 Cuộc họp Ban TO gần nhất</span>
         <span class="toa-sb-meta" id="toa-s4-meta"></span>
         <button class="toa-sb-tog" id="toa-s4-tog">Thu gọn ▲</button>
       </div>
       <div class="toa-sb-body" id="toa-s4-body">
-        <div id="toa-s4-content"></div>
+        <div id="toa-s4-content">
+          <div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Đang tải cuộc họp...</div>
+        </div>
       </div>
     </div>
 
-    <!-- §5 Theo dõi Action -->
+    <!-- §5 Action đang mở -->
     <div class="toa-section-block" id="toa-s5">
       <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s5')">
-        <span class="toa-sb-title">⚡ Theo dõi Action</span>
+        <span class="toa-sb-title">⚡ Action đang mở</span>
         <span class="toa-sb-meta" id="toa-s5-meta"></span>
         <button class="toa-sb-tog" id="toa-s5-tog">Thu gọn ▲</button>
       </div>
@@ -3152,8 +3154,7 @@
           <select id="toa-s5-f-status" class="mod-search" style="min-width:140px" onchange="toaS5ApplyFilters()">
             <option value="">Tất cả trạng thái</option>
             <option value="In Progress">Đang xử lý</option>
-            <option value="Overdue">Quá hạn</option>
-            <option value="Done">Hoàn thành</option>
+            <option value="Chưa bắt đầu">Chưa bắt đầu</option>
             <option value="Blocked">Vướng mắc</option>
           </select>
           <select id="toa-s5-f-owner" class="mod-search" style="min-width:130px" onchange="toaS5ApplyFilters()">
@@ -3164,6 +3165,30 @@
         <div id="toa-s5-content">
           <div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Đang tải action...</div>
         </div>
+      </div>
+    </div>
+
+    <!-- §6 Action quá hạn -->
+    <div class="toa-section-block" id="toa-s6">
+      <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s6')">
+        <span class="toa-sb-title">⏰ Action quá hạn</span>
+        <span class="toa-sb-meta" id="toa-s6-meta"></span>
+        <button class="toa-sb-tog" id="toa-s6-tog">Thu gọn ▲</button>
+      </div>
+      <div class="toa-sb-body" id="toa-s6-body">
+        <div id="toa-s6-content"></div>
+      </div>
+    </div>
+
+    <!-- §7 Đã hoàn thành -->
+    <div class="toa-section-block" id="toa-s7">
+      <div class="toa-sb-hdr" onclick="toaToggleSection('toa-s7')">
+        <span class="toa-sb-title">✅ Đã hoàn thành gần đây</span>
+        <span class="toa-sb-meta" id="toa-s7-meta"></span>
+        <button class="toa-sb-tog" id="toa-s7-tog">Mở rộng ▼</button>
+      </div>
+      <div class="toa-sb-body" id="toa-s7-body" style="display:none">
+        <div id="toa-s7-content"></div>
       </div>
     </div>
   </div>
@@ -3191,10 +3216,15 @@
               <div class="toau-type-lbl">B. Giao công việc xử lý</div>
               <div class="toau-type-sub">Tạo dòng công việc mới trong TO_ACTIONS</div>
             </div>
-            <div class="toau-type-card" id="toau-card-update" onclick="toauSelectType('update')" style="grid-column:1/-1">
+            <div class="toau-type-card" id="toau-card-update" onclick="toauSelectType('update')">
               <div class="toau-type-icon">✏️</div>
               <div class="toau-type-lbl">C. Cập nhật kết quả công việc</div>
               <div class="toau-type-sub">Tìm Action ID có sẵn và cập nhật kết quả, tiến độ, bằng chứng, vướng mắc</div>
+            </div>
+            <div class="toau-type-card" id="toau-card-ceo" onclick="toauSelectType('ceo')">
+              <div class="toau-type-icon">👔</div>
+              <div class="toau-type-lbl">D. Ghi nhận chỉ đạo CEO</div>
+              <div class="toau-type-sub">Ghi lại quyết định hoặc chỉ đạo của CEO vào sheet CEO_COMMENTS</div>
             </div>
           </div>
           <div class="toau-step1-next">
@@ -3242,6 +3272,14 @@
               <div class="toau-field">
                 <label class="toau-label">Khu vực</label>
                 <input class="toau-input" id="toau-iss-area" placeholder="Khu vực liên quan">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Meeting ID liên quan</label>
+                <select class="toau-issue-select" id="toau-iss-meeting">
+                  <option value="">— Chọn cuộc họp (tùy chọn) —</option>
+                </select>
               </div>
             </div>
           </div>
@@ -3394,6 +3432,12 @@
                 <span class="toau-autofill" id="toau-act-meeting-hint"></span>
               </div>
             </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Topic ID liên quan</label>
+                <input class="toau-input" id="toau-act-topicid" placeholder="Topic ID (tùy chọn, VD: TOP-001)">
+              </div>
+            </div>
             <div class="toau-form-row full">
               <div class="toau-field">
                 <label class="toau-label">Cuộc họp / Bối cảnh</label>
@@ -3422,7 +3466,7 @@
             </div>
             <div class="toau-form-row">
               <div class="toau-field">
-                <label class="toau-label">Người phối hợp <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <label class="toau-label">Người phối hợp</label>
                 <input class="toau-input" id="toau-act-coowner" placeholder="Người hỗ trợ phối hợp">
               </div>
               <div class="toau-field">
@@ -3472,17 +3516,17 @@
             <div class="toau-form-sec-title">Kết quả &amp; Tiến độ</div>
             <div class="toau-form-row">
               <div class="toau-field">
-                <label class="toau-label">% Hoàn thành <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <label class="toau-label">% Hoàn thành</label>
                 <input class="toau-input" type="number" id="toau-act-pct" min="0" max="100" placeholder="0–100">
               </div>
               <div class="toau-field">
-                <label class="toau-label">Ngày cập nhật <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <label class="toau-label">Ngày cập nhật</label>
                 <input class="toau-input" type="date" id="toau-act-upddate">
               </div>
             </div>
             <div class="toau-form-row">
               <div class="toau-field">
-                <label class="toau-label">Người cập nhật <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <label class="toau-label">Người cập nhật</label>
                 <input class="toau-input" id="toau-act-updby" placeholder="Người cập nhật kết quả">
               </div>
             </div>
@@ -3500,7 +3544,7 @@
             </div>
             <div class="toau-form-row full">
               <div class="toau-field">
-                <label class="toau-label">Vướng mắc / Cần hỗ trợ <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <label class="toau-label">Vướng mắc / Cần hỗ trợ</label>
                 <textarea class="toau-textarea" style="min-height:54px" id="toau-act-vuong" placeholder="Mô tả vướng mắc cần hỗ trợ..."></textarea>
               </div>
             </div>
@@ -3516,7 +3560,7 @@
             </div>
             <div class="toau-form-row full">
               <div class="toau-field">
-                <label class="toau-label">CEO cần chốt <span class="toau-warn-badge">⚠ Chưa có cột trong sheet</span></label>
+                <label class="toau-label">CEO cần chốt</label>
                 <textarea class="toau-textarea" style="min-height:54px" id="toau-act-ceodec" placeholder="Quyết định CEO cần phê duyệt..."></textarea>
               </div>
             </div>
@@ -3648,6 +3692,93 @@
           <button class="toau-btn-save" id="toau-upd-save" disabled onclick="toauSaveUpdate()">💾 Lưu cập nhật</button>
         </div>
       </div>
+
+      <!-- STEP 2D: CEO comment form -->
+      <div id="toau-step2-ceo" style="display:none">
+        <div class="toau-form-wrap">
+          <div class="toau-step-badge">👔 Ghi nhận vào sheet CEO_COMMENTS</div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Thông tin chỉ đạo CEO</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Ngày ghi nhận <span style="color:#dc2626">*</span></label>
+                <input class="toau-input" type="date" id="toau-ceo-date">
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Người ghi <span style="color:#dc2626">*</span></label>
+                <input class="toau-input" id="toau-ceo-nguoighi" placeholder="Tên người ghi nhận chỉ đạo">
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Loại chỉ đạo</label>
+                <select class="toau-select" id="toau-ceo-loai">
+                  <option value="">—</option>
+                  <option>Chỉ đạo</option>
+                  <option>Quyết định</option>
+                  <option>Yêu cầu báo cáo</option>
+                  <option>Ghi nhận</option>
+                  <option>Khác</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Trạng thái xử lý</label>
+                <select class="toau-select" id="toau-ceo-trangthai">
+                  <option>Chờ xử lý</option>
+                  <option>Đang xử lý</option>
+                  <option>Đã xong</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Liên kết</div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Meeting ID liên quan</label>
+                <select class="toau-issue-select" id="toau-ceo-meeting">
+                  <option value="">— Chọn cuộc họp (tùy chọn) —</option>
+                </select>
+              </div>
+              <div class="toau-field">
+                <label class="toau-label">Issue ID liên quan</label>
+                <select class="toau-issue-select" id="toau-ceo-issue">
+                  <option value="">— Chọn vấn đề (tùy chọn) —</option>
+                </select>
+              </div>
+            </div>
+            <div class="toau-form-row">
+              <div class="toau-field">
+                <label class="toau-label">Action ID liên quan</label>
+                <input class="toau-input" id="toau-ceo-actionid" placeholder="Action ID liên quan (tùy chọn)">
+              </div>
+            </div>
+          </div>
+
+          <div class="toau-form-section">
+            <div class="toau-form-sec-title">Nội dung chỉ đạo</div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Nội dung chỉ đạo CEO <span style="color:#dc2626">*</span></label>
+                <textarea class="toau-textarea" id="toau-ceo-noidung" placeholder="Ghi lại nội dung chỉ đạo, quyết định của CEO..."></textarea>
+              </div>
+            </div>
+            <div class="toau-form-row full">
+              <div class="toau-field">
+                <label class="toau-label">Ghi chú</label>
+                <textarea class="toau-textarea" style="min-height:54px" id="toau-ceo-ghichu" placeholder="Thông tin bổ sung..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toau-footer">
+          <span class="toau-footer-note" id="toau-ceo-fnote"></span>
+          <button class="toau-btn-back" onclick="toauBackToStep1()">← Quay lại</button>
+          <button class="toau-btn-save enabled" id="toau-ceo-save" onclick="toauSaveCEOComment()">💾 Lưu vào CEO_COMMENTS</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -3690,7 +3821,7 @@
   <div class="module" id="module-ceo-decision">
     <div class="mod-toolbar">
       <div class="mod-toolbar-left">
-        <h2>✅ CEO Decision Board</h2>
+        <h2>✅ Bảng quyết định CEO</h2>
         <span class="mod-count-badge" id="dec-badge">—</span>
       </div>
       <div class="mod-toolbar-right">
@@ -3714,7 +3845,7 @@
     <div id="dec-content">
       <div class="module-placeholder">
         <div class="module-placeholder-icon">✅</div>
-        <h2>CEO Decision Board</h2>
+        <h2>Bảng quyết định CEO</h2>
         <p>Tập hợp tất cả quyết định đang chờ CEO phê duyệt từ toàn bộ các workstream. Dữ liệu sẽ tự động cập nhật khi PMO Dashboard tải xong.</p>
         <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>
       </div>
@@ -3725,7 +3856,7 @@
   <div class="module" id="module-data-quality">
     <div class="mod-toolbar">
       <div class="mod-toolbar-left">
-        <h2>📊 Data Quality</h2>
+        <h2>📊 Chất lượng dữ liệu</h2>
         <span class="mod-count-badge" id="dq-badge">—</span>
       </div>
       <div class="mod-toolbar-right">
@@ -3742,7 +3873,7 @@
     <div id="dq-content">
       <div class="module-placeholder">
         <div class="module-placeholder-icon">📊</div>
-        <h2>Data Quality</h2>
+        <h2>Chất lượng dữ liệu</h2>
         <p>Đánh giá chất lượng điền dữ liệu của 16 PIC theo 6 workstream. Dữ liệu sẽ tự động cập nhật khi PMO Dashboard tải xong.</p>
         <div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>
       </div>
@@ -6783,129 +6914,58 @@ APS - S&OP - KHO - SẢN XUẤT",
     var toaPanelView      = true;
 
     function loadTOActions() {
-      var contentEl = document.getElementById('toa-content');
-
-      // Cache hit: dashboardCache đã có TO data thực sự
-      if (dashboardCache && Array.isArray(dashboardCache.toActions) && dashboardCache.toActions.length > 0) {
-        renderTOActionCenter(buildTOCenterFromCache_(dashboardCache));
-        return;
-      }
-
       var s1El = document.getElementById('toa-s1-content');
       if (s1El) s1El.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⏳</div><h2>Đang tải dữ liệu TO...</h2></div>';
 
-      // Gọi song song cả 2 endpoints, dùng cái nào có dữ liệu
-      var p1 = gasGet('getToActionCenterData').catch(function(e) { return { _failed: true, _err: String(e) }; });
-      var p2 = gasGet('getTOActions').catch(function(e) { return { _failed: true, _err: String(e) }; });
-
-      Promise.all([p1, p2]).then(function(res) {
-        var rich  = res[0];
-        var basic = res[1];
-
-        // Dùng rich data nếu có action hoặc issue
-        if (rich && !rich._failed && ((rich.actions && rich.actions.length > 0) || (rich.issues && rich.issues.length > 0))) {
-          renderTOActionCenter(rich);
-          return;
+      gasGet('getToActionCenterData').then(function(data) {
+        if (data && !data._failed && (data.issues || data.actions)) {
+          renderTOActionCenter(data);
+        } else {
+          var err = (data && (data._error || data._err)) ? (data._error || data._err) : 'Không kết nối được GAS';
+          if (s1El) s1El.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">'
+            + '<p>Chưa tải được dữ liệu TO Command Center.</p>'
+            + '<p style="color:#dc2626;font-size:12px;word-break:break-word;max-width:600px;margin:8px auto">' + safe(err) + '</p>'
+            + '<button onclick="loadTOActions()" style="margin-top:12px;padding:6px 14px;background:#064e3b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">↺ Thử lại</button>'
+            + '</div>';
         }
-        // Dùng basic data nếu có records
-        if (basic && !basic._failed && basic.records && basic.records.length > 0) {
-          renderTOActionCenter(buildTOCenterFromRecords_(basic.records));
-          return;
-        }
-        // Cả 2 trả về trống — hiện thông báo rõ với lỗi thực tế
-        var errorParts = [];
-        if (rich && rich._failed)  errorParts.push('Rich: ' + (rich._err  || 'API fail'));
-        if (rich && rich._error)   errorParts.push('Rich err: ' + rich._error);
-        if (basic && basic._failed) errorParts.push('Basic: ' + (basic._err || 'API fail'));
-        if (basic && basic._error)  errorParts.push('Basic err: ' + basic._error);
-        var errorInfo = errorParts.join(' | ');
-        var el = document.getElementById('toa-s1-content');
-        if (el) el.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280;font-size:14px">'
-          + '<p>Chưa tải được dữ liệu TO Action Center.</p>'
-          + (errorInfo ? '<p style="color:#dc2626;font-size:12px;word-break:break-word;max-width:600px;margin:8px auto">' + errorInfo + '</p>' : '')
-          + '<p style="margin-top:12px">'
-          + '<a href="' + GAS_URL + '?action=getToActionsRaw" target="_blank" style="color:#064e3b;margin-right:16px">🔍 Kiểm tra kết nối GAS</a>'
-          + '<button onclick="toaLoaded=false;loadTOActions()" style="padding:6px 14px;background:#064e3b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">↺ Thử lại</button>'
-          + '</p>'
+      }).catch(function(e) {
+        if (s1El) s1El.innerHTML = '<div style="padding:32px;text-align:center;color:#6b7280">'
+          + '<p>Lỗi kết nối: ' + safe(String(e)) + '</p>'
+          + '<button onclick="loadTOActions()" style="margin-top:12px;padding:6px 14px;background:#064e3b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">↺ Thử lại</button>'
           + '</div>';
       });
-    }
-
-    // Xây dựng cấu trúc renderTOActionCenter từ dashboardCache
-    function buildTOCenterFromCache_(cache) {
-      var actions = cache.toActions   || [];
-      var issues  = cache.toIssues    || [];
-      var sum     = cache.toSummary   || {};
-      return {
-        actions:        actions,
-        issues:         issues,
-        factories:      cache.toFactories || [],
-        meetings:       cache.toMeetings  || [],
-        hotIssues:      cache.toHotIssues || [],
-        evidenceFiles:  buildEvidenceFiles_(actions, issues),
-        byArea:         buildByArea_(issues),
-        urgent24h:      [], urgent72h: [], inPlan: [],
-        noOwnerList:    [], ceoList:    [],
-        issuesSummary:  sum.issuesSummary  || {},
-        actionsSummary: sum.actionsSummary || {}
-      };
-    }
-
-    // Xây dựng cấu trúc renderTOActionCenter từ mảng records (legacy format)
-    function buildTOCenterFromRecords_(recs) {
-      return {
-        actions: recs, issues: [], factories: [],
-        evidenceFiles: buildEvidenceFiles_(recs, []),
-        byArea: [], urgent24h: [], urgent72h: [], inPlan: recs,
-        noOwnerList: [], ceoList: [],
-        issuesSummary:  { total: 0, byRAG: { Green: 0, Amber: 0, Red: 0 }, open: 0 },
-        actionsSummary: { total: recs.length, done: 0, inProgress: 0, overdue: 0,
-          noOwner: 0, ceoNeeded: 0, urgent24hCount: 0, urgent72hCount: 0, inPlanCount: recs.length }
-      };
-    }
-
-    function buildEvidenceFiles_(actions, issues) {
-      var map = {};
-      (issues  || []).forEach(function(x) { if (x.EvidenceLink || x.evidenceLink) { var u = x.EvidenceLink || x.evidenceLink; map[u] = { url: u, name: x.Reporter || x.reporter || 'Issue file' }; } });
-      (actions || []).forEach(function(x) { if (x.EvidenceLink || x.evidenceLink) { var u = x.EvidenceLink || x.evidenceLink; map[u] = { url: u, name: x.Source || x.context  || 'Action file' }; } });
-      return Object.keys(map).map(function(k) { return map[k]; });
-    }
-
-    function buildByArea_(issues) {
-      var m = {};
-      (issues || []).forEach(function(iss) {
-        var area = iss.Area || iss.area || 'Chưa phân loại';
-        var rag  = iss.RAG  || iss.rag  || 'Amber';
-        if (!m[area]) m[area] = { area: area, total: 0, green: 0, amber: 0, red: 0 };
-        m[area].total++;
-        if (rag === 'Green') m[area].green++; else if (rag === 'Red') m[area].red++; else m[area].amber++;
-      });
-      return Object.keys(m).map(function(k) { return m[k]; });
     }
 
     function renderTOActionCenter(data) {
       if (!data) {
         var el = document.getElementById('toa-s1-content');
-        if (el) el.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">⚡</div><h2>Trung tâm điều hành Ban TO</h2><p>Chưa kết nối được dữ liệu. Kiểm tra sheet <strong>TO_ACTIONS</strong> và quyền truy cập GAS.</p></div>';
+        if (el) el.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">👑</div><h2>TO Command Center</h2><p>Chưa kết nối được dữ liệu.</p></div>';
         return;
       }
-      data.actions   = data.actions   || [];
-      data.issues    = data.issues    || [];
-      data.factories = data.factories || [];
-      data.meetings  = data.meetings  || [];
-      data.hotIssues = data.hotIssues || [];
+      data.issues         = data.issues         || [];
+      data.hotIssues      = data.hotIssues      || [];
+      data.meetings       = data.meetings       || [];
+      data.topics         = data.topics         || [];
+      data.actions        = data.actions        || [];
+      data.ceoComments    = data.ceoComments    || [];
+      data.openActions    = data.openActions    || [];
+      data.overdueActions = data.overdueActions || [];
+      data.doneActions    = data.doneActions    || [];
+      data.ceoPending     = data.ceoPending     || [];
+      data.ceoList        = data.ceoList        || [];
+      data.factories      = data.factories      || [];
       toaCache = data;
 
-      // Cập nhật badge tổng quan
       var badge = document.getElementById('toa-badge');
-      if (badge) badge.textContent = data.actions.length + ' action  /  ' + data.issues.length + ' vấn đề  /  ' + data.meetings.length + ' cuộc họp';
+      if (badge) badge.textContent = data.issues.length + ' vấn đề  ·  ' + data.actions.length + ' action  ·  ' + data.meetings.length + ' cuộc họp';
 
-      // Render 5 sections
-      toaRenderSection1_FactoryView(data);
-      toaRenderSection2_Meetings(data);
-      toaRenderSection3_HotIssues(data);
-      toaRenderSection4_CEO(data);
-      toaRenderSection5_Actions(data);
+      toaRenderSection1_CEO(data);
+      toaRenderSection2_HotGS1(data);
+      toaRenderSection3_HotGS5(data);
+      toaRenderSection4_Meetings(data);
+      toaRenderSection5_OpenActions(data);
+      toaRenderSection6_Overdue(data);
+      toaRenderSection7_Done(data);
     }
 
     // Lọc records theo nhà máy đang active
@@ -7417,110 +7477,264 @@ APS - S&OP - KHO - SẢN XUẤT",
     function filterTOActions(kw) { toaS5ApplyFilters(); }
 
     /* ══════════════════════════════════════════════
-       TO Action Center — 5-Section Render Functions
+       TO Command Center — 7-Section Render Functions
     ══════════════════════════════════════════════ */
 
-    /* §1 Factory View — wrapper quanh toaRenderFactoryPanels */
-    function toaRenderSection1_FactoryView(data) {
+    /* §1 CEO cần quyết ngay */
+    function toaRenderSection1_CEO(data) {
+      var el   = document.getElementById('toa-s1-content');
       var meta = document.getElementById('toa-s1-meta');
-      var acts = (data.actions||[]);
-      var iss  = (data.issues||[]);
-      var overdue = acts.filter(function(a){ return a.IsOverdue; }).length;
-      var ceo     = acts.filter(function(a){ var n=String(a.CEONote||'').trim().toLowerCase(); return n&&n!=='không'&&n!=='no'; }).length;
-      if (meta) meta.textContent = iss.length + ' vấn đề  ·  ' + acts.length + ' action' + (overdue?' · ⏰ '+overdue+' quá hạn':'') + (ceo?' · 👑 '+ceo+' CEO':'');
-      toaRenderFactoryPanels(data, 'toa-s1-content');
+      if (!el) return;
+
+      var ceoPending = data.ceoPending || [];
+      var ceoList    = data.ceoList    || [];
+      var meetCEO    = (data.meetings||[]).filter(function(m){ return m.CanCEO && m.CanCEO.trim(); });
+      var total      = ceoPending.length + ceoList.length + meetCEO.length;
+
+      if (meta) meta.textContent = total + ' nội dung chờ CEO';
+
+      if (!total) {
+        el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Không có nội dung nào cần CEO quyết định.</div>';
+        return;
+      }
+
+      var html = '<div class="toa-ceo-decision-list">';
+
+      // Từ CEO_COMMENTS (chỉ đạo trực tiếp)
+      ceoPending.forEach(function(c) {
+        html += '<div class="toa-ceo-decision-row">'
+          + '<span class="toa-cdec-factory" style="background:#7c3aed">👑 ' + safe(c.Loai||'Chỉ đạo') + '</span>'
+          + '<div class="toa-cdec-content">'
+          + '<div class="toa-cdec-action">' + safe(c.NoiDung) + '</div>'
+          + (c.MeetingIDRef ? '<div class="toa-cdec-sub">📋 ' + safe(c.MeetingIDRef) + '</div>' : '')
+          + (c.IssueIDRef   ? '<div class="toa-cdec-sub">📌 ' + safe(c.IssueIDRef) + '</div>' : '')
+          + '<div class="toa-cdec-note">👤 ' + safe(c.NguoiGhi||'—') + ' · 📅 ' + safe(c.Ngay||'—') + '</div>'
+          + '</div>'
+          + modStatusBadge(c.TrangThaiXuLy)
+          + '</div>';
+      });
+
+      // Từ TO_ACTIONS (CEO cần chốt)
+      ceoList.forEach(function(a) {
+        var dec  = String(a.CEODecision||'').trim();
+        var note = String(a.CEONote||'').trim();
+        html += '<div class="toa-ceo-decision-row">'
+          + '<span class="toa-cdec-factory">' + safe(a.Factory||'—') + '</span>'
+          + '<div class="toa-cdec-content">'
+          + '<div class="toa-cdec-action">' + safe(a.Action) + '</div>'
+          + (note ? '<div class="toa-cdec-sub">📢 ' + safe(note) + '</div>' : '')
+          + (dec  ? '<div class="toa-cdec-sub" style="color:#d97706">✅ Cần chốt: ' + safe(dec) + '</div>' : '')
+          + '<div class="toa-cdec-note">👤 ' + safe(a.Owner||a.PIC||'—') + ' · 📅 ' + safe(a.Deadline||'—') + '</div>'
+          + '</div>'
+          + modRagBadge(a.RAG)
+          + modStatusBadge(a.Status)
+          + '</div>';
+      });
+
+      // Từ TO_MEETINGS (Cần CEO)
+      meetCEO.forEach(function(m) {
+        html += '<div class="toa-ceo-decision-row">'
+          + '<span class="toa-cdec-factory" style="background:#2563eb">📋 Họp</span>'
+          + '<div class="toa-cdec-content">'
+          + '<div class="toa-cdec-action">' + safe(m.TieuDe||m.MeetingID) + '</div>'
+          + '<div class="toa-cdec-sub" style="color:#7c3aed">👑 ' + safe(m.CanCEO) + '</div>'
+          + '<div class="toa-cdec-note">📅 ' + safe(m.NgayHop||'—') + '</div>'
+          + '</div>'
+          + modRagBadge(m.RAG)
+          + '</div>';
+      });
+
+      html += '</div>';
+      el.innerHTML = html;
     }
 
-    /* §2 Họp Ban TO — meeting timeline */
-    function toaRenderSection2_Meetings(data) {
-      var el   = document.getElementById('toa-s2-content');
-      var meta = document.getElementById('toa-s2-meta');
+    /* §2 & §3 Helper: hot issues theo factory */
+    function toaRenderHotIssuesByFactory_(data, factory, contentId, metaId) {
+      var el   = document.getElementById(contentId);
+      var meta = document.getElementById(metaId);
       if (!el) return;
-      var meetings  = data.meetings  || [];
-      var hotIssues = data.hotIssues || [];
-      var actions   = data.actions   || [];
+
+      var allHot = data.hotIssues || [];
+      var hot    = allHot.filter(function(iss) {
+        return !factory || String(iss.Factory||'').trim() === factory;
+      });
+      var actions = data.actions || [];
+
+      if (meta) {
+        var red = hot.filter(function(h){ return h.RAG === 'Red'; }).length;
+        meta.textContent = hot.length + ' vấn đề' + (red ? ' · 🔴 ' + red + ' nghiêm trọng' : '');
+      }
+
+      if (!hot.length) {
+        el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Không có vấn đề nóng nào cho ' + safe(factory) + '.</div>';
+        return;
+      }
+
+      var sorted = hot.slice().sort(function(a,b){
+        return ({Red:0,Amber:1,Green:2}[a.RAG]||1) - ({Red:0,Amber:1,Green:2}[b.RAG]||1);
+      });
+
+      var html = '<div class="toa-hi-grid">';
+      sorted.forEach(function(iss) {
+        var cls = iss.RAG === 'Red' ? 'hi-red' : (iss.RAG === 'Amber' ? 'hi-amber' : (iss.RAG === 'Green' ? 'hi-green' : 'hi-gray'));
+        var linkedActs = actions.filter(function(a){ return a.IssueIDRef === iss.IssueID; });
+        html += '<div class="toa-hi-card ' + cls + '">'
+          + '<div class="toa-hi-id">' + safe(iss.IssueID)
+          + (iss.MeetingIDRef ? ' · 📋 ' + safe(iss.MeetingIDRef) : '')
+          + '</div>'
+          + (iss.IssueType ? '<span class="toa-hi-cat">' + safe(iss.IssueType) + '</span>' : '')
+          + '<div class="toa-hi-title">' + safe(iss.Description||'—') + '</div>'
+          + (iss.RootCause ? '<div class="toa-hi-desc">🔍 ' + safe(iss.RootCause.slice(0,120)+(iss.RootCause.length>120?'…':'')) + '</div>' : '')
+          + '<div class="toa-hi-meta">'
+          + (iss.Area     ? '<span>📍 ' + safe(iss.Area) + '</span>'     : '')
+          + (iss.Reporter ? '<span>👤 ' + safe(iss.Reporter) + '</span>' : '')
+          + modRagBadge(iss.RAG)
+          + modStatusBadge(iss.Status)
+          + '</div>'
+          + (linkedActs.length ? '<div style="font-size:11px;color:#6b7280;margin-top:6px">⚡ ' + linkedActs.length + ' action liên quan</div>' : '')
+          + '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    /* §2 Vấn đề nóng GS1 */
+    function toaRenderSection2_HotGS1(data) {
+      toaRenderHotIssuesByFactory_(data, 'GS1', 'toa-s2-content', 'toa-s2-meta');
+    }
+
+    /* §3 Vấn đề nóng GS5 */
+    function toaRenderSection3_HotGS5(data) {
+      toaRenderHotIssuesByFactory_(data, 'GS5', 'toa-s3-content', 'toa-s3-meta');
+    }
+
+    /* §4 Cuộc họp gần nhất — 3-cấp: Họp → Topics → Actions */
+    function toaRenderSection4_Meetings(data) {
+      var el   = document.getElementById('toa-s4-content');
+      var meta = document.getElementById('toa-s4-meta');
+      if (!el) return;
+
+      var meetings = data.meetings || [];
+      var topics   = data.topics   || [];
+      var actions  = data.actions  || [];
+      var issues   = data.issues   || [];
+
       if (meta) meta.textContent = meetings.length + ' cuộc họp';
+
       if (!meetings.length) {
         el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Chưa có cuộc họp nào trong sheet <strong>TO_MEETINGS</strong>.</div>';
         return;
       }
-      // Sắp xếp mới nhất trên đầu
+
       var sorted = meetings.slice().sort(function(a,b){
         var da = a.NgayHop ? new Date(String(a.NgayHop).split('/').reverse().join('-')) : new Date(0);
         var db = b.NgayHop ? new Date(String(b.NgayHop).split('/').reverse().join('-')) : new Date(0);
         return db - da;
       });
+
       var html = '<div class="toa-meeting-list">';
       sorted.forEach(function(m) {
-        var mid = m.MeetingID;
-        var mIss = hotIssues.filter(function(h){ return h.MeetingID === mid; });
-        var mAct = actions.filter(function(a){ return a.MeetingID === mid; });
+        var mid     = m.MeetingID;
+        var mTopics = [];
+        var mAct    = m.actions || [];
+        var mIss    = [];
+
         var ragCls = m.RAG === 'Red' ? 'fc-red' : (m.RAG === 'Amber' ? 'fc-amber' : (m.RAG === 'Green' ? 'fc-green' : 'fc-gray'));
-        var chips = '<span class="toa-fp-chip '+ragCls+'">' + (m.RAG||'—') + '</span>';
-        if (mIss.length) chips += '<span class="toa-fp-chip fc-gray">'+mIss.length+' vấn đề</span>';
-        if (mAct.length) chips += '<span class="toa-fp-chip fc-gray">'+mAct.length+' action</span>';
-        html += '<div class="toa-meeting-item" id="toa-mi-'+safe(mid)+'">'
-          + '<div class="toa-meeting-hdr" onclick="toaToggleMeeting(\''+safe(mid)+'\')">'
+        var chips  = '<span class="toa-fp-chip ' + ragCls + '">' + (m.RAG||'—') + '</span>';
+        if (mIss.length)    chips += '<span class="toa-fp-chip fc-gray">' + mIss.length + ' vấn đề</span>';
+        if (mTopics.length) chips += '<span class="toa-fp-chip fc-gray" style="background:#ede9fe;color:#7c3aed">' + mTopics.length + ' chủ đề</span>';
+        if (mAct.length)    chips += '<span class="toa-fp-chip fc-gray">' + mAct.length + ' action</span>';
+
+        html += '<div class="toa-meeting-item" id="toa-mi-' + safe(mid) + '">'
+          + '<div class="toa-meeting-hdr" onclick="toaToggleMeeting(\'' + safe(mid) + '\')">'
           + '<span class="toa-meeting-arrow">▶</span>'
-          + '<span class="toa-meeting-date">'+safe(m.NgayHop||'—')+'</span>'
-          + '<span class="toa-meeting-id">'+safe(mid)+'</span>'
-          + '<span class="toa-meeting-title">'+safe(m.TieuDe||'Chưa có tiêu đề')+'</span>'
-          + '<div class="toa-meeting-chips">'+chips+'</div>'
+          + '<span class="toa-meeting-date">' + safe(m.NgayHop||'—') + '</span>'
+          + '<span class="toa-meeting-id">' + safe(mid) + '</span>'
+          + '<span class="toa-meeting-title">' + safe(m.TieuDe||'Chưa có tiêu đề') + '</span>'
+          + '<div class="toa-meeting-chips">' + chips + '</div>'
           + '</div>'
           + '<div class="toa-meeting-detail">'
-          + toaBuildMeetingDetail_(m, mIss, mAct)
+          + toaBuildMeetingDetail_(m, mIss, mTopics, mAct)
           + '</div></div>';
       });
       html += '</div>';
       el.innerHTML = html;
     }
 
-    function toaBuildMeetingDetail_(m, hotIssues, actions) {
+    function toaBuildMeetingDetail_(m, mIssues, mTopics, mActions) {
       var html = '<div class="toa-md-grid" style="margin-bottom:12px">';
-      if (m.ChuTri)    html += '<div class="toa-md-kv"><strong>Chủ trì:</strong> '+safe(m.ChuTri)+'</div>';
-      if (m.ThuKy)     html += '<div class="toa-md-kv"><strong>Thư ký:</strong> '+safe(m.ThuKy)+'</div>';
-      if (m.DiaDiem)   html += '<div class="toa-md-kv"><strong>Địa điểm:</strong> '+safe(m.DiaDiem)+'</div>';
-      if (m.LoaiHop)   html += '<div class="toa-md-kv"><strong>Loại họp:</strong> '+safe(m.LoaiHop)+'</div>';
-      if (m.ThanhPhan) html += '<div class="toa-md-kv" style="grid-column:1/-1"><strong>Thành phần:</strong> '+safe(m.ThanhPhan)+'</div>';
+      if (m.ChuTri)    html += '<div class="toa-md-kv"><strong>Chủ trì:</strong> ' + safe(m.ChuTri) + '</div>';
+      if (m.ThuKy)     html += '<div class="toa-md-kv"><strong>Thư ký:</strong> ' + safe(m.ThuKy) + '</div>';
+      if (m.DiaDiem)   html += '<div class="toa-md-kv"><strong>Địa điểm:</strong> ' + safe(m.DiaDiem) + '</div>';
+      if (m.LoaiHop)   html += '<div class="toa-md-kv"><strong>Loại họp:</strong> ' + safe(m.LoaiHop) + '</div>';
+      if (m.ThanhPhan) html += '<div class="toa-md-kv" style="grid-column:1/-1"><strong>Thành phần:</strong> ' + safe(m.ThanhPhan) + '</div>';
       html += '</div>';
 
       if (m.TomTat) {
         html += '<div class="toa-md-section"><div class="toa-md-title">📝 Tóm tắt</div>'
-          + '<div class="toa-md-text">'+safe(m.TomTat)+'</div></div>';
+          + '<div class="toa-md-text">' + safe(m.TomTat) + '</div></div>';
       }
-      if (hotIssues.length) {
-        html += '<div class="toa-md-section"><div class="toa-md-title">🔥 Vấn đề nóng phát sinh ('+hotIssues.length+')</div><div>';
-        hotIssues.forEach(function(h){
-          var cls = h.RAG === 'Red' ? 'hi-red' : (h.RAG === 'Amber' ? 'hi-amber' : 'hi-green');
-          html += '<span class="toa-md-issue-chip '+cls+'">'+safe(h.HotIssueID)+' · '+safe(h.TieuDe||h.Category||'—')+'</span>';
+
+      // Vấn đề liên quan
+      if (mIssues && mIssues.length) {
+        html += '<div class="toa-md-section"><div class="toa-md-title">📌 Vấn đề được bàn (' + mIssues.length + ')</div><div>';
+        mIssues.forEach(function(iss) {
+          var cls = iss.RAG === 'Red' ? 'hi-red' : (iss.RAG === 'Amber' ? 'hi-amber' : 'hi-green');
+          html += '<span class="toa-md-issue-chip ' + cls + '">' + safe(iss.IssueID) + ' · ' + safe(iss.Description||iss.IssueType||'—') + '</span>';
         });
         html += '</div></div>';
       }
-      if (actions.length) {
-        html += '<div class="toa-md-section"><div class="toa-md-title">⚡ Action phát sinh ('+actions.length+')</div>'
+
+      // Topics → Actions (3-cấp)
+      if (mTopics && mTopics.length) {
+        html += '<div class="toa-md-section"><div class="toa-md-title">🗂 Chủ đề thảo luận (' + mTopics.length + ')</div>';
+        mTopics.forEach(function(t) {
+          var tActs = (mActions||[]).filter(function(a){ return a.TopicID === t.TopicID; });
+          html += '<div style="margin:8px 0;padding:8px 12px;background:#f5f3ff;border-left:3px solid #7c3aed;border-radius:4px">'
+            + '<div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:4px">' + safe(t.TopicID) + ' · ' + safe(t.TopicName) + '</div>'
+            + (t.Summary ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px">' + safe(t.Summary) + '</div>' : '');
+          if (tActs.length) {
+            html += '<div style="font-size:11px;color:#6b7280">';
+            tActs.slice(0,4).forEach(function(a) {
+              html += '<div style="display:flex;gap:6px;align-items:center;margin:2px 0">'
+                + modRagBadge(a.RAG)
+                + '<span>' + safe(a.Action) + '</span>'
+                + '<span style="color:#9ca3af;font-size:10px">— ' + safe(a.PIC||a.Owner||'—') + '</span>'
+                + '</div>';
+            });
+            if (tActs.length > 4) html += '<div style="color:#9ca3af;font-size:10px">+ ' + (tActs.length-4) + ' action khác...</div>';
+            html += '</div>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+      } else if (mActions && mActions.length) {
+        // No topics — show actions directly
+        html += '<div class="toa-md-section"><div class="toa-md-title">⚡ Action phát sinh (' + mActions.length + ')</div>'
           + '<div class="toa-md-action-list">';
-        actions.slice(0,6).forEach(function(a){
+        mActions.slice(0,6).forEach(function(a) {
           html += '<div class="toa-md-action-row">'
             + modRagBadge(a.RAG)
-            + '<span class="toa-md-action-txt">'+safe(a.Action)+'</span>'
-            + '<span style="font-size:11px;color:#6b7280;white-space:nowrap">'+safe(a.PIC||'—')+'</span>'
+            + '<span class="toa-md-action-txt">' + safe(a.Action) + '</span>'
+            + '<span style="font-size:11px;color:#6b7280;white-space:nowrap">' + safe(a.PIC||'—') + '</span>'
             + modStatusBadge(a.Status)
             + '</div>';
         });
-        if (actions.length > 6) html += '<div style="font-size:11px;color:#9ca3af;padding:4px 0">+ '+(actions.length-6)+' action khác...</div>';
+        if (mActions.length > 6) html += '<div style="font-size:11px;color:#9ca3af;padding:4px 0">+ ' + (mActions.length-6) + ' action khác...</div>';
         html += '</div></div>';
       }
+
       if (m.CanLamRo) {
         html += '<div class="toa-md-section"><div class="toa-md-title">❓ Cần làm rõ</div>'
-          + '<div class="toa-md-text">'+safe(m.CanLamRo)+'</div></div>';
+          + '<div class="toa-md-text">' + safe(m.CanLamRo) + '</div></div>';
       }
       if (m.CanCEO) {
         html += '<div class="toa-md-section"><div class="toa-md-title">👑 Cần CEO quyết định</div>'
-          + '<div class="toa-md-text" style="color:#7c3aed">'+safe(m.CanCEO)+'</div></div>';
+          + '<div class="toa-md-text" style="color:#7c3aed">' + safe(m.CanCEO) + '</div></div>';
       }
       if (m.FileBienBan) {
         html += '<div class="toa-md-section"><div class="toa-md-title">📎 File biên bản</div>'
-          + '<a class="toa-md-file-link" href="'+safe(m.FileBienBan)+'" target="_blank">📂 Mở file biên bản</a></div>';
+          + '<a class="toa-md-file-link" href="' + safe(m.FileBienBan) + '" target="_blank">📂 Mở file biên bản</a></div>';
       }
       return html;
     }
@@ -7531,109 +7745,12 @@ APS - S&OP - KHO - SẢN XUẤT",
       item.classList.toggle('expanded');
     }
 
-    /* §3 Vấn đề nóng */
-    function toaRenderSection3_HotIssues(data) {
-      var el   = document.getElementById('toa-s3-content');
-      var meta = document.getElementById('toa-s3-meta');
-      if (!el) return;
-      var hotIssues = data.hotIssues || [];
-      var actions   = data.actions   || [];
-      if (meta) {
-        var red = hotIssues.filter(function(h){ return h.RAG === 'Red'; }).length;
-        meta.textContent = hotIssues.length + ' vấn đề' + (red ? '  · 🔴 ' + red + ' nghiêm trọng' : '');
-      }
-      if (!hotIssues.length) {
-        el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Chưa có vấn đề nóng trong sheet <strong>TO_HOT_ISSUES</strong>.</div>';
-        return;
-      }
-      var sorted = hotIssues.slice().sort(function(a,b){
-        return ({Red:0,Amber:1,Green:2}[a.RAG]||1) - ({Red:0,Amber:1,Green:2}[b.RAG]||1);
-      });
-      var html = '<div class="toa-hi-grid">';
-      sorted.forEach(function(h) {
-        var cls = h.RAG === 'Red' ? 'hi-red' : (h.RAG === 'Amber' ? 'hi-amber' : (h.RAG === 'Green' ? 'hi-green' : 'hi-gray'));
-        var linkedActs = actions.filter(function(a){ return a.IssueIDRef === h.HotIssueID; });
-        var pct = Math.min(100, Math.max(0, Number(h.PctHoanThanh)||0));
-        html += '<div class="toa-hi-card '+cls+'">'
-          + '<div class="toa-hi-id">'+safe(h.HotIssueID)+(h.MeetingID?' · '+safe(h.MeetingID):'')+'</div>'
-          + (h.Category ? '<span class="toa-hi-cat">'+safe(h.Category)+'</span>' : '')
-          + '<div class="toa-hi-title">'+safe(h.TieuDe||'—')+'</div>'
-          + (h.MoTa ? '<div class="toa-hi-desc">'+safe(h.MoTa.slice(0,120)+(h.MoTa.length>120?'…':''))+'</div>' : '')
-          + '<div class="toa-hi-meta">'
-          + (h.Factory ? '<span>🏭 '+safe(h.Factory)+'</span>' : '')
-          + (h.Owner   ? '<span>👤 '+safe(h.Owner)+'</span>'   : '')
-          + (h.Deadline? '<span>📅 '+safe(h.Deadline)+'</span>': '')
-          + modRagBadge(h.RAG)
-          + modStatusBadge(h.TrangThai)
-          + '</div>'
-          + (linkedActs.length ? '<div style="font-size:11px;color:#6b7280;margin-top:6px">⚡ '+linkedActs.length+' action liên quan</div>' : '')
-          + '<div class="toa-hi-progress"><div class="toa-hi-progress-bar" style="width:'+pct+'%"></div></div>'
-          + '<div style="font-size:10px;color:#6b7280;text-align:right;margin-top:2px">'+pct+'%</div>'
-          + '</div>';
-      });
-      html += '</div>';
-      el.innerHTML = html;
-    }
-
-    /* §4 CEO cần quyết định */
-    function toaRenderSection4_CEO(data) {
-      var el   = document.getElementById('toa-s4-content');
-      var meta = document.getElementById('toa-s4-meta');
-      if (!el) return;
-      var actions = data.actions || [];
-      function hasCEOContent(a) {
-        var note = String(a.CEONote||'').trim().toLowerCase();
-        var dec  = String(a.CEODecision||'').trim().toLowerCase();
-        return (note && note !== 'không' && note !== 'no' && note !== 'n/a')
-            || (dec  && dec  !== 'không' && dec  !== 'no' && dec  !== 'n/a');
-      }
-      var ceoItems = actions.filter(hasCEOContent);
-      // Thêm items từ meetings.CanCEO
-      var meetingCEO = (data.meetings||[]).filter(function(m){ return m.CanCEO && m.CanCEO.trim(); });
-
-      if (meta) meta.textContent = (ceoItems.length + meetingCEO.length) + ' nội dung chờ CEO';
-      if (!ceoItems.length && !meetingCEO.length) {
-        el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Không có nội dung nào cần CEO quyết định.</div>';
-        return;
-      }
-      var html = '<div class="toa-ceo-decision-list">';
-      // Action items
-      ceoItems.forEach(function(a) {
-        var note = String(a.CEONote||'').trim();
-        var dec  = String(a.CEODecision||'').trim();
-        html += '<div class="toa-ceo-decision-row">'
-          + '<span class="toa-cdec-factory">'+safe(a.Factory||'—')+'</span>'
-          + '<div class="toa-cdec-content">'
-          + '<div class="toa-cdec-action">'+safe(a.Action)+'</div>'
-          + (note ? '<div class="toa-cdec-sub">📢 '+safe(note)+'</div>' : '')
-          + (dec  ? '<div class="toa-cdec-sub" style="color:#d97706">✅ Cần chốt: '+safe(dec)+'</div>' : '')
-          + '<div class="toa-cdec-note">👤 '+safe(a.Owner||a.PIC||'—')+' · 📅 '+safe(a.Deadline||'—')+'</div>'
-          + '</div>'
-          + modRagBadge(a.RAG)
-          + modStatusBadge(a.Status)
-          + '</div>';
-      });
-      // Meeting CEO items
-      meetingCEO.forEach(function(m) {
-        html += '<div class="toa-ceo-decision-row">'
-          + '<span class="toa-cdec-factory" style="background:#2563eb">📋 Họp</span>'
-          + '<div class="toa-cdec-content">'
-          + '<div class="toa-cdec-action">'+safe(m.TieuDe||m.MeetingID)+'</div>'
-          + '<div class="toa-cdec-sub" style="color:#7c3aed">👑 '+safe(m.CanCEO)+'</div>'
-          + '<div class="toa-cdec-note">📅 '+safe(m.NgayHop||'—')+'</div>'
-          + '</div>'
-          + modRagBadge(m.RAG)
-          + '</div>';
-      });
-      html += '</div>';
-      el.innerHTML = html;
-    }
-
-    /* §5 Theo dõi Action */
-    function toaRenderSection5_Actions(data) {
+    /* §5 Action đang mở — với filter bar */
+    function toaRenderSection5_OpenActions(data) {
       var meta = document.getElementById('toa-s5-meta');
-      if (meta) meta.textContent = (data.actions||[]).length + ' action';
-      // Populate meeting filter
+      var openActs = data.openActions || [];
+      if (meta) meta.textContent = openActs.length + ' action đang mở';
+
       var meetSel = document.getElementById('toa-s5-f-meeting');
       if (meetSel) {
         while (meetSel.options.length > 1) meetSel.remove(1);
@@ -7644,17 +7761,18 @@ APS - S&OP - KHO - SẢN XUẤT",
           meetSel.appendChild(o);
         });
       }
-      // Populate owner filter
+
       var ownerSel = document.getElementById('toa-s5-f-owner');
       if (ownerSel) {
         var owners = {};
-        (data.actions||[]).forEach(function(a){ if(a.Owner) owners[a.Owner]=1; if(a.PIC) owners[a.PIC]=1; });
+        openActs.forEach(function(a){ if(a.Owner) owners[a.Owner]=1; if(a.PIC) owners[a.PIC]=1; });
         while (ownerSel.options.length > 1) ownerSel.remove(1);
         Object.keys(owners).sort().forEach(function(o) {
           var opt = document.createElement('option'); opt.value = o; opt.textContent = o;
           ownerSel.appendChild(opt);
         });
       }
+
       toaS5ApplyFilters();
     }
 
@@ -7665,16 +7783,45 @@ APS - S&OP - KHO - SẢN XUẤT",
       var statFilter  = ((document.getElementById('toa-s5-f-status') ||{}).value||'');
       var ownerFilter = ((document.getElementById('toa-s5-f-owner')  ||{}).value||'');
       var kw          = ((document.getElementById('toa-s5-search')   ||{}).value||'').toLowerCase().trim();
-      var filtered = (toaCache.actions||[]).filter(function(r) {
+      var src = toaCache.openActions || [];
+      var filtered = src.filter(function(r) {
         var matchMeet  = !meetFilter  || (r.MeetingID||'') === meetFilter;
         var matchFact  = !factFilter  || (r.Factory||'')   === factFilter;
         var matchStat  = !statFilter  || (r.Status||'').toLowerCase().includes(statFilter.toLowerCase());
         var matchOwner = !ownerFilter || (r.Owner||'') === ownerFilter || (r.PIC||'') === ownerFilter;
-        var matchKw    = !kw || ((r.Action||'')+(r.PIC||'')+(r.Owner||'')+(r.Area||'')+(r.CEONote||'')).toLowerCase().includes(kw);
+        var matchKw    = !kw || ((r.Action||'')+(r.PIC||'')+(r.Owner||'')+(r.Area||'')+(r.CEODecision||'')).toLowerCase().includes(kw);
         return matchMeet && matchFact && matchStat && matchOwner && matchKw;
       });
       var suffix = (meetFilter||factFilter||statFilter||ownerFilter||kw) ? ' (đang lọc)' : '';
-      toaRenderActionsTable(filtered, '⚡ Theo dõi Action'+suffix, 'toa-s5-content');
+      toaRenderActionsTable(filtered, '⚡ Action đang mở' + suffix, 'toa-s5-content');
+    }
+
+    /* §6 Action quá hạn */
+    function toaRenderSection6_Overdue(data) {
+      var el   = document.getElementById('toa-s6-content');
+      var meta = document.getElementById('toa-s6-meta');
+      if (!el) return;
+      var overdueActs = data.overdueActions || [];
+      if (meta) meta.textContent = overdueActs.length + ' action quá hạn';
+      if (!overdueActs.length) {
+        el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Không có action quá hạn.</div>';
+        return;
+      }
+      toaRenderActionsTable(overdueActs, '⏰ Action quá hạn', 'toa-s6-content');
+    }
+
+    /* §7 Đã hoàn thành (30 ngày gần nhất) */
+    function toaRenderSection7_Done(data) {
+      var el   = document.getElementById('toa-s7-content');
+      var meta = document.getElementById('toa-s7-meta');
+      if (!el) return;
+      var doneActs = data.doneActions || [];
+      if (meta) meta.textContent = doneActs.length + ' hoàn thành (30 ngày gần nhất)';
+      if (!doneActs.length) {
+        el.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:13px">Chưa có action hoàn thành trong 30 ngày gần nhất.</div>';
+        return;
+      }
+      toaRenderActionsTable(doneActs, '✅ Đã hoàn thành gần đây', 'toa-s7-content');
     }
 
     /* Collapse/expand section block */
@@ -7694,13 +7841,14 @@ APS - S&OP - KHO - SẢN XUẤT",
 
     function toaOpenUpdateForm() {
       toauType = '';
-      ['issue','action','update'].forEach(function(t){
+      ['issue','action','update','ceo'].forEach(function(t){
         var c = document.getElementById('toau-card-'+t); if(c) c.classList.remove('selected');
       });
       document.getElementById('toau-step1').style.display = '';
       document.getElementById('toau-step2-issue').style.display = 'none';
       document.getElementById('toau-step2-action').style.display = 'none';
       document.getElementById('toau-step2-update').style.display = 'none';
+      document.getElementById('toau-step2-ceo').style.display = 'none';
       document.getElementById('toau-modal-title').textContent = '📝 Cập nhật TO';
       document.getElementById('toau-overlay').style.display = 'flex';
       // Set default dates to today
@@ -7723,14 +7871,14 @@ APS - S&OP - KHO - SẢN XUẤT",
 
     function toauSelectType(type) {
       toauType = type;
-      ['issue','action','update'].forEach(function(t){
+      ['issue','action','update','ceo'].forEach(function(t){
         var c = document.getElementById('toau-card-'+t);
         if(c) c.classList.toggle('selected', t===type);
       });
     }
 
     function toauGoStep2() {
-      if (!toauType) { alert('Vui lòng chọn loại cập nhật (A, B hoặc C).'); return; }
+      if (!toauType) { alert('Vui lòng chọn loại cập nhật (A, B, C hoặc D).'); return; }
       document.getElementById('toau-step1').style.display = 'none';
       if (toauType === 'issue') {
         document.getElementById('toau-modal-title').textContent = '🔍 Ghi nhận vấn đề mới';
@@ -7740,6 +7888,11 @@ APS - S&OP - KHO - SẢN XUẤT",
         document.getElementById('toau-modal-title').textContent = '⚡ Giao công việc xử lý';
         document.getElementById('toau-step2-action').style.display = '';
         toauPreviewActionID();
+      } else if (toauType === 'ceo') {
+        document.getElementById('toau-modal-title').textContent = '👔 Ghi nhận chỉ đạo CEO';
+        document.getElementById('toau-step2-ceo').style.display = '';
+        var today = new Date().toISOString().slice(0,10);
+        var dt = document.getElementById('toau-ceo-date'); if (dt && !dt.value) dt.value = today;
       } else {
         document.getElementById('toau-modal-title').textContent = '✏️ Cập nhật kết quả công việc';
         document.getElementById('toau-step2-update').style.display = '';
@@ -7750,6 +7903,7 @@ APS - S&OP - KHO - SẢN XUẤT",
       document.getElementById('toau-step2-issue').style.display = 'none';
       document.getElementById('toau-step2-action').style.display = 'none';
       document.getElementById('toau-step2-update').style.display = 'none';
+      document.getElementById('toau-step2-ceo').style.display = 'none';
       document.getElementById('toau-step1').style.display = '';
       document.getElementById('toau-modal-title').textContent = '📝 Cập nhật TO';
     }
@@ -7772,31 +7926,33 @@ APS - S&OP - KHO - SẢN XUẤT",
     }
 
     function toauPopulateIssueSelector() {
-      var sel = document.getElementById('toau-act-issue');
-      if (!sel) return;
-      while (sel.options.length > 1) sel.remove(1);
       var issues = (toaCache && toaCache.issues) ? toaCache.issues : [];
-      // Only show open issues
       var open = issues.filter(function(r){ return !/đã xử lý|đóng/i.test(r.Status||''); });
-      open.forEach(function(r){
-        var opt = document.createElement('option');
-        opt.value = r.IssueID || '';
-        var label = (r.IssueID||'?')+' · '+(r.Factory||'')+' · '+(r.Area||'')+' · '+(r.Description||r.IssueType||'').slice(0,40);
-        opt.textContent = label;
-        sel.appendChild(opt);
+      ['toau-act-issue', 'toau-ceo-issue'].forEach(function(selId) {
+        var sel = document.getElementById(selId);
+        if (!sel) return;
+        while (sel.options.length > 1) sel.remove(1);
+        open.forEach(function(r){
+          var opt = document.createElement('option');
+          opt.value = r.IssueID || '';
+          opt.textContent = (r.IssueID||'?')+' · '+(r.Factory||'')+' · '+(r.Area||'')+' · '+(r.Description||r.IssueType||'').slice(0,40);
+          sel.appendChild(opt);
+        });
       });
     }
 
     function toauPopulateMeetingSelector() {
-      var sel = document.getElementById('toau-act-meeting');
-      if (!sel) return;
-      while (sel.options.length > 1) sel.remove(1);
       var meetings = (toaCache && toaCache.meetings) ? toaCache.meetings : [];
-      meetings.forEach(function(m) {
-        var opt = document.createElement('option');
-        opt.value = m.MeetingID || '';
-        opt.textContent = (m.MeetingID||'?') + (m.NgayHop?' · '+m.NgayHop:'') + (m.TieuDe?' — '+m.TieuDe.slice(0,30):'');
-        sel.appendChild(opt);
+      ['toau-act-meeting', 'toau-iss-meeting', 'toau-ceo-meeting'].forEach(function(selId) {
+        var sel = document.getElementById(selId);
+        if (!sel) return;
+        while (sel.options.length > 1) sel.remove(1);
+        meetings.forEach(function(m) {
+          var opt = document.createElement('option');
+          opt.value = m.MeetingID || '';
+          opt.textContent = (m.MeetingID||'?') + (m.NgayHop?' · '+m.NgayHop:'') + (m.TieuDe?' — '+m.TieuDe.slice(0,30):'');
+          sel.appendChild(opt);
+        });
       });
     }
 
@@ -7957,9 +8113,10 @@ APS - S&OP - KHO - SẢN XUẤT",
         rootCause:   ((document.getElementById('toau-iss-cause')||{}).value||'').trim(),
         impact:      ((document.getElementById('toau-iss-impact')||{}).value||'').trim(),
         level:       ((document.getElementById('toau-iss-level')||{}).value||'').trim(),
-        rag:         ((document.getElementById('toau-iss-rag')||{}).value||'').trim(),
-        status:      ((document.getElementById('toau-iss-status')||{}).value||'').trim(),
-        note:        ((document.getElementById('toau-iss-note')||{}).value||'').trim()
+        rag:          ((document.getElementById('toau-iss-rag')||{}).value||'').trim(),
+        status:       ((document.getElementById('toau-iss-status')||{}).value||'').trim(),
+        note:         ((document.getElementById('toau-iss-note')||{}).value||'').trim(),
+        meetingIdRef: ((document.getElementById('toau-iss-meeting')||{}).value||'').trim()
       };
       gasPostJSON('toWriteIssue', payload).then(function(res) {
         if (res && res.success) {
@@ -8003,11 +8160,14 @@ APS - S&OP - KHO - SẢN XUẤT",
         rag:        ((document.getElementById('toau-act-rag')||{}).value||'').trim(),
         output:     ((document.getElementById('toau-act-output')||{}).value||'').trim(),
         fileSource: ((document.getElementById('toau-act-evidence')||{}).value||'').trim(),
-        ceoNote:    ((document.getElementById('toau-act-ceonote')||{}).value||'').trim(),
-        vuongMac:   ((document.getElementById('toau-act-vuong')||{}).value||'').trim(),
-        pct:        ((document.getElementById('toau-act-pct')||{}).value||'').trim(),
-        updDate:    toauToGASDate((document.getElementById('toau-act-upddate')||{}).value||''),
-        note:       ''
+        ceoNote:     ((document.getElementById('toau-act-ceonote')||{}).value||'').trim(),
+        ceoDecision: ((document.getElementById('toau-act-ceodec')||{}).value||'').trim(),
+        vuongMac:    ((document.getElementById('toau-act-vuong')||{}).value||'').trim(),
+        pct:         ((document.getElementById('toau-act-pct')||{}).value||'').trim(),
+        updDate:     toauToGASDate((document.getElementById('toau-act-upddate')||{}).value||''),
+        meetingIdRef:((document.getElementById('toau-act-meeting')||{}).value||'').trim(),
+        topicId:     ((document.getElementById('toau-act-topicid')||{}).value||'').trim(),
+        note:        ''
       };
       gasPostJSON('toWriteAction', payload).then(function(res) {
         if (res && res.success) {
@@ -8053,6 +8213,35 @@ APS - S&OP - KHO - SẢN XUẤT",
           setTimeout(function(){ toaCloseUpdateForm(); loadTOActions(); }, 1800);
         } else {
           toauSetDone('toau-upd-save','toau-upd-fnote','❌ Lỗi: '+(res&&res.error?res.error:'Không rõ lỗi — dữ liệu có thể đã được ghi. Kiểm tra sheet.'), true);
+        }
+      });
+    }
+
+    function toauSaveCEOComment() {
+      var noidung  = ((document.getElementById('toau-ceo-noidung')||{}).value||'').trim();
+      var nguoighi = ((document.getElementById('toau-ceo-nguoighi')||{}).value||'').trim();
+      if (!noidung)  { toauSetNote('toau-ceo-fnote','❌ Chưa nhập Nội dung chỉ đạo CEO.','#dc2626'); return; }
+      if (!nguoighi) { toauSetNote('toau-ceo-fnote','❌ Chưa nhập Người ghi.','#dc2626'); return; }
+      var confirmMsg = 'Xác nhận ghi nhận chỉ đạo CEO vào sheet CEO_COMMENTS?\n\nNội dung: '+noidung.slice(0,80);
+      if (!confirm(confirmMsg)) return;
+      toauSetBusy('toau-ceo-save','toau-ceo-fnote','Đang gửi đến GAS...');
+      var payload = {
+        ngay:          toauToGASDate((document.getElementById('toau-ceo-date')||{}).value||''),
+        nguoiGhi:      nguoighi,
+        loai:          ((document.getElementById('toau-ceo-loai')||{}).value||'').trim(),
+        trangThaiXuLy: ((document.getElementById('toau-ceo-trangthai')||{}).value||'Chờ xử lý').trim(),
+        meetingIdRef:  ((document.getElementById('toau-ceo-meeting')||{}).value||'').trim(),
+        issueIdRef:    ((document.getElementById('toau-ceo-issue')||{}).value||'').trim(),
+        actionIdRef:   ((document.getElementById('toau-ceo-actionid')||{}).value||'').trim(),
+        noiDung:       noidung,
+        ghiChu:        ((document.getElementById('toau-ceo-ghichu')||{}).value||'').trim()
+      };
+      gasPostJSON('saveCEOComment', payload).then(function(res) {
+        if (res && res.success) {
+          toauSetDone('toau-ceo-save','toau-ceo-fnote','✅ '+(res.message||'Đã ghi nhận chỉ đạo thành công.'), false);
+          setTimeout(function(){ toaCloseUpdateForm(); loadTOActions(); }, 1800);
+        } else {
+          toauSetDone('toau-ceo-save','toau-ceo-fnote','❌ Lỗi: '+(res&&res.error?res.error:'Không rõ lỗi'), true);
         }
       });
     }
@@ -8174,7 +8363,7 @@ APS - S&OP - KHO - SẢN XUẤT",
         contentEl.innerHTML =
           '<div class="module-placeholder">' +
           '<div class="module-placeholder-icon">✅</div>' +
-          '<h2>CEO Decision Board</h2>' +
+          '<h2>Bảng quyết định CEO</h2>' +
           '<p>Tập hợp tất cả quyết định đang chờ CEO phê duyệt từ toàn bộ các workstream. Dữ liệu tự động cập nhật khi PMO Dashboard tải xong.</p>' +
           '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>' +
           '</div>';
@@ -8252,7 +8441,7 @@ APS - S&OP - KHO - SẢN XUẤT",
         contentEl.innerHTML =
           '<div class="module-placeholder">' +
           '<div class="module-placeholder-icon">📊</div>' +
-          '<h2>Data Quality</h2>' +
+          '<h2>Chất lượng dữ liệu</h2>' +
           '<p>Đánh giá chất lượng điền dữ liệu của 16 PIC theo 6 workstream. Dữ liệu tự động cập nhật khi PMO Dashboard tải xong.</p>' +
           '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ PMO Dashboard</div>' +
           '</div>';
