@@ -9,65 +9,18 @@ function doGet(e) {
     return ContentService.createTextOutput(body).setMimeType(mime);
   }
 
-  if (action === 'getDashboardData')    return jsonOut(getDashboardData());
-  if (action === 'getDashboardComments') return jsonOut(getDashboardComments());
-  if (action === 'getCEOProjects')      return jsonOut(getCEOProjectsData());
-  if (action === 'getCEOProjectTracker') return jsonOut(getCEOProjectTrackerData());
-  if (action === 'getTOActions') {
-    try {
-      return jsonOut(getTOActionsData());
-    } catch(eTOA) {
-      Logger.log('[getTOActions] ERROR: ' + eTOA.message);
-      return jsonOut({ exists: false, records: [], total: 0, _error: eTOA.message });
-    }
-  }
-  if (action === 'getMeetingMinutes')   return jsonOut(getMeetingMinutesData());
-  if (action === 'getMeetingCenter')    return jsonOut(getMeetingCenterData());
-  if (action === 'getRiskSOS')          return jsonOut(getRiskSOSData());
-  if (action === 'getCEODecisions')     return jsonOut(getCEODecisionsData());
-  if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
-  if (action === 'getCommandCenterData') return jsonOut(getCommandCenterData());
-  if (action === 'getPicPmoData')        return jsonOut(getPicPmoData());
+  /* ── KIẾN TRÚC MỚI: 8 sheet — 1 module = 1 sheet ── */
+  if (action === 'getDashboardData')      return jsonOut(getNewDashboardData());
+  if (action === 'getDashboardComments')  return jsonOut(getDashboardComments());
+  if (action === 'getToActionCenterData') return jsonOut(getTOModuleData());
+  if (action === 'getMeetingCenter')      return jsonOut(getBienBanHopModuleData());
+  if (action === 'getRiskSOS')            return jsonOut(getRiskModuleData());
+  if (action === 'getCEODecisions')       return jsonOut(getQuyetDinhModuleData());
+  if (action === 'getCEOProjects')        return jsonOut(getDuAnCEOModuleData());
+  if (action === 'getCEOProjectTracker')  return jsonOut(getDuAnCEOModuleData());
+  if (action === 'getPicPmoData')         return jsonOut(getPMOModuleData());
 
   if (action === 'ping') return jsonOut({ ok: true, ts: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss') });
-
-  if (action === 'getToActionsRaw') {
-    // DEBUG: đọc thẳng TO_ACTIONS, trả raw data
-    var ss2 = SpreadsheetApp.getActiveSpreadsheet();
-    var sh  = ss2.getSheetByName('TO_ACTIONS');
-    if (!sh) return jsonOut({ ok: false, reason: 'Sheet TO_ACTIONS không tìm thấy', allSheets: ss2.getSheets().map(function(s){ return s.getName(); }) });
-    var lastRow = sh.getLastRow();
-    var lastCol = sh.getLastColumn();
-    if (lastRow < 2) return jsonOut({ ok: false, reason: 'Sheet trống (lastRow=' + lastRow + ')' });
-    var headers = sh.getRange(1, 1, 1, lastCol).getValues()[0];
-    var sample  = sh.getRange(2, 1, Math.min(3, lastRow - 1), lastCol).getValues();
-    return jsonOut({ ok: true, rowCount: lastRow - 1, headers: headers, sample: sample });
-  }
-
-  if (action === 'getToActionCenterData') {
-    try {
-      return jsonOut(getToActionCenterData());
-    } catch(e) {
-      Logger.log('[getToActionCenterData] ERROR: ' + e.message);
-      // Fallback: đọc đơn giản qua getTOActionsData
-      try {
-        var toa = getTOActionsData();
-        var recs = toa.records || [];
-        return jsonOut({
-          actions: recs, issues: [], factories: [],
-          evidenceFiles: [], byArea: [],
-          urgent24h: [], urgent72h: [], inPlan: recs,
-          noOwnerList: [], ceoList: [],
-          _error: e.message,
-          issuesSummary: { total: 0, byRAG: { Green: 0, Amber: 0, Red: 0 }, open: 0 },
-          actionsSummary: { total: recs.length, done: 0, inProgress: 0, overdue: 0,
-            noOwner: 0, ceoNeeded: 0, urgent24hCount: 0, urgent72hCount: 0, inPlanCount: recs.length }
-        });
-      } catch(e2) {
-        return jsonOut({ actions: [], issues: [], factories: [], _error: e.message + ' | ' + e2.message });
-      }
-    }
-  }
 
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('GSP NEXT 30 - CEO Dashboard')
@@ -89,13 +42,17 @@ function doPost(e) {
       result = deleteDashboardComment(payload);
     } else if (action === 'toWriteIssue') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      result = toWriteNewIssue_(ss, payload);
+      payload.loaiND = 'Vấn đề';
+      result = writeTO_(ss, payload);
     } else if (action === 'toWriteAction') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      result = toWriteNewAction_(ss, payload);
+      payload.loaiND = 'Action';
+      result = writeTO_(ss, payload);
     } else if (action === 'toUpdateAction') {
+      result = { success: false, error: 'Tính năng cập nhật bằng ID đã bị tắt. Vui lòng cập nhật trực tiếp trong Google Sheets "03_TO_COMMAND_CENTER".' };
+    } else if (action === 'saveCEOComment') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      result = toUpdateExistingAction_(ss, payload);
+      result = writeQuyetDinh_(ss, payload);
     } else {
       result = { success: false, error: 'Unknown action' };
     }
@@ -2486,7 +2443,8 @@ function normalizeMeetingTopic_(r, i) {
     Summary:   String(r['Tóm tắt nhanh Topic'] || r['Tóm tắt'] || '').trim(),
     Owner:     String(r['Owner theo dõi']       || '').trim(),
     Status:    String(r['Trạng thái']           || 'Đang diễn ra').trim(),
-    Note:      String(r['Ghi chú']             || '').trim()
+    Note:      String(r['Ghi chú']             || '').trim(),
+    MeetingID: String(r['Meeting ID']          || '').trim()
   };
 }
 
@@ -4123,113 +4081,100 @@ function testGetPicPmoData() {
 ================================================================ */
 
 function getToActionCenterData() {
-  var ss    = SpreadsheetApp.getActiveSpreadsheet();
-  var now   = new Date();
-  var in24h = new Date(now.getTime() + 24 * 3600 * 1000);
-  var in72h = new Date(now.getTime() + 72 * 3600 * 1000);
+  var ss             = SpreadsheetApp.getActiveSpreadsheet();
+  var now            = new Date();
+  var thirtyDaysAgo  = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
 
-  var issues    = readSheetSafe('TO_ISSUES').map(normalizeToIssue_);
-  var actions   = readSheetSafe('TO_ACTIONS').map(normalizeTOActionFull_);
-  var meetings  = getTOMeetings_(ss);
-  var hotIssues = getToHotIssues_(ss);
+  // ── 5 sheet reads ──
+  var issues      = readSheetSafe('TO_ISSUES').map(normalizeToIssue_);
+  var meetings    = getTOMeetings_(ss);
+  var topics      = readSheetSafe('MEETING_TOPICS').map(normalizeMeetingTopic_);
+  var actions     = readSheetSafe('TO_ACTIONS').map(normalizeTOActionFull_);
+  var ceoComments = getCEOComments_(ss);
 
-  // ── Urgency buckets ──
-  var urgent24h = [];
-  var urgent72h = [];
-  var inPlan    = [];
-  var noOwner   = [];
-  var ceoList   = [];
-
-  actions.forEach(function(a) {
-    var planType = (a.PlanType || '').toLowerCase();
-    var dl       = a.Deadline ? parseDate(a.Deadline) : null;
-    var active   = (a.Status !== 'Done');
-
-    if (active) {
-      var is24  = planType.includes('24') || planType.includes('ngay')  || (dl && dl <= in24h);
-      var is72  = !is24 && (planType.includes('72') || planType.includes('khẩn') || planType.includes('khan') || (dl && dl > in24h && dl <= in72h));
-
-      if (is24)       urgent24h.push(a);
-      else if (is72)  urgent72h.push(a);
-      else            inPlan.push(a);
-    }
-
-    if ((isNeedAssign_(a.PIC) || isNeedAssign_(a.Owner)) && active) noOwner.push(a);
-    if (hasText(a.CEONote) && !isNoValue_(a.CEONote))    ceoList.push(a);
+  // ── Hot issues: lọc từ TO_ISSUES (RAG=Red hoặc Mức độ=Cao/High/Critical) ──
+  var hotIssues = issues.filter(function(iss) {
+    var lvl = String(iss.Level || '').toLowerCase();
+    return iss.RAG === 'Red'
+      || lvl === 'cao' || lvl === 'high' || lvl === 'critical' || lvl.includes('khẩn');
   });
 
-  // ── Issues aggregation ──
-  var issRAG    = { Green: 0, Amber: 0, Red: 0 };
-  var areaMap   = {};
-  var evidenceMap = {};
+  // ── Action buckets ──
+  var openActions    = [];
+  var overdueActions = [];
+  var doneActions    = [];
+  var noOwner        = [];
+  var ceoList        = [];
 
+  actions.forEach(function(a) {
+    var s      = String(a.Status || '').toLowerCase();
+    var isDone = s === 'done' || s.includes('hoàn') || s.includes('xong');
+    var isOv   = a.IsOverdue;
+
+    if (isDone) {
+      var updDate = a.NgayCapNhat ? parseDate(a.NgayCapNhat) : null;
+      if (!updDate || updDate >= thirtyDaysAgo) doneActions.push(a);
+    } else if (isOv) {
+      overdueActions.push(a);
+    } else {
+      openActions.push(a);
+    }
+
+    if ((isNeedAssign_(a.PIC) || isNeedAssign_(a.Owner)) && !isDone) noOwner.push(a);
+    if (hasText(a.CEODecision) && !isNoValue_(a.CEODecision))         ceoList.push(a);
+  });
+
+  // CEO_COMMENTS còn chờ xử lý
+  var ceoPending = ceoComments.filter(function(c) {
+    var s = String(c.TrangThaiXuLy || '').toLowerCase();
+    return s !== 'đã xong' && s !== 'hoàn thành' && s !== 'done';
+  });
+
+  // ── Factories từ TO_ISSUES ──
+  var factorySet = {};
+  issues.forEach(function(x) { if (x.Factory) factorySet[x.Factory] = true; });
+  var factories = Object.keys(factorySet).sort();
+
+  // ── Issues summary ──
+  var issRAG = { Green: 0, Amber: 0, Red: 0 };
   issues.forEach(function(iss) {
     var r = iss.RAG || 'Amber';
-    if (issRAG[r] !== undefined) issRAG[r]++; else issRAG['Amber']++;
-
-    var area = iss.Area || 'Chưa phân loại';
-    if (!areaMap[area]) areaMap[area] = { area: area, total: 0, green: 0, amber: 0, red: 0 };
-    areaMap[area].total++;
-    if (r === 'Green')      areaMap[area].green++;
-    else if (r === 'Red')   areaMap[area].red++;
-    else                    areaMap[area].amber++;
-
-    if (hasText(iss.EvidenceLink)) {
-      evidenceMap[iss.EvidenceLink] = { url: iss.EvidenceLink, name: iss.Reporter + (iss.ReportDate ? '  —  ' + iss.ReportDate : '') };
-    }
+    if (issRAG[r] !== undefined) issRAG[r]++; else issRAG.Amber++;
   });
-
-  actions.forEach(function(a) {
-    if (hasText(a.EvidenceLink)) {
-      evidenceMap[a.EvidenceLink] = { url: a.EvidenceLink, name: a.Source || a.Meeting || 'File báo cáo' };
-    }
-  });
-
-  var done = actions.filter(function(a) { return a.Status === 'Done'; });
-  var overdue = actions.filter(function(a) { return a.Status === 'Overdue' || a.IsOverdue; });
-
-  // ── Unique factories (for frontend factory tab generation) ──
-  var factorySet = {};
-  issues.forEach(function(x)  { if (x.Factory) factorySet[x.Factory] = true; });
-  actions.forEach(function(x) { if (x.Factory) factorySet[x.Factory] = true; });
-  var factories = Object.keys(factorySet).sort();
 
   return JSON.parse(JSON.stringify({
     updatedAt: Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss'),
 
-    factories: factories,
+    factories:   factories,
+    issues:      issues,
+    hotIssues:   hotIssues,
+    meetings:    meetings,
+    topics:      topics,
+    actions:     actions,
+    ceoComments: ceoComments,
+
+    openActions:    openActions,
+    overdueActions: overdueActions,
+    doneActions:    doneActions,
+    ceoList:        ceoList,
+    ceoPending:     ceoPending,
+    noOwnerList:    noOwner,
 
     issuesSummary: {
-      total:   issues.length,
-      byRAG:   issRAG,
-      open:    issues.filter(function(i) { return i.Status !== 'Đã xử lý' && i.Status !== 'Đóng'; }).length,
-      byStatus: buildStatusCounts_(issues, 'Status')
+      total: issues.length,
+      open:  issues.filter(function(i) { return i.Status !== 'Đã xử lý' && i.Status !== 'Đóng'; }).length,
+      byRAG: issRAG,
+      hot:   hotIssues.length
     },
 
     actionsSummary: {
-      total:          actions.length,
-      done:           done.length,
-      inProgress:     actions.filter(function(a) { return a.Status === 'In Progress'; }).length,
-      overdue:        overdue.length,
-      noOwner:        noOwner.length,
-      ceoNeeded:      ceoList.length,
-      urgent24hCount: urgent24h.length,
-      urgent72hCount: urgent72h.length,
-      inPlanCount:    inPlan.length
-    },
-
-    byArea:        Object.keys(areaMap).map(function(k) { return areaMap[k]; }),
-    evidenceFiles: Object.keys(evidenceMap).map(function(k) { return evidenceMap[k]; }),
-
-    urgent24h:   urgent24h,
-    urgent72h:   urgent72h,
-    inPlan:      inPlan,
-    noOwnerList: noOwner,
-    ceoList:     ceoList,
-    issues:      issues,
-    actions:     actions,
-    meetings:    meetings,
-    hotIssues:   hotIssues
+      total:   actions.length,
+      open:    openActions.length,
+      overdue: overdueActions.length,
+      done:    doneActions.length,
+      ceo:     ceoList.length + ceoPending.length,
+      noOwner: noOwner.length
+    }
   }));
 }
 
@@ -4275,7 +4220,8 @@ function normalizeToIssue_(r, i) {
     RAG:          rag,
     Status:       status,
     ActionIDRef:  String(r['Action ID liên quan']  || '').trim(),
-    Note:         String(r['Ghi chú']             || '').trim()
+    Note:         String(r['Ghi chú']             || '').trim(),
+    MeetingIDRef: String(r['Meeting ID liên quan'] || '').trim()
   };
 }
 
@@ -4292,6 +4238,7 @@ function normalizeTOActionFull_(r, i) {
     ReportDate:   formatDate(r['Ngày ghi nhận']       || ''),
     Date:         formatDate(r['Ngày phát sinh']       || ''),
     MeetingID:    String(r['Meeting ID']               || '').trim(),
+    TopicID:      String(r['Topic ID']                 || '').trim(),
     IssueIDRef:   String(r['Issue ID liên quan']       || '').trim(),
     Area:         String(r['Khu vực']                 || '').trim(),
     Source:       String(r['Cuộc họp / Bối cảnh']     || r['Bối cảnh'] || '').trim(),
@@ -4341,25 +4288,6 @@ function normalizeTOMeeting_(r) {
   };
 }
 
-/* ── Normalize TO_HOT_ISSUES row ── */
-function normalizeToHotIssue_(r) {
-  return {
-    HotIssueID:   String(r['Hot Issue ID']  || '').trim(),
-    MeetingID:    String(r['Meeting ID']    || '').trim(),
-    Factory:      String(r['Nhà máy']       || '').trim(),
-    Category:     String(r['Category']      || '').trim(),
-    TieuDe:       String(r['Tiêu đề']       || '').trim(),
-    MoTa:         String(r['Mô tả']         || '').trim(),
-    Owner:        String(r['Owner']         || '').trim(),
-    Deadline:     formatDate(r['Deadline']  || ''),
-    RAG:          normalizeRag(r['RAG']     || ''),
-    TrangThai:    String(r['Trạng thái']    || '').trim(),
-    PctHoanThanh: r['% Hoàn thành'] !== '' && r['% Hoàn thành'] !== undefined
-                    ? (Number(r['% Hoàn thành']) || 0) : 0,
-    GhiChu:       String(r['Ghi chú']       || '').trim()
-  };
-}
-
 /* ── Đọc TO_MEETINGS — tự tạo sheet nếu chưa tồn tại ── */
 function getTOMeetings_(ss) {
   var sheet = ss.getSheetByName('TO_MEETINGS');
@@ -4381,25 +4309,40 @@ function getTOMeetings_(ss) {
   return rows.map(normalizeTOMeeting_).filter(function(r) { return r.MeetingID; });
 }
 
-/* ── Đọc TO_HOT_ISSUES — tự tạo sheet nếu chưa tồn tại ── */
-function getToHotIssues_(ss) {
-  var sheet = ss.getSheetByName('TO_HOT_ISSUES');
+/* ── Normalize CEO_COMMENTS row ── */
+function normalizeCeoComment_(r, i) {
+  return {
+    CommentID:     String(r['Comment ID']          || ('CEO-' + String(i + 1).padStart(3, '0'))),
+    Ngay:          formatDate(r['Ngày']             || ''),
+    MeetingIDRef:  String(r['Meeting ID liên quan'] || '').trim(),
+    IssueIDRef:    String(r['Issue ID liên quan']   || '').trim(),
+    ActionIDRef:   String(r['Action ID liên quan']  || '').trim(),
+    NoiDung:       String(r['Nội dung CEO']         || '').trim(),
+    Loai:          String(r['Loại']                 || '').trim(),
+    NguoiGhi:      String(r['Người ghi']            || '').trim(),
+    TrangThaiXuLy: String(r['Trạng thái xử lý']    || 'Chờ xử lý').trim(),
+    GhiChu:        String(r['Ghi chú']              || '').trim()
+  };
+}
+
+/* ── Đọc CEO_COMMENTS — tự tạo sheet nếu chưa tồn tại ── */
+function getCEOComments_(ss) {
+  var sheet = ss.getSheetByName('CEO_COMMENTS');
   if (!sheet) {
-    sheet = ss.insertSheet('TO_HOT_ISSUES');
+    sheet = ss.insertSheet('CEO_COMMENTS');
     var headers = [
-      'Hot Issue ID', 'Meeting ID', 'Nhà máy', 'Category',
-      'Tiêu đề', 'Mô tả', 'Owner', 'Deadline',
-      'RAG', 'Trạng thái', '% Hoàn thành', 'Ghi chú'
+      'Comment ID', 'Ngày', 'Meeting ID liên quan', 'Issue ID liên quan',
+      'Action ID liên quan', 'Nội dung CEO', 'Loại', 'Người ghi',
+      'Trạng thái xử lý', 'Ghi chú'
     ];
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, headers.length)
-      .setBackground('#064e3b').setFontColor('#ffffff').setFontWeight('bold');
+      .setBackground('#1e3a5f').setFontColor('#ffffff').setFontWeight('bold');
     SpreadsheetApp.flush();
     return [];
   }
-  var rows = readSheetSafe('TO_HOT_ISSUES');
-  return rows.map(normalizeToHotIssue_).filter(function(r) { return r.HotIssueID; });
+  return readSheetSafe('CEO_COMMENTS').map(normalizeCeoComment_).filter(function(r) { return r.CommentID; });
 }
 
 /* ================================================================
@@ -4754,8 +4697,9 @@ function toWriteNewIssue_(ss, payload) {
       'Mức độ':              String(payload.level      || '').trim(),
       'RAG':                 String(payload.rag        || '').trim(),
       'Trạng thái':          String(payload.status     || 'Mới').trim(),
-      'Action ID liên quan': '',
-      'Ghi chú':             String(payload.note       || '').trim()
+      'Action ID liên quan':  '',
+      'Meeting ID liên quan': String(payload.meetingIdRef || '').trim(),
+      'Ghi chú':              String(payload.note         || '').trim()
     };
     appendRowByHeaders_(sheet, data);
     SpreadsheetApp.flush();
@@ -4789,8 +4733,9 @@ function toWriteNewAction_(ss, payload) {
       'Người ghi nhận':               String(payload.reporter    || '').trim(),
       'Ngày ghi nhận':                String(payload.reportDate  || today).trim(),
       'Ngày phát sinh':               String(payload.issueDate   || '').trim(),
-      'Meeting ID':                   '',
-      'Cuộc họp / Bối cảnh':         String(payload.context     || '').trim(),
+      'Meeting ID':                   String(payload.meetingIdRef || '').trim(),
+      'Topic ID':                     String(payload.topicId      || '').trim(),
+      'Cuộc họp / Bối cảnh':         String(payload.context      || '').trim(),
       'Issue ID liên quan':           String(payload.issueIdRef  || '').trim(),
       'Khu vực':                      String(payload.area        || '').trim(),
       'Nội dung action':              String(payload.action      || '').trim(),
@@ -4875,6 +4820,36 @@ function toUpdateExistingAction_(ss, payload) {
   }
 }
 
+function saveCEOComment_(ss, payload) {
+  try {
+    getCEOComments_(ss); // ensures sheet + headers exist
+    var sheet = ss.getSheetByName('CEO_COMMENTS');
+    if (!sheet) return { success: false, error: 'Không thể tạo sheet CEO_COMMENTS.' };
+    var noiDung  = String(payload.noiDung  || '').trim();
+    var nguoiGhi = String(payload.nguoiGhi || '').trim();
+    if (!noiDung)  return { success: false, error: 'Thiếu Nội dung chỉ đạo CEO.' };
+    if (!nguoiGhi) return { success: false, error: 'Thiếu Người ghi.' };
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+    var data = {
+      'Comment ID':           '',
+      'Ngày':                 String(payload.ngay          || today).trim(),
+      'Meeting ID liên quan': String(payload.meetingIdRef  || '').trim(),
+      'Issue ID liên quan':   String(payload.issueIdRef    || '').trim(),
+      'Action ID liên quan':  String(payload.actionIdRef   || '').trim(),
+      'Nội dung CEO':         noiDung,
+      'Loại':                 String(payload.loai          || '').trim(),
+      'Người ghi':            nguoiGhi,
+      'Trạng thái xử lý':    String(payload.trangThaiXuLy || 'Chờ xử lý').trim(),
+      'Ghi chú':              String(payload.ghiChu        || '').trim()
+    };
+    appendRowByHeaders_(sheet, data);
+    SpreadsheetApp.flush();
+    return { success: true, message: 'Đã ghi nhận chỉ đạo CEO thành công.' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
 // Đọc sheet với header dòng đầu có nội dung (flexible)
 function safeReadSheetFull_(sheet) {
   try {
@@ -4954,5 +4929,1236 @@ function testImportHuongToanGS5TOReport() {
     false
   );
   Logger.log(JSON.stringify(result));
+  return result;
+}
+
+/* =====================================================
+   KIẾN TRÚC MỚI — 9 SHEET CHÍNH
+   Bước 4: Sao lưu sheet cũ
+   Bước 5: Tạo cấu trúc 9 sheet mới
+
+   Chạy thủ công từ Apps Script editor:
+     setupNewArchitecture_()
+===================================================== */
+
+function setupNewArchitecture_() {
+  var ss  = SpreadsheetApp.getActiveSpreadsheet();
+  var ui  = SpreadsheetApp.getUi();
+  var log = [];
+
+  try {
+    log.push('▶ BƯỚC 4 — Sao lưu sheet cũ...');
+    log = log.concat(backupExistingSheets_(ss));
+
+    log.push('');
+    log.push('▶ BƯỚC 5 — Tạo cấu trúc 9 sheet mới...');
+    log = log.concat(createNewSheetStructure_(ss));
+
+    SpreadsheetApp.flush();
+    var msg = log.join('\n');
+    Logger.log(msg);
+    ui.alert('✅ Hoàn thành!\n\n' + msg);
+  } catch (err) {
+    Logger.log('LỖI setupNewArchitecture_: ' + err.message + '\n' + err.stack);
+    ui.alert('❌ Lỗi: ' + err.message + '\n\nXem chi tiết trong Apps Script Logger (Ctrl+Enter).');
+  }
+}
+
+/* ── Bước 4: Sao lưu các sheet quan trọng ── */
+function backupExistingSheets_(ss) {
+  var log = [];
+  var toBackup = [
+    'THEO_DOI_DU_AN_CEO', 'CEO_PROJECTS', 'CEO_PROJECT_UPDATES',
+    'PMO_ALL_ACTIONS', 'PMO_90D_ACTIONS',
+    'TO_ISSUES', 'TO_ACTIONS', 'TO_MEETINGS',
+    'MEETING_MINUTES', 'MEETING_TOPICS', 'MEETING_ACTIONS',
+    'CEO_DECISIONS', 'CEO_COMMENTS', 'CEO_Comments',
+    'RISK_SOS'
+  ];
+
+  toBackup.forEach(function(name) {
+    var sh = ss.getSheetByName(name);
+    if (!sh) {
+      log.push('  ⬜ Không tìm thấy: ' + name);
+      return;
+    }
+    var bakName = name + '_BAK';
+    if (ss.getSheetByName(bakName)) {
+      log.push('  ⬜ Đã có bản sao rồi: ' + bakName + ' — bỏ qua');
+      return;
+    }
+    sh.copyTo(ss).setName(bakName);
+    log.push('  ✅ Đã sao lưu: ' + name + '  →  ' + bakName);
+  });
+
+  return log;
+}
+
+/* =====================================================
+   KIẾN TRÚC MỚI — 8 SHEET CHÍNH
+   1 Module = 1 Sheet = 1 Nguồn dữ liệu duy nhất
+   Không ID · Không sheet trung gian · Không chuẩn hóa SQL
+===================================================== */
+
+/* ── Tự tính RAG từ trạng thái + deadline + vướng mắc ── */
+function calcRAG_(status, deadline, vuongMac, ceoCanChot) {
+  var s = String(status || '').toLowerCase().trim();
+  if (/hoàn thành|done|xong/i.test(s)) return 'Green';
+  if (isPastDeadline(deadline, status))  return 'Red';
+  if (hasText(ceoCanChot))               return 'Red';
+  if (hasText(vuongMac))                 return 'Amber';
+  if (deadline) {
+    var d = parseDate(deadline);
+    if (d) {
+      var diff = (d - new Date()) / (1000 * 60 * 60 * 24);
+      if (diff >= 0 && diff <= 7) return 'Amber';
+    }
+  }
+  if (/tạm dừng|dừng|blocked/i.test(s)) return 'Amber';
+  return 'Green';
+}
+
+/* ── Tiến độ text → % số ── */
+function tienDoToPct_(tienDo) {
+  var t = String(tienDo || '').toLowerCase().trim();
+  if (/hoàn thành|done|xong/i.test(t))   return 100;
+  if (/gần hoàn thành/i.test(t))          return 80;
+  if (/đang thực hiện/i.test(t))          return 50;
+  if (/tạm dừng/i.test(t))               return 0;
+  return 0;
+}
+
+/* ── Normalizer: 01_PMO_GSP_NEXT30 ── */
+function normalizePMO_(r) {
+  var status  = String(r['Trạng thái']      || '').trim();
+  var deadline= formatDate(r['Deadline']     || '');
+  var vuong   = String(r['Vướng mắc']       || '').trim();
+  var ceoChot = String(r['CEO cần chốt']    || '').trim();
+  var tienDo  = String(r['Tiến độ']         || '').trim();
+  var rag     = calcRAG_(status, deadline, vuong, ceoChot);
+  return {
+    PIC:          String(r['PIC / Trục']          || '').trim(),
+    NhomViec:     String(r['Nhóm công việc']       || '').trim(),
+    NoiDung:      String(r['Nội dung công việc']   || '').trim(),
+    NguoiPhuTrach:String(r['Người phụ trách']      || '').trim(),
+    Deadline:     deadline,
+    TrangThai:    status,
+    TienDo:       tienDo,
+    PctHT:        tienDoToPct_(tienDo),
+    VuongMac:     vuong,
+    ViecTiepTheo: String(r['Việc tiếp theo']       || '').trim(),
+    CEOCanChot:   ceoChot,
+    CapNhat:      String(r['Cập nhật mới nhất']    || '').trim(),
+    Link:         String(r['Link tài liệu']        || '').trim(),
+    RAG:          rag,
+    IsOverdue:    isPastDeadline(deadline, status),
+    // Legacy aliases
+    Action:       String(r['Nội dung công việc']  || '').trim(),
+    Owner:        String(r['Người phụ trách']     || '').trim(),
+    PICName:      String(r['PIC / Trục']          || '').trim(),
+    Status:       status,
+    Workstream:   String(r['PIC / Trục']          || '').trim(),
+    CEODecision:  ceoChot,
+    CEONote:      ceoChot,
+    Risk:         vuong
+  };
+}
+
+/* ── Normalizer: 02_DU_AN_CEO ── */
+function normalizeDuAnCEO_(r) {
+  var status  = String(r['Trạng thái']              || '').trim();
+  var deadline= formatDate(r['Deadline']             || '');
+  var vuong   = String(r['Vướng mắc']               || '').trim();
+  var ceoChot = String(r['Nội dung cần CEO chốt']   || '').trim();
+  var tienDo  = String(r['Tiến độ']                 || '').trim();
+  var rag     = calcRAG_(status, deadline, vuong, ceoChot);
+  return {
+    MaBanGhi:      String(r['Tên dự án']            || '').trim(),
+    TenBanGhi:     String(r['Tên dự án']            || '').trim(),
+    TenDuAn:       String(r['Tên dự án']            || '').trim(),
+    MoTa:          String(r['Mô tả ngắn']           || '').trim(),
+    NguoiPhuTrach: String(r['Người phụ trách']      || '').trim(),
+    NguoiPhoiHop:  String(r['Người phối hợp']       || '').trim(),
+    UuTien:        String(r['Mức ưu tiên']          || '').trim(),
+    Deadline:      deadline,
+    TrangThai:     status,
+    TienDo:        tienDo,
+    PctHT:         tienDoToPct_(tienDo),
+    CapNhat:       String(r['Cập nhật mới nhất']    || '').trim(),
+    VuongMac:      vuong,
+    ViecTiepTheo:  String(r['Việc tiếp theo']       || '').trim(),
+    CEOCanChot:    ceoChot,
+    QuyetDinhCEO:  String(r['Quyết định của CEO']   || '').trim(),
+    Link:          String(r['Link tài liệu']         || '').trim(),
+    RAG:           rag,
+    IsOverdue:     isPastDeadline(deadline, status),
+    // Legacy aliases
+    ProjectName:   String(r['Tên dự án']            || '').trim(),
+    PICLead:       String(r['Người phụ trách']      || '').trim(),
+    Owner:         String(r['Người phụ trách']      || '').trim(),
+    Status:        status,
+    Issues:        vuong,
+    CEODecision:   ceoChot,
+    CEONote:       ceoChot,
+    Progress:      tienDo,
+    Description:   String(r['Mô tả ngắn']           || '').trim()
+  };
+}
+
+/* ── Normalizer: 03_TO_COMMAND_CENTER ── */
+function normalizeTO_(r) {
+  var status  = String(r['Trạng thái']             || '').trim();
+  var deadline= formatDate(r['Deadline']            || '');
+  var vuong   = String(r['Vướng mắc']              || '').trim();
+  var ceoChot = String(r['Nội dung cần CEO chốt']  || '').trim();
+  var tienDo  = String(r['Tiến độ']                || '').trim();
+  var loai    = String(r['Loại nội dung']          || '').trim();
+  var tieuDe  = String(r['Tiêu đề']               || '').trim();
+  var noiDung = String(r['Nội dung cần xử lý']     || '').trim();
+  var nhaMay  = String(r['Nhà máy']               || '').trim();
+  var nguoiPT = String(r['Người phụ trách']        || '').trim();
+  var rag     = calcRAG_(status, deadline, vuong, ceoChot);
+  return {
+    LoaiND:          loai,
+    NgayGhiNhan:     formatDate(r['Ngày ghi nhận'] || ''),
+    NhaMay:          nhaMay,
+    NhomVanDe:       String(r['Nhóm vấn đề']       || '').trim(),
+    TieuDe:          tieuDe,
+    NoiDungXuLy:     noiDung,
+    NguoiPhuTrach:   nguoiPT,
+    NguoiPhoiHop:    String(r['Người phối hợp']    || '').trim(),
+    Deadline:        deadline,
+    TrangThai:       status,
+    TienDo:          tienDo,
+    PctHT:           tienDoToPct_(tienDo),
+    VuongMac:        vuong,
+    ViecTiepTheo:    String(r['Việc tiếp theo']     || '').trim(),
+    CEOCanChot:      ceoChot,
+    KetQua:          String(r['Kết quả']            || '').trim(),
+    CuocHopLienQuan: String(r['Cuộc họp liên quan']|| '').trim(),
+    Link:            String(r['Link bằng chứng']   || '').trim(),
+    CapNhat:         String(r['Cập nhật mới nhất'] || '').trim(),
+    RAG:             rag,
+    IsOverdue:       isPastDeadline(deadline, status),
+    // Legacy aliases cho frontend
+    IssueID:    '',
+    ActionID:   '',
+    Factory:    nhaMay,
+    Area:       nhaMay,
+    Description:tieuDe + (noiDung ? ' — ' + noiDung : ''),
+    Action:     noiDung || tieuDe,
+    NoiDung:    noiDung || tieuDe,
+    PIC:        nguoiPT,
+    Owner:      nguoiPT,
+    Status:     status,
+    Level:      String(r['Nhóm vấn đề'] || '').trim(),
+    Reporter:   nguoiPT,
+    Loai:       loai,
+    NguoiGhi:   nguoiPT,
+    Ngay:       formatDate(r['Ngày ghi nhận'] || ''),
+    TrangThaiXuLy: status,
+    CEONote:    ceoChot,
+    CEODecision:ceoChot,
+    MeetingIDRef: String(r['Cuộc họp liên quan'] || '').trim()
+  };
+}
+
+/* ── Normalizer: 04_BIEN_BAN_HOP ── */
+function normalizeBienBan_(r) {
+  var status   = String(r['Trạng thái']            || 'Nháp').trim();
+  var deadline = formatDate(r['Deadline']           || '');
+  var ceoChot  = String(r['Nội dung cần CEO chốt'] || '').trim();
+  var tenHop   = String(r['Tên cuộc họp']          || '').trim();
+  var actionChinh = String(r['Action chính (tóm tắt)'] || '').trim();
+  return {
+    NgayHop:     formatDate(r['Ngày họp']           || ''),
+    TenHop:      tenHop,
+    LoaiHop:     String(r['Loại họp']              || '').trim(),
+    ChuTri:      String(r['Chủ trì']               || '').trim(),
+    ThanhPhan:   String(r['Thành phần tham dự']    || '').trim(),
+    TomTat:      String(r['Tóm tắt chính']         || '').trim(),
+    KetLuan:     String(r['Kết luận chính']        || '').trim(),
+    ActionChinh: actionChinh,
+    NguoiAction: String(r['Người phụ trách action']|| '').trim(),
+    Deadline:    deadline,
+    CEOCanChot:  ceoChot,
+    Link:        String(r['Link biên bản']          || '').trim(),
+    TrangThai:   status,
+    // Legacy aliases cho renderMeetingCenter
+    MeetingID:   tenHop,
+    Date:        formatDate(r['Ngày họp'] || ''),
+    Topic:       tenHop,
+    TieuDe:      tenHop,
+    Chair:       String(r['Chủ trì'] || '').trim(),
+    Attendees:   String(r['Thành phần tham dự'] || '').trim(),
+    Summary:     String(r['Tóm tắt chính'] || '').trim(),
+    CEODirective:ceoChot,
+    CEODecision: ceoChot,
+    FileMinutes: String(r['Link biên bản'] || '').trim(),
+    FileBienBan: String(r['Link biên bản'] || '').trim(),
+    Status:      status,
+    Actions:     actionChinh,
+    HasCEO:      hasText(ceoChot),
+    HasAction:   hasText(actionChinh)
+  };
+}
+
+/* ── Normalizer: 05_RISK_SOS ── */
+function normalizeRiskRow_(r) {
+  var status  = String(r['Trạng thái']             || '').trim();
+  var deadline= formatDate(r['Deadline']            || '');
+  var ceoChot = String(r['Nội dung cần CEO chốt']  || '').trim();
+  var mucDo   = String(r['Mức độ']                 || '').trim();
+  var vuong   = String(r['Hướng xử lý']            || '').trim();
+  var rag = /khẩn cấp/i.test(mucDo) ? 'Red'
+           : /cao/i.test(mucDo) ? 'Red'
+           : /trung bình/i.test(mucDo) ? 'Amber' : 'Green';
+  if (isPastDeadline(deadline, status) || hasText(ceoChot)) rag = 'Red';
+  return {
+    NgayGhiNhan:   formatDate(r['Ngày ghi nhận']     || ''),
+    Module:        String(r['Module']                 || '').trim(),
+    NhaMay:        String(r['Nhà máy']               || '').trim(),
+    NoiDungRuiRo:  String(r['Nội dung rủi ro']       || '').trim(),
+    MucDo:         mucDo,
+    AnhHuong:      String(r['Ảnh hưởng']            || '').trim(),
+    NguoiPhuTrach: String(r['Người phụ trách']       || '').trim(),
+    HuongXuLy:     vuong,
+    Deadline:      deadline,
+    TrangThai:     status,
+    CEOCanChot:    ceoChot,
+    KetQua:        String(r['Kết quả']               || '').trim(),
+    CapNhat:       String(r['Cập nhật mới nhất']     || '').trim(),
+    RAG:           rag,
+    IsOverdue:     isPastDeadline(deadline, status),
+    IsOpen:        !/đã xử lý|đóng|done/i.test(status),
+    // Legacy aliases
+    Description:   String(r['Nội dung rủi ro']  || '').trim(),
+    Level:         mucDo,
+    PIC:           String(r['Người phụ trách']   || '').trim(),
+    Action:        vuong,
+    Status:        status,
+    CEONote:       ceoChot,
+    CEODecision:   ceoChot
+  };
+}
+
+/* ── Normalizer: 06_QUYET_DINH_CEO ── */
+function normalizeQuyetDinh_(r) {
+  var status  = String(r['Trạng thái']                  || '').trim();
+  var deadline= formatDate(r['Deadline cần quyết định'] || '');
+  return {
+    NgayDeXuat:    formatDate(r['Ngày đề xuất']           || ''),
+    Module:        String(r['Module']                     || '').trim(),
+    NoiDung:       String(r['Nội dung cần quyết định']    || '').trim(),
+    BoiCanh:       String(r['Bối cảnh ngắn']             || '').trim(),
+    PhuongAn:      String(r['Phương án đề xuất']         || '').trim(),
+    NguoiDeXuat:   String(r['Người đề xuất']             || '').trim(),
+    Deadline:      deadline,
+    QuyetDinhCEO:  String(r['Quyết định của CEO']        || '').trim(),
+    NgayQuyet:     formatDate(r['Ngày quyết định']        || ''),
+    TrangThai:     status,
+    GhiChu:        String(r['Ghi chú']                   || '').trim(),
+    // Legacy
+    Content:       String(r['Nội dung cần quyết định'] || '').trim(),
+    Decision:      String(r['Quyết định của CEO'] || '').trim(),
+    Proposer:      String(r['Người đề xuất'] || '').trim(),
+    Status:        status,
+    IsPending:     /chờ|pending/i.test(status)
+  };
+}
+
+/* ── Normalizer: 08_LUONG_CHAT_CHU_TICH ── */
+function normalizeLuongChat_(r) {
+  var status  = String(r['Trạng thái']              || '').trim();
+  var ceoChot = String(r['Nội dung cần CEO chốt']   || '').trim();
+  return {
+    Ngay:          formatDate(r['Ngày']              || ''),
+    ChuDe:         String(r['Chủ đề']              || '').trim(),
+    TomTat:        String(r['Tóm tắt']             || '').trim(),
+    ChiDao:        String(r['Chỉ đạo của CEO']     || '').trim(),
+    NguoiPhuTrach: String(r['Người phụ trách']     || '').trim(),
+    Deadline:      formatDate(r['Deadline']          || ''),
+    ActionPhatSinh:String(r['Action phát sinh']    || '').trim(),
+    TrangThai:     status,
+    CEOCanChot:    ceoChot,
+    Link:          String(r['Link file']             || '').trim(),
+    // Legacy
+    Status:        status,
+    HasAction:     hasText(String(r['Action phát sinh'] || '')),
+    CEONote:       ceoChot
+  };
+}
+
+/* =====================================================
+   DATA GETTERS — 1 HÀM = 1 MODULE = 1 SHEET
+===================================================== */
+
+function getPMOModuleData() {
+  var rows    = readSheetSafe('01_PMO_GSP_NEXT30').map(normalizePMO_);
+  var open    = rows.filter(function(r){ return !/hoàn thành|done/i.test(r.TrangThai); });
+  var overdue = rows.filter(function(r){ return r.IsOverdue; });
+  var ceoList = rows.filter(function(r){ return hasText(r.CEOCanChot); });
+  var ragSum  = { Green: 0, Amber: 0, Red: 0 };
+  rows.forEach(function(r){ var g = r.RAG||'Green'; if(ragSum[g]!==undefined) ragSum[g]++; });
+  var byPIC = {};
+  rows.forEach(function(r) {
+    var p = r.PIC || 'Khác';
+    if (!byPIC[p]) byPIC[p] = { name: p, total: 0, open: 0, overdue: 0, red: 0, ceo: 0 };
+    byPIC[p].total++;
+    if (!/hoàn thành|done/i.test(r.TrangThai)) byPIC[p].open++;
+    if (r.IsOverdue) byPIC[p].overdue++;
+    if (r.RAG === 'Red') byPIC[p].red++;
+    if (hasText(r.CEOCanChot)) byPIC[p].ceo++;
+  });
+  return {
+    records:    rows,
+    open:       open,
+    overdue:    overdue,
+    ceoList:    ceoList,
+    byPIC:      Object.keys(byPIC).map(function(k){ return byPIC[k]; }),
+    summary:    { total: rows.length, open: open.length, overdue: overdue.length, ceo: ceoList.length, byRAG: ragSum },
+    pmoActions: rows
+  };
+}
+
+function getDuAnCEOModuleData() {
+  var rawRows = readSheetSafe('02_DU_AN_CEO');
+
+  // Auto-detect schema: nếu có cột 'Loại bản ghi' → extended schema (sau migrate)
+  if (rawRows.length > 0 && rawRows[0].hasOwnProperty('Loại bản ghi')) {
+    return getDuAnCEO02Extended_(rawRows);
+  }
+
+  // Flat schema cũ (14 cột) — bổ sung exists + summary fields đúng tên cho cptRender
+  var rows    = rawRows.map(normalizeDuAnCEO_);
+  var active  = rows.filter(function(r){ return !/hoàn thành|done/i.test(r.TrangThai); });
+  var overdue = rows.filter(function(r){ return r.IsOverdue; });
+  var ceoList = rows.filter(function(r){ return hasText(r.CEOCanChot); });
+  var risk    = rows.filter(function(r){ return hasText(r.VuongMac); });
+  var noPT    = rows.filter(function(r){ return !r.NguoiPhuTrach; });
+  var ragSum  = { Green: 0, Amber: 0, Red: 0 };
+  rows.forEach(function(r){ var g = r.RAG || 'Green'; if (ragSum[g] !== undefined) ragSum[g]++; });
+  return {
+    exists:      rows.length > 0,
+    records:     rows,
+    active:      active,
+    overdue:     overdue,
+    ceoList:     ceoList,
+    hangMucs:    [],
+    congViecs:   [],
+    capNhats:    [],
+    quyetDinhs:  [],
+    summary: {
+      tongDuAn:             rows.length,
+      dangTrienKhai:        active.length,
+      dungTienDo:           ragSum.Green,
+      coNguyChamTre:        ragSum.Amber,
+      quaHan:               overdue.length,
+      chuaCoNguoiPhuTrach:  noPT.length,
+      coRuiRo:              risk.length,
+      canCEOQuyetDinh:      ceoList.length,
+      total: rows.length, active: active.length,
+      overdue: overdue.length, ceo: ceoList.length, byRAG: ragSum
+    },
+    ceoProjects: rows,
+    projects:    rows
+  };
+}
+
+function getTOModuleData() {
+  var now  = new Date();
+  var rows = readSheetSafe('03_TO_COMMAND_CENTER').map(normalizeTO_);
+  var issues    = rows.filter(function(r){ return r.LoaiND==='Vấn đề'||r.LoaiND==='Vấn đề nóng'; });
+  var hotIssues = rows.filter(function(r){ return r.LoaiND==='Vấn đề nóng'||r.RAG==='Red'; });
+  var allActs   = rows.filter(function(r){ return r.LoaiND==='Action'||r.LoaiND==='Việc cần làm rõ'; });
+  var openActs = [], overdueActs = [], doneActs = [];
+  allActs.forEach(function(a) {
+    if (/hoàn thành|done|xong/i.test(a.TrangThai)) doneActs.push(a);
+    else if (a.IsOverdue) overdueActs.push(a);
+    else openActs.push(a);
+  });
+  var factorySet = {};
+  rows.forEach(function(r){ if(r.NhaMay) factorySet[r.NhaMay]=true; });
+  var factories = Object.keys(factorySet).sort();
+  // Nhóm action theo cuộc họp liên quan
+  var meetingMap = {};
+  allActs.forEach(function(a) {
+    var key = a.CuocHopLienQuan || '';
+    if (!key) return;
+    if (!meetingMap[key]) meetingMap[key] = { MeetingID: key, TieuDe: key, NgayHop: '', TrangThai: '', CanCEO: '', actions: [] };
+    meetingMap[key].actions.push(a);
+  });
+  var meetings = Object.keys(meetingMap).map(function(k){ return meetingMap[k]; });
+  var ceoList  = rows.filter(function(r){ return hasText(r.CEOCanChot); });
+  var ragSum   = { Green: 0, Amber: 0, Red: 0 };
+  issues.forEach(function(r){ var g=r.RAG||'Amber'; if(ragSum[g]!==undefined) ragSum[g]++; else ragSum.Amber++; });
+  return JSON.parse(JSON.stringify({
+    updatedAt:       Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss'),
+    factories:       factories,
+    issues:          issues,
+    hotIssues:       hotIssues,
+    meetings:        meetings,
+    topics:          [],
+    actions:         allActs,
+    openActions:     openActs,
+    overdueActions:  overdueActs,
+    doneActions:     doneActs,
+    ceoComments:     [],
+    ceoPending:      [],
+    ceoList:         ceoList,
+    noOwnerList:     rows.filter(function(r){ return !r.NguoiPhuTrach; }),
+    issuesSummary:   { total: issues.length, open: issues.filter(function(r){ return !/hoàn thành/i.test(r.TrangThai); }).length, byRAG: ragSum, hot: hotIssues.length },
+    actionsSummary:  { total: allActs.length, open: openActs.length, overdue: overdueActs.length, done: doneActs.length, ceo: ceoList.length, noOwner: rows.filter(function(r){ return !r.NguoiPhuTrach; }).length }
+  }));
+}
+
+function getBienBanHopModuleData() {
+  var rows    = readSheetSafe('04_BIEN_BAN_HOP').map(normalizeBienBan_);
+  var pending = rows.filter(function(r){ return /nháp/i.test(r.TrangThai); });
+  var hasCEO  = rows.filter(function(r){ return hasText(r.CEOCanChot); });
+  var hasAct  = rows.filter(function(r){ return hasText(r.ActionChinh); });
+  return {
+    records:   rows,
+    pending:   pending,
+    hasCEO:    hasCEO,
+    hasAction: hasAct,
+    summary:   { total: rows.length, pending: pending.length, hasCEO: hasCEO.length, hasAction: hasAct.length },
+    minutes:   rows,
+    topics:    [],
+    actions:   []
+  };
+}
+
+function getRiskModuleData() {
+  var rows  = readSheetSafe('05_RISK_SOS').map(normalizeRiskRow_);
+  var open  = rows.filter(function(r){ return r.IsOpen; });
+  var red   = rows.filter(function(r){ return r.RAG==='Red'; });
+  var ceo   = rows.filter(function(r){ return hasText(r.CEOCanChot); });
+  return {
+    records: rows,
+    open:    open,
+    red:     red,
+    ceoList: ceo,
+    summary: { total: rows.length, open: open.length, red: red.length, ceo: ceo.length },
+    riskSos: rows
+  };
+}
+
+function getQuyetDinhModuleData() {
+  var rows    = readSheetSafe('06_QUYET_DINH_CEO').map(normalizeQuyetDinh_);
+  var pending = rows.filter(function(r){ return r.IsPending; });
+  return {
+    records:      rows,
+    pending:      pending,
+    summary:      { total: rows.length, pending: pending.length },
+    decisions:    rows,
+    ceoDecisions: rows
+  };
+}
+
+function getLuongChatModuleData() {
+  var rows = readSheetSafe('08_LUONG_CHAT_CHU_TICH').map(normalizeLuongChat_);
+  var open = rows.filter(function(r){ return !/đã xử lý/i.test(r.TrangThai); });
+  var ceo  = rows.filter(function(r){ return hasText(r.CEOCanChot); });
+  return {
+    records: rows,
+    open:    open,
+    ceoList: ceo,
+    summary: { total: rows.length, open: open.length, ceo: ceo.length }
+  };
+}
+
+/* ── Dashboard tổng hợp: đọc từ 7 module ── */
+function getNewDashboardData() {
+  var pmo     = getPMOModuleData();
+  var duAn    = getDuAnCEOModuleData();
+  var to      = getTOModuleData();
+  var bienBan = getBienBanHopModuleData();
+  var risk    = getRiskModuleData();
+  var quyet   = getQuyetDinhModuleData();
+  var chat    = getLuongChatModuleData();
+  var ceoTotal= (to.ceoList||[]).length + (duAn.ceoList||[]).length
+              + (pmo.ceoList||[]).length + (risk.ceoList||[]).length
+              + (quyet.pending||[]).length + (chat.ceoList||[]).length;
+  return {
+    pmo:            pmo,
+    duAnCEO:        duAn,
+    to:             to,
+    bienBan:        bienBan,
+    risk:           risk,
+    quyetDinh:      quyet,
+    luongChat:      chat,
+    ceoTotal:       ceoTotal,
+    // Legacy fields cho dashboard renderer cũ
+    pmoActions:     pmo.pmoActions     || [],
+    ceoProjects:    duAn.ceoProjects   || [],
+    toActions:      to.actions         || [],
+    meetingMinutes: bienBan.minutes    || [],
+    ceoDecisions:   quyet.decisions    || [],
+    riskSos:        risk.riskSos       || [],
+    meetingTopics:  [],
+    masterPIC:      [],
+    masterStatus:   []
+  };
+}
+
+/* =====================================================
+   WRITE HANDLERS — GHI VÀO SHEET MỚI (KHÔNG ID)
+===================================================== */
+
+/* ── Ghi vào 03_TO_COMMAND_CENTER (issue + action) ── */
+function writeTO_(ss, payload) {
+  try {
+    var sheet = ss.getSheetByName('03_TO_COMMAND_CENTER');
+    if (!sheet) return { success: false, error: 'Sheet 03_TO_COMMAND_CENTER chưa tồn tại. Vui lòng chạy setupNewArchitecture_() từ Apps Script editor.' };
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+    var data = {
+      'Loại nội dung':         String(payload.loaiND || 'Action').trim(),
+      'Ngày ghi nhận':         String(payload.ngay || payload.reportDate || today).trim(),
+      'Nhà máy':               String(payload.nhaMay || payload.factory || '').trim(),
+      'Nhóm vấn đề':           String(payload.nhomVanDe || payload.issueType || payload.workstream || '').trim(),
+      'Tiêu đề':               String(payload.tieuDe || payload.description || payload.issueTitle || '').trim(),
+      'Nội dung cần xử lý':    String(payload.noiDung || payload.action || payload.rootCause || payload.context || '').trim(),
+      'Người phụ trách':       String(payload.nguoiPhuTrach || payload.pic || payload.reporter || '').trim(),
+      'Người phối hợp':        String(payload.nguoiPhoiHop || payload.coOwner || '').trim(),
+      'Deadline':               String(payload.deadline || '').trim(),
+      'Trạng thái':            String(payload.trangThai || payload.status || 'Chưa bắt đầu').trim(),
+      'Tiến độ':               String(payload.tienDo || '').trim(),
+      'Vướng mắc':             String(payload.vuongMac || '').trim(),
+      'Việc tiếp theo':        String(payload.viecTiepTheo || '').trim(),
+      'Nội dung cần CEO chốt': String(payload.ceoCanChot || payload.ceoNote || payload.ceoDecision || '').trim(),
+      'Kết quả':               String(payload.ketQua || payload.output || '').trim(),
+      'Cuộc họp liên quan':    String(payload.cuocHop || payload.meetingIdRef || payload.meeting || '').trim(),
+      'Link bằng chứng':       String(payload.link || payload.fileSource || payload.bangChung || '').trim(),
+      'Cập nhật mới nhất':     String(payload.capNhat || '').trim()
+    };
+    if (!data['Tiêu đề'] && !data['Nội dung cần xử lý']) {
+      return { success: false, error: 'Cần nhập ít nhất Tiêu đề hoặc Nội dung.' };
+    }
+    appendRowByHeaders_(sheet, data);
+    SpreadsheetApp.flush();
+    return { success: true, message: 'Đã ghi nhận thành công vào 03_TO_COMMAND_CENTER.' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/* ── Ghi vào 06_QUYET_DINH_CEO (thay thế CEO_COMMENTS) ── */
+function writeQuyetDinh_(ss, payload) {
+  try {
+    var sheet = ss.getSheetByName('06_QUYET_DINH_CEO');
+    if (!sheet) return { success: false, error: 'Sheet 06_QUYET_DINH_CEO chưa tồn tại. Vui lòng chạy setupNewArchitecture_() từ Apps Script editor.' };
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+    var data = {
+      'Ngày đề xuất':            String(payload.ngay || today).trim(),
+      'Module':                  String(payload.module || payload.loai || 'TO').trim(),
+      'Nội dung cần quyết định': String(payload.noiDung || payload.content || '').trim(),
+      'Bối cảnh ngắn':           String(payload.boiCanh || payload.meetingIdRef || '').trim(),
+      'Phương án đề xuất':       String(payload.phuongAn || '').trim(),
+      'Người đề xuất':           String(payload.nguoiDeXuat || payload.nguoiGhi || '').trim(),
+      'Deadline cần quyết định': String(payload.deadline || '').trim(),
+      'Quyết định của CEO':      String(payload.quyetDinh || '').trim(),
+      'Ngày quyết định':         String(payload.ngayQuyet || '').trim(),
+      'Trạng thái':              String(payload.trangThaiXuLy || payload.trangThai || 'Chờ quyết định').trim(),
+      'Ghi chú':                 String(payload.ghiChu || payload.issueIdRef || '').trim()
+    };
+    if (!data['Nội dung cần quyết định']) {
+      return { success: false, error: 'Cần nhập Nội dung cần quyết định.' };
+    }
+    appendRowByHeaders_(sheet, data);
+    SpreadsheetApp.flush();
+    return { success: true, message: 'Đã ghi nhận vào 06_QUYET_DINH_CEO.' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/* ── Bước 5: Tạo 9 sheet mới ── */
+function createNewSheetStructure_(ss) {
+  var log = [];
+
+  var STATUS_MAIN = ['Chưa bắt đầu', 'Đang thực hiện', 'Gần hoàn thành', 'Hoàn thành', 'Tạm dừng'];
+  var UU_TIEN     = ['Cao', 'Trung bình', 'Thấp'];
+  var NHA_MAY     = ['GS1', 'GS5', 'GS6', 'Khối văn phòng', 'Toàn hệ thống'];
+  var MODULE_LIST = ['PMO', 'Dự án CEO', 'TO', 'Risk', 'Biên bản họp', 'Chung'];
+  var MUC_DO_RISK = ['Thấp', 'Trung bình', 'Cao', 'Khẩn cấp'];
+  var PIC_LIST    = [
+    'PIC01 - Kinh Doanh', 'PIC02 - Sales Tech', 'PIC03 - SCM',
+    'PIC04 - Mua Hàng',   'PIC05 - Công Nghệ',  'PIC06 - Cơ Điện/QLTB',
+    'PIC07 - IT/ERP',     'PIC08 - QA',          'PIC09 - P&C',
+    'PIC10 - Giám Sát Tuân Thủ', 'PIC11 - Kiểm Soát Nội Bộ',
+    'PIC12 - HCNS', 'PIC13 - Tài Chính/Kế Toán',
+    'PIC14 - GS1',  'PIC15 - GS5', 'PIC16 - GS6'
+  ];
+
+  var SHEETS = [
+
+    /* 00 */
+    { name: '00_TONG_QUAN',
+      color: '#1e3a5f',
+      autoNote: true,
+      headers: ['Module','Tổng bản ghi đang mở','Vấn đề đỏ (RAG Red)',
+                'Việc quá hạn','Cần CEO chốt','Tỷ lệ hoàn thành (%)','Cập nhật gần nhất'],
+      widths:  [160, 180, 180, 140, 140, 180, 180],
+      dropdowns: {}
+    },
+
+    /* 01 */
+    { name: '01_PMO_GSP_NEXT30',
+      color: '#14532d',
+      headers: ['PIC / Trục','Nhóm công việc','Nội dung công việc',
+                'Người phụ trách','Deadline','Trạng thái','Tiến độ',
+                'Vướng mắc','Việc tiếp theo','CEO cần chốt',
+                'Cập nhật mới nhất','Link tài liệu'],
+      widths:  [180, 160, 300, 160, 100, 150, 150,
+                220, 220, 220, 240, 180],
+      dropdowns: {
+        0: PIC_LIST,
+        1: ['Sản xuất','Kinh doanh','Kỹ thuật','Hệ thống','HCNS','Tài chính','Khác'],
+        5: STATUS_MAIN,
+        6: STATUS_MAIN
+      }
+    },
+
+    /* 02 */
+    { name: '02_DU_AN_CEO',
+      color: '#7c2d12',
+      headers: ['Tên dự án','Mô tả ngắn','Người phụ trách','Người phối hợp',
+                'Mức ưu tiên','Deadline','Trạng thái','Tiến độ',
+                'Cập nhật mới nhất','Vướng mắc','Việc tiếp theo',
+                'Nội dung cần CEO chốt','Quyết định của CEO','Link tài liệu'],
+      widths:  [240, 260, 160, 160, 120, 100, 150, 150,
+                240, 220, 220, 220, 220, 180],
+      dropdowns: {
+        4: UU_TIEN,
+        6: STATUS_MAIN,
+        7: STATUS_MAIN
+      }
+    },
+
+    /* 03 */
+    { name: '03_TO_COMMAND_CENTER',
+      color: '#1e3a5f',
+      headers: ['Loại nội dung','Ngày ghi nhận','Nhà máy','Nhóm vấn đề',
+                'Tiêu đề','Nội dung cần xử lý','Người phụ trách','Người phối hợp',
+                'Deadline','Trạng thái','Tiến độ','Vướng mắc',
+                'Việc tiếp theo','Nội dung cần CEO chốt','Kết quả',
+                'Cuộc họp liên quan','Link bằng chứng','Cập nhật mới nhất'],
+      widths:  [150, 110, 100, 150, 220, 280, 160, 160,
+                100, 150, 150, 220, 220, 220, 220, 220, 180, 220],
+      dropdowns: {
+        0: ['Vấn đề', 'Action', 'Vấn đề nóng', 'Việc cần làm rõ'],
+        2: NHA_MAY,
+        3: ['Sản xuất','Kinh doanh','Nhân sự','Kỹ thuật','An toàn','Chất lượng','Khác'],
+        9: STATUS_MAIN,
+        10: STATUS_MAIN
+      }
+    },
+
+    /* 04 */
+    { name: '04_BIEN_BAN_HOP',
+      color: '#064e3b',
+      headers: ['Ngày họp','Tên cuộc họp','Loại họp','Chủ trì',
+                'Thành phần tham dự','Tóm tắt chính','Kết luận chính',
+                'Action chính (tóm tắt)','Người phụ trách action','Deadline',
+                'Nội dung cần CEO chốt','Link biên bản','Trạng thái'],
+      widths:  [100, 240, 150, 150, 220, 280, 280, 220, 160, 100, 220, 180, 110],
+      dropdowns: {
+        2: ['Họp Ban TO','Họp dự án','Họp CEO','Họp định kỳ','Khác'],
+        12: ['Nháp','Đã ký','Đã gửi']
+      }
+    },
+
+    /* 05 */
+    { name: '05_RISK_SOS',
+      color: '#7f1d1d',
+      headers: ['Ngày ghi nhận','Module','Nhà máy','Nội dung rủi ro',
+                'Mức độ','Ảnh hưởng','Người phụ trách','Hướng xử lý',
+                'Deadline','Trạng thái','Nội dung cần CEO chốt',
+                'Kết quả','Cập nhật mới nhất'],
+      widths:  [110, 140, 100, 280, 120, 220, 160, 220, 100, 150, 220, 220, 220],
+      dropdowns: {
+        1: MODULE_LIST,
+        2: NHA_MAY,
+        4: MUC_DO_RISK,
+        9: ['Mới','Đang xử lý','Đã xử lý','Đóng']
+      }
+    },
+
+    /* 06 */
+    { name: '06_QUYET_DINH_CEO',
+      color: '#4c1d95',
+      headers: ['Ngày đề xuất','Module','Nội dung cần quyết định',
+                'Bối cảnh ngắn','Phương án đề xuất','Người đề xuất',
+                'Deadline cần quyết định','Quyết định của CEO',
+                'Ngày quyết định','Trạng thái','Ghi chú'],
+      widths:  [110, 140, 280, 220, 240, 160, 160, 280, 110, 180, 180],
+      dropdowns: {
+        1: MODULE_LIST,
+        9: ['Chờ quyết định','Đã quyết','Đang triển khai','Hoàn thành']
+      }
+    },
+
+    /* 07 */
+    { name: '07_CHAT_LUONG_DU_LIEU',
+      color: '#374151',
+      autoNote: true,
+      headers: ['Module','Tổng bản ghi','Thiếu người phụ trách',
+                'Thiếu Deadline','Quá hạn','Chưa cập nhật >7 ngày',
+                'Điểm chất lượng (%)','Cập nhật gần nhất'],
+      widths:  [160, 130, 180, 130, 100, 200, 170, 180],
+      dropdowns: {}
+    },
+
+    /* 08 */
+    { name: '08_LUONG_CHAT_CHU_TICH',
+      color: '#78350f',
+      headers: ['Ngày','Chủ đề','Tóm tắt','Chỉ đạo của CEO',
+                'Người phụ trách','Deadline','Action phát sinh',
+                'Trạng thái','Nội dung cần CEO chốt','Link file'],
+      widths:  [100, 220, 260, 300, 160, 100, 220, 120, 220, 180],
+      dropdowns: {
+        7: ['Mới','Đang xử lý','Đã xử lý']
+      }
+    }
+
+  ]; // end SHEETS
+
+  SHEETS.forEach(function(cfg) {
+    /* Bỏ qua nếu đã tồn tại */
+    if (ss.getSheetByName(cfg.name)) {
+      log.push('  ⬜ Đã tồn tại: ' + cfg.name + ' — bỏ qua');
+      return;
+    }
+
+    var sheet = ss.insertSheet(cfg.name);
+
+    /* ── Header ── */
+    var nCols       = cfg.headers.length;
+    var headerRange = sheet.getRange(1, 1, 1, nCols);
+    headerRange.setValues([cfg.headers])
+               .setBackground(cfg.color)
+               .setFontColor('#ffffff')
+               .setFontWeight('bold')
+               .setFontSize(11)
+               .setWrap(true)
+               .setVerticalAlignment('middle')
+               .setHorizontalAlignment('center');
+    sheet.setRowHeight(1, 40);
+    sheet.setFrozenRows(1);
+
+    /* ── Màu tab ── */
+    sheet.setTabColor(cfg.color);
+
+    /* ── Độ rộng cột ── */
+    if (cfg.widths) {
+      cfg.widths.forEach(function(w, i) { sheet.setColumnWidth(i + 1, w); });
+    }
+
+    /* ── Dropdown (data validation rows 2-1000) ── */
+    Object.keys(cfg.dropdowns).forEach(function(idxStr) {
+      var colIdx  = parseInt(idxStr, 10);
+      var options = cfg.dropdowns[idxStr];
+      var rule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(options, true)
+        .setAllowInvalid(true)
+        .build();
+      sheet.getRange(2, colIdx + 1, 999, 1).setDataValidation(rule);
+    });
+
+    /* ── Ghi chú cho sheet tự động ── */
+    if (cfg.autoNote) {
+      sheet.getRange(1, 1).setNote('⚙️ Sheet này do Apps Script tự cập nhật.\nKhông chỉnh sửa tay.');
+    }
+
+    log.push('  ✅ Đã tạo: ' + cfg.name + '  (' + nCols + ' cột)');
+  });
+
+  return log;
+}
+
+/* =====================================================================
+   MIGRATION: GSP Project Workbook → 02_DU_AN_CEO (extended schema)
+   Schema mở rộng v2 — hỗ trợ phân cấp Dự án / Hạng mục / Công việc
+   ===================================================================== */
+
+/* ── Đọc sheet có header không nằm ở hàng 1 ─────────────────────────
+   sheetName : tên sheet trong Spreadsheet hiện tại
+   headerRow : số thứ tự hàng header (1-based), ví dụ 9 hoặc 4
+   Trả về    : array of objects, bỏ qua hàng trống hoàn toàn
+   ─────────────────────────────────────────────────────────────────── */
+function readSheetFromHeaderRow_(sheetName, headerRow) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(sheetName);
+  if (!sh) {
+    Logger.log('[readSheetFromHeaderRow_] Sheet không tìm thấy: ' + sheetName);
+    return [];
+  }
+  var lastRow = sh.getLastRow();
+  var lastCol = sh.getLastColumn();
+  if (lastRow < headerRow + 1 || lastCol < 1) return [];
+  var headers    = sh.getRange(headerRow, 1, 1, lastCol).getValues()[0];
+  var numData    = lastRow - headerRow;
+  var dataValues = sh.getRange(headerRow + 1, 1, numData, lastCol).getValues();
+  return dataValues.map(function(row) {
+    var obj = {};
+    headers.forEach(function(h, i) {
+      var key = String(h || '').trim();
+      if (key) obj[key] = row[i];
+    });
+    return obj;
+  }).filter(function(obj) {
+    return Object.keys(obj).some(function(k) {
+      var v = obj[k];
+      return v !== '' && v !== null && v !== undefined;
+    });
+  });
+}
+
+/* ── Data getter cho 02_DU_AN_CEO extended schema (sau migrate) ────── */
+function getDuAnCEO02Extended_(rawRows) {
+  var projects   = [];
+  var hangMucs   = [];
+  var congViecs  = [];
+  var capNhats   = [];
+  var quyetDinhs = [];
+
+  rawRows.forEach(function(r) {
+    var loai = String(r['Loại bản ghi'] || '').trim();
+    if      (loai === 'Dự án')      projects.push(normalizeCEO02DuAn_(r));
+    else if (loai === 'Hạng mục')   hangMucs.push(normalizeCEO02HangMuc_(r));
+    else if (loai === 'Công việc')  congViecs.push(normalizeCEO02CongViec_(r));
+    else if (loai === 'Cập nhật')   capNhats.push(normalizeCEO02DuAn_(r));
+    else if (loai === 'Quyết định') quyetDinhs.push(normalizeCEO02DuAn_(r));
+  });
+
+  // Enrich: tính số công việc + % hoàn thành cho từng dự án
+  var cvByDuAn = {};
+  congViecs.forEach(function(cv) {
+    var maDuAn = cv.MaDuAn;
+    if (!maDuAn) return;
+    if (!cvByDuAn[maDuAn]) cvByDuAn[maDuAn] = { total: 0, done: 0 };
+    cvByDuAn[maDuAn].total++;
+    if (/hoàn thành|done|xong/i.test(cv.TrangThai)) cvByDuAn[maDuAn].done++;
+  });
+
+  projects.forEach(function(p) {
+    var cv = cvByDuAn[p.MaDuAn] || { total: 0, done: 0 };
+    p.SoCongViec  = cv.total;
+    p.SoHoanThanh = cv.done;
+    if (!p.PhanTramHT && cv.total > 0) {
+      p.PhanTramHT = Math.round((cv.done / cv.total) * 100);
+      p.PctHT      = p.PhanTramHT;
+    }
+    p.RAG       = calcRAG_(p.TrangThai, p.ThoiHanHoanThanh, p.VuongMacRuiRo, p.NdCanCEOQuyet);
+    p.IsOverdue = isPastDeadline(p.ThoiHanHoanThanh, p.TrangThai);
+    p.LatestUpdate = null;
+  });
+
+  // Summary
+  var active   = projects.filter(function(p){ return !/hoàn thành|done/i.test(p.TrangThai); });
+  var overdue  = projects.filter(function(p){ return p.IsOverdue; });
+  var ceoList  = projects.filter(function(p){ return hasText(p.NdCanCEOQuyet); });
+  var risk     = projects.filter(function(p){ return hasText(p.VuongMacRuiRo); });
+  var noPT     = projects.filter(function(p){ return !p.NguoiPhuTrach; });
+  var ragGreen = projects.filter(function(p){ return p.RAG === 'Green'; }).length;
+  var ragAmber = projects.filter(function(p){ return p.RAG === 'Amber'; }).length;
+  var ragSum   = { Green: ragGreen, Amber: ragAmber, Red: projects.length - ragGreen - ragAmber };
+
+  return {
+    exists:      projects.length > 0,
+    projects:    projects,
+    hangMucs:    hangMucs,
+    congViecs:   congViecs,
+    capNhats:    capNhats,
+    quyetDinhs:  quyetDinhs,
+    summary: {
+      tongDuAn:             projects.length,
+      dangTrienKhai:        active.length,
+      dungTienDo:           ragGreen,
+      coNguyChamTre:        ragAmber,
+      quaHan:               overdue.length,
+      chuaCoNguoiPhuTrach:  noPT.length,
+      coRuiRo:              risk.length,
+      canCEOQuyetDinh:      ceoList.length,
+      tongHangMuc:          hangMucs.length,
+      tongCongViec:         congViecs.length,
+      total: projects.length, active: active.length,
+      overdue: overdue.length, ceo: ceoList.length, byRAG: ragSum
+    },
+    ceoProjects: projects,
+    records:     projects
+  };
+}
+
+/* ── Normalizer: dòng "Dự án" trong 02_DU_AN_CEO extended ─────────── */
+function normalizeCEO02DuAn_(r) {
+  var deadline = String(r['Thời hạn']              || '').trim();
+  var status   = String(r['Trạng thái']             || '').trim();
+  var vuong    = String(r['Vướng mắc']              || '').trim();
+  var ceoChot  = String(r['Nội dung cần CEO chốt']  || '').trim();
+  var tienDo   = String(r['Tiến độ']               || '').trim();
+  var ten      = String(r['Tên']                   || '').trim();
+  var maBanGhi = String(r['Mã bản ghi']            || '').trim();
+  var maDuAn   = String(r['Mã dự án']              || maBanGhi || '').trim();
+  return {
+    LoaiBanGhi:       'Dự án',
+    MaBanGhi:         maBanGhi || maDuAn,
+    MaDuAn:           maDuAn,
+    MaCapTren:        '',
+    TenBanGhi:        ten,
+    TenDuAn:          ten,
+    MoTa:             String(r['Mô tả chi tiết']    || '').trim(),
+    NhomViec:         String(r['Nhóm việc']          || '').trim(),
+    NguoiPhuTrach:    String(r['Người phụ trách']    || '').trim(),
+    NguoiPhoiHop:     String(r['Người phối hợp']     || '').trim(),
+    MucDoUuTien:      String(r['Mức ưu tiên']        || '').trim(),
+    ThoiHanHoanThanh: deadline,
+    Deadline:         deadline,
+    TrangThai:        status,
+    Status:           status,
+    TienDo:           tienDo,
+    PhanTramHT:       tienDoToPct_(tienDo),
+    PctHT:            tienDoToPct_(tienDo),
+    CapNhatMoiNhat:   String(r['Cập nhật mới nhất'] || '').trim(),
+    CapNhat:          String(r['Cập nhật mới nhất'] || '').trim(),
+    VuongMacRuiRo:    vuong,
+    VuongMac:         vuong,
+    KeTiepTheo:       String(r['Việc tiếp theo']     || '').trim(),
+    ViecTiepTheo:     String(r['Việc tiếp theo']     || '').trim(),
+    NdCanCEOQuyet:    ceoChot,
+    CEOCanChot:       ceoChot,
+    NdCEOCanBiet:     String(r['Ghi chú']            || '').trim(),
+    QuyetDinhCEO:     String(r['Quyết định của CEO'] || '').trim(),
+    CEODecision:      String(r['Quyết định của CEO'] || '').trim(),
+    SanPhamDauRa:     String(r['Đầu ra phải có']     || '').trim(),
+    LinkFile:         String(r['Link tài liệu']      || '').trim(),
+    Link:             String(r['Link tài liệu']      || '').trim(),
+    RAG:              calcRAG_(status, deadline, vuong, ceoChot),
+    IsOverdue:        isPastDeadline(deadline, status),
+    SoCongViec:       0,
+    SoHoanThanh:      0,
+    LatestUpdate:     null,
+    ProjectName:      ten,
+    Owner:            String(r['Người phụ trách']    || '').trim(),
+    PICLead:          String(r['Người phụ trách']    || '').trim(),
+    Issues:           vuong,
+    CEONote:          ceoChot,
+    Progress:         tienDo,
+    Description:      String(r['Mô tả chi tiết']    || '').trim()
+  };
+}
+
+/* ── Normalizer: dòng "Hạng mục" ────────────────────────────────── */
+function normalizeCEO02HangMuc_(r) {
+  var base = normalizeCEO02DuAn_(r);
+  base.LoaiBanGhi = 'Hạng mục';
+  base.MaCapTren  = String(r['Mã dự án'] || '').trim();
+  return base;
+}
+
+/* ── Normalizer: dòng "Công việc" ───────────────────────────────── */
+function normalizeCEO02CongViec_(r) {
+  var deadline = String(r['Thời hạn']              || '').trim();
+  var status   = String(r['Trạng thái']             || '').trim();
+  var vuong    = String(r['Vướng mắc']              || '').trim();
+  var ceoChot  = String(r['Nội dung cần CEO chốt']  || '').trim();
+  var ten      = String(r['Tên']                   || '').trim();
+  var maBanGhi = String(r['Mã bản ghi']            || '').trim();
+  var maDuAn   = String(r['Mã dự án']              || '').trim();
+  return {
+    LoaiBanGhi:       'Công việc',
+    MaBanGhi:         maBanGhi,
+    MaDuAn:           maDuAn,
+    MaCapTren:        maDuAn,
+    TenBanGhi:        ten,
+    TenDuAn:          ten,
+    MoTa:             String(r['Mô tả chi tiết']    || '').trim(),
+    NhomViec:         String(r['Nhóm việc']          || '').trim(),
+    NguoiPhuTrach:    String(r['Người phụ trách']    || '').trim(),
+    NguoiPhoiHop:     String(r['Người phối hợp']     || '').trim(),
+    ThoiHanHoanThanh: deadline,
+    Deadline:         deadline,
+    TrangThai:        status,
+    Status:           status,
+    TienDo:           '',
+    PhanTramHT:       0,
+    PctHT:            0,
+    VuongMacRuiRo:    vuong,
+    VuongMac:         vuong,
+    NdCanCEOQuyet:    ceoChot,
+    CEOCanChot:       ceoChot,
+    SanPhamDauRa:     String(r['Đầu ra phải có']     || '').trim(),
+    NdCEOCanBiet:     String(r['Ghi chú']            || '').trim(),
+    LinkFile:         String(r['Link tài liệu']      || '').trim(),
+    Link:             String(r['Link tài liệu']      || '').trim(),
+    RAG:              calcRAG_(status, deadline, vuong, ceoChot),
+    IsOverdue:        isPastDeadline(deadline, status),
+    ProjectName:      ten,
+    Owner:            String(r['Người phụ trách']    || '').trim(),
+    Action:           ten,
+    Issues:           vuong
+  };
+}
+
+/* ── DRY-RUN: Đọc + phân tích hai sheet nguồn ─────────────────────
+   Cách chạy: Apps Script editor → chọn hàm migrateGSPProjectWorkbookToCEOTracker → Run
+   Tham số  : dryRun = true (mặc định) — chỉ đọc và báo cáo, KHÔNG ghi
+              dryRun = false — BỊ KHÓA, chưa implement
+   Kết quả  : Xem Execution log (View → Logs) sau khi chạy
+   ─────────────────────────────────────────────────────────────────── */
+function migrateGSPProjectWorkbookToCEOTracker(dryRun) {
+  dryRun = dryRun !== false;  // undefined/true/bất kỳ → true; chỉ false tường minh → false
+  var log    = [];
+  var errors = [];
+
+  var srcDanhMuc  = readSheetFromHeaderRow_('DANH MỤC DỰ ÁN', 9);
+  var srcCongViec = readSheetFromHeaderRow_('CÔNG VIỆC CHI TIẾT', 4);
+
+  if (!srcDanhMuc.length)  errors.push('Sheet "DANH MỤC DỰ ÁN" không tồn tại hoặc không có dữ liệu (header dòng 9).');
+  if (!srcCongViec.length) errors.push('Sheet "CÔNG VIỆC CHI TIẾT" không tồn tại hoặc không có dữ liệu (header dòng 4).');
+  if (errors.length) {
+    var fatal = errors.join('\n');
+    Logger.log('[migrateGSPProjectWorkbookToCEOTracker] FATAL:\n' + fatal);
+    return { ok: false, dryRun: dryRun, errors: errors, log: fatal };
+  }
+
+  // Phân tích DANH MỤC DỰ ÁN
+  var projectIdSet = {};
+  var dupProjMap   = {};
+  var projects     = [];
+
+  srcDanhMuc.forEach(function(r) {
+    var ma  = String(r['Mã dự án']      || '').trim();
+    var ten = String(r['Tên dự án lớn'] || '').trim();
+    if (!ma && !ten) return;
+    if (!ma) {
+      errors.push('Dự án thiếu Mã dự án: "' + ten.slice(0, 60) + '"');
+      return;
+    }
+    if (projectIdSet[ma]) {
+      dupProjMap[ma] = (dupProjMap[ma] || 1) + 1;
+      errors.push('Mã dự án trùng: ' + ma);
+      return;
+    }
+    projectIdSet[ma] = true;
+    projects.push(r);
+  });
+
+  // Phân tích CÔNG VIỆC CHI TIẾT
+  var maViecSet       = {};
+  var dupMaViecMap    = {};
+  var cvThieuMaDuAn   = [];
+  var cvKhongTonDuAn  = [];
+  var cvThieuNhomViec = [];
+  var hangMucMap      = {};
+
+  srcCongViec.forEach(function(r) {
+    var maViec   = String(r['Mã việc']   || '').trim();
+    var maDuAn   = String(r['Mã dự án']  || '').trim();
+    var nhomViec = String(r['Nhóm việc'] || '').trim();
+    var tenViec  = String(r['Nội dung giao việc theo nguồn'] || '').slice(0, 60);
+
+    if (!maViec) {
+      errors.push('Công việc thiếu Mã việc: "' + tenViec + '"');
+    } else if (maViecSet[maViec]) {
+      dupMaViecMap[maViec] = (dupMaViecMap[maViec] || 1) + 1;
+      errors.push('Mã việc trùng: ' + maViec);
+    } else {
+      maViecSet[maViec] = true;
+    }
+
+    if (!maDuAn) {
+      cvThieuMaDuAn.push(maViec || '(thiếu Mã việc)');
+    } else if (!projectIdSet[maDuAn]) {
+      cvKhongTonDuAn.push((maViec || '?') + ' -> "' + maDuAn + '"');
+    }
+
+    if (!nhomViec) {
+      cvThieuNhomViec.push(maViec || '(thiếu Mã việc)');
+    }
+
+    if (maDuAn && nhomViec) {
+      var hmKey = maDuAn + '|' + nhomViec;
+      if (!hangMucMap[hmKey]) hangMucMap[hmKey] = { maDuAn: maDuAn, nhomViec: nhomViec, soViec: 0 };
+      hangMucMap[hmKey].soViec++;
+    }
+  });
+
+  var hangMucs      = [];
+  for (var k in hangMucMap) { if (hangMucMap.hasOwnProperty(k)) hangMucs.push(hangMucMap[k]); }
+  var dupProjList   = Object.keys(dupProjMap);
+  var dupMaViecList = Object.keys(dupMaViecMap);
+
+  var ts = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss');
+  var fmtList = function(arr, cap, icon) {
+    if (!arr.length) return String.fromCharCode(9989) + ' Khong co';
+    return (icon || String.fromCharCode(10060)) + ' ' + arr.length + ' -- ' + arr.slice(0, cap).join(', ') + (arr.length > cap ? ' ...' : '');
+  };
+
+  log.push('================================================================');
+  log.push('  DRY-RUN: migrateGSPProjectWorkbookToCEOTracker');
+  log.push('  ' + ts);
+  log.push('================================================================');
+  log.push('');
+  log.push('THONG KE NGUON:');
+  log.push('  Tong du an (DANH MUC DU AN):           ' + projects.length + ' (/' + srcDanhMuc.length + ' dong)');
+  log.push('  Tong hang muc tu suy ra:               ' + hangMucs.length + ' to hop duy nhat (Ma DA + Nhom viec)');
+  log.push('  Tong cong viec (CONG VIEC CHI TIET):   ' + srcCongViec.length);
+  log.push('  Tong ban ghi se ghi vao 02_DU_AN_CEO:  ' + (projects.length + hangMucs.length + srcCongViec.length));
+  log.push('');
+  log.push('KIEM TRA MA DU AN:');
+  log.push('  Ma du an trung:                ' + fmtList(dupProjList, 10, 'LOI'));
+  log.push('');
+  log.push('KIEM TRA CONG VIEC (' + srcCongViec.length + ' ban ghi):');
+  log.push('  Ma viec trung:                 ' + fmtList(dupMaViecList, 5, 'LOI'));
+  log.push('  Thieu Ma du an:                ' + fmtList(cvThieuMaDuAn, 5, 'LOI'));
+  log.push('  Ma du an khong ton tai:        ' + fmtList(cvKhongTonDuAn, 5, 'LOI'));
+  log.push('  Thieu Nhom viec:               ' + fmtList(cvThieuNhomViec, 5, 'CANH BAO'));
+  log.push('');
+
+  if (errors.length) {
+    log.push('LOI CAN XU LY (' + errors.length + ' loi):');
+    errors.forEach(function(e, i) { log.push('  [' + (i + 1) + '] ' + e); });
+  } else {
+    log.push('LOI: OK - Khong co loi. Du lieu sach - san sang de migrate.');
+  }
+
+  log.push('');
+  log.push('CHE DO: DRY-RUN - Khong co gi duoc ghi vao 02_DU_AN_CEO.');
+  log.push('================================================================');
+
+  var report = log.join('\n');
+  Logger.log(report);
+
+  if (!dryRun) {
+    throw new Error('Write mode chua duoc kich hoat. Chay dry-run truoc, xac nhan ket qua, roi moi enable write mode.');
+  }
+
+  return {
+    ok:      errors.length === 0,
+    dryRun:  true,
+    stats: {
+      tongDuAn:    projects.length,
+      tongHangMuc: hangMucs.length,
+      tongCongViec:srcCongViec.length,
+      tongBanGhi:  projects.length + hangMucs.length + srcCongViec.length
+    },
+    issues: {
+      dupProjectIds:  dupProjList,
+      dupMaViec:      dupMaViecList,
+      cvThieuMaDuAn:  cvThieuMaDuAn,
+      cvKhongTonDuAn: cvKhongTonDuAn,
+      cvThieuNhomViec:cvThieuNhomViec
+    },
+    errors: errors,
+    log:    report
+  };
+}
+
+/* ── Wrapper không tham số — chọn hàm này trong Apps Script editor để chạy dry-run ── */
+function testMigrationDryRun() {
+  var result = migrateGSPProjectWorkbookToCEOTracker(true);
+  Logger.log(JSON.stringify(result, null, 2));
   return result;
 }

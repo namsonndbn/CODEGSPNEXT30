@@ -3058,7 +3058,7 @@
       <div class="module-placeholder">
         <div class="module-placeholder-icon">📊</div>
         <h2>Theo dõi dự án CEO</h2>
-        <p>Theo dõi tiến độ 8 dự án chiến lược CEO trực tiếp dẫn dắt. Nhấn <strong>🔄 Làm mới dữ liệu</strong> để tải dữ liệu từ sheet <strong>THEO_DOI_DU_AN_CEO</strong>.</p>
+        <p>Theo dõi tiến độ các dự án chiến lược CEO trực tiếp dẫn dắt. Nhấn <strong>🔄 Làm mới dữ liệu</strong> để tải dữ liệu từ sheet <strong>02_DU_AN_CEO</strong>.</p>
         <div class="module-placeholder-badge">⏳ Nhấn 🔄 Làm mới dữ liệu để bắt đầu</div>
       </div>
     </div>
@@ -6384,7 +6384,7 @@ APS - S&OP - KHO - SẢN XUẤT",
         .then(function(data) { cptCache = data; cptRender(data); })
         .catch(function() {
           var el2 = document.getElementById('cpt-content');
-          if (el2) el2.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">❌</div><h2>Không thể tải dữ liệu</h2><p>Kiểm tra kết nối hoặc sheet THEO_DOI_DU_AN_CEO.</p></div>';
+          if (el2) el2.innerHTML = '<div class="module-placeholder"><div class="module-placeholder-icon">❌</div><h2>Không thể tải dữ liệu</h2><p>Kiểm tra kết nối hoặc sheet <strong>02_DU_AN_CEO</strong>.</p></div>';
         });
     }
 
@@ -6395,9 +6395,9 @@ APS - S&OP - KHO - SẢN XUẤT",
           '<div class="module-placeholder">' +
           '<div class="module-placeholder-icon">📊</div>' +
           '<h2>Theo dõi dự án CEO</h2>' +
-          '<p>Chưa có dữ liệu trong sheet <strong>THEO_DOI_DU_AN_CEO</strong>. ' +
-          'Hãy chạy <code>setupCEOProjectTrackerSheet()</code> rồi nhập dữ liệu P1–P8.</p>' +
-          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet THEO_DOI_DU_AN_CEO</div></div>';
+          '<p>Chưa có dữ liệu trong sheet <strong>02_DU_AN_CEO</strong>. ' +
+          'Chạy <code>migrateGSPProjectWorkbookToCEOTracker(true)</code> trong Apps Script để kiểm tra nguồn.</p>' +
+          '<div class="module-placeholder-badge">⏳ Đang chờ dữ liệu từ sheet 02_DU_AN_CEO</div></div>';
         ['cpt-kpi-bar','cpt-qs-wrap'].forEach(function(id) {
           var e = document.getElementById(id); if (e) e.style.display = 'none';
         });
@@ -6748,7 +6748,7 @@ APS - S&OP - KHO - SẢN XUẤT",
         );
       } else {
         html += sec('6. Cập nhật mới nhất',
-          '<div class="cpt-detail-empty">Chưa có cập nhật tiến độ. Hãy thêm dòng CẬP NHẬT vào sheet THEO_DOI_DU_AN_CEO.</div>',
+          '<div class="cpt-detail-empty">Chưa có cập nhật tiến độ. Hãy thêm dòng có Loại bản ghi = "Cập nhật" vào sheet 02_DU_AN_CEO.</div>',
           'full'
         );
       }
