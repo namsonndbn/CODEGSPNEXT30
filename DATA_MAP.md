@@ -232,4 +232,285 @@
 
 ---
 
+## 10. Meeting Hub V3 — Kiến trúc dữ liệu thật
+
+> Cập nhật: 2026-10-06 · Thay thế cách đọc legacy (MEETING_TOPICS / MEETING_MINUTES / MEETING_ACTIONS)
+> Config qua `PropertiesService.getScriptProperties()` — **KHÔNG hardcode ID**.
+
+### 10.1 Script Properties cần cấu hình
+
+| Key | Giá trị cần điền | Bắt buộc |
+|---|---|---|
+| `MEETING_HUB_SPREADSHEET_ID` | ID Google Spreadsheet chứa 5 sheets mới | ✅ |
+| `DRIVE_ROOT_FOLDER_ID` | ID folder gốc trên Google Drive cho Meeting Hub | ✅ |
+| `MINUTES_TEMPLATE_FILE_ID` | ID file Google Doc template biên bản | ⚠️ Tuỳ chọn |
+| `ALLOWED_DOMAIN` | `goldsunpackaging.vn` | ✅ (default có sẵn) |
+
+### 10.2 Sheets mới (tạo bằng `setupMeetingHubDataStore()`)
+
+| Sheet | Nhóm | Số cột | Hàm đọc chính | Hàm ghi chính | Ghi chú |
+|---|---|---|---|---|---|
+| `MEETINGS` | NHẬP | 29 | `getMeetingHubDataFromSheets_()` | `createMeeting()` | Chứa driveFolderId, minutesFileId, v.v. |
+| `ACTIONS` | NHẬP | 25 | `getMeetingHubDataFromSheets_()` | `updateAction()`, `importMeetingActionsV3()` | ACTION_LOG tự ghi khi update |
+| `PEOPLE` | THAM CHIẾU | 5 | `getPersonDetail()` | `seedMeetingHubPeopleFromArray()` | email, fullName, department, title, active |
+| `TOPICS` | THAM CHIẾU | 6 | `getTopicDetail()` | — (nhập thủ công) | topicId, topicName, description, module, active, sortOrder |
+| `ACTION_LOG` | HỆ THỐNG | 10 | — (audit only) | `updateAction()`, `importMeetingActionsV3()` | Ghi tự động khi Status/Deadline/Owner thay đổi |
+
+#### Schema MEETINGS (29 cột)
+`meetingId` · `meetingDate` · `meetingTitle` · `topicId` · `topicName` · `meetingType` · `chairperson` · `secretary` · `participants` · `summary` · `mainContent` · `analysis` · `conclusions` · `decisions` · `ceoDirections` · `needCeoDecision` · `driveFolderId` · `driveFolderUrl` · `minutesFolderId` · `attachmentsFolderId` · `evidenceFolderId` · `otherFolderId` · `minutesFileId` · `minutesFileName` · `minutesFileType` · `minutesFileUrl` · `status` · `createdAt` · `updatedAt`
+
+#### Schema ACTIONS (25 cột)
+`actionId` · `meetingId` · `topicId` · `actionTitle` · `actionDescription` · `ownerEmail` · `ownerName` · `coOwnerEmails` · `department` · `deadline` · `expectedOutput` · `priority` · `status` · `rag` · `progress` · `actualResult` · `evidenceFileId` · `evidenceFileName` · `evidenceFileUrl` · `blocker` · `needCeoDecision` · `ceoDecision` · `lastUpdate` · `createdAt` · `updatedAt`
+
+#### Schema ACTION_LOG (10 cột)
+`logId` · `actionId` · `meetingId` · `updatedAt` · `updatedBy` · `oldStatus` · `newStatus` · `oldDeadline` · `newDeadline` · `progress` · `note`
+
+### 10.3 Cấu trúc Google Drive
+
+```
+DRIVE_ROOT_FOLDER_ID/
+└── YYYY/
+    └── MM/
+        └── MTG-YYYYMMDD-XXX_TenCuocHop/   ← driveFolderId trong MEETINGS
+            ├── 01_Bien_ban/                 ← minutesFolderId
+            ├── 02_Tai_lieu_hop/             ← attachmentsFolderId
+            ├── 03_Bang_chung_Action/        ← evidenceFolderId
+            └── 04_Khac/                     ← otherFolderId
+```
+
+- Meeting ID format: `MTG-YYYYMMDD-XXX` (XXX = số thứ tự trong ngày, 3 chữ số)
+- Action ID format: `ACT-YYYYMMDD-XXXX` (XXXX = số thứ tự trong ngày, 4 chữ số)
+- File preview URL: Google Docs → `/document/d/{ID}/preview` · Sheets → `/spreadsheets/d/{ID}/preview` · Khác → `/file/d/{ID}/preview`
+- Trash file: `file.setTrashed(true)` — **KHÔNG bao giờ xóa vĩnh viễn**
+
+### 10.4 Hàm Apps Script quan trọng — Meeting Hub V3
+
+| Hàm | Chức năng | Khi nào chạy |
+|---|---|---|
+| `setupMeetingHubDataStore()` | Tạo/chuẩn hóa 5 sheets với headers — không xóa data cũ | 1 lần khi setup |
+| `setupMeetingHubConfigExample()` | In hướng dẫn cấu hình Script Properties vào log | Khi cần hỗ trợ |
+| `testMeetingHubConnection()` | Diagnostic: config, SS, Drive, row counts | Sau mỗi lần cấu hình |
+| `getMeetingHubData()` | V3 main — đọc thật, fallback demo nếu chưa cấu hình | Mỗi khi dashboard load |
+| `createMeeting(params)` | Tạo meeting + Drive folder + ghi MEETINGS | Khi tạo cuộc họp mới |
+| `updateAction(actionId, changes)` | Cập nhật action + ghi ACTION_LOG tự động | Khi PIC cập nhật tiến độ |
+| `importMeetingActionsV3(rows, mode, meetingId)` | Import Excel → ACTIONS + validate + ACTION_LOG | Sau cuộc họp |
+| `seedMeetingHubPeopleFromArray(arr)` | Thêm bulk PEOPLE (skip duplicate email) | Setup ban đầu |
+| `migrateLegacyMeetingHubData(dryRun)` | Migrate dữ liệu cũ → 5 sheets mới | 1 lần, sau setup |
+| `createMeetingDriveFolder(meetingId, title)` | Tạo cấu trúc 4 subfolder trên Drive | Auto-call bởi createMeeting |
+| `createMinutesFromTemplate(meetingId, title)` | Copy template → 01_Bien_ban, replace {{TOKEN}} | Khi cần biên bản |
+
+### 10.5 Quan hệ fallback
+
+```
+getMeetingHubData()
+  ├── validateMeetingHubConfig() → valid?
+  │   ├── YES → getMeetingHubDataFromSheets_() [REAL DATA]
+  │   └── NO  → getMeetingHubDataLegacy_()     [DEMO FALLBACK, _isDemo:true]
+  │              ↑ đọc MEETING_TOPICS + MEETING_MINUTES + MEETING_ACTIONS (sheets cũ)
+  └── Frontend nhận _isDemo:true → hiển thị banner "Demo mode"
+```
+
+---
+
+## 11. LOS — LEADERSHIP OPERATING SYSTEM
+
+> Cập nhật: 2026-10-06 · Module mới — theo dõi năng lực điều hành cán bộ quản lý
+> 2 chỉ số độc lập: **LOS** (Leadership Operating System) và **ME** (Meeting Effectiveness)
+> KHÔNG tạo Overall Score. KHÔNG cộng LOS + ME.
+
+### 11.1 Phạm vi áp dụng
+
+Cán bộ từ **Trưởng bộ phận trở lên** — lọc bằng `isLosEligibleTitle_()`.
+TUYỆT ĐỐI không tự tạo Leader giả. Nếu chưa có dữ liệu → Empty State.
+
+### 11.2 Sheets mới (tạo bằng `setupLosDataStore()`)
+
+| Sheet | Số cột | Mô tả |
+|---|---|---|
+| `LOS_LEADER` | 18 | Profile Leader đã enroll vào chương trình LOS |
+| `LOS_SCORE` | 27 | LOS score theo 8 tiêu chí, mỗi tiêu chí có AI Proposed + Verified |
+| `LOS_MEETING` | 8 | Reference tới Meeting Hub (KHÔNG duplicate) — chỉ lưu meetingId + leaderRole |
+| `LOS_ME_SCORE` | 24 | ME score theo 6 tiêu chí, có ME Cap ≤ 5 nếu thiếu Decision+Action |
+| `LOS_COACHING` | 20 | Coaching Actions theo từng Gap |
+| `LOS_EVIDENCE` | 11 | Reference tới Meeting/Action/OC/Drive (chỉ lưu sourceId, không copy binary) |
+| `LOS_REVIEW` | 17 | Gate Review: Baseline → D7 → D14 → D30 → D60 → D90 |
+
+### 11.3 LOS Score — 8 Tiêu chí (tổng weight = 10)
+
+| Tiêu chí | Weight |
+|---|---|
+| Data-driven | 1.5 |
+| Planning & Prioritization | 1.5 |
+| Decision Making | 1.5 |
+| Ownership | 1.5 |
+| Delegation/PIC | 1.0 |
+| Problem Solving | 1.0 |
+| Follow-through | 1.0 |
+| Coaching/Team Development | 1.0 |
+
+### 11.4 ME Score — 6 Tiêu chí (tổng weight = 10)
+
+| Tiêu chí | Weight | Rule đặc biệt |
+|---|---|---|
+| Data Ready | 1.5 | |
+| Problem/Gap rõ | 1.5 | |
+| Root Cause | 1.5 | |
+| Decision | 2.0 | **Cap trigger** |
+| Action – PIC – Deadline | 2.0 | **Cap trigger** |
+| Follow-up / Closure | 1.5 | |
+
+**ME Cap**: Nếu Decision < 1.0 HOẶC Action-PIC-Deadline < 1.0 → ME final ≤ 5.0
+
+### 11.5 Luồng dữ liệu LOS
+
+```
+LOS_LEADER (profile)
+  └── LOS_SCORE (8 tiêu chí × gate)
+  └── LOS_MEETING → MEETINGS.meetingId (reference Meeting Hub)
+       └── LOS_ME_SCORE (6 tiêu chí × meeting)
+  └── LOS_COACHING (Gap → Action → Before/After)
+  └── LOS_EVIDENCE → Meeting/Action/OC/Drive sourceId (reference only)
+  └── LOS_REVIEW (Gate snapshot: Baseline/D7/D14/D30/D60/D90)
+```
+
+### 11.6 AI vs Verified Score
+
+- `aiProposedScore`: AI đề xuất — hiển thị badge "AI đề xuất"
+- `verifiedScore`: Score chính thức — chỉ human mới set
+- AI KHÔNG được tự override verifiedScore
+- Score hiển thị trên Dashboard: verifiedScore nếu có, sinon aiProposedScore + badge
+
+### 11.7 Tích hợp Meeting Hub
+
+```
+LOS_MEETING.meetingId  →  MEETINGS.meetingId
+LOS_EVIDENCE.sourceId  →  MEETINGS.meetingId / ACTIONS.actionId / ...
+Click Meeting trong LOS  →  openMeetingHub()  →  mhOpenMeeting(meetingId)
+```
+
+### 11.8 Hàm Apps Script quan trọng — LOS
+
+| Hàm | Chức năng | Khi nào chạy |
+|---|---|---|
+| `setupLosDataStore()` | Tạo 7 sheets LOS với headers | 1 lần khi setup |
+| `testLosConnection()` | Diagnostic: config, sheets, user | Sau mỗi lần cấu hình |
+| `getLosData()` | Tất cả Leader + scores + coaching + gates | Mỗi khi module LOS load |
+| `getLosEligibleLeaders()` | Lấy danh sách Leader eligible (từ LOS_LEADER hoặc PEOPLE) | Sub-function |
+| `calculateLosScore_(obj)` | Tính LOS /10 từ 8 tiêu chí | Helper |
+| `calculateMeScore_(obj)` | Tính ME /10 từ 6 tiêu chí + ME Cap | Helper |
+| `applyMeDecisionActionCap_(raw, obj)` | Áp ME Cap ≤ 5 nếu thiếu Decision/Action | Helper |
+| `saveLosVerifiedScore(payload)` | Ghi Verified Score vào LOS_SCORE | Khi PMO/CEO xác nhận điểm |
+| `saveMeVerifiedScore(payload)` | Ghi ME Verified Score vào LOS_ME_SCORE | Khi PMO xác nhận ME |
+| `createLosCoachingAction(payload)` | Tạo Coaching Action mới | Sau mỗi Review |
+| `saveLosReview(payload)` | Lưu Gate Review snapshot | Tại Baseline/D30/D60/D90 |
+
+### 11.9 Script Properties (dùng chung với Meeting Hub)
+
+| Key | Mô tả |
+|---|---|
+| `MEETING_HUB_SPREADSHEET_ID` | ID Spreadsheet chứa cả MH sheets và LOS sheets |
+| `ALLOWED_DOMAIN` | goldsunpackaging.vn |
+
+---
+
+## 12. CLC — CHI PHÍ LỖI CHẤT LƯỢNG
+
+### 12.1 Tổng quan module
+
+Module CLC quản lý vòng đời PDCA cho chi phí lỗi chất lượng:  
+**Data → Case → Root Cause → Action (CA/PA) → PIC Commitment → Weekly Review → Monthly KPI**
+
+### 12.2 Sheet: `CLC_COMMITMENT`
+
+Lưu cam kết của từng PIC gắn với Case/Action cụ thể. Hỗ trợ xác nhận 2 cấp.
+
+| Cột | Kiểu | Mô tả |
+|---|---|---|
+| `commitmentId` | Text (PK) | Mã cam kết, ví dụ: `C-001` |
+| `caseId` | Text (FK) | Mã Case CLC liên quan |
+| `actionId` | Text (FK) | Mã Action (CA/PA) liên quan |
+| `picId` | Text (FK) | Mã PIC chịu trách nhiệm |
+| `picName` | Text | Tên đầy đủ PIC |
+| `department` | Text | Bộ phận/Phòng ban |
+| `commitmentText` | Text (long) | Nội dung cam kết (ngôn ngữ tự nhiên) |
+| `commitmentDate` | Date | Ngày PIC đặt cam kết |
+| `deadline` | Date | Deadline hiện tại (có thể carry-forward) |
+| `originalDeadline` | Date | Deadline gốc ban đầu (KHÔNG thay đổi khi carry-forward) |
+| `expectedOutput` | Text | Đầu ra bắt buộc (kết quả, bằng chứng cụ thể) |
+| `status` | Text | Trạng thái: Chờ PIC xác nhận / Đang thực hiện / Quá hạn / Hoàn thành chờ xác minh / Đã xác minh |
+| `signed` | Boolean | TRUE = Cấp 1 đã xác nhận điện tử |
+| `signedBy` | Text | Email/Tên người ký |
+| `signedDate` | Date | Ngày ký xác nhận |
+| `signatureEvidenceUrl` | URL | Link file biên bản ký (Cấp 2 — tùy chọn) |
+| `actualResult` | Text | Kết quả thực tế PIC tự cập nhật |
+| `evidenceUrl` | URL | Link bằng chứng hoàn thành (ảnh/file) |
+| `verifiedBy` | Text | Người xác minh (QA/Manager) |
+| `verifiedDate` | Date | Ngày xác minh |
+| `carryForwardFrom` | Text | commitmentId gốc nếu là carry-forward |
+| `overdueDays` | Number | Số ngày quá hạn (tính từ originalDeadline) |
+| `_savedAt` | Timestamp | Tự động — GAS ghi khi save/upsert |
+| `_savedBy` | Email | Tự động — email người gọi GAS |
+| `_confirmedAt` | Timestamp | Tự động — thời điểm xác nhận điện tử |
+
+**Hàm GAS:** `saveClcCommitment(payload)`, `confirmClcCommitment(payload)`, `getClcCommitmentsData_(ss)`  
+**doPost actions:** `saveClcCommitment`, `confirmClcCommitment`  
+**doGet actions:** `getClcDashboard` (trả về mảng commitments)
+
+---
+
+### 12.3 Sheet: `CLC_WEEKLY_PIC_REVIEW`
+
+Snapshot đánh giá từng PIC mỗi cuối tuần. Dùng cho Weekly PIC Review và lịch sử KPI.
+
+| Cột | Kiểu | Mô tả |
+|---|---|---|
+| `reviewId` | Text (PK) | Mã đánh giá, ví dụ: `WR-P01-W4` |
+| `picId` | Text (FK) | Mã PIC |
+| `year` | Number | Năm, ví dụ: 2026 |
+| `month` | Number | Tháng (1–12) |
+| `week` | Number | Tuần trong tháng (1–4) |
+| `kpiMonthlyTarget` | Number | Mục tiêu KPI tổng hợp của tháng (0–100) |
+| `weekScore_k1` | Number | Điểm thực tế KPI1 — Giảm phát sinh CLC mới (%) |
+| `weekScore_k2` | Number | Điểm thực tế KPI2 — Xử lý CLC hiện hữu (%) |
+| `weekScore_k3` | Number | Điểm thực tế KPI3 — Hoàn thành Action đúng hạn (%) |
+| `weekScore_k4` | Number | Điểm thực tế KPI4 — Phòng ngừa/chống tái diễn (%) |
+| `weekScore_k5` | Number | Điểm thực tế KPI5 — Kỷ luật dữ liệu & báo cáo (%) |
+| `weeklyScore` | Number | Điểm tổng hợp có trọng số (0–100) |
+| `mtdActual` | Number | Điểm MTD trung bình tích lũy (0–100) |
+| `commitmentStatus` | Text | Tổng trạng thái cam kết tuần: Đang thực hiện / Quá hạn / Đã xác minh / Chờ PIC xác nhận |
+| `overdueActions` | Number | Số Action quá hạn tính đến cuối tuần |
+| `repeatIssues` | Number | Số lỗi tái diễn phát hiện trong tuần |
+| `reviewNote` | Text (long) | Nhận xét CEO/Manager sau buổi đánh giá |
+| `nextWeekCommitment` | Text (long) | Cam kết hành động tuần tới |
+| `reviewedBy` | Text | Người đánh giá (thường là CEO/Manager) |
+| `snapshotDate` | Date | Ngày chụp snapshot đánh giá |
+| `_savedAt` | Timestamp | Tự động — GAS ghi |
+| `_savedBy` | Email | Tự động — email người gọi |
+
+**Hàm GAS:** `saveClcWeeklyReview(payload)`, `getClcWeeklyReviewData_(ss)`  
+**doPost actions:** `saveClcWeeklyReview`  
+**doGet actions:** `getClcDashboard` (trả về mảng weeklyReviews)
+
+---
+
+### 12.4 Cài đặt ban đầu
+
+1. Chạy `setupClcDataStore()` từ GAS Editor để tạo 2 sheet với headers đúng chuẩn.
+2. Hai sheet được tạo trong Spreadsheet hiện tại (hoặc ID trong `CLC_SPREADSHEET_ID` nếu cấu hình riêng).
+3. Module hoạt động ở **Demo Mode** ngay lập tức — không cần dữ liệu thật để test.
+
+### 12.5 Weights KPI (có thể điều chỉnh)
+
+| KPI | Trọng số mặc định | Target mặc định |
+|---|---|---|
+| K1 — Giảm phát sinh CLC mới | 30% | 30% |
+| K2 — Xử lý CLC hiện hữu | 20% | 20% |
+| K3 — Hoàn thành Action đúng hạn | 20% | 85% |
+| K4 — Phòng ngừa / chống tái diễn | 20% | 80% |
+| K5 — Kỷ luật dữ liệu & báo cáo | 10% | 90% |
+
+> Trọng số chỉ chính thức sau khi CEO phê duyệt. Điều chỉnh trong `CLC_KPI_CONFIG` ở frontend JS.
+
+---
+
 *Tài liệu này được tạo tự động bằng cách phân tích ma.gs + index.html — không có thay đổi nào được thực hiện trên dữ liệu hoặc sheet.*
