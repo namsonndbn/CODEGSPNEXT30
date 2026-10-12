@@ -19,6 +19,43 @@ function doGet(e) {
   if (action === 'getCEOProjects')        return jsonOut(getDuAnCEOModuleData());
   if (action === 'getCEOProjectTracker')  return jsonOut(getDuAnCEOModuleData());
   if (action === 'getPicPmoData')         return jsonOut(getPMOModuleData());
+  /* ── Compat routes — Meeting Hub V3 & legacy ── */
+  if (action === 'getTOActions') {
+    try { return jsonOut(getTOActionsData()); }
+    catch(eTOA) { return jsonOut({ exists: false, records: [], total: 0, _error: eTOA.message }); }
+  }
+  if (action === 'getMeetingHub')        return jsonOut(getMeetingHubData());
+  if (action === 'getMeetingHubV3')      return jsonOut(getMeetingHubData());
+  if (action === 'getMeetingDetail')     return jsonOut(getMeetingDetail((e.parameter||{}).meetingId||''));
+  if (action === 'getMeetingDetailV3')   return jsonOut(getMeetingDetailV3((e.parameter||{}).meetingId||''));
+  if (action === 'getMeetingActions')    return jsonOut(getMeetingActions((e.parameter||{}).meetingId||''));
+  if (action === 'getMeetingFiles')      return jsonOut(getMeetingFiles((e.parameter||{}).meetingId||''));
+  if (action === 'createMeetingDriveFolder') return jsonOut(createMeetingDriveFolder((e.parameter||{}).meetingId||'',(e.parameter||{}).meetingTitle||''));
+  if (action === 'createMinutesFromTemplate') return jsonOut(createMinutesFromTemplate((e.parameter||{}).meetingId||'',(e.parameter||{}).meetingTitle||''));
+  if (action === 'getMeetingPersonWorkload') return jsonOut(getPersonWorkload((e.parameter||{}).email||''));
+  if (action === 'getMeetingPersonDetail')   return jsonOut(getPersonDetail((e.parameter||{}).email||''));
+  if (action === 'getMeetingTopicDetail')    return jsonOut(getTopicDetail((e.parameter||{}).topicId||''));
+  if (action === 'testMeetingHubConnection') return jsonOut(testMeetingHubConnection());
+  if (action === 'setupMeetingHubConfigExample') return jsonOut(setupMeetingHubConfigExample());
+  if (action === 'getMeetingMinutes')   return jsonOut(getMeetingMinutesData());
+  if (action === 'getDataQualityFull')  return jsonOut(getDataQualityFullData());
+  if (action === 'getCommandCenterData') return jsonOut(getCommandCenterData());
+
+  if (action === 'getLosData')           return jsonOut(getLosData());
+  if (action === 'getLeadershipCard')    return jsonOut(getLeadershipCard((e.parameter||{}).leaderId||''));
+  if (action === 'getLosScorecard')      return jsonOut(getLosScorecard((e.parameter||{}).leaderId||''));
+  if (action === 'getLeaderMeData')      return jsonOut(getLeaderMeData((e.parameter||{}).leaderId||''));
+  if (action === 'getLosTrend')          return jsonOut(getLosTrend((e.parameter||{}).leaderId||''));
+  if (action === 'getLeaderGateReviews') return jsonOut(getLeaderGateReviews((e.parameter||{}).leaderId||''));
+  if (action === 'getLeaderCoaching')    return jsonOut(getLeaderCoaching((e.parameter||{}).leaderId||''));
+  if (action === 'testLosConnection')    return jsonOut(testLosConnection());
+  if (action === 'setupLosDataStore')    return jsonOut(setupLosDataStore());
+  if (action === 'getLosDataSourceStatus') return jsonOut(getLosDataSourceStatus());
+  if (action === 'getMeetingsForLosLinking') return jsonOut(getMeetingsForLosLinking((e.parameter||{}).leaderId||'',(e.parameter||{}).leaderEmail||''));
+
+  /* ── CLC routes ── */
+  if (action === 'getClcDashboard')       return jsonOut(getClcDashboard());
+  if (action === 'getClcDataSourceStatus') return jsonOut(getClcDataSourceStatus());
 
   if (action === 'ping') return jsonOut({ ok: true, ts: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss') });
 
@@ -53,6 +90,60 @@ function doPost(e) {
     } else if (action === 'saveCEOComment') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       result = writeQuyetDinh_(ss, payload);
+    } else if (action === 'uploadMeetingFile') {
+      result = uploadMeetingFile(payload.meetingId, payload.folderId, payload.base64data, payload.fileName, payload.mimeType);
+    } else if (action === 'renameMeetingFile') {
+      result = renameMeetingFile(payload.fileId, payload.newName);
+    } else if (action === 'moveMeetingFile') {
+      result = moveMeetingFile(payload.fileId, payload.targetFolderId);
+    } else if (action === 'trashMeetingFile') {
+      result = trashMeetingFile(payload.fileId);
+    } else if (action === 'attachEvidenceToAction') {
+      result = attachEvidenceToAction(payload.actionId, payload.fileId);
+    } else if (action === 'attachMinutesFileToMeeting') {
+      result = attachMinutesFileToMeeting(payload.meetingId, payload.fileId);
+    } else if (action === 'createMinutesFromTemplate') {
+      result = createMinutesFromTemplate(payload.meetingId, payload.meetingTitle);
+    } else if (action === 'importMeetingActions') {
+      result = importMeetingActionsFromPayload(payload.rows || [], payload.mode || 'batch', payload.meetingId || '');
+    } else if (action === 'createMeeting') {
+      result = createMeeting(payload);
+    } else if (action === 'updateAction') {
+      result = updateAction(payload.actionId, payload);
+    } else if (action === 'seedMeetingHubPeople') {
+      result = seedMeetingHubPeopleFromArray(payload.people || []);
+    } else if (action === 'migrateLegacyMeetingHubData') {
+      result = migrateLegacyMeetingHubData(payload.dryRun !== false);
+    } else if (action === 'setupMeetingHubDataStore') {
+      result = setupMeetingHubDataStore();
+    } else if (action === 'saveLosVerifiedScore') {
+      result = saveLosVerifiedScore(payload);
+    } else if (action === 'saveMeVerifiedScore') {
+      result = saveMeVerifiedScore(payload);
+    } else if (action === 'saveLosReview') {
+      result = saveLosReview(payload);
+    } else if (action === 'createLosCoachingAction') {
+      result = createLosCoachingAction(payload);
+    } else if (action === 'updateLosCoachingAction') {
+      result = updateLosCoachingAction(payload.coachingId, payload);
+    } else if (action === 'linkLosEvidence') {
+      result = linkLosEvidence(payload);
+    } else if (action === 'setupLosDataStore') {
+      result = setupLosDataStore();
+    } else if (action === 'importLosLeaders') {
+      result = importLosLeaders(payload);
+    } else if (action === 'importLosScores') {
+      result = importLosScores(payload);
+    } else if (action === 'saveLosMeetingLinks') {
+      result = saveLosMeetingLinks(payload);
+    } else if (action === 'saveClcCommitment') {
+      result = saveClcCommitment(payload);
+    } else if (action === 'confirmClcCommitment') {
+      result = confirmClcCommitment(payload);
+    } else if (action === 'saveClcWeeklyReview') {
+      result = saveClcWeeklyReview(payload);
+    } else if (action === 'setupClcDataStore') {
+      result = setupClcDataStore();
     } else {
       result = { success: false, error: 'Unknown action' };
     }
@@ -6162,3 +6253,2055 @@ function testMigrationDryRun() {
   Logger.log(JSON.stringify(result, null, 2));
   return result;
 }
+
+/* =====================================================
+   MEETING HUB — getMeetingHubData() (Legacy compat)
+   Đọc từ 3 sheets hiện có:
+     MEETING_TOPICS, MEETING_MINUTES, MEETING_ACTIONS
+   Map sang data model mới cho frontend mh* namespace.
+===================================================== */
+function getMeetingHubDataLegacy_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  /* ── Đọc MEETING_TOPICS ── */
+  var rawTopics = [];
+  try { rawTopics = readSheetSafe('MEETING_TOPICS'); } catch(e) {}
+  var topics = rawTopics.map(function(r) {
+    return {
+      topicId:   String(r['Topic ID'] || r['TopicID'] || r['Mã chủ đề'] || '').trim(),
+      topicName: String(r['Topic Name'] || r['TopicName'] || r['Tên chủ đề'] || '').trim(),
+      module:    String(r['Module'] || r['Nhóm'] || '').trim(),
+      desc:      String(r['Description'] || r['Mô tả'] || r['Desc'] || '').trim(),
+      meetingCount:    0,
+      openActionCount: 0
+    };
+  }).filter(function(t) { return t.topicId || t.topicName; });
+
+  /* ── Đọc MEETING_MINUTES ── */
+  var rawMinutes = [];
+  try { rawMinutes = readSheetSafe('MEETING_MINUTES'); } catch(e) {}
+  var today = new Date();
+  var meetings = rawMinutes.map(function(r) {
+    var dateStr = String(r['Date'] || r['Ngày họp'] || r['Ngày'] || '').trim();
+    return {
+      meetingId:    String(r['Meeting ID'] || r['MeetingID'] || r['Mã biên bản'] || '').trim(),
+      meetingTitle: String(r['Topic'] || r['Chủ đề'] || r['Tiêu đề'] || '').trim(),
+      date:         dateStr,
+      type:         String(r['Type'] || r['Loại họp'] || r['Loại'] || '').trim(),
+      chair:        String(r['Chair'] || r['Chủ trì'] || '').trim(),
+      location:     String(r['Location'] || r['Địa điểm'] || '').trim(),
+      status:       String(r['Status'] || r['Trạng thái'] || '').trim(),
+      topicId:      String(r['Topic ID'] || r['TopicID'] || r['Mã chủ đề'] || '').trim(),
+      summary:      String(r['Summary'] || r['Tóm tắt'] || '').trim(),
+      ceoDirective: String(r['CEO Directive'] || r['CEODirective'] || r['Chỉ đạo CEO'] || '').trim(),
+      ceoDecision:  String(r['CEO Decision'] || r['CEODecision'] || r['CEO cần chốt'] || '').trim(),
+      attendees:    String(r['Attendees'] || r['Tham dự'] || '').trim(),
+      actionCount:  0
+    };
+  }).filter(function(m) { return m.meetingId || m.meetingTitle; });
+
+  /* ── Đọc MEETING_ACTIONS ── */
+  var rawActions = [];
+  try { rawActions = readSheetSafe('MEETING_ACTIONS'); } catch(e) {}
+  var actions = rawActions.map(function(r) {
+    var dlStr = String(r['Deadline'] || r['Hạn chót'] || '').trim();
+    var dl = parseViDate_(dlStr);
+    var isOverdue = dl ? (dl < today && (r['Status'] || r['Trạng thái'] || '') && !/hoàn thành|done/i.test(String(r['Status'] || r['Trạng thái'] || ''))) : false;
+    return {
+      actionId:    String(r['Action ID'] || r['ActionID'] || r['Mã CV'] || '').trim(),
+      meetingId:   String(r['Meeting ID'] || r['MeetingID'] || '').trim(),
+      topicId:     String(r['Topic ID']   || r['TopicID']   || '').trim(),
+      content:     String(r['Content'] || r['Nội dung'] || r['Công việc'] || '').trim(),
+      owner:       String(r['Owner'] || r['PIC'] || r['Người phụ trách'] || '').trim(),
+      coOwner:     String(r['Co-Owner'] || r['CoOwner'] || r['Phối hợp'] || '').trim(),
+      deadline:    dlStr,
+      status:      String(r['Status'] || r['Trạng thái'] || '').trim(),
+      rag:         String(r['RAG'] || '').trim() || 'Green',
+      pct:         Number(r['% HT'] || r['PctHoanThanh'] || r['% Hoàn thành'] || 0),
+      result:      String(r['Result'] || r['KetQuaThucTe'] || r['Kết quả thực tế'] || '').trim(),
+      updatedDate: String(r['NgayCapNhat'] || r['Ngày CĐ'] || r['Ngày cập nhật'] || '').trim(),
+      updatedBy:   String(r['NguoiCapNhat'] || r['Người CĐ'] || r['Người cập nhật'] || '').trim(),
+      evidence:    String(r['BangChung'] || r['Bằng chứng'] || r['Evidence'] || '').trim(),
+      blocker:     String(r['VuongMac'] || r['Vướng mắc'] || r['Blocker'] || '').trim(),
+      ceoNeeded:   String(r['CEO cần chốt'] || r['CEODecision'] || r['CEO Decision'] || '').trim(),
+      isOverdue:   isOverdue
+    };
+  }).filter(function(a) { return a.actionId || a.content; });
+
+  /* ── Tính meetingCount và openActionCount cho từng topic ── */
+  topics.forEach(function(t) {
+    t.meetingCount    = meetings.filter(function(m) { return m.topicId === t.topicId; }).length;
+    t.openActionCount = actions.filter(function(a)  { return a.topicId === t.topicId && a.pct < 100; }).length;
+  });
+
+  /* ── Tính actionCount cho từng meeting ── */
+  meetings.forEach(function(m) {
+    m.actionCount = actions.filter(function(a) { return a.meetingId === m.meetingId; }).length;
+  });
+
+  /* ── Build summary ── */
+  var done    = actions.filter(function(a){ return a.pct>=100||/hoàn thành|done/i.test(a.status); }).length;
+  var inProg  = actions.filter(function(a){ return /đang/i.test(a.status)&&a.pct<100&&!a.isOverdue; }).length;
+  var overdue = actions.filter(function(a){ return a.isOverdue; }).length;
+
+  return {
+    meetings: meetings,
+    actions:  actions,
+    topics:   topics,
+    people:   [],   // built client-side from actions
+    summary: {
+      totalMeetings: meetings.length,
+      totalActions:  actions.length,
+      done: done, inProgress: inProg, overdue: overdue
+    },
+    /* Legacy fields for backward compat with renderMeetingCenter */
+    legacyTopics:   rawTopics.map(normalizeMeetingTopic_),
+    legacyMinutes:  rawMinutes.map(normalizeMeetingMinutesFull_),
+    legacyActions:  rawActions.map(normalizeMeetingAction_)
+  };
+}
+
+/* Helper: safe date parse (reuse existing parseViDate_ if available, else inline) */
+function parseViDate_(str) {
+  if (!str) return null;
+  try {
+    var s = String(str).trim();
+    // dd/MM/yyyy
+    var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+    // yyyy-MM-dd
+    var d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  } catch(e) { return null; }
+}
+
+/* ══════════════════════════════════════════════════════
+   MEETING HUB V3 — Drive & Detail functions
+   (Backend prep — chưa deploy. Không gọi hàm này trực tiếp.)
+   SECURITY: Chỉ deploy khi đã cấu hình DRIVE_ROOT_FOLDER_ID
+══════════════════════════════════════════════════════ */
+
+// Configure via Script Properties (không hardcode trong code):
+// DRIVE_ROOT_FOLDER_ID  — ID folder gốc trên Drive
+// MINUTES_TEMPLATE_FILE_ID — ID template Google Doc biên bản
+
+var DRIVE_ROOT_FOLDER_ID      = 'CHUA_CAU_HINH'; // set via ScriptProperties
+var MINUTES_TEMPLATE_FILE_ID  = 'CHUA_CAU_HINH'; // set via ScriptProperties
+
+// SECURITY: Chỉ cho phép user thuộc domain goldsunpackaging.vn thực hiện thao tác ghi
+function assertAuthorizedUser() {
+  var email = Session.getActiveUser().getEmail();
+  if (!email || !email.toLowerCase().endsWith('@goldsunpackaging.vn')) {
+    throw new Error('UNAUTHORIZED: Chỉ tài khoản @goldsunpackaging.vn được phép thực hiện thao tác này. Email: ' + email);
+  }
+  return email;
+}
+
+function _getDriveRootFolder() {
+  var rootId = PropertiesService.getScriptProperties().getProperty('DRIVE_ROOT_FOLDER_ID') || DRIVE_ROOT_FOLDER_ID;
+  if (rootId === 'CHUA_CAU_HINH') throw new Error('DRIVE_ROOT_FOLDER_ID chưa được cấu hình trong Script Properties.');
+  return DriveApp.getFolderById(rootId);
+}
+
+function _getMinutesTemplateId() {
+  return PropertiesService.getScriptProperties().getProperty('MINUTES_TEMPLATE_FILE_ID') || MINUTES_TEMPLATE_FILE_ID;
+}
+
+// Tìm hoặc tạo subfolder theo tên trong folder cha
+function _getOrCreateFolder(parentFolder, name) {
+  var iter = parentFolder.getFoldersByName(name);
+  return iter.hasNext() ? iter.next() : parentFolder.createFolder(name);
+}
+
+/**
+ * Tạo Google Drive folder cho một cuộc họp theo cấu trúc:
+ * ROOT/YYYY/MM/MTG-YYYYMMDD-XXX_TEN_CUOC_HOP/01_Bien_ban/02_Tai_lieu_hop/03_Bang_chung_Action/04_Khac
+ * Trả về { folderId, folderUrl, subFolders }
+ */
+function createMeetingDriveFolder(meetingId, meetingTitle) {
+  try {
+    assertAuthorizedUser();
+    var rootFolder = _getDriveRootFolder();
+    // Parse YYYY/MM from meetingId (MTG-YYYYMMDD-XXX)
+    var parts = (meetingId || '').split('-');
+    var dateStr = parts[1] || '';
+    var yyyy = dateStr.substring(0,4) || String(new Date().getFullYear());
+    var mm   = dateStr.substring(4,6) || String(new Date().getMonth()+1).padStart(2,'0');
+    var yearFolder  = _getOrCreateFolder(rootFolder, yyyy);
+    var monthFolder = _getOrCreateFolder(yearFolder, mm);
+    var safeName = (meetingTitle||meetingId).replace(/[\/\\:*?"<>|]/g,'_').substring(0,80);
+    var folderName  = meetingId + '_' + safeName;
+    var existing = monthFolder.getFoldersByName(folderName);
+    var mtgFolder = existing.hasNext() ? existing.next() : monthFolder.createFolder(folderName);
+    // Create sub-folders
+    var subNames = ['01_Bien_ban','02_Tai_lieu_hop','03_Bang_chung_Action','04_Khac'];
+    var subFolders = {};
+    subNames.forEach(function(n){ subFolders[n] = _getOrCreateFolder(mtgFolder, n).getId(); });
+    return { folderId: mtgFolder.getId(), folderUrl: mtgFolder.getUrl(), subFolders: subFolders };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Đính kèm file biên bản vào cuộc họp (ghi vào sheet MEETING_MINUTES).
+ * fileId: Google Drive file ID
+ */
+function attachMinutesFileToMeeting(meetingId, fileId) {
+  try {
+    var file = DriveApp.getFileById(fileId);
+    var fileUrl = file.getUrl();
+    var mimeType = file.getMimeType();
+    var fileType = mimeType.indexOf('pdf') !== -1 ? 'pdf' : mimeType.indexOf('sheet') !== -1 ? 'gsheet' : 'gdoc';
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('MEETING_MINUTES');
+    if (!sheet) return { error: 'Sheet MEETING_MINUTES không tồn tại' };
+    var data = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var midCol = headers.indexOf('MeetingID');
+    var urlCol = headers.indexOf('MinutesFileUrl');
+    var typeCol = headers.indexOf('MinutesFileType');
+    if (midCol < 0) return { error: 'Không tìm thấy cột MeetingID' };
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][midCol] === meetingId) {
+        if (urlCol >= 0) sheet.getRange(i+1, urlCol+1).setValue(fileUrl);
+        if (typeCol >= 0) sheet.getRange(i+1, typeCol+1).setValue(fileType);
+        return { success: true, fileUrl: fileUrl, fileType: fileType };
+      }
+    }
+    return { error: 'Không tìm thấy cuộc họp ' + meetingId };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Lấy danh sách file trong Drive folder của một cuộc họp.
+ */
+function getMeetingFiles(meetingId) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('MEETING_MINUTES');
+    if (!sheet) return { files: [] };
+    var data = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var midCol = headers.indexOf('MeetingID');
+    var folderCol = headers.indexOf('DriveFolderId');
+    if (midCol < 0) return { files: [] };
+    var row = null;
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][midCol] === meetingId) { row = data[i]; break; }
+    }
+    if (!row || folderCol < 0 || !row[folderCol]) return { files: [] };
+    var folderId = row[folderCol];
+    var folder = DriveApp.getFolderById(folderId);
+    var files = [];
+    var iter = folder.getFiles();
+    while (iter.hasNext()) {
+      var f = iter.next();
+      files.push({ fileId: f.getId(), name: f.getName(), url: f.getUrl(), mimeType: f.getMimeType(), size: f.getSize(), lastUpdated: f.getLastUpdated().toISOString() });
+    }
+    return { files: files, folderId: folderId, folderUrl: folder.getUrl() };
+  } catch (e) {
+    return { error: e.message, files: [] };
+  }
+}
+
+/**
+ * Lấy chi tiết một cuộc họp cụ thể (bao gồm actions + files).
+ * Dùng cho API endpoint getMeetingDetail?meetingId=MTG-XXXX
+ */
+function getMeetingDetail(meetingId) {
+  try {
+    var allData = getMeetingHubData();
+    var meeting = (allData.meetings || []).filter(function(m){ return m.meetingId === meetingId; })[0];
+    if (!meeting) return { error: 'Không tìm thấy cuộc họp ' + meetingId };
+    var actions = (allData.actions || []).filter(function(a){ return a.meetingId === meetingId; });
+    var files = getMeetingFiles(meetingId);
+    return { meeting: meeting, actions: actions, files: files.files || [], folderId: files.folderId || '', folderUrl: files.folderUrl || '' };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Lấy các hành động của một cuộc họp cụ thể.
+ */
+function getMeetingActions(meetingId) {
+  try {
+    var allData = getMeetingHubData();
+    var actions = (allData.actions || []).filter(function(a){ return a.meetingId === meetingId; });
+    return { meetingId: meetingId, actions: actions, count: actions.length };
+  } catch (e) {
+    return { error: e.message, actions: [] };
+  }
+}
+
+/**
+ * Upload file vào folder của cuộc họp (subfolder 02_Tai_lieu_hop mặc định).
+ * base64data: chuỗi base64 của file
+ */
+function uploadMeetingFile(meetingId, folderId, base64data, fileName, mimeType) {
+  try {
+    assertAuthorizedUser();
+    if (!folderId) return { error: 'folderId không được để trống' };
+    var folder = DriveApp.getFolderById(folderId);
+    var blob = Utilities.newBlob(Utilities.base64Decode(base64data), mimeType || 'application/octet-stream', fileName);
+    var file = folder.createFile(blob);
+    return { success: true, fileId: file.getId(), name: file.getName(), url: file.getUrl(), mimeType: file.getMimeType(), size: file.getSize() };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Đổi tên file trên Google Drive.
+ */
+function renameMeetingFile(fileId, newName) {
+  try {
+    assertAuthorizedUser();
+    var file = DriveApp.getFileById(fileId);
+    file.setName(newName);
+    return { success: true, fileId: fileId, newName: newName };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Chuyển file sang folder khác (không xóa file).
+ */
+function moveMeetingFile(fileId, targetFolderId) {
+  try {
+    assertAuthorizedUser();
+    var file = DriveApp.getFileById(fileId);
+    var targetFolder = DriveApp.getFolderById(targetFolderId);
+    // Xóa khỏi các folder hiện tại
+    var parents = file.getParents();
+    while (parents.hasNext()) { file.removeFromFolder(parents.next()); }
+    targetFolder.addFile(file);
+    return { success: true, fileId: fileId, targetFolderId: targetFolderId };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Chuyển file vào Trash — KHÔNG xóa vĩnh viễn.
+ */
+function trashMeetingFile(fileId) {
+  try {
+    assertAuthorizedUser();
+    var file = DriveApp.getFileById(fileId);
+    file.setTrashed(true);
+    return { success: true, fileId: fileId, message: 'Đã chuyển "' + file.getName() + '" vào thùng rác.' };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Đính kèm link bằng chứng vào một Action (ghi vào sheet MEETING_ACTIONS).
+ */
+function attachEvidenceToAction(actionId, fileId) {
+  try {
+    assertAuthorizedUser();
+    var file = DriveApp.getFileById(fileId);
+    var fileUrl = file.getUrl();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('MEETING_ACTIONS');
+    if (!sheet) return { error: 'Sheet MEETING_ACTIONS không tồn tại' };
+    var data = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var aidCol = headers.indexOf('ActionID');
+    var evCol  = headers.indexOf('Evidence');
+    if (aidCol < 0) return { error: 'Không tìm thấy cột ActionID' };
+    if (evCol  < 0) return { error: 'Không tìm thấy cột Evidence' };
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][aidCol] === actionId) {
+        sheet.getRange(i+1, evCol+1).setValue(fileUrl);
+        return { success: true, actionId: actionId, fileUrl: fileUrl };
+      }
+    }
+    return { error: 'Không tìm thấy action ' + actionId };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/**
+ * Tạo Google Doc biên bản từ template.
+ * Copy template vào folder 01_Bien_ban của cuộc họp.
+ */
+function createMinutesFromTemplate(meetingId, meetingTitle) {
+  try {
+    assertAuthorizedUser();
+    var templateId = _getMinutesTemplateId();
+    if (templateId === 'CHUA_CAU_HINH') return { error: 'MINUTES_TEMPLATE_FILE_ID chưa được cấu hình.' };
+    // Lấy folderId của cuộc họp từ sheet
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('MEETING_MINUTES');
+    var folderId = '';
+    if (sheet) {
+      var data = sheet.getDataRange().getValues();
+      var headers = data[0];
+      var midCol = headers.indexOf('MeetingID');
+      var folderCol = headers.indexOf('DriveFolderId');
+      if (midCol >= 0 && folderCol >= 0) {
+        for (var i = 1; i < data.length; i++) {
+          if (data[i][midCol] === meetingId) { folderId = data[i][folderCol]; break; }
+        }
+      }
+    }
+    var targetFolder;
+    if (folderId) {
+      var mtgFolder = DriveApp.getFolderById(folderId);
+      var bbIter = mtgFolder.getFoldersByName('01_Bien_ban');
+      targetFolder = bbIter.hasNext() ? bbIter.next() : _getOrCreateFolder(mtgFolder, '01_Bien_ban');
+    } else {
+      targetFolder = _getDriveRootFolder();
+    }
+    var template = DriveApp.getFileById(templateId);
+    var newFileName = 'Biên bản — ' + (meetingTitle || meetingId) + ' — ' + meetingId;
+    var newFile = template.makeCopy(newFileName, targetFolder);
+    return { success: true, fileId: newFile.getId(), url: newFile.getUrl(), name: newFile.getName() };
+  } catch (e) {
+    return { error: e.message };
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   MEETING HUB V3 — doPost handler (merged into main doPost below)
+   Giữ lại function này như alias để backward compat
+══════════════════════════════════════════════════════ */
+function doPostMeetingHub_(e) {
+  function jsonOut(data) {
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+  }
+  try {
+    var body = JSON.parse(e.postData.contents || '{}');
+    var action = body.action || (e.parameter && e.parameter.action) || '';
+    switch(action) {
+      case 'uploadMeetingFile':
+        return jsonOut(uploadMeetingFile(body.meetingId, body.folderId, body.base64data, body.fileName, body.mimeType));
+      case 'renameMeetingFile':
+        return jsonOut(renameMeetingFile(body.fileId, body.newName));
+      case 'moveMeetingFile':
+        return jsonOut(moveMeetingFile(body.fileId, body.targetFolderId));
+      case 'trashMeetingFile':
+        return jsonOut(trashMeetingFile(body.fileId));
+      case 'attachEvidenceToAction':
+        return jsonOut(attachEvidenceToAction(body.actionId, body.fileId));
+      case 'createMinutesFromTemplate':
+        return jsonOut(createMinutesFromTemplate(body.meetingId, body.meetingTitle));
+      case 'attachMinutesFileToMeeting':
+        return jsonOut(attachMinutesFileToMeeting(body.meetingId, body.fileId));
+      case 'importMeetingActions':
+        return jsonOut(importMeetingActionsFromPayload(body.rows || [], body.mode || 'batch', body.meetingId || ''));
+      default:
+        return jsonOut({ error: 'Unknown action: ' + action });
+    }
+  } catch(err) {
+    return jsonOut({ error: err.message });
+  }
+}
+
+/**
+ * Import actions từ payload (được gọi từ doPost importMeetingActions).
+ * Chỉ ghi vào sheet MEETING_ACTIONS — KHÔNG ghi demo data.
+ */
+function importMeetingActionsFromPayload(rows, mode, defaultMeetingId) {
+  assertAuthorizedUser();
+  if (!rows || !rows.length) return { error: 'Không có dữ liệu để import' };
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('MEETING_ACTIONS');
+  if (!sheet) return { error: 'Sheet MEETING_ACTIONS không tồn tại' };
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var imported = 0;
+  rows.forEach(function(row) {
+    var mid = String(row['MEETING_ID'] || defaultMeetingId || '').trim();
+    if (!mid) return;
+    var now = new Date().toISOString().substring(0,10);
+    var newRow = headers.map(function(h) {
+      var map = { 'MeetingID': mid, 'ActionTitle': row['NỘI_DUNG_CÔNG_VIỆC'], 'Content': row['MÔ_TẢ_CHI_TIẾT'],
+        'OwnerEmail': row['OWNER_EMAIL'], 'Owner': row['OWNER_NAME'], 'CoOwnerEmails': row['CO_OWNER_EMAILS'],
+        'Department': row['PHÒNG_BAN'], 'Deadline': row['DEADLINE'], 'ExpectedOutput': row['ĐẦU_RA_YÊU_CẦU'],
+        'Priority': row['ƯU_TIÊN'], 'Status': row['TRẠNG_THÁI'], 'RAG': row['RAG'], 'Pct': row['TIẾN_ĐỘ_%'],
+        'Result': row['KẾT_QUẢ_THỰC_TẾ'], 'Evidence': row['LINK_BẰNG_CHỨNG'], 'Blocker': row['VƯỚNG_MẮC'],
+        'CEONeeded': row['CẦN_CEO_CHỐT'], 'CEODecision': row['CEO_DECISION'], 'Note': row['GHI_CHÚ'],
+        'CreatedDate': now, 'UpdatedDate': now };
+      return map[h] !== undefined ? map[h] : '';
+    });
+    sheet.appendRow(newRow);
+    imported++;
+  });
+  return { success: true, imported: imported, message: 'Đã import ' + imported + ' hành động.' };
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MEETING HUB V3 — REAL DATA BACKEND
+   Tất cả functions trong block này đọc/ghi từ Google Sheets & Drive thật.
+   Cấu hình qua Script Properties — KHÔNG hardcode ID.
+═══════════════════════════════════════════════════════════════════ */
+
+/* ── Config helpers ── */
+function getMeetingHubConfig() {
+  var p = PropertiesService.getScriptProperties();
+  return {
+    spreadsheetId: p.getProperty('MEETING_HUB_SPREADSHEET_ID') || '',
+    driveRootId:   p.getProperty('DRIVE_ROOT_FOLDER_ID') || '',
+    templateId:    p.getProperty('MINUTES_TEMPLATE_FILE_ID') || '',
+    allowedDomain: p.getProperty('ALLOWED_DOMAIN') || 'goldsunpackaging.vn'
+  };
+}
+
+function validateMeetingHubConfig() {
+  var c = getMeetingHubConfig();
+  var errors = [];
+  if (!c.spreadsheetId) errors.push('MEETING_HUB_SPREADSHEET_ID chưa cấu hình');
+  if (!c.driveRootId)   errors.push('DRIVE_ROOT_FOLDER_ID chưa cấu hình');
+  return { valid: errors.length === 0, errors: errors, config: c };
+}
+
+function setupMeetingHubConfigExample() {
+  Logger.log('=== Cấu hình Meeting Hub V3 ===');
+  Logger.log('Vào Apps Script > Project Settings > Script Properties và thêm:');
+  Logger.log('MEETING_HUB_SPREADSHEET_ID = <ID của Google Spreadsheet chứa MEETINGS/ACTIONS/PEOPLE/TOPICS/ACTION_LOG>');
+  Logger.log('DRIVE_ROOT_FOLDER_ID = <ID folder gốc trên Google Drive>');
+  Logger.log('MINUTES_TEMPLATE_FILE_ID = <ID file Google Doc template biên bản> (tuỳ chọn)');
+  Logger.log('ALLOWED_DOMAIN = goldsunpackaging.vn');
+  return { message: 'Xem log để biết cách cấu hình Script Properties.' };
+}
+
+/* ── assertMhUser_ — alias for assertAuthorizedUser (đã tồn tại) ── */
+function assertMhUser_() { return assertAuthorizedUser(); }
+
+/* ── Spreadsheet helper ── */
+function getSpreadsheetForMeetingHub_() {
+  var cfg = getMeetingHubConfig();
+  if (cfg.spreadsheetId) {
+    try { return SpreadsheetApp.openById(cfg.spreadsheetId); } catch(e) {}
+  }
+  return SpreadsheetApp.getActiveSpreadsheet();
+}
+
+/* ── Sheet helper functions ── */
+function mhSheetRowToObj_(headers, row) {
+  var obj = {};
+  headers.forEach(function(h, i) { obj[h] = (row[i] !== undefined && row[i] !== null) ? row[i] : ''; });
+  return obj;
+}
+
+function mhGetSheetData_(ss, sheetName) {
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  return data.slice(1).map(function(row) { return mhSheetRowToObj_(headers, row); });
+}
+
+function mhFindRowIndex_(sheet, colIndex, value) {
+  if (sheet.getLastRow() < 2) return -1;
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][colIndex] || '') === String(value)) return i + 1;
+  }
+  return -1;
+}
+
+function mhGetHeaderIndex_(sheet, headerName) {
+  if (sheet.getLastRow() < 1) return -1;
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  return headers.indexOf(headerName);
+}
+
+function mhSetCellByHeader_(sheet, rowIndex, headerName, value) {
+  var col = mhGetHeaderIndex_(sheet, headerName);
+  if (col >= 0) sheet.getRange(rowIndex, col + 1).setValue(value);
+}
+
+function mhListFilesInFolder_(folder, folderLabel) {
+  var files = [];
+  try {
+    var iter = folder.getFiles();
+    while (iter.hasNext()) {
+      var f = iter.next();
+      files.push({
+        fileId: f.getId(), name: f.getName(), url: f.getUrl(),
+        mimeType: f.getMimeType(), size: f.getSize(),
+        modifiedDate: Utilities.formatDate(f.getLastUpdated(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'),
+        modifiedBy: '', folder: folderLabel
+      });
+    }
+  } catch(e) { Logger.log('mhListFilesInFolder_ error: ' + e.message); }
+  return files;
+}
+
+function mhGenerateMeetingId_(ss, dateStr) {
+  var d = dateStr ? new Date(dateStr) : new Date();
+  var yyyymmdd = Utilities.formatDate(d, 'Asia/Ho_Chi_Minh', 'yyyyMMdd');
+  var sheet = ss.getSheetByName('MEETINGS');
+  var count = 0;
+  if (sheet && sheet.getLastRow() > 1) {
+    var ids = sheet.getRange(2, 1, sheet.getLastRow()-1, 1).getValues();
+    ids.forEach(function(row) { if (String(row[0]).indexOf('MTG-'+yyyymmdd) === 0) count++; });
+  }
+  return 'MTG-' + yyyymmdd + '-' + String(count + 1).padStart(3, '0');
+}
+
+function mhGenerateActionId_(ss, dateStr) {
+  var d = dateStr ? new Date(dateStr) : new Date();
+  var yyyymmdd = Utilities.formatDate(d, 'Asia/Ho_Chi_Minh', 'yyyyMMdd');
+  var sheet = ss.getSheetByName('ACTIONS');
+  var count = 0;
+  if (sheet && sheet.getLastRow() > 1) {
+    var ids = sheet.getRange(2, 1, sheet.getLastRow()-1, 1).getValues();
+    ids.forEach(function(row) { if (String(row[0]).indexOf('ACT-'+yyyymmdd) === 0) count++; });
+  }
+  return 'ACT-' + yyyymmdd + '-' + String(count + 1).padStart(4, '0');
+}
+
+function mhKpiCalc_(actions) {
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d7 = new Date(today); d7.setDate(d7.getDate() + 7);
+  return {
+    overdue:      actions.filter(function(a){ var dl=a.deadline?new Date(a.deadline):null; return dl&&dl<today&&!a._done; }).length,
+    dueSoon:      actions.filter(function(a){ var dl=a.deadline?new Date(a.deadline):null; return dl&&dl>=today&&dl<=d7&&!a._done; }).length,
+    blocked:      actions.filter(function(a){ return !a._done&&String(a.blocker||'').trim(); }).length,
+    noUpdate:     actions.filter(function(a){ var lu=a.lastUpdate||a.updatedDate; if(!lu||a._done) return false; var diff=(today-new Date(lu))/86400000; return diff>7; }).length,
+    doneNoResult: actions.filter(function(a){ return a._done&&!String(a.result||'').trim(); }).length
+  };
+}
+
+/* ── setupMeetingHubDataStore — tạo/chuẩn hóa 5 sheets ── */
+function setupMeetingHubDataStore() {
+  try {
+    assertMhUser_();
+    var ss = getSpreadsheetForMeetingHub_();
+    var SCHEMAS = {
+      'MEETINGS': ['meetingId','meetingDate','meetingTitle','topicId','topicName','meetingType','chairperson','secretary','participants','summary','mainContent','analysis','conclusions','decisions','ceoDirections','needCeoDecision','driveFolderId','driveFolderUrl','minutesFolderId','attachmentsFolderId','evidenceFolderId','otherFolderId','minutesFileId','minutesFileName','minutesFileType','minutesFileUrl','status','createdAt','updatedAt'],
+      'ACTIONS':  ['actionId','meetingId','topicId','actionTitle','actionDescription','ownerEmail','ownerName','coOwnerEmails','department','deadline','expectedOutput','priority','status','rag','progress','actualResult','evidenceFileId','evidenceFileName','evidenceFileUrl','blocker','needCeoDecision','ceoDecision','lastUpdate','createdAt','updatedAt'],
+      'PEOPLE':   ['email','fullName','department','title','active'],
+      'TOPICS':   ['topicId','topicName','description','module','active','sortOrder'],
+      'ACTION_LOG': ['logId','actionId','meetingId','updatedAt','updatedBy','oldStatus','newStatus','oldDeadline','newDeadline','progress','note']
+    };
+    var created = [], updated = [];
+    Object.keys(SCHEMAS).forEach(function(sheetName) {
+      var headers = SCHEMAS[sheetName];
+      var sheet = ss.getSheetByName(sheetName);
+      if (!sheet) {
+        sheet = ss.insertSheet(sheetName);
+        sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+        sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#4a86e8').setFontColor('#ffffff');
+        created.push(sheetName);
+      } else {
+        var existing = sheet.getLastColumn() > 0 ? sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0] : [];
+        var missing = headers.filter(function(h){ return existing.indexOf(h) < 0; });
+        if (missing.length > 0) {
+          var startCol = sheet.getLastColumn() + 1;
+          sheet.getRange(1, startCol, 1, missing.length).setValues([missing]);
+          updated.push(sheetName + ' (+' + missing.join(',') + ')');
+        }
+      }
+    });
+    return { success: true, created: created, updated: updated };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── getMeetingHubData V3 — replaces legacy, với fallback ── */
+function getMeetingHubData() {
+  try {
+    var validation = validateMeetingHubConfig();
+    if (!validation.valid) {
+      var legacy = getMeetingHubDataLegacy_();
+      legacy._isDemo = true;
+      legacy._demoReason = 'Chưa cấu hình Script Properties: ' + validation.errors.join('; ');
+      return legacy;
+    }
+    return getMeetingHubDataFromSheets_();
+  } catch(e) {
+    try {
+      var leg = getMeetingHubDataLegacy_();
+      leg._isDemo = true;
+      leg._demoReason = 'Lỗi V3: ' + e.message;
+      return leg;
+    } catch(e2) {
+      return { meetings:[], actions:[], topics:[], people:[], _isDemo:true, _demoReason: e.message };
+    }
+  }
+}
+
+function getMeetingHubDataFromSheets_() {
+  var ss = getSpreadsheetForMeetingHub_();
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d7 = new Date(today); d7.setDate(d7.getDate()+7);
+
+  /* ── Topics ── */
+  var rawTopics = mhGetSheetData_(ss, 'TOPICS');
+  var topics = rawTopics.filter(function(r){ return String(r.active||'').toLowerCase()!=='false'&&(r.topicId||r.topicName); }).map(function(r){
+    return { topicId: String(r.topicId||'').trim(), topicName: String(r.topicName||'').trim(), module: String(r.module||'').trim(), desc: String(r.description||'').trim(), meetingCount:0, openActionCount:0 };
+  });
+
+  /* ── People ── */
+  var rawPeople = mhGetSheetData_(ss, 'PEOPLE');
+  var people = rawPeople.filter(function(r){ return r.email; }).map(function(r){
+    return { email: String(r.email||'').trim(), fullName: String(r.fullName||'').trim(), department: String(r.department||'').trim(), title: String(r.title||'').trim(), active: String(r.active||'true').toLowerCase()!=='false' };
+  });
+
+  /* ── Actions ── */
+  var rawActions = mhGetSheetData_(ss, 'ACTIONS');
+  var actions = rawActions.filter(function(r){ return r.actionId||r.actionTitle; }).map(function(r){
+    var pct = Number(r.progress||0);
+    var dlStr = r.deadline ? Utilities.formatDate(r.deadline instanceof Date ? r.deadline : new Date(r.deadline), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd') : '';
+    var dl = dlStr ? new Date(dlStr) : null;
+    var status = String(r.status||'').trim();
+    var isDone = pct>=100 || /hoàn thành|done/i.test(status);
+    var isOverdue = dl && dl<today && !isDone;
+    var dueSoon = dl && dl>=today && dl<=d7 && !isDone;
+    var luStr = r.lastUpdate ? (r.lastUpdate instanceof Date ? Utilities.formatDate(r.lastUpdate,'Asia/Ho_Chi_Minh','yyyy-MM-dd') : String(r.lastUpdate)) : '';
+    return {
+      actionId:      String(r.actionId||'').trim(),
+      meetingId:     String(r.meetingId||'').trim(),
+      topicId:       String(r.topicId||'').trim(),
+      actionTitle:   String(r.actionTitle||'').trim(),
+      content:       String(r.actionDescription||'').trim(),
+      owner:         String(r.ownerName||'').trim(),
+      ownerEmail:    String(r.ownerEmail||'').trim(),
+      coOwner:       String(r.coOwnerEmails||'').trim(),
+      department:    String(r.department||'').trim(),
+      deadline:      dlStr,
+      status:        status,
+      rag:           String(r.rag||'Green').trim(),
+      pct:           pct,
+      priority:      String(r.priority||'').trim(),
+      expectedOutput:String(r.expectedOutput||'').trim(),
+      result:        String(r.actualResult||'').trim(),
+      updatedDate:   luStr,
+      updatedBy:     '',
+      evidence:      String(r.evidenceFileUrl||'').trim(),
+      blocker:       String(r.blocker||'').trim(),
+      ceoNeeded:     String(r.needCeoDecision||'').trim(),
+      history:       [],
+      isOverdue:     isOverdue,
+      dueSoon:       dueSoon,
+      _done:         isDone
+    };
+  });
+
+  /* ── Meetings ── */
+  var rawMeetings = mhGetSheetData_(ss, 'MEETINGS');
+  var meetings = rawMeetings.filter(function(r){ return r.meetingId||r.meetingTitle; }).map(function(r){
+    var dateStr = r.meetingDate ? (r.meetingDate instanceof Date ? Utilities.formatDate(r.meetingDate,'Asia/Ho_Chi_Minh','yyyy-MM-dd') : String(r.meetingDate)) : '';
+    var mActions = actions.filter(function(a){ return a.meetingId===String(r.meetingId||'').trim(); });
+    return {
+      meetingId:      String(r.meetingId||'').trim(),
+      meetingTitle:   String(r.meetingTitle||'').trim(),
+      date:           dateStr,
+      type:           String(r.meetingType||'').trim(),
+      chair:          String(r.chairperson||'').trim(),
+      location:       '',
+      status:         String(r.status||'').trim(),
+      topicId:        String(r.topicId||'').trim(),
+      summary:        String(r.summary||'').trim(),
+      decisions:      String(r.decisions||'').trim(),
+      ceoDirective:   String(r.ceoDirections||'').trim(),
+      ceoDecision:    String(r.needCeoDecision||'').trim(),
+      attendees:      String(r.participants||'').trim(),
+      driveFolderId:  String(r.driveFolderId||'').trim(),
+      minutesFileUrl: String(r.minutesFileUrl||'').trim(),
+      minutesFileType:String(r.minutesFileType||'').trim(),
+      minutesFileId:  String(r.minutesFileId||'').trim(),
+      actionCount:    mActions.length,
+      driveFiles:     []
+    };
+  });
+
+  /* ── Tính aggregates ── */
+  topics.forEach(function(t){
+    t.meetingCount    = meetings.filter(function(m){ return m.topicId===t.topicId; }).length;
+    t.openActionCount = actions.filter(function(a){ return a.topicId===t.topicId&&!a._done; }).length;
+  });
+  var kpi = mhKpiCalc_(actions);
+  var done    = actions.filter(function(a){ return a._done; }).length;
+  var inProg  = actions.filter(function(a){ return !a._done&&!a.isOverdue; }).length;
+
+  return {
+    meetings: meetings, actions: actions, topics: topics, people: people,
+    _isDemo: false,
+    summary: {
+      totalMeetings: meetings.length, totalActions: actions.length,
+      done: done, inProgress: inProg, overdue: kpi.overdue,
+      dueSoon: kpi.dueSoon, blocked: kpi.blocked,
+      noUpdate: kpi.noUpdate, doneNoResult: kpi.doneNoResult
+    }
+  };
+}
+
+/* ── getMeetingDetailV3 ── */
+function getMeetingDetailV3(meetingId) {
+  try {
+    var allData = getMeetingHubData();
+    var meeting = (allData.meetings||[]).filter(function(m){ return m.meetingId===meetingId; })[0];
+    if (!meeting) return { error: 'Không tìm thấy cuộc họp: ' + meetingId };
+    var mActions = (allData.actions||[]).filter(function(a){ return a.meetingId===meetingId; });
+    var files = getMeetingFilesV3_(meetingId, meeting.driveFolderId);
+    meeting.driveFiles = files;
+    return { meeting: meeting, actions: mActions, files: files };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── getMeetingFilesV3_ — list files từ Drive folder thật ── */
+function getMeetingFilesV3_(meetingId, driveFolderId) {
+  if (!driveFolderId) return [];
+  var files = [];
+  try {
+    var mtgFolder = DriveApp.getFolderById(driveFolderId);
+    var subLabels = { '01_Bien_ban':'Biên bản', '02_Tai_lieu_hop':'Tài liệu họp', '03_Bang_chung_Action':'Bằng chứng', '04_Khac':'Khác' };
+    Object.keys(subLabels).forEach(function(subName){
+      try {
+        var subIter = mtgFolder.getFoldersByName(subName);
+        if (subIter.hasNext()) {
+          files = files.concat(mhListFilesInFolder_(subIter.next(), subLabels[subName]));
+        }
+      } catch(e2) {}
+    });
+    // Cũng list files ở root folder nếu có
+    files = files.concat(mhListFilesInFolder_(mtgFolder, 'Root'));
+  } catch(e) {
+    Logger.log('getMeetingFilesV3_ error for ' + meetingId + ': ' + e.message);
+  }
+  return files;
+}
+
+/* ── createMeeting ── */
+function createMeeting(meetingData) {
+  try {
+    assertMhUser_();
+    var ss = getSpreadsheetForMeetingHub_();
+    var sheet = ss.getSheetByName('MEETINGS');
+    if (!sheet) return { error: 'Sheet MEETINGS không tồn tại. Chạy setupMeetingHubDataStore() trước.' };
+    var now = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+    var meetingDate = meetingData.meetingDate || meetingData.date || Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
+    var meetingId = mhGenerateMeetingId_(ss, meetingDate);
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var rowData = {
+      meetingId: meetingId,
+      meetingDate: meetingDate,
+      meetingTitle: meetingData.meetingTitle||meetingData.title||'',
+      topicId: meetingData.topicId||'',
+      topicName: meetingData.topicName||'',
+      meetingType: meetingData.meetingType||meetingData.type||'',
+      chairperson: meetingData.chairperson||meetingData.chair||'',
+      secretary: meetingData.secretary||'',
+      participants: meetingData.participants||meetingData.attendees||'',
+      summary: meetingData.summary||'',
+      status: meetingData.status||'Planned',
+      createdAt: now, updatedAt: now
+    };
+    var newRow = headers.map(function(h){ return rowData[h]!==undefined ? rowData[h] : ''; });
+    sheet.appendRow(newRow);
+    var lastRow = sheet.getLastRow();
+    // Tạo Drive folder
+    var driveResult = {};
+    try {
+      driveResult = createMeetingDriveFolder(meetingId, rowData.meetingTitle);
+      if (driveResult.folderId) {
+        mhSetCellByHeader_(sheet, lastRow, 'driveFolderId',  driveResult.folderId);
+        mhSetCellByHeader_(sheet, lastRow, 'driveFolderUrl', driveResult.folderUrl);
+        if (driveResult.subFolders) {
+          mhSetCellByHeader_(sheet, lastRow, 'minutesFolderId',     driveResult.subFolders['01_Bien_ban']||'');
+          mhSetCellByHeader_(sheet, lastRow, 'attachmentsFolderId', driveResult.subFolders['02_Tai_lieu_hop']||'');
+          mhSetCellByHeader_(sheet, lastRow, 'evidenceFolderId',    driveResult.subFolders['03_Bang_chung_Action']||'');
+          mhSetCellByHeader_(sheet, lastRow, 'otherFolderId',       driveResult.subFolders['04_Khac']||'');
+        }
+        rowData.driveFolderId  = driveResult.folderId;
+        rowData.driveFolderUrl = driveResult.folderUrl;
+      }
+    } catch(de) { Logger.log('Drive folder error: ' + de.message); }
+    return { success: true, meetingId: meetingId, meeting: rowData, driveResult: driveResult };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── updateAction ── */
+function updateAction(actionId, updateData) {
+  try {
+    assertMhUser_();
+    var ss = getSpreadsheetForMeetingHub_();
+    var sheet = ss.getSheetByName('ACTIONS');
+    if (!sheet) return { error: 'Sheet ACTIONS không tồn tại' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var aidCol = headers.indexOf('actionId');
+    if (aidCol < 0) return { error: 'Cột actionId không tồn tại' };
+    var rowIdx = mhFindRowIndex_(sheet, aidCol, actionId);
+    if (rowIdx < 0) return { error: 'Không tìm thấy action: ' + actionId };
+    var oldRow = sheet.getRange(rowIdx, 1, 1, headers.length).getValues()[0];
+    var oldObj = mhSheetRowToObj_(headers, oldRow);
+    var now = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+    var changed = [];
+    var trackedFields = ['status','deadline','ownerEmail','ownerName','progress','actualResult','blocker'];
+    trackedFields.forEach(function(f){
+      if (updateData[f]!==undefined && String(updateData[f])!==String(oldObj[f]||'')) {
+        changed.push({ field:f, old: oldObj[f], new_: updateData[f] });
+      }
+    });
+    // Áp dụng update
+    var fieldMap = { status:'status', deadline:'deadline', ownerEmail:'ownerEmail', ownerName:'ownerName',
+      progress:'progress', actualResult:'actualResult', blocker:'blocker', rag:'rag', priority:'priority',
+      expectedOutput:'expectedOutput', coOwnerEmails:'coOwnerEmails', needCeoDecision:'needCeoDecision' };
+    Object.keys(fieldMap).forEach(function(k){
+      if (updateData[k]!==undefined) {
+        var col = headers.indexOf(fieldMap[k]);
+        if (col>=0) sheet.getRange(rowIdx, col+1).setValue(updateData[k]);
+      }
+    });
+    var luCol = headers.indexOf('lastUpdate');
+    if (luCol>=0) sheet.getRange(rowIdx, luCol+1).setValue(now);
+    var updCol = headers.indexOf('updatedAt');
+    if (updCol>=0) sheet.getRange(rowIdx, updCol+1).setValue(now);
+    // Ghi ACTION_LOG nếu có thay đổi
+    if (changed.length > 0) {
+      try {
+        var logSheet = ss.getSheetByName('ACTION_LOG');
+        if (logSheet) {
+          var logHeaders = logSheet.getLastColumn()>0 ? logSheet.getRange(1,1,1,logSheet.getLastColumn()).getValues()[0] : [];
+          var logNow = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMddHHmmss');
+          changed.forEach(function(ch){
+            var logId = 'LOG-' + logNow + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
+            var logRow = logHeaders.map(function(h){
+              var m = { logId:logId, actionId:actionId, meetingId:oldObj.meetingId||'', updatedAt:now,
+                updatedBy: Session.getActiveUser().getEmail()||'', note:ch.field+': '+ch.old+' → '+ch.new_ };
+              if (ch.field==='status') { m.oldStatus=ch.old; m.newStatus=ch.new_; }
+              if (ch.field==='deadline') { m.oldDeadline=ch.old; m.newDeadline=ch.new_; }
+              if (ch.field==='progress') { m.progress=ch.new_; }
+              return m[h]!==undefined ? m[h] : '';
+            });
+            logSheet.appendRow(logRow);
+          });
+        }
+      } catch(le) { Logger.log('ACTION_LOG error: ' + le.message); }
+    }
+    return { success: true, actionId: actionId, changedFields: changed.length };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── getPersonWorkload ── */
+function getPersonWorkload(email) {
+  try {
+    var ss = getSpreadsheetForMeetingHub_();
+    var allActions = mhGetSheetData_(ss, 'ACTIONS');
+    var today = new Date(); today.setHours(0,0,0,0);
+    var d7 = new Date(today); d7.setDate(d7.getDate()+7);
+    var myActions = allActions.filter(function(r){
+      return String(r.ownerEmail||'').trim()===email || String(r.coOwnerEmails||'').indexOf(email)>=0;
+    }).map(function(r){
+      var pct = Number(r.progress||0);
+      var dl = r.deadline ? new Date(r.deadline) : null;
+      var isDone = pct>=100 || /hoàn thành|done/i.test(String(r.status||''));
+      return {
+        actionId: r.actionId, actionTitle: r.actionTitle, meetingId: r.meetingId,
+        status: r.status, deadline: r.deadline, pct: pct, rag: r.rag, blocker: r.blocker,
+        isDone: isDone,
+        isOverdue: dl&&dl<today&&!isDone,
+        dueSoon: dl&&dl>=today&&dl<=d7&&!isDone
+      };
+    });
+    return {
+      email: email,
+      total:   myActions.length,
+      done:    myActions.filter(function(a){ return a.isDone; }).length,
+      open:    myActions.filter(function(a){ return !a.isDone; }).length,
+      overdue: myActions.filter(function(a){ return a.isOverdue; }).length,
+      dueSoon: myActions.filter(function(a){ return a.dueSoon; }).length,
+      blocked: myActions.filter(function(a){ return !a.isDone&&String(a.blocker||'').trim(); }).length,
+      actions: myActions
+    };
+  } catch(e) {
+    return { error: e.message, email: email };
+  }
+}
+
+/* ── getPersonDetail ── */
+function getPersonDetail(email) {
+  try {
+    var ss = getSpreadsheetForMeetingHub_();
+    var people = mhGetSheetData_(ss, 'PEOPLE');
+    var person = people.filter(function(p){ return String(p.email||'').trim()===email; })[0] || { email: email };
+    var workload = getPersonWorkload(email);
+    return { person: person, workload: workload, actions: workload.actions || [] };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── getTopicDetail ── */
+function getTopicDetail(topicId) {
+  try {
+    var ss = getSpreadsheetForMeetingHub_();
+    var topics = mhGetSheetData_(ss, 'TOPICS');
+    var topic = topics.filter(function(t){ return String(t.topicId||'').trim()===topicId; })[0] || { topicId: topicId };
+    var meetings = mhGetSheetData_(ss, 'MEETINGS').filter(function(m){ return String(m.topicId||'').trim()===topicId; });
+    var actions  = mhGetSheetData_(ss, 'ACTIONS').filter(function(a){  return String(a.topicId||'').trim()===topicId; });
+    return { topic: topic, meetings: meetings, actions: actions, meetingCount: meetings.length, actionCount: actions.length };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── testMeetingHubConnection — diagnostic ── */
+function testMeetingHubConnection() {
+  var report = { ts: Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss'), user: '', config: {}, spreadsheet: null, driveRoot: null, template: null, sheetCounts: {}, errors: [] };
+  try { report.user = Session.getActiveUser().getEmail(); } catch(e) { report.errors.push('User: ' + e.message); }
+  var v = validateMeetingHubConfig();
+  report.config = v.config;
+  report.configValid = v.valid;
+  if (!v.valid) report.errors = report.errors.concat(v.errors);
+  // Spreadsheet
+  try {
+    var ss = getSpreadsheetForMeetingHub_();
+    report.spreadsheet = { name: ss.getName(), id: ss.getId() };
+    ['MEETINGS','ACTIONS','PEOPLE','TOPICS','ACTION_LOG'].forEach(function(sn){
+      var sh = ss.getSheetByName(sn);
+      report.sheetCounts[sn] = sh ? Math.max(0, sh.getLastRow()-1) : 'sheet không tồn tại';
+    });
+  } catch(e) { report.errors.push('Spreadsheet: ' + e.message); }
+  // Drive root
+  try {
+    var cfg = getMeetingHubConfig();
+    if (cfg.driveRootId) {
+      var rf = DriveApp.getFolderById(cfg.driveRootId);
+      report.driveRoot = { name: rf.getName(), id: rf.getId(), url: rf.getUrl() };
+    }
+  } catch(e) { report.errors.push('Drive root: ' + e.message); }
+  // Template
+  try {
+    var cfg2 = getMeetingHubConfig();
+    if (cfg2.templateId) {
+      var tf = DriveApp.getFileById(cfg2.templateId);
+      report.template = { name: tf.getName(), id: tf.getId() };
+    }
+  } catch(e) { report.errors.push('Template: ' + e.message); }
+  report.ok = report.errors.length === 0;
+  return report;
+}
+
+/* ── seedMeetingHubPeopleFromArray ── */
+function seedMeetingHubPeopleFromArray(peopleArray) {
+  try {
+    assertMhUser_();
+    if (!peopleArray || !peopleArray.length) return { error: 'Không có dữ liệu' };
+    var ss = getSpreadsheetForMeetingHub_();
+    var sheet = ss.getSheetByName('PEOPLE');
+    if (!sheet) return { error: 'Sheet PEOPLE không tồn tại. Chạy setupMeetingHubDataStore() trước.' };
+    var existing = mhGetSheetData_(ss, 'PEOPLE').map(function(r){ return String(r.email||'').trim().toLowerCase(); });
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : ['email','fullName','department','title','active'];
+    var added=0, skipped=0;
+    peopleArray.forEach(function(p){
+      var em = String(p.email||'').trim().toLowerCase();
+      if (!em || existing.indexOf(em)>=0) { skipped++; return; }
+      var row = headers.map(function(h){ return p[h]!==undefined ? p[h] : (h==='active'?'true':''); });
+      sheet.appendRow(row);
+      existing.push(em);
+      added++;
+    });
+    return { success: true, added: added, skipped: skipped };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── migrateLegacyMeetingHubData ── */
+function migrateLegacyMeetingHubData(dryRun) {
+  try {
+    assertMhUser_();
+    var dryRunMode = (dryRun !== false); // default true
+    var ss = getSpreadsheetForMeetingHub_();
+    var log = [];
+    var migrated = 0, skipped = 0;
+
+    // Migrate MEETING_TOPICS → TOPICS
+    var topicsSheet = ss.getSheetByName('TOPICS');
+    var topicsHasData = topicsSheet && topicsSheet.getLastRow() > 1;
+    if (!topicsHasData) {
+      var legTopics = [];
+      try { legTopics = readSheetSafe('MEETING_TOPICS'); } catch(e) {}
+      if (legTopics.length > 0 && !dryRunMode) {
+        if (!topicsSheet) topicsSheet = ss.insertSheet('TOPICS');
+        if (topicsSheet.getLastRow() < 1) topicsSheet.appendRow(['topicId','topicName','description','module','active','sortOrder']);
+        legTopics.forEach(function(r){
+          topicsSheet.appendRow([r['Topic ID']||r['TopicID']||'', r['Topic Name']||r['TopicName']||'', r['Description']||r['Mô tả']||'', r['Module']||'', 'true', '']);
+          migrated++;
+        });
+        log.push('Migrated ' + legTopics.length + ' topics từ MEETING_TOPICS → TOPICS');
+      } else {
+        log.push((dryRunMode?'[DRY RUN] Would migrate ':'') + legTopics.length + ' topics từ MEETING_TOPICS → TOPICS');
+        if (dryRunMode) skipped += legTopics.length;
+      }
+    } else { log.push('TOPICS đã có dữ liệu — bỏ qua migrate'); skipped++; }
+
+    // Migrate MEETING_MINUTES → MEETINGS
+    var meetingsSheet = ss.getSheetByName('MEETINGS');
+    var meetingsHasData = meetingsSheet && meetingsSheet.getLastRow() > 1;
+    if (!meetingsHasData) {
+      var legMinutes = [];
+      try { legMinutes = readSheetSafe('MEETING_MINUTES'); } catch(e) {}
+      if (legMinutes.length > 0 && !dryRunMode) {
+        if (!meetingsSheet) meetingsSheet = ss.insertSheet('MEETINGS');
+        if (meetingsSheet.getLastRow() < 1) meetingsSheet.appendRow(['meetingId','meetingDate','meetingTitle','topicId','topicName','meetingType','chairperson','secretary','participants','summary','status','createdAt','updatedAt']);
+        var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+        legMinutes.forEach(function(r){
+          meetingsSheet.appendRow([r['Meeting ID']||r['MeetingID']||'', r['Date']||r['Ngày họp']||'', r['Topic']||r['Chủ đề']||'', r['Topic ID']||r['TopicID']||'', '', r['Type']||r['Loại họp']||'', r['Chair']||r['Chủ trì']||'', '', r['Attendees']||r['Tham dự']||'', r['Summary']||r['Tóm tắt']||'', r['Status']||r['Trạng thái']||'', now, now]);
+          migrated++;
+        });
+        log.push('Migrated ' + legMinutes.length + ' meetings từ MEETING_MINUTES → MEETINGS');
+      } else {
+        log.push((dryRunMode?'[DRY RUN] Would migrate ':'') + legMinutes.length + ' meetings từ MEETING_MINUTES → MEETINGS');
+        if (dryRunMode) skipped += legMinutes.length;
+      }
+    } else { log.push('MEETINGS đã có dữ liệu — bỏ qua migrate'); skipped++; }
+
+    // Migrate MEETING_ACTIONS → ACTIONS
+    var actionsSheet = ss.getSheetByName('ACTIONS');
+    var actionsHasData = actionsSheet && actionsSheet.getLastRow() > 1;
+    if (!actionsHasData) {
+      var legActions = [];
+      try { legActions = readSheetSafe('MEETING_ACTIONS'); } catch(e) {}
+      if (legActions.length > 0 && !dryRunMode) {
+        if (!actionsSheet) actionsSheet = ss.insertSheet('ACTIONS');
+        if (actionsSheet.getLastRow() < 1) actionsSheet.appendRow(['actionId','meetingId','topicId','actionTitle','actionDescription','ownerEmail','ownerName','coOwnerEmails','department','deadline','expectedOutput','priority','status','rag','progress','actualResult','blocker','needCeoDecision','lastUpdate','createdAt','updatedAt']);
+        var now2 = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+        legActions.forEach(function(r){
+          actionsSheet.appendRow([r['Action ID']||r['ActionID']||r['Mã CV']||'', r['Meeting ID']||r['MeetingID']||'', r['Topic ID']||r['TopicID']||'', r['Content']||r['Nội dung']||r['Công việc']||'', '', r['OwnerEmail']||'', r['Owner']||r['PIC']||r['Người phụ trách']||'', r['Co-Owner']||r['CoOwner']||'', r['Department']||r['Phòng']||'', r['Deadline']||r['Hạn chót']||'', '', r['Priority']||'', r['Status']||r['Trạng thái']||'', r['RAG']||'Green', r['% HT']||r['% Hoàn thành']||0, r['Result']||r['Kết quả thực tế']||'', r['VuongMac']||r['Blocker']||'', r['CEO cần chốt']||'', now2, now2, now2]);
+          migrated++;
+        });
+        log.push('Migrated ' + legActions.length + ' actions từ MEETING_ACTIONS → ACTIONS');
+      } else {
+        log.push((dryRunMode?'[DRY RUN] Would migrate ':'') + legActions.length + ' actions từ MEETING_ACTIONS → ACTIONS');
+        if (dryRunMode) skipped += legActions.length;
+      }
+    } else { log.push('ACTIONS đã có dữ liệu — bỏ qua migrate'); skipped++; }
+
+    return { success: true, dryRun: dryRunMode, migrated: migrated, skipped: skipped, log: log };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ── attachMinutesFileToMeetingV3 — ghi vào MEETINGS sheet mới ── */
+function attachMinutesFileToMeetingV3(meetingId, fileId) {
+  try {
+    assertMhUser_();
+    var file = DriveApp.getFileById(fileId);
+    var fileUrl = file.getUrl(); var mime = file.getMimeType();
+    var fileType = mime.indexOf('pdf')>=0?'pdf':mime.indexOf('sheet')>=0?'gsheet':'gdoc';
+    var ss = getSpreadsheetForMeetingHub_();
+    var sheet = ss.getSheetByName('MEETINGS');
+    if (!sheet) return { error: 'Sheet MEETINGS không tồn tại' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var midCol = headers.indexOf('meetingId');
+    if (midCol<0) return { error: 'Cột meetingId không tồn tại' };
+    var rowIdx = mhFindRowIndex_(sheet, midCol, meetingId);
+    if (rowIdx<0) return { error: 'Không tìm thấy cuộc họp: ' + meetingId };
+    mhSetCellByHeader_(sheet, rowIdx, 'minutesFileId',   fileId);
+    mhSetCellByHeader_(sheet, rowIdx, 'minutesFileName', file.getName());
+    mhSetCellByHeader_(sheet, rowIdx, 'minutesFileType', fileType);
+    mhSetCellByHeader_(sheet, rowIdx, 'minutesFileUrl',  fileUrl);
+    mhSetCellByHeader_(sheet, rowIdx, 'updatedAt', Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss'));
+    return { success: true, fileUrl: fileUrl, fileType: fileType, fileName: file.getName() };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── attachEvidenceToActionV3 — ghi vào ACTIONS sheet mới ── */
+function attachEvidenceToActionV3(actionId, fileId) {
+  try {
+    assertMhUser_();
+    var file = DriveApp.getFileById(fileId);
+    var ss = getSpreadsheetForMeetingHub_();
+    var sheet = ss.getSheetByName('ACTIONS');
+    if (!sheet) return { error: 'Sheet ACTIONS không tồn tại' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var aidCol = headers.indexOf('actionId');
+    if (aidCol<0) return { error: 'Cột actionId không tồn tại' };
+    var rowIdx = mhFindRowIndex_(sheet, aidCol, actionId);
+    if (rowIdx<0) return { error: 'Không tìm thấy action: ' + actionId };
+    mhSetCellByHeader_(sheet, rowIdx, 'evidenceFileId',   fileId);
+    mhSetCellByHeader_(sheet, rowIdx, 'evidenceFileName', file.getName());
+    mhSetCellByHeader_(sheet, rowIdx, 'evidenceFileUrl',  file.getUrl());
+    mhSetCellByHeader_(sheet, rowIdx, 'updatedAt', Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss'));
+    return { success: true, actionId: actionId, fileUrl: file.getUrl() };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── importMeetingActionsFromPayload V3 — đọc/ghi vào ACTIONS sheet mới ── */
+function importMeetingActionsV3(rows, mode, defaultMeetingId) {
+  try {
+    assertMhUser_();
+    if (!rows || !rows.length) return { error: 'Không có dữ liệu để import' };
+    var ss = getSpreadsheetForMeetingHub_();
+    var sheet = ss.getSheetByName('ACTIONS');
+    if (!sheet) return { error: 'Sheet ACTIONS không tồn tại. Chạy setupMeetingHubDataStore() trước.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var meetingsSheet = ss.getSheetByName('MEETINGS');
+    var validMeetingIds = [];
+    if (meetingsSheet && meetingsSheet.getLastRow()>1) {
+      validMeetingIds = meetingsSheet.getRange(2,1,meetingsSheet.getLastRow()-1,1).getValues().map(function(r){ return String(r[0]||'').trim(); }).filter(Boolean);
+    }
+    var peopleSheet = ss.getSheetByName('PEOPLE');
+    var validEmails = [];
+    if (peopleSheet && peopleSheet.getLastRow()>1) {
+      var ph = peopleSheet.getRange(1,1,1,peopleSheet.getLastColumn()).getValues()[0];
+      var emCol = ph.indexOf('email');
+      if (emCol>=0) validEmails = peopleSheet.getRange(2,1,peopleSheet.getLastRow()-1,peopleSheet.getLastColumn()).getValues().map(function(r){ return String(r[emCol]||'').trim().toLowerCase(); }).filter(Boolean);
+    }
+    var imported=0, errors=[];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    rows.forEach(function(row, idx){
+      var mid = String(row.meetingId || row.MEETING_ID || defaultMeetingId || '').trim();
+      var title = String(row.actionTitle || row.NỘI_DUNG_CÔNG_VIỆC || '').trim();
+      var ownerEmail = String(row.ownerEmail || row.OWNER_EMAIL || '').trim().toLowerCase();
+      var deadline = String(row.deadline || row.DEADLINE || '').trim();
+      // Validate
+      if (!mid) { errors.push('Row ' + (idx+1) + ': thiếu meetingId'); return; }
+      if (!title) { errors.push('Row ' + (idx+1) + ': thiếu actionTitle'); return; }
+      if (validMeetingIds.length>0 && validMeetingIds.indexOf(mid)<0) { errors.push('Row ' + (idx+1) + ': meetingId "' + mid + '" không tồn tại'); return; }
+      if (ownerEmail && validEmails.length>0 && validEmails.indexOf(ownerEmail)<0) { errors.push('Row ' + (idx+1) + ': ownerEmail "' + ownerEmail + '" không có trong PEOPLE'); return; }
+      var actionId = mhGenerateActionId_(ss, null);
+      var rowData = { actionId:actionId, meetingId:mid, topicId:row.topicId||'', actionTitle:title,
+        actionDescription:row.actionDescription||row.MÔ_TẢ_CHI_TIẾT||'', ownerEmail:ownerEmail,
+        ownerName:row.ownerName||row.OWNER_NAME||'', coOwnerEmails:row.coOwnerEmails||row.CO_OWNER_EMAILS||'',
+        department:row.department||row.PHÒNG_BAN||'', deadline:deadline,
+        expectedOutput:row.expectedOutput||row.ĐẦU_RA_YÊU_CẦU||'',
+        priority:row.priority||row.ƯU_TIÊN||'Normal',
+        status:row.status||row.TRẠNG_THÁI||'Open',
+        rag:row.rag||row.RAG||'Green',
+        progress:Number(row.progress||row['TIẾN_ĐỘ_%']||0),
+        actualResult:'', blocker:'', needCeoDecision:'', createdAt:now, updatedAt:now, lastUpdate:now };
+      var newRow = headers.map(function(h){ return rowData[h]!==undefined ? rowData[h] : ''; });
+      sheet.appendRow(newRow);
+      imported++;
+    });
+    return { success: true, imported: imported, errors: errors, message: 'Đã import ' + imported + ' action' + (errors.length?' ('+errors.length+' lỗi bị bỏ qua)':'') + '.' };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+/* ═══ END MEETING HUB V3 — REAL DATA BACKEND ═══ */
+
+/* ═══ LOS — LEADERSHIP OPERATING SYSTEM — Backend ═══ */
+
+/* ── Config & Sheet helpers ── */
+function getLosConfig() {
+  var p = PropertiesService.getScriptProperties();
+  return {
+    spreadsheetId: p.getProperty('LOS_SPREADSHEET_ID') || p.getProperty('MEETING_HUB_SPREADSHEET_ID') || '',
+    allowedDomain: p.getProperty('ALLOWED_DOMAIN') || 'goldsunpackaging.vn'
+  };
+}
+
+function getLosSpreadsheet_() {
+  var cfg = getLosConfig();
+  if (cfg.spreadsheetId) {
+    try { return SpreadsheetApp.openById(cfg.spreadsheetId); } catch(e) {}
+  }
+  return SpreadsheetApp.getActiveSpreadsheet();
+}
+
+/* LOS_ELIGIBLE_TITLES — chức danh được phép tham gia LOS */
+var LOS_ELIGIBLE_LEVEL_KEYWORDS = [
+  'giám đốc', 'director', 'trưởng phòng', 'trưởng bộ phận',
+  'quản lý', 'manager', 'phó giám đốc', 'deputy', 'head of',
+  'cfo', 'coo', 'ceo', 'cto', 'ban điều hành', 'ban tổng giám đốc'
+];
+var LOS_INELIGIBLE_KEYWORDS = ['quản đốc', 'trưởng ca', 'tổ trưởng', 'nhóm trưởng', 'nhân viên', 'chuyên viên', 'kỹ sư', 'kỹ thuật viên'];
+
+function isLosEligibleTitle_(title) {
+  if (!title) return false;
+  var t = title.toLowerCase();
+  for (var i=0; i<LOS_INELIGIBLE_KEYWORDS.length; i++) { if (t.indexOf(LOS_INELIGIBLE_KEYWORDS[i])>=0) return false; }
+  for (var j=0; j<LOS_ELIGIBLE_LEVEL_KEYWORDS.length; j++) { if (t.indexOf(LOS_ELIGIBLE_LEVEL_KEYWORDS[j])>=0) return true; }
+  return false;
+}
+
+function getLosEligibleLeaders() {
+  try {
+    var ss = getLosSpreadsheet_();
+    // Ưu tiên 1: LOS_LEADER sheet
+    var losSheet = ss.getSheetByName('LOS_LEADER');
+    if (losSheet && losSheet.getLastRow() > 1) {
+      return mhGetSheetData_(ss, 'LOS_LEADER').filter(function(r){ return String(r.active||'').toLowerCase()!=='false'; });
+    }
+    // Ưu tiên 2: PEOPLE sheet từ Meeting Hub
+    var peopleSheet = ss.getSheetByName('PEOPLE');
+    if (peopleSheet && peopleSheet.getLastRow() > 1) {
+      return mhGetSheetData_(ss, 'PEOPLE')
+        .filter(function(r){ return String(r.active||'true').toLowerCase()!=='false' && isLosEligibleTitle_(r.title||''); })
+        .map(function(r, i){ return {
+          leaderId: r.email||('L'+String(i+1).padStart(3,'0')),
+          email: r.email||'', fullName: r.fullName||'',
+          title: r.title||'', department: r.department||'',
+          managementLevel: r.title||'', active: true
+        }; });
+    }
+    return [];
+  } catch(e) { Logger.log('getLosEligibleLeaders error: ' + e.message); return []; }
+}
+
+/* ── Main data function ── */
+function getLosData() {
+  try {
+    var ss = getLosSpreadsheet_();
+    var leaders = getLosEligibleLeaders();
+    if (!leaders || leaders.length === 0) {
+      return { leaders: [], _isDemo: false, _message: 'Chưa có dữ liệu Leader trong LOS_LEADER hoặc PEOPLE sheet.' };
+    }
+
+    var scores    = mhGetSheetData_(ss, 'LOS_SCORE') || [];
+    var coaching  = mhGetSheetData_(ss, 'LOS_COACHING') || [];
+    var reviews   = mhGetSheetData_(ss, 'LOS_REVIEW') || [];
+    var losMtgs   = mhGetSheetData_(ss, 'LOS_MEETING') || [];
+    var meScores  = mhGetSheetData_(ss, 'LOS_ME_SCORE') || [];
+
+    leaders = leaders.map(function(l) {
+      var lid = l.leaderId || l.email || '';
+      // Latest score
+      var lScores = scores.filter(function(s){ return String(s.leaderId||'')===String(lid); })
+        .sort(function(a,b){ return new Date(b.reviewDate||0)-new Date(a.reviewDate||0); });
+      var cur  = lScores[0]  || {};
+      var prev = lScores[1] || {};
+      var losCur  = Number(cur.losVerified||0)  || Number(cur.losAiProposed||0)  || 0;
+      var meCur   = Number(cur.meVerified||0)   || Number(cur.meAiProposed||0)   || 0;
+      var losPrev = Number(prev.losVerified||0) || Number(prev.losAiProposed||0) || 0;
+      var mePrev  = Number(prev.meVerified||0)  || Number(prev.meAiProposed||0)  || 0;
+
+      // Gate reviews
+      var lReviews = reviews.filter(function(r){ return String(r.leaderId||'')===lid; })
+        .sort(function(a,b){ return new Date(a.reviewDate||0)-new Date(b.reviewDate||0); });
+
+      // Top Gap
+      var lCoach = coaching.filter(function(c){ return String(c.leaderId||'')===lid && (c.status||'').toLowerCase()!=='done'; });
+      var topGap = lCoach[0] ? lCoach[0].gapTitle||'' : '';
+
+      // Meetings ME
+      var lMtgs = losMtgs.filter(function(m){ return String(m.leaderId||'')===lid; });
+      var meetingIds = lMtgs.map(function(m){ return m.meetingId; });
+      var lMe = meScores.filter(function(s){ return meetingIds.indexOf(String(s.meetingId||''))>=0; });
+      var meVals = lMe.map(function(s){ return Number(s.meVerified||0)||Number(s.meAiProposed||0)||0; }).filter(Boolean);
+      var meAvg30 = meVals.length>0 ? meVals.reduce(function(a,b){return a+b;},0)/meVals.length : 0;
+
+      return {
+        leaderId: lid,
+        email:    l.email||'',
+        fullName: l.fullName||l.email||lid,
+        title:    l.title||'',
+        managementLevel: l.managementLevel||l.title||'',
+        company:  l.company||'',
+        plant:    l.plant||'',
+        division: l.division||'',
+        department: l.department||'',
+        currentGate:  l.currentGate||cur.gate||'Baseline',
+        losStartDate: l.losStartDate||'',
+        lastReviewDate:cur.reviewDate||l.lastReviewDate||'',
+        nextReviewDate:l.nextReviewDate||'',
+        losVerified:  Number(cur.losVerified||0),
+        losAi:        Number(cur.losAiProposed||0),
+        meVerified:   Number(cur.meVerified||0)||meAvg30,
+        meAi:         0,
+        losPrev:      losPrev,
+        mePrev:       mePrev,
+        losDelta:     losCur - losPrev,
+        meDelta:      meCur  - mePrev,
+        topGap:       topGap,
+        topGaps:      lCoach.slice(0,3).map(function(c){ return {title:c.gapTitle, desc:c.gapDescription||''}; }),
+        gateReviews:  lReviews.map(function(r){ return {gate:r.gate,reviewDate:r.reviewDate,losScore:Number(r.losScore||0),meScore:Number(r.meScore||0),reviewNote:r.reviewNote||''}; }),
+        coaching:     lCoach.slice(0,5).map(function(c){ return {gapTitle:c.gapTitle,coachingAction:c.coachingAction,coachName:c.coachName,deadline:c.deadline,status:c.status,beforeScore:c.beforeScore,afterScore:c.afterScore}; }),
+        losScoreDetail: cur,
+        meetings:     lMtgs.slice(0,20).map(function(m){ return {meetingId:m.meetingId,meetingDate:m.meetingDate,meetingTitle:m.meetingTitle||m.meetingId,leaderRole:m.leaderRole,meScore:0}; }),
+        evidenceSummary: { minutes:0, actions:0, dashboard:0, gemba:0 }
+      };
+    });
+
+    return { leaders: leaders, updatedAt: new Date().toISOString() };
+  } catch(e) {
+    Logger.log('getLosData error: ' + e.message);
+    return { leaders: [], error: e.message };
+  }
+}
+
+function getLeadershipCard(leaderId) {
+  try {
+    var data = getLosData();
+    var leader = (data.leaders||[]).filter(function(l){ return l.leaderId===leaderId; })[0];
+    if (!leader) return { error: 'Không tìm thấy Leader: ' + leaderId };
+    return { leader: leader };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getLosScorecard(leaderId) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var scores = mhGetSheetData_(ss, 'LOS_SCORE') || [];
+    var lScores = scores.filter(function(s){ return String(s.leaderId||'')===leaderId; })
+      .sort(function(a,b){ return new Date(b.reviewDate||0)-new Date(a.reviewDate||0); });
+    return { scorecard: lScores[0] || null, history: lScores };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getLeaderMeData(leaderId) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var mtgs = (mhGetSheetData_(ss,'LOS_MEETING')||[]).filter(function(m){ return m.leaderId===leaderId; });
+    var mids = mtgs.map(function(m){ return m.meetingId; });
+    var me   = (mhGetSheetData_(ss,'LOS_ME_SCORE')||[]).filter(function(s){ return mids.indexOf(s.meetingId)>=0; });
+    return { meetings: mtgs, meScores: me };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getMeetingMeScore(meetingId, leaderId) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var me = (mhGetSheetData_(ss,'LOS_ME_SCORE')||[]).filter(function(s){ return s.meetingId===meetingId && (!leaderId||s.leaderId===leaderId); });
+    return { meScore: me[0] || null };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getLosTrend(leaderId) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var reviews = (mhGetSheetData_(ss,'LOS_REVIEW')||[]).filter(function(r){ return r.leaderId===leaderId; })
+      .sort(function(a,b){ return new Date(a.reviewDate||0)-new Date(b.reviewDate||0); });
+    return { trend: reviews };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getLeaderGateReviews(leaderId) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var reviews = (mhGetSheetData_(ss,'LOS_REVIEW')||[]).filter(function(r){ return r.leaderId===leaderId; });
+    return { gateReviews: reviews };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getLeaderCoaching(leaderId) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var coaching = (mhGetSheetData_(ss,'LOS_COACHING')||[]).filter(function(c){ return c.leaderId===leaderId; });
+    return { coaching: coaching };
+  } catch(e) { return { error: e.message }; }
+}
+
+function getLeaderEvidence(leaderId, filter) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var ev = (mhGetSheetData_(ss,'LOS_EVIDENCE')||[]).filter(function(e){ return e.leaderId===leaderId && (!filter||e.sourceType===filter); });
+    return { evidence: ev };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── Calculations (pure functions) ── */
+var LOS_CRITERIA_WEIGHTS = {dataDriven:1.5,planning:1.5,decision:1.5,ownership:1.5,delegation:1.0,problemSolving:1.0,followThrough:1.0,coaching:1.0};
+var ME_CRITERIA_WEIGHTS  = {dataReady:1.5,problem:1.5,rootCause:1.5,decision:2.0,actionPicDeadline:2.0,followUp:1.5};
+
+function calculateLosScore_(scoreObj) {
+  if (!scoreObj) return 0;
+  var total = 0;
+  Object.keys(LOS_CRITERIA_WEIGHTS).forEach(function(k) {
+    var v = Number(scoreObj[k+'Verified']||0) || Number(scoreObj[k+'Ai']||0) || 0;
+    total += v * LOS_CRITERIA_WEIGHTS[k];
+  });
+  return Math.min(10, Math.round(total*10)/10);
+}
+
+function calculateMeScore_(scoreObj) {
+  if (!scoreObj) return 0;
+  var total = 0;
+  Object.keys(ME_CRITERIA_WEIGHTS).forEach(function(k) {
+    var v = Number(scoreObj[k+'Verified']||0) || Number(scoreObj[k+'Ai']||0) || 0;
+    total += v * ME_CRITERIA_WEIGHTS[k];
+  });
+  var raw = Math.min(10, Math.round(total*10)/10);
+  return applyMeDecisionActionCap_(raw, scoreObj);
+}
+
+function applyMeDecisionActionCap_(rawScore, scoreObj) {
+  var dec = Number(scoreObj.decisionVerified||0) || Number(scoreObj.decisionAi||0) || 0;
+  var act = Number(scoreObj.actionPicDeadlineVerified||0) || Number(scoreObj.actionPicDeadlineAi||0) || 0;
+  if (dec < 1.0 || act < 1.0) return Math.min(5.0, rawScore);
+  return rawScore;
+}
+
+function getLosLeaderStatus_(leaderData) {
+  var los = leaderData.losVerified || leaderData.losAi || 0;
+  var me  = leaderData.meVerified  || leaderData.meAi  || 0;
+  var losDelta = parseFloat(leaderData.losDelta || 0);
+  var meDelta  = parseFloat(leaderData.meDelta  || 0);
+  if (los === 0 && me === 0) return 'yellow';
+  if (los >= 7 && me >= 7 && losDelta >= 0 && meDelta >= 0) return 'green';
+  if (los < 5 || me < 5 || losDelta < -1 || meDelta < -1) return 'red';
+  return 'yellow';
+}
+
+/* ── Write functions ── */
+function saveLosVerifiedScore(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_SCORE');
+    if (!sheet) return { error: 'Sheet LOS_SCORE không tồn tại. Chạy setupLosDataStore() trước.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var userEmail = Session.getActiveUser().getEmail();
+    var scoreId = 'LOS-' + Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMdd-HHmmss');
+    var data = Object.assign({ scoreId:scoreId, createdAt:now, updatedAt:now, verifiedBy:userEmail, verifiedDate:now }, payload);
+    var row = headers.map(function(h){ return data[h]!==undefined?data[h]:''; });
+    sheet.appendRow(row);
+    return { success:true, scoreId:scoreId };
+  } catch(e) { return { error: e.message }; }
+}
+
+function saveMeVerifiedScore(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_ME_SCORE');
+    if (!sheet) return { error: 'Sheet LOS_ME_SCORE không tồn tại.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var userEmail = Session.getActiveUser().getEmail();
+    var data = Object.assign({ meScoreId:'ME-'+Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMdd-HHmmss'), createdAt:now, updatedAt:now, verifiedBy:userEmail, verifiedDate:now }, payload);
+    sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+    return { success:true };
+  } catch(e) { return { error: e.message }; }
+}
+
+function saveLosReview(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_REVIEW');
+    if (!sheet) return { error: 'Sheet LOS_REVIEW không tồn tại.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var data = Object.assign({ reviewId:'REV-'+Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMdd-HHmmss'), createdAt:now }, payload);
+    sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+    return { success:true };
+  } catch(e) { return { error: e.message }; }
+}
+
+function createLosCoachingAction(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_COACHING');
+    if (!sheet) return { error: 'Sheet LOS_COACHING không tồn tại.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var data = Object.assign({ coachingId:'CA-'+Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMdd-HHmmss'), createdAt:now, updatedAt:now }, payload);
+    sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+    return { success:true };
+  } catch(e) { return { error: e.message }; }
+}
+
+function updateLosCoachingAction(coachingId, updateData) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_COACHING');
+    if (!sheet) return { error: 'Sheet LOS_COACHING không tồn tại.' };
+    var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+    var idCol = headers.indexOf('coachingId');
+    var rowIdx = mhFindRowIndex_(sheet, idCol, coachingId);
+    if (rowIdx < 0) return { error: 'Không tìm thấy coachingId: ' + coachingId };
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    Object.assign(updateData, { updatedAt: now, updatedBy: Session.getActiveUser().getEmail() });
+    Object.keys(updateData).forEach(function(k) {
+      var col = headers.indexOf(k);
+      if (col >= 0) sheet.getRange(rowIdx, col+1).setValue(updateData[k]);
+    });
+    return { success:true };
+  } catch(e) { return { error: e.message }; }
+}
+
+function linkLosEvidence(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_EVIDENCE');
+    if (!sheet) return { error: 'Sheet LOS_EVIDENCE không tồn tại.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var data = Object.assign({ evidenceId:'EV-'+Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMdd-HHmmss'), createdAt:now }, payload);
+    sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+    return { success:true };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── setupLosDataStore ── */
+function setupLosDataStore() {
+  try {
+    var ss = getLosSpreadsheet_();
+    var schemas = {
+      LOS_LEADER:   ['leaderId','employeeId','email','fullName','title','managementLevel','company','plant','division','department','photoUrl','losStartDate','currentGate','lastReviewDate','nextReviewDate','active','createdAt','updatedAt'],
+      LOS_SCORE:    ['scoreId','leaderId','gate','reviewDate','dataDrivenAi','dataDrivenVerified','planningAi','planningVerified','decisionAi','decisionVerified','ownershipAi','ownershipVerified','delegationAi','delegationVerified','problemSolvingAi','problemSolvingVerified','followThroughAi','followThroughVerified','coachingAi','coachingVerified','losAiProposed','losVerified','verifiedBy','verifiedDate','reviewNote','createdAt','updatedAt'],
+      LOS_MEETING:  ['losMeetingId','leaderId','meetingId','leaderRole','meetingDate','meetingTitle','evaluated','createdAt'],
+      LOS_ME_SCORE: ['meScoreId','leaderId','meetingId','dataReadyAi','dataReadyVerified','problemAi','problemVerified','rootCauseAi','rootCauseVerified','decisionAi','decisionVerified','actionPicDeadlineAi','actionPicDeadlineVerified','followUpAi','followUpVerified','meAiProposed','meVerified','capApplied','capReason','verifiedBy','verifiedDate','reviewNote','createdAt','updatedAt'],
+      LOS_COACHING: ['coachingId','leaderId','sourceType','sourceCriterion','gapTitle','gapDescription','behaviorToChange','coachingAction','nextPractice','coachEmail','coachName','coachingDate','deadline','status','beforeScore','afterScore','nextReviewGate','result','createdAt','updatedAt'],
+      LOS_EVIDENCE: ['evidenceId','leaderId','sourceType','sourceId','criterionType','criterionName','title','url','note','evidenceDate','createdAt'],
+      LOS_REVIEW:   ['reviewId','leaderId','gate','reviewDate','losScore','meScore','topGap1','topGap2','topGap3','developmentAction','behaviorChanged','gapRemaining','trend','reviewNote','reviewer','nextReviewDate','createdAt']
+    };
+    var result = {};
+    Object.keys(schemas).forEach(function(name) {
+      var headers = schemas[name];
+      var sheet = ss.getSheetByName(name);
+      if (!sheet) {
+        sheet = ss.insertSheet(name);
+        sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+        sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#042f23').setFontColor('white');
+        result[name] = 'created';
+      } else {
+        var existing = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+        var missing = headers.filter(function(h){ return existing.indexOf(h)<0; });
+        if (missing.length>0) {
+          missing.forEach(function(h) {
+            var col = existing.length + 1;
+            sheet.getRange(1, col).setValue(h).setFontWeight('bold').setBackground('#042f23').setFontColor('white');
+            existing.push(h);
+          });
+          result[name] = 'updated (' + missing.length + ' cols added)';
+        } else { result[name] = 'ok'; }
+      }
+    });
+    return { success:true, result:result };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── testLosConnection ── */
+function testLosConnection() {
+  try {
+    var ss = getLosSpreadsheet_();
+    var cfg = getLosConfig();
+    var sheets = ['LOS_LEADER','LOS_SCORE','LOS_MEETING','LOS_ME_SCORE','LOS_COACHING','LOS_EVIDENCE','LOS_REVIEW'];
+    var sheetStatus = {};
+    sheets.forEach(function(name) {
+      var s = ss.getSheetByName(name);
+      sheetStatus[name] = s ? 'exists (' + Math.max(0,s.getLastRow()-1) + ' rows)' : 'missing';
+    });
+    var leaders = getLosEligibleLeaders();
+    return {
+      config: cfg, spreadsheetName: ss.getName(),
+      currentUser: Session.getActiveUser().getEmail(),
+      eligibleLeaders: leaders.length,
+      sheets: sheetStatus
+    };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── importLosLeaders — Upsert leaders from Excel or sync from PEOPLE ── */
+function importLosLeaders(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_LEADER');
+    if (!sheet) return { error: 'Sheet LOS_LEADER chưa tồn tại. Chạy setupLosDataStore() trước.' };
+    var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+
+    var leaders;
+    if (payload.mode === 'sync') {
+      leaders = getLosEligibleLeaders().map(function(l) { return {
+        employeeId: l.employeeId||l.email||'',
+        email: l.email||'', fullName: l.fullName||'',
+        title: l.title||'', managementLevel: l.managementLevel||l.title||'',
+        company: l.company||'', plant: l.plant||'', division: l.division||'',
+        department: l.department||'', losStartDate: l.losStartDate||'',
+        currentGate: l.currentGate||'Baseline', active: true
+      }; });
+    } else {
+      leaders = payload.leaders || [];
+    }
+
+    var existing = mhGetSheetData_(ss, 'LOS_LEADER') || [];
+    var imported = 0, updated = 0, skipped = 0;
+
+    leaders.forEach(function(l) {
+      if (!l.email && !l.employeeId) { skipped++; return; }
+      var existIdx = -1;
+      var existRow = -1;
+      for (var i=0; i<existing.length; i++) {
+        if (l.employeeId && String(existing[i].employeeId||'')===String(l.employeeId)) { existIdx=i; break; }
+        if (l.email && String(existing[i].email||'').toLowerCase()===String(l.email||'').toLowerCase()) { existIdx=i; }
+      }
+      if (existIdx >= 0) {
+        var sheetData = sheet.getDataRange().getValues();
+        for (var r=1; r<sheetData.length; r++) {
+          var eId = String(sheetData[r][headers.indexOf('employeeId')]||'');
+          var em  = String(sheetData[r][headers.indexOf('email')]||'').toLowerCase();
+          if ((l.employeeId && eId===String(l.employeeId)) || (l.email && em===l.email.toLowerCase())) {
+            existRow = r+1; break;
+          }
+        }
+        if (existRow > 0) {
+          l.updatedAt = now;
+          headers.forEach(function(h,ci) { if (l[h]!==undefined) sheet.getRange(existRow,ci+1).setValue(l[h]); });
+          updated++;
+        }
+      } else {
+        if (!isLosEligibleTitle_(l.title||'')) { skipped++; return; }
+        var leaderId = 'LDR-' + Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMddHHmmss') + '-' + imported;
+        var data = Object.assign({ leaderId:leaderId, createdAt:now, updatedAt:now }, l);
+        sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+        imported++;
+      }
+    });
+    return { success:true, imported:imported, updated:updated, skipped:skipped };
+  } catch(e) { Logger.log('importLosLeaders error: ' + e.message); return { error: e.message }; }
+}
+
+/* ── importLosScores — Bulk import LOS scores from Excel ── */
+function importLosScores(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_SCORE');
+    if (!sheet) return { error: 'Sheet LOS_SCORE chưa tồn tại.' };
+    var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var rows = payload.scores || [];
+    var userEmail = Session.getActiveUser().getEmail();
+    var imported = 0;
+    var keyMap = {
+      'ĐIỀU_HÀNH_BẰNG_DỮ_LIỆU':'dataDrivenVerified','LẬP_KẾ_HOẠCH_ƯU_TIÊN':'planningVerified',
+      'RA_QUYẾT_ĐỊNH':'decisionVerified','NHẬN_TRÁCH_NHIỆM':'ownershipVerified',
+      'PHÂN_QUYỀN_GIAO_PIC':'delegationVerified','GIẢI_QUYẾT_VẤN_ĐỀ':'problemSolvingVerified',
+      'THEO_ĐẾN_KẾT_QUẢ':'followThroughVerified','PHÁT_TRIỂN_ĐỘI_NGŨ':'coachingVerified',
+      'NHẬN_XÉT':'reviewNote','NGƯỜI_XÁC_NHẬN':'verifiedBy',
+      'MỐC_ĐÁNH_GIÁ':'gate','NGÀY_ĐÁNH_GIÁ':'reviewDate',
+      'EMPLOYEE_ID':'employeeId','EMAIL':'email'
+    };
+    rows.forEach(function(r) {
+      var mapped = {};
+      Object.keys(r).forEach(function(k) { mapped[keyMap[k]||k] = r[k]; });
+      var leaders = mhGetSheetData_(ss, 'LOS_LEADER') || [];
+      var ldr = leaders.filter(function(l) {
+        return (mapped.employeeId && l.employeeId===String(mapped.employeeId)) ||
+               (mapped.email && String(l.email||'').toLowerCase()===String(mapped.email||'').toLowerCase());
+      })[0];
+      if (!ldr) return;
+      var scoreId = 'LOS-' + Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMdd-HHmmss') + '-' + imported;
+      var data = Object.assign({ scoreId:scoreId, leaderId:ldr.leaderId||ldr.email, createdAt:now, updatedAt:now, verifiedBy:mapped.verifiedBy||userEmail }, mapped);
+      sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+      imported++;
+    });
+    return { success:true, imported:imported };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── saveLosMeetingLinks — Lưu nhiều liên kết một lúc ── */
+function saveLosMeetingLinks(payload) {
+  try {
+    assertMhUser_();
+    var ss = getLosSpreadsheet_();
+    var sheet = ss.getSheetByName('LOS_MEETING');
+    if (!sheet) return { error: 'Sheet LOS_MEETING chưa tồn tại.' };
+    var headers = sheet.getLastColumn()>0 ? sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0] : [];
+    var now = Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyy-MM-dd HH:mm:ss');
+    var links = payload.links || [];
+    var saved = 0;
+    var existing = mhGetSheetData_(ss, 'LOS_MEETING') || [];
+    links.forEach(function(lk) {
+      var dup = existing.filter(function(e){ return e.leaderId===lk.leaderId && e.meetingId===lk.meetingId; })[0];
+      if (dup) return;
+      var id = 'LM-' + Utilities.formatDate(new Date(),'Asia/Ho_Chi_Minh','yyyyMMddHHmmss') + '-' + saved;
+      var data = Object.assign({ losMeetingId:id, createdAt:now, evaluated:false }, lk);
+      sheet.appendRow(headers.map(function(h){ return data[h]!==undefined?data[h]:''; }));
+      existing.push(data);
+      saved++;
+    });
+    return { success:true, saved:saved };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ── getMeetingsForLosLinking — Gợi ý cuộc họp cho Leader từ Meeting Hub ── */
+function getMeetingsForLosLinking(leaderId, leaderEmail) {
+  try {
+    var ss = getLosSpreadsheet_();
+    var meetings = mhGetSheetData_(ss, 'MEETINGS') || [];
+    if (!meetings.length) {
+      var mhCfg = getMeetingHubConfig();
+      if (mhCfg && mhCfg.spreadsheetId) {
+        try {
+          var mhSs = SpreadsheetApp.openById(mhCfg.spreadsheetId);
+          meetings = mhGetSheetData_(mhSs, 'MEETINGS') || [];
+        } catch(e2) {}
+      }
+    }
+    var le = (leaderEmail||'').toLowerCase();
+    var result = meetings.map(function(m) {
+      var chair = String(m.chairpersonEmail||'').toLowerCase();
+      var parts = String(m.participantsEmails||'').toLowerCase();
+      var sec   = String(m.secretaryEmail||'').toLowerCase();
+      var exactMatch = le && (chair.indexOf(le)>=0 || parts.indexOf(le)>=0 || sec.indexOf(le)>=0);
+      return {
+        meetingId:         m.meetingId||m.id||'',
+        title:             m.title||m.meetingTitle||'',
+        meetingDate:       m.meetingDate||m.date||'',
+        chairpersonEmail:  m.chairpersonEmail||'',
+        participantsEmails:m.participantsEmails||'',
+        secretaryEmail:    m.secretaryEmail||'',
+        minutesFileUrl:    m.minutesFileUrl||'',
+        exactMatch:        exactMatch
+      };
+    }).sort(function(a,b) { return (b.exactMatch?1:0)-(a.exactMatch?1:0) || new Date(b.meetingDate)-new Date(a.meetingDate); });
+    return { meetings: result };
+  } catch(e) { return { meetings:[], error: e.message }; }
+}
+
+/* ── getLosDataSourceStatus — Tổng hợp trạng thái nguồn dữ liệu ── */
+function getLosDataSourceStatus() {
+  try {
+    var ss = getLosSpreadsheet_();
+    var leaders  = (mhGetSheetData_(ss,'LOS_LEADER')||[]).filter(function(r){ return String(r.active||'').toLowerCase()!=='false'; });
+    var scores   = mhGetSheetData_(ss,'LOS_SCORE')    || [];
+    var linked   = mhGetSheetData_(ss,'LOS_MEETING')  || [];
+    var me       = mhGetSheetData_(ss,'LOS_ME_SCORE') || [];
+    var coaching = mhGetSheetData_(ss,'LOS_COACHING') || [];
+    var meetings = mhGetSheetData_(ss,'MEETINGS')     || [];
+    var scoredIds = {};
+    scores.forEach(function(s){ if (s.leaderId) scoredIds[s.leaderId] = true; });
+    var openCoaching = coaching.filter(function(c){ return (c.status||'').toLowerCase()!=='hoàn thành' && (c.status||'').toLowerCase()!=='done'; }).length;
+    return {
+      leaders:        leaders.length,
+      scored:         Object.keys(scoredIds).length,
+      mhMeetings:     meetings.length,
+      linkedMeetings: linked.length,
+      meScored:       me.length,
+      openCoaching:   openCoaching
+    };
+  } catch(e) { return { error: e.message }; }
+}
+
+/* ═══ END LOS — LEADERSHIP OPERATING SYSTEM ═══ */
+
+/* ════════════════════════════════════════════════════════════
+   CLC — CHI PHÍ LỖI CHẤT LƯỢNG (Quality Defect/Loss Cost)
+   Tables: CLC_COMMITMENT, CLC_WEEKLY_PIC_REVIEW
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Sheet helpers ── */
+var CLC_SS_PROP_ = 'CLC_SPREADSHEET_ID';
+var CLC_COMMITMENT_SHEET    = 'CLC_COMMITMENT';
+var CLC_WEEKLY_REVIEW_SHEET = 'CLC_WEEKLY_PIC_REVIEW';
+
+function getClcSpreadsheet_() {
+  var id = PropertiesService.getScriptProperties().getProperty(CLC_SS_PROP_);
+  return id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet();
+}
+
+function clcGetSheetData_(ss, sheetName) {
+  var sh = ss.getSheetByName(sheetName);
+  if (!sh || sh.getLastRow() < 2) return [];
+  var headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(function(h){ return String(h).trim(); });
+  var rows    = sh.getRange(2, 1, sh.getLastRow() - 1, sh.getLastColumn()).getValues();
+  return rows.map(function(r) {
+    var obj = {};
+    headers.forEach(function(h, i) { if (h) obj[h] = r[i]; });
+    return obj;
+  });
+}
+
+function clcUpsertRow_(ss, sheetName, idField, idValue, rowData) {
+  var sh = ss.getSheetByName(sheetName);
+  if (!sh) return { success: false, error: 'Sheet ' + sheetName + ' không tồn tại' };
+  var lastCol = sh.getLastColumn();
+  var headers = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h){ return String(h).trim(); });
+  var lastRow = sh.getLastRow();
+  /* find existing */
+  var idColIdx = headers.indexOf(idField);
+  var existingRow = -1;
+  if (idColIdx >= 0 && lastRow >= 2) {
+    var ids = sh.getRange(2, idColIdx + 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < ids.length; i++) {
+      if (String(ids[i][0]) === String(idValue)) { existingRow = i + 2; break; }
+    }
+  }
+  var rowValues = headers.map(function(h) {
+    if (rowData.hasOwnProperty(h)) return rowData[h];
+    return '';
+  });
+  if (existingRow > 0) {
+    sh.getRange(existingRow, 1, 1, headers.length).setValues([rowValues]);
+    return { success: true, action: 'updated', row: existingRow };
+  } else {
+    sh.appendRow(rowValues);
+    return { success: true, action: 'inserted', row: sh.getLastRow() };
+  }
+}
+
+/* ── getClcDashboard ── main GET endpoint ── */
+function getClcDashboard() {
+  try {
+    var ss = getClcSpreadsheet_();
+    var commitments = getClcCommitmentsData_(ss);
+    var weeklyReviews = getClcWeeklyReviewData_(ss);
+    var pics = buildClcPicList_(ss, commitments, weeklyReviews);
+    return {
+      ok: true,
+      pics: pics,
+      cases: [],
+      correctiveActions: [],
+      preventiveActions: [],
+      commitments: commitments,
+      weeklyReviews: weeklyReviews,
+      _isDemo: false,
+      updatedAt: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss')
+    };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+function getClcCommitmentsData_(ss) {
+  var rows = clcGetSheetData_(ss, CLC_COMMITMENT_SHEET);
+  return rows.filter(function(r) { return r.commitmentId; });
+}
+
+function getClcWeeklyReviewData_(ss) {
+  var rows = clcGetSheetData_(ss, CLC_WEEKLY_REVIEW_SHEET);
+  return rows.filter(function(r) { return r.reviewId; });
+}
+
+function buildClcPicList_(ss, commitments, weeklyReviews) {
+  /* Build PIC roster from PEOPLE sheet */
+  var people = [];
+  try {
+    var sh = ss.getSheetByName('PEOPLE');
+    if (!sh || sh.getLastRow() < 2) sh = ss.getSheetByName('MASTER_PIC');
+    if (sh && sh.getLastRow() >= 2) {
+      var headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+      var rows    = sh.getRange(2, 1, sh.getLastRow() - 1, sh.getLastColumn()).getValues();
+      people = rows.map(function(r) {
+        var obj = {};
+        headers.forEach(function(h, i) { if (h) obj[String(h).trim()] = r[i]; });
+        return obj;
+      }).filter(function(p) { return String(p.active || p.Active || 'true').toLowerCase() !== 'false'; });
+    }
+  } catch(e) { people = []; }
+
+  /* Build PIC objects */
+  return people.map(function(p) {
+    var email = p.email || p.Email || '';
+    var picId = p.picId || p.PicId || email.split('@')[0] || '';
+    var picCommits = commitments.filter(function(c) { return c.picId === picId || c.picEmail === email; });
+    var picReviews = weeklyReviews.filter(function(r) { return r.picId === picId || r.picEmail === email; });
+    return {
+      picId:      picId,
+      picName:    p.fullName || p.name || p.Name || email,
+      picEmail:   email,
+      department: p.department || p.Department || '',
+      factory:    p.factory    || p.Factory    || '',
+      title:      p.title      || p.Title      || '',
+      kpiWeekly:  { k1:[0,0,0,0], k2:[0,0,0,0], k3:[0,0,0,0], k4:[0,0,0,0], k5:[0,0,0,0] },
+      weeklyScores: [0,0,0,0],
+      status: 'N/A', trend: 'flat'
+    };
+  });
+}
+
+/* ── saveClcCommitment ── */
+function saveClcCommitment(payload) {
+  try {
+    if (!payload.commitmentId) return { success: false, error: 'commitmentId bắt buộc' };
+    var ss = getClcSpreadsheet_();
+    payload._savedAt = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+    payload._savedBy = Session.getActiveUser().getEmail();
+    return clcUpsertRow_(ss, CLC_COMMITMENT_SHEET, 'commitmentId', payload.commitmentId, payload);
+  } catch(e) { return { success: false, error: e.message }; }
+}
+
+/* ── confirmClcCommitment — Level 1 electronic signature ── */
+function confirmClcCommitment(payload) {
+  try {
+    if (!payload.commitmentId) return { success: false, error: 'commitmentId bắt buộc' };
+    var ss = getClcSpreadsheet_();
+    var existing = getClcCommitmentsData_(ss);
+    var row = existing.find(function(r) { return r.commitmentId === payload.commitmentId; });
+    if (!row) return { success: false, error: 'Không tìm thấy commitmentId: ' + payload.commitmentId };
+    row.signed         = true;
+    row.signedBy       = payload.signedBy || Session.getActiveUser().getEmail();
+    row.signedDate     = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
+    row.status         = 'Đã cam kết';
+    row._confirmedAt   = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+    if (payload.signatureEvidenceUrl) row.signatureEvidenceUrl = payload.signatureEvidenceUrl;
+    return clcUpsertRow_(ss, CLC_COMMITMENT_SHEET, 'commitmentId', payload.commitmentId, row);
+  } catch(e) { return { success: false, error: e.message }; }
+}
+
+/* ── saveClcWeeklyReview ── */
+function saveClcWeeklyReview(payload) {
+  try {
+    if (!payload.reviewId) return { success: false, error: 'reviewId bắt buộc' };
+    var ss = getClcSpreadsheet_();
+    payload._savedAt = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm:ss');
+    payload._savedBy = Session.getActiveUser().getEmail();
+    return clcUpsertRow_(ss, CLC_WEEKLY_REVIEW_SHEET, 'reviewId', payload.reviewId, payload);
+  } catch(e) { return { success: false, error: e.message }; }
+}
+
+/* ── getClcDataSourceStatus ── */
+function getClcDataSourceStatus() {
+  try {
+    var ss = getClcSpreadsheet_();
+    var commitments  = (ss.getSheetByName(CLC_COMMITMENT_SHEET)    || { getLastRow: function(){ return 0; } }).getLastRow();
+    var reviews      = (ss.getSheetByName(CLC_WEEKLY_REVIEW_SHEET) || { getLastRow: function(){ return 0; } }).getLastRow();
+    return { ok: true, commitments: Math.max(0, commitments - 1), weeklyReviews: Math.max(0, reviews - 1) };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+/* ── setupClcDataStore — tạo 2 sheet nếu chưa có ── */
+function setupClcDataStore() {
+  try {
+    var ss = getClcSpreadsheet_();
+    var created = [];
+
+    var commitHeaders = [
+      'commitmentId','caseId','actionId','picId','picName','department',
+      'commitmentText','commitmentDate','deadline','originalDeadline',
+      'expectedOutput','status','signed','signedBy','signedDate',
+      'signatureEvidenceUrl','actualResult','evidenceUrl',
+      'verifiedBy','verifiedDate','carryForwardFrom','overdueDays',
+      '_savedAt','_savedBy','_confirmedAt'
+    ];
+    if (!ss.getSheetByName(CLC_COMMITMENT_SHEET)) {
+      var sh1 = ss.insertSheet(CLC_COMMITMENT_SHEET);
+      sh1.getRange(1, 1, 1, commitHeaders.length).setValues([commitHeaders]);
+      sh1.getRange(1, 1, 1, commitHeaders.length).setBackground('#0f2d1f').setFontColor('white').setFontWeight('bold');
+      sh1.setFrozenRows(1);
+      created.push(CLC_COMMITMENT_SHEET);
+    }
+
+    var reviewHeaders = [
+      'reviewId','picId','year','month','week',
+      'kpiMonthlyTarget','weekScore_k1','weekScore_k2','weekScore_k3','weekScore_k4','weekScore_k5',
+      'weeklyScore','mtdActual','commitmentStatus',
+      'overdueActions','repeatIssues','reviewNote',
+      'nextWeekCommitment','reviewedBy','snapshotDate',
+      '_savedAt','_savedBy'
+    ];
+    if (!ss.getSheetByName(CLC_WEEKLY_REVIEW_SHEET)) {
+      var sh2 = ss.insertSheet(CLC_WEEKLY_REVIEW_SHEET);
+      sh2.getRange(1, 1, 1, reviewHeaders.length).setValues([reviewHeaders]);
+      sh2.getRange(1, 1, 1, reviewHeaders.length).setBackground('#0f2d1f').setFontColor('white').setFontWeight('bold');
+      sh2.setFrozenRows(1);
+      created.push(CLC_WEEKLY_REVIEW_SHEET);
+    }
+
+    return { ok: true, created: created, message: created.length > 0 ? 'Đã tạo: ' + created.join(', ') : 'Các sheet đã tồn tại' };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+/* ═══ END CLC — CHI PHÍ LỖI CHẤT LƯỢNG ═══ */
