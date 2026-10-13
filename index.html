@@ -3275,6 +3275,82 @@
 .clc-export-bar { display: flex; gap: 8px; align-items: center; padding: 10px 14px; background: var(--los-success-bg); border: 1px solid var(--los-success-bd); border-radius: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 .clc-export-bar-txt { flex: 1; font-size: 12px; font-weight: 600; color: var(--los-primary); }
 
+/* ── Active KPI card ── */
+.clc-kpi-active { outline: 2px solid var(--los-primary); outline-offset: 2px; }
+
+/* ── Urgent block ── */
+.clc-urgent-block {
+  background: var(--los-surface); border: 1px solid var(--los-border); border-radius: 10px;
+  box-shadow: var(--los-shadow-sm); overflow: hidden; margin-bottom: 20px;
+}
+.clc-urgent-list { padding: 4px 0; }
+.clc-urgent-row {
+  display: flex; align-items: center; gap: 8px; padding: 9px 16px; cursor: pointer;
+  border-bottom: 1px solid var(--los-border); flex-wrap: nowrap; overflow: hidden;
+  transition: background .12s;
+}
+.clc-urgent-row:last-child { border-bottom: none; }
+.clc-urgent-row:hover { background: var(--los-success-bg); }
+.clc-urgent-content { flex: 1; min-width: 0; }
+.clc-urgent-action { font-size: 12px; font-weight: 600; color: var(--los-text-h); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clc-urgent-meta { font-size: 10px; color: var(--los-text-mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clc-urgent-pic { font-size: 11px; color: var(--los-text-sec); white-space: nowrap; min-width: 110px; flex-shrink: 0; }
+.clc-overdue-text { color: var(--los-danger) !important; font-weight: 700; font-size: 11px; white-space: nowrap; }
+.clc-duesoon-urgent { color: var(--los-warning); font-weight: 700; font-size: 11px; white-space: nowrap; }
+.clc-duesoon-text { color: var(--los-info); font-size: 11px; white-space: nowrap; }
+
+/* ── Action board wrapper ── */
+.clc-action-board-wrap {
+  background: var(--los-surface); border: 1px solid var(--los-border); border-radius: 10px;
+  box-shadow: var(--los-shadow-sm); overflow: hidden; margin-bottom: 20px;
+}
+.clc-board-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 13px 16px; background: var(--los-surface-2); border-bottom: 1px solid var(--los-border); flex-wrap: wrap;
+}
+.clc-board-title { font-size: 12px; font-weight: 800; color: var(--los-text-h); text-transform: uppercase; letter-spacing: 0.6px; }
+.clc-board-sub { font-size: 11px; color: var(--los-text-mute); margin-top: 2px; }
+.clc-filter-active-banner {
+  background: var(--los-info-bg); border-bottom: 1px solid var(--los-info-bd);
+  padding: 8px 16px; font-size: 12px; color: var(--los-info); display: flex; align-items: center;
+}
+
+/* ── PIC Attention ── */
+.clc-pic-attention-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+@media (max-width: 640px) { .clc-pic-attention-row { grid-template-columns: 1fr; } }
+.clc-pic-attention-card {
+  border: 1px solid var(--los-border); border-radius: 10px; padding: 14px 16px;
+  background: var(--los-surface); box-shadow: var(--los-shadow-sm);
+}
+.clc-pic-attention-card.warning { border-top: 3px solid var(--los-warning); }
+.clc-pic-attention-card.success { border-top: 3px solid var(--los-success); }
+.clc-pac-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--los-text-sec); margin-bottom: 10px; }
+.clc-pac-row { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--los-border); flex-wrap: wrap; }
+.clc-pac-row:last-child { border-bottom: none; }
+
+/* ── CLC Supporting data ── */
+.clc-supporting-block {
+  background: var(--los-surface); border: 1px solid var(--los-border); border-radius: 10px;
+  padding: 14px 16px; box-shadow: var(--los-shadow-sm); margin-bottom: 20px;
+}
+.clc-supporting-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--los-text-sec); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.clc-supporting-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+.clc-sup-item { background: var(--los-surface-2); border: 1px solid var(--los-border); border-radius: 8px; padding: 10px 14px; flex: 1; min-width: 90px; text-align: center; }
+.clc-sup-item.danger { border-color: var(--los-danger-bd); background: var(--los-danger-bg); }
+.clc-sup-item.warning { border-color: var(--los-warning-bd); background: var(--los-warning-bg); }
+.clc-sup-num { font-size: 18px; font-weight: 800; color: var(--los-primary); font-variant-numeric: tabular-nums; }
+.clc-sup-lbl { font-size: 9px; color: var(--los-text-sec); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+
+/* ── Action Detail drawer sections ── */
+.clc-ad-section { margin-bottom: 18px; }
+.clc-ad-section-title {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px;
+  color: var(--los-text-sec); padding: 6px 0; border-bottom: 1px solid var(--los-border); margin-bottom: 10px;
+}
+.clc-ad-row { display: flex; gap: 10px; margin-bottom: 7px; font-size: 12px; align-items: flex-start; }
+.clc-ad-label { min-width: 150px; color: var(--los-text-sec); font-weight: 600; flex-shrink: 0; }
+.clc-ad-val { color: var(--los-text-body); flex: 1; }
+
 @media print {
   .nav-bar, .clc-subtab-bar, .clc-demo-banner, .clc-export-bar, .clc-btn, .clc-btn-primary, .clc-filter-bar { display: none !important; }
   .clc-table th { background: #0f2d1f !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -14103,6 +14179,8 @@ var clcCurrentMonth   = '2026-10';
 var clcCurrentWeek    = 4;
 var clcFilterDept     = '';
 var clcFilterStatus   = '';
+var clcKpiFilter      = '';
+var clcActionSearch   = '';
 
 /* ── Demo Data ── */
 var CLC_DEMO_DATA = (function() {
@@ -14184,44 +14262,112 @@ var CLC_DEMO_DATA = (function() {
     { caseId: 'CLC-006', title: 'Tái diễn lỗi màng co', value: 55000000, factory: 'GS1', dept: 'Sản xuất', picId: 'P03', rootCause: 'Giống CLC-001 — root cause chưa xử lý triệt để', status: 'Mới phát sinh', daysOpen: 5, needCeoDecision: false, repeatCase: true }
   ];
 
-  /* Corrective Actions */
+  /* Corrective Actions — enhanced with status, blocker, dept, factory, completionCriteria, verified */
   var correctiveActions = [
     { actionId: 'CA-001', caseId: 'CLC-001', type: 'corrective', actionType: 'Khắc phục tức thời',
       title: 'Cân chỉnh lại nhiệt độ máy và kiểm tra 4 tiếng/lần', picId: 'P03',
-      collaboratorId: 'P01', startDate: '2026-09-28', deadline: '2026-10-05',
-      expectedOutput: 'Biên bản hiệu chỉnh + log nhiệt độ 7 ngày', kpiTarget: 'Giảm 30% lỗi màng co',
+      coOwnerId: 'P01', dept: 'Sản xuất', factory: 'GS1',
+      startDate: '2026-09-28', deadline: '2026-10-05',
+      expectedOutput: 'Biên bản hiệu chỉnh + log nhiệt độ 7 ngày',
+      completionCriteria: 'Nhiệt độ ổn định trong ngưỡng 7 ngày, không quá 2 lần vượt ngưỡng/ngày',
+      kpiTarget: 'Giảm 30% lỗi màng co',
       beforeValue: '12%', currentResult: '8%', progress: 65,
-      evidenceUrl: '', verificationStatus: 'Chưa có bằng chứng', rag: 'Y',
-      carryForward: true, originalDeadline: '2026-10-05', overdueDays: 7
+      actualResult: null, verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: '', verificationStatus: 'Chưa có bằng chứng',
+      status: 'Quá hạn', blocker: null, needCeoDecision: false,
+      rag: 'Y', carryForward: true, originalDeadline: '2026-10-05', overdueDays: 7
     },
     { actionId: 'CA-002', caseId: 'CLC-002', type: 'corrective', actionType: 'Xử lý tồn cũ',
       title: 'Thay thế khuôn cắt hết hạn + kiểm tra khuôn dự phòng', picId: 'P02',
-      collaboratorId: 'P04', startDate: '2026-10-01', deadline: '2026-10-15',
-      expectedOutput: 'Khuôn mới lắp đặt + test 100 mẫu đạt spec', kpiTarget: 'Giảm lỗi kích thước về 0.5%',
+      coOwnerId: 'P04', dept: 'SCM', factory: 'GS5',
+      startDate: '2026-10-01', deadline: '2026-10-15',
+      expectedOutput: 'Khuôn mới lắp đặt + test 100 mẫu đạt spec',
+      completionCriteria: 'Test 100 mẫu đạt spec kích thước ±1mm, biên bản nghiệm thu ký bởi QA',
+      kpiTarget: 'Giảm lỗi kích thước về 0.5%',
       beforeValue: '3.2%', currentResult: '1.8%', progress: 55,
-      evidenceUrl: 'https://drive.google.com/demo', verificationStatus: 'Chờ xác minh', rag: 'G'
+      actualResult: 'Đã thay khuôn — đang chạy test batch 1',
+      verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: 'https://drive.google.com/demo', verificationStatus: 'Chờ xác minh',
+      status: 'Chờ xác nhận', blocker: null, needCeoDecision: false,
+      rag: 'G'
     },
     { actionId: 'CA-003', caseId: 'CLC-003', type: 'corrective', actionType: 'Hệ thống/Dữ liệu',
       title: 'Tạo checklist kiểm soát 3 lớp trước khi dán nhãn', picId: 'P03',
-      collaboratorId: 'P01', startDate: '2026-09-15', deadline: '2026-09-30',
-      expectedOutput: 'Quy trình cập nhật + đào tạo 100% line worker', kpiTarget: '0 lỗi nhãn trong 30 ngày',
+      coOwnerId: 'P01', dept: 'Sản xuất', factory: 'GS1',
+      startDate: '2026-09-15', deadline: '2026-09-30',
+      expectedOutput: 'Quy trình cập nhật + đào tạo 100% line worker',
+      completionCriteria: '100% công nhân ký xác nhận đào tạo + 0 lỗi nhãn trong 2 tuần đầu',
+      kpiTarget: '0 lỗi nhãn trong 30 ngày',
       beforeValue: '5 lỗi/tuần', currentResult: '4 lỗi/tuần', progress: 30,
-      evidenceUrl: '', verificationStatus: 'Chưa có bằng chứng', rag: 'R',
-      carryForward: true, originalDeadline: '2026-09-30', overdueDays: 12
+      actualResult: null, verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: '', verificationStatus: 'Chưa có bằng chứng',
+      status: 'Quá hạn', blocker: null, needCeoDecision: false,
+      rag: 'R', carryForward: true, originalDeadline: '2026-09-30', overdueDays: 12
     },
     { actionId: 'CA-004', caseId: 'CLC-004', type: 'corrective', actionType: 'Khắc phục tức thời',
       title: 'Audit NVL đầu vào, yêu cầu COA từ nhà cung cấp', picId: 'P01',
-      collaboratorId: null, startDate: '2026-10-01', deadline: '2026-10-10',
-      expectedOutput: 'COA xác nhận + lô đạt spec 100%', kpiTarget: 'Độ dày ±5% spec',
-      beforeValue: '±12%', currentResult: '±6%', progress: 85,
-      evidenceUrl: 'https://drive.google.com/demo2', verificationStatus: 'Đã xác minh', rag: 'G'
+      coOwnerId: null, dept: 'QA', factory: 'GS1',
+      startDate: '2026-10-01', deadline: '2026-10-10',
+      expectedOutput: 'COA xác nhận + lô đạt spec 100%',
+      completionCriteria: 'COA đầy đủ cho 100% lô tồn kho, kiểm tra độ dày ±5% spec',
+      kpiTarget: 'Độ dày ±5% spec',
+      beforeValue: '±12%', currentResult: '±6%', progress: 100,
+      actualResult: 'Đã hoàn thành — COA đầy đủ, độ dày đạt ±6%',
+      verified: true, verifiedBy: 'CEO', verifiedDate: '2026-10-11',
+      evidenceUrl: 'https://drive.google.com/demo2', verificationStatus: 'Đã xác minh',
+      status: 'Đã xác minh', blocker: null, needCeoDecision: false,
+      rag: 'G'
     },
     { actionId: 'CA-005', caseId: 'CLC-005', type: 'corrective', actionType: 'Xử lý tồn cũ',
       title: 'Sửa chữa hệ thống thông gió, lắp thêm cảm biến độ ẩm', picId: 'P05',
-      collaboratorId: null, startDate: '2026-10-02', deadline: '2026-10-20',
-      expectedOutput: 'Hệ thống hoạt động + log độ ẩm < 65% RH', kpiTarget: 'Độ ẩm kho < 65% RH',
+      coOwnerId: null, dept: 'Kho vận', factory: 'GS6',
+      startDate: '2026-10-02', deadline: '2026-10-20',
+      expectedOutput: 'Hệ thống hoạt động + log độ ẩm < 65% RH',
+      completionCriteria: 'Log độ ẩm 3 tuần liên tiếp < 65% RH, không có sự kiện vượt ngưỡng',
+      kpiTarget: 'Độ ẩm kho < 65% RH',
       beforeValue: '>80% RH', currentResult: '72% RH', progress: 45,
-      evidenceUrl: '', verificationStatus: 'Đang triển khai', rag: 'Y'
+      actualResult: null, verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: '', verificationStatus: 'Đang triển khai',
+      status: 'Đang thực hiện', blocker: null, needCeoDecision: false,
+      rag: 'Y'
+    },
+    { actionId: 'CA-006', caseId: 'CLC-006', type: 'corrective', actionType: 'Khắc phục tức thời',
+      title: 'Thay thế toàn bộ bộ gia nhiệt máy dán — mua thiết bị mới', picId: 'P03',
+      coOwnerId: null, dept: 'Sản xuất', factory: 'GS1',
+      startDate: '2026-10-08', deadline: '2026-10-25',
+      expectedOutput: 'Thiết bị mới lắp đặt + test chạy thử 48h không lỗi',
+      completionCriteria: 'Thiết bị vận hành 48h liên tục, 0 lỗi màng co, biên bản nghiệm thu có chữ ký',
+      kpiTarget: '0 lỗi màng co trong 2 tuần',
+      beforeValue: '12% lỗi', currentResult: '12% lỗi', progress: 5,
+      actualResult: null, verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: '', verificationStatus: 'Đang chờ ngân sách',
+      status: 'Có vướng mắc',
+      blocker: 'Chờ phê duyệt ngân sách mua thiết bị — cần CEO quyết định trước 20/10',
+      needCeoDecision: true, rag: 'R'
+    },
+    { actionId: 'CA-007', caseId: 'CLC-002', type: 'corrective', actionType: 'Đào tạo/Chuẩn hóa',
+      title: 'Phối hợp rà soát lại quy trình', picId: 'P01',
+      coOwnerId: 'P02', dept: 'QA', factory: 'GS5',
+      startDate: '2026-10-10', deadline: '2026-10-17',
+      expectedOutput: '',
+      completionCriteria: '',
+      kpiTarget: '',
+      beforeValue: null, currentResult: null, progress: 10,
+      actualResult: null, verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: '', verificationStatus: 'Chưa bắt đầu',
+      status: 'Chưa bắt đầu', blocker: null, needCeoDecision: false, rag: 'Y'
+    },
+    { actionId: 'CA-008', caseId: 'CLC-005', type: 'corrective', actionType: 'Cải tiến quy trình',
+      title: 'Lắp đặt hệ thống quan trắc độ ẩm tự động liên kết cảnh báo', picId: 'P05',
+      coOwnerId: null, dept: 'Kho vận', factory: 'GS6',
+      startDate: '2026-10-05', deadline: '2026-10-14',
+      expectedOutput: 'Hệ thống cảnh báo hoạt động + dashboard độ ẩm realtime',
+      completionCriteria: 'Hệ thống gửi cảnh báo tự động khi độ ẩm > 65%, test thành công 72h',
+      kpiTarget: 'Phản ứng < 30 phút khi vượt ngưỡng',
+      beforeValue: 'Không có cảnh báo', currentResult: 'Đang lắp đặt', progress: 70,
+      actualResult: null, verified: false, verifiedBy: null, verifiedDate: null,
+      evidenceUrl: '', verificationStatus: 'Đang triển khai',
+      status: 'Đang thực hiện', blocker: null, needCeoDecision: false, rag: 'Y'
     }
   ];
 
@@ -14229,27 +14375,43 @@ var CLC_DEMO_DATA = (function() {
   var preventiveActions = [
     { actionId: 'PA-001', caseId: 'CLC-001', type: 'preventive', actionType: 'Cải tiến quy trình',
       title: 'Cài đặt hệ thống cảnh báo nhiệt độ tự động cho toàn bộ máy dán', picId: 'P01',
+      coOwnerId: null, dept: 'QA', factory: 'GS1',
       processPoint: 'Kiểm soát thông số máy — bước cài đặt trước ca', rootCause: 'Nhiệt độ máy dán không ổn định',
       startDate: '2026-10-05', deadline: '2026-10-30',
+      expectedOutput: 'Hệ thống cảnh báo lắp đặt trên tất cả máy dán GS1',
+      completionCriteria: '0 lần vượt ngưỡng nhiệt độ trong 4 tuần đo lường',
       baseline: '5 lần vượt ngưỡng/tuần', target: '0 lần vượt ngưỡng',
       afterValue: '2 lần/tuần', measurementPeriod: '4 tuần', repeatOccurrence: false,
-      evidenceUrl: '', effectiveness: 'Đang đo lường', verificationStatus: 'Chưa kết luận', rag: 'Y'
+      evidenceUrl: '', effectiveness: 'Đang đo lường', verificationStatus: 'Chưa kết luận',
+      status: 'Đang thực hiện', blocker: null, needCeoDecision: false, rag: 'Y',
+      progress: 40, actualResult: null, verified: false, verifiedBy: null, verifiedDate: null
     },
     { actionId: 'PA-002', caseId: 'CLC-002', type: 'preventive', actionType: 'Đào tạo/Chuẩn hóa',
       title: 'Lập lịch bảo dưỡng khuôn định kỳ hàng tháng', picId: 'P04',
+      coOwnerId: null, dept: 'QA', factory: 'GS5',
       processPoint: 'Bảo trì định kỳ thiết bị cắt', rootCause: 'Khuôn cắt mòn, chưa được thay thế',
       startDate: '2026-10-01', deadline: '2026-10-15',
+      expectedOutput: 'Lịch bảo dưỡng hàng tháng ban hành + nhân sự được phân công',
+      completionCriteria: '100% khuôn bảo dưỡng đúng lịch trong 3 tháng liên tiếp',
       baseline: 'Không có lịch định kỳ', target: '100% khuôn được bảo dưỡng theo lịch',
       afterValue: 'Đã có lịch tháng 10', measurementPeriod: '3 tháng', repeatOccurrence: false,
-      evidenceUrl: 'https://drive.google.com/demo3', effectiveness: 'Hiệu quả', verificationStatus: 'Đã xác minh', rag: 'G'
+      evidenceUrl: 'https://drive.google.com/demo3', effectiveness: 'Hiệu quả', verificationStatus: 'Đã xác minh',
+      status: 'Đã xác minh', blocker: null, needCeoDecision: false, rag: 'G',
+      progress: 100, actualResult: 'Đã ban hành lịch tháng 10, PA-002 hiệu quả — 0 lỗi kích thước',
+      verified: true, verifiedBy: 'P01', verifiedDate: '2026-10-11'
     },
     { actionId: 'PA-003', caseId: 'CLC-003', type: 'preventive', actionType: 'Hệ thống/Dữ liệu',
       title: 'Tích hợp kiểm soát nhãn vào MES — tự động so sánh với master data', picId: 'P03',
+      coOwnerId: null, dept: 'Sản xuất', factory: 'GS1',
       processPoint: 'Hệ thống MES dán nhãn', rootCause: 'Quy trình kiểm soát in nhãn thiếu chốt chặn',
       startDate: '2026-10-01', deadline: '2026-11-15',
+      expectedOutput: 'Module kiểm soát nhãn tích hợp MES hoạt động trên 100% line',
+      completionCriteria: '0 lỗi nhãn trong 8 tuần sau tích hợp MES',
       baseline: '5 lỗi/tuần', target: '0 lỗi/tuần',
-      afterValue: null, measurementPeriod: '8 tuần', repeatOccurrence: true, /* tái diễn */
-      evidenceUrl: '', effectiveness: 'Chưa hiệu quả', verificationStatus: 'Cần rà soát lại', rag: 'R'
+      afterValue: null, measurementPeriod: '8 tuần', repeatOccurrence: true,
+      evidenceUrl: '', effectiveness: 'Chưa hiệu quả', verificationStatus: 'Cần rà soát lại',
+      status: 'Có vướng mắc', blocker: 'Root cause CLC-006 tái diễn — cần xem lại phương án', needCeoDecision: false, rag: 'R',
+      progress: 15, actualResult: null, verified: false, verifiedBy: null, verifiedDate: null
     }
   ];
 
@@ -14474,12 +14636,9 @@ function generateClcPicRecommendation(pic, reviews, commitments, actions) {
 }
 
 /* ── Load & Render ── */
-var clcCache = null;
-var clcLoaded = false;
-
 function clcLoad() {
   var el = document.getElementById('module-clc');
-  if (!el || el.style.display === 'none') return;
+  if (!el) return;
   if (isClcDemoMode()) {
     clcCache = CLC_DEMO_DATA;
     clcLoaded = true;
@@ -14493,11 +14652,11 @@ function clcLoad() {
   gasGet('getClcDashboard', {}).then(function(data) {
     if (data && !data.error) { clcCache = data; clcLoaded = true; clcRender(data); }
     else clcRenderEmpty(data ? data.error : 'Không tải được dữ liệu CLC.');
-  }).catch(function() { clcRenderEmpty('Lỗi kết nối.'); });
+  }).catch(function() { enableClcDemoMode(); });
 }
 
 function clcRenderLoading() {
-  var views = ['clc-view-overview','clc-view-actions','clc-view-commitments','clc-view-weekly','clc-view-kpi'];
+  var views = ['clc-view-action-center','clc-view-case-list','clc-view-pic-tracking','clc-view-weekly'];
   views.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.innerHTML = '<div class="clc-empty"><div class="clc-empty-icon">⏳</div><p>Đang tải dữ liệu...</p></div>';
@@ -14505,7 +14664,7 @@ function clcRenderLoading() {
 }
 
 function clcRenderEmpty(msg) {
-  var el = document.getElementById('clc-view-overview');
+  var el = document.getElementById('clc-view-action-center');
   if (!el) return;
   el.innerHTML = '<div class="clc-empty"><div class="clc-empty-icon">📉</div><p>' + safe(msg || 'Chưa có dữ liệu.') + '</p>' +
     '<button class="clc-btn clc-btn-primary" style="margin-top:12px" onclick="enableClcDemoMode()">Xem dữ liệu minh họa</button></div>';
@@ -14513,11 +14672,10 @@ function clcRenderEmpty(msg) {
 
 function clcRender(data) {
   if (!data) return clcRenderEmpty('Không có dữ liệu');
-  clcRenderOverview(data);
-  clcRenderActionTracker(data);
-  clcRenderCommitments(data);
+  clcRenderActionCenter(data);
+  clcRenderCaseList(data);
+  clcRenderPicTracking(data);
   clcRenderWeeklyReview(data);
-  clcRenderKpiMonth(data);
 }
 
 function clcShowDemoBanner(show) {
@@ -14534,88 +14692,568 @@ function clcSwitchView(view, btn) {
   if (target) target.classList.add('active');
   document.querySelectorAll('.clc-subtab').forEach(function(el) { el.classList.remove('active'); });
   if (btn) btn.classList.add('active');
+  /* Lazy render: re-render action board when switching to it (KPI filter may have changed) */
+  if (view === 'action-center' && clcCache) clcRenderActionCenter(clcCache);
 }
 
-/* ── Overview render ── */
-function clcRenderOverview(data) {
-  var el = document.getElementById('clc-view-overview');
+/* ══════════════════════════════════════════════════
+   CLC ACTION CENTER — new executive control layout
+   ══════════════════════════════════════════════════ */
+
+/* ── Unified action list ── */
+function clcGetAllActions(data) {
+  var cas = (data.correctiveActions||[]).map(function(a){return Object.assign({},a,{_kind:'corrective'});});
+  var pas = (data.preventiveActions||[]).map(function(a){return Object.assign({},a,{_kind:'preventive'});});
+  return cas.concat(pas);
+}
+
+function clcGetDisplayStatus(a) {
+  if (a.verified || a.verificationStatus === 'Đã xác minh') return 'Đã xác minh';
+  if (a.blocker || a.status === 'Có vướng mắc') return 'Có vướng mắc';
+  if (a.carryForward || a.status === 'Quá hạn') return 'Quá hạn';
+  if (a.actualResult && !a.verified) return 'Chờ xác nhận';
+  if (a.progress >= 100 && !a.verified) return 'Hoàn thành chờ xác minh';
+  if (!a.progress || a.progress === 0) return 'Chưa bắt đầu';
+  return 'Đang thực hiện';
+}
+
+function clcIsOverdue(a) {
+  var st = clcGetDisplayStatus(a);
+  if (st === 'Đã xác minh' || st === 'Hoàn thành chờ xác minh') return false;
+  if (a.carryForward) return true;
+  if (!a.deadline) return false;
+  return new Date(a.deadline) < new Date('2026-10-12');
+}
+
+function clcIsDueSoon(a, days) {
+  var st = clcGetDisplayStatus(a);
+  if (st === 'Đã xác minh' || clcIsOverdue(a)) return false;
+  if (!a.deadline) return false;
+  var dl = new Date(a.deadline);
+  var today = new Date('2026-10-12');
+  var diff = (dl - today) / 86400000;
+  return diff >= 0 && diff <= (days || 7);
+}
+
+function clcActionPriority(a) {
+  var st = clcGetDisplayStatus(a);
+  if (st === 'Quá hạn') return 1;
+  if (a.rag === 'R') return 2;
+  if (st === 'Có vướng mắc') return 3;
+  if (a.needCeoDecision) return 4;
+  if (clcIsDueSoon(a, 7)) return 5;
+  if (st === 'Đang thực hiện' || st === 'Chưa bắt đầu' || st === 'Chờ xác nhận' || st === 'Hoàn thành chờ xác minh') return 6;
+  return 7;
+}
+
+function clcSortByPriority(actions) {
+  return actions.slice().sort(function(a, b) { return clcActionPriority(a) - clcActionPriority(b); });
+}
+
+function clcActionMissingFields(a) {
+  var m = [];
+  if (!a.picId) m.push('Thiếu PIC');
+  if (!a.deadline) m.push('Thiếu deadline');
+  if (!a.expectedOutput) m.push('Thiếu đầu ra');
+  if (!a.completionCriteria) m.push('Thiếu tiêu chí đóng');
+  return m;
+}
+
+var CLC_VAGUE_KW = ['Rà soát lại','Kiểm tra','Phối hợp','Khắc phục','Xem lại','Theo dõi','Báo cáo'];
+function clcIsVagueAction(a) {
+  if (!a.title || a.expectedOutput) return false;
+  return CLC_VAGUE_KW.some(function(kw){ return a.title.indexOf(kw) >= 0 && a.title.length < 35; });
+}
+
+function clcKpiFilterLabel(k) {
+  return {open:'Việc đang mở',overdue:'Quá hạn',duesoon:'Đến hạn 7 ngày',blocked:'Có vướng mắc',noresult:'Chưa có kết quả',noevid:'Chưa có bằng chứng',pending:'Chờ xác nhận',ceo:'Cần CEO chốt'}[k] || k;
+}
+
+function clcApplyKpiFilter(key) {
+  clcKpiFilter = (clcKpiFilter === key) ? '' : key;
+  if (clcCache) clcRenderActionCenter(clcCache);
+}
+
+function clcAbFilter() { if (clcCache) clcRenderActionCenter(clcCache); }
+
+function clcAbClearFilters() {
+  ['clc-ab-search','clc-ab-f-pic','clc-ab-f-dept','clc-ab-f-status','clc-ab-f-rag','clc-ab-f-type'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  clcKpiFilter = '';
+  if (clcCache) clcRenderActionCenter(clcCache);
+}
+
+/* ── Tab 1: TRUNG TÂM HÀNH ĐỘNG ── */
+function clcRenderActionCenter(data) {
+  var el = document.getElementById('clc-view-action-center');
   if (!el) return;
-  var pics = data.pics || [];
-  var cases = data.cases || [];
-  var commitments = data.commitments || [];
-  var cas = data.correctiveActions || [];
-  var pas = data.preventiveActions || [];
-  var reviews = data.weeklyReviews || [];
-  var week = clcCurrentWeek;
-  var isDemo = isClcDemoMode();
-
-  /* ── CEO Alert detection ── */
-  var alerts = clcDetectAlerts(data);
-
-  /* ── KPI summary ── */
-  var totalCases = cases.length;
-  var openCases = cases.filter(function(c) { return c.status !== 'Đã xử lý'; }).length;
-  var totalValue = cases.reduce(function(s, c) { return s + (c.value || 0); }, 0);
-  var overdueActions = cas.filter(function(a) { return a.carryForward; }).length;
-  var ceoCases = cases.filter(function(c) { return c.needCeoDecision; }).length;
-  var unsignedCommit = commitments.filter(function(c) { return !c.signed; }).length;
-  var longCases = cases.filter(function(c) { return c.daysOpen >= 90; }).length;
-
   var html = '';
+  html += clcRenderActionKpiRow(data);
+  html += clcRenderUrgentBlock(data);
+  html += clcRenderActionBoard(data);
+  html += clcRenderPicAttention(data);
+  html += clcRenderClcSupporting(data);
+  el.innerHTML = html;
+}
 
-  /* KPI Row */
-  html += '<div class="clc-kpi-row">';
-  html += clcKpiCard(totalCases, 'Tổng Case CLC', '', '');
-  html += clcKpiCard(openCases, 'Case đang mở', '', openCases > 3 ? 'warning' : '');
-  html += clcKpiCard(clcFmtValue(totalValue), 'Tổng giá trị CLC', 'VND', 'danger');
-  html += clcKpiCard(overdueActions, 'Action quá hạn', '', overdueActions > 0 ? 'danger' : '');
-  html += clcKpiCard(unsignedCommit, 'Cam kết chưa ký', '', unsignedCommit > 0 ? 'warning' : '');
-  html += clcKpiCard(ceoCases, 'Case cần CEO chốt', '', ceoCases > 0 ? 'danger' : '');
-  html += clcKpiCard(longCases, 'Case >90 ngày', '', longCases > 0 ? 'danger' : '');
+function clcRenderActionKpiRow(data) {
+  var all = clcGetAllActions(data);
+  var openCount    = all.filter(function(a){ return clcGetDisplayStatus(a) !== 'Đã xác minh'; }).length;
+  var overdueCount = all.filter(clcIsOverdue).length;
+  var dueSoonCount = all.filter(function(a){ return clcIsDueSoon(a,7); }).length;
+  var blockedCount = all.filter(function(a){ return a.blocker || clcGetDisplayStatus(a)==='Có vướng mắc'; }).length;
+  var noResultCount= all.filter(function(a){ return !a.actualResult && !a.verified; }).length;
+  var noEvidCount  = all.filter(function(a){ return !a.evidenceUrl && a.progress>50 && !a.verified; }).length;
+  var pendCount    = all.filter(function(a){ var st=clcGetDisplayStatus(a); return st==='Chờ xác nhận'||st==='Hoàn thành chờ xác minh'; }).length;
+  var ceoCount     = all.filter(function(a){ return a.needCeoDecision; }).length;
+  var cards = [
+    {key:'open',    num:openCount,    lbl:'Việc đang mở',       v: ''},
+    {key:'overdue', num:overdueCount, lbl:'Quá hạn',            v: overdueCount>0?'danger':'hl'},
+    {key:'duesoon', num:dueSoonCount, lbl:'Đến hạn 7 ngày',     v: dueSoonCount>0?'warning':''},
+    {key:'blocked', num:blockedCount, lbl:'Có vướng mắc',       v: blockedCount>0?'warning':''},
+    {key:'noresult',num:noResultCount,lbl:'Chưa có kết quả',    v: ''},
+    {key:'noevid',  num:noEvidCount,  lbl:'Chưa có bằng chứng', v: noEvidCount>0?'warning':''},
+    {key:'pending', num:pendCount,    lbl:'Chờ xác nhận',       v: pendCount>0?'warning':''},
+    {key:'ceo',     num:ceoCount,     lbl:'Cần CEO chốt',       v: ceoCount>0?'danger':''}
+  ];
+  var html = '<div class="clc-kpi-row">';
+  cards.forEach(function(c){
+    var isActive = clcKpiFilter === c.key;
+    var varCls = c.v ? ' '+c.v : '';
+    var actCls = isActive ? ' clc-kpi-active' : '';
+    html += '<div class="clc-kpi-card'+varCls+actCls+'" onclick="clcApplyKpiFilter(\''+c.key+'\')" style="cursor:pointer">' +
+      '<div class="clc-kpi-num">'+c.num+'</div><div class="clc-kpi-lbl">'+safe(c.lbl)+'</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function clcRenderUrgentBlock(data) {
+  var all = clcSortByPriority(clcGetAllActions(data));
+  var urgent = all.filter(function(a){ return clcActionPriority(a) <= 5; }).slice(0,8);
+  var picMap = {}; (data.pics||[]).forEach(function(p){ picMap[p.picId]=p; });
+  var caseMap = {}; (data.cases||[]).forEach(function(c){ caseMap[c.caseId]=c; });
+  var html = '<div class="clc-urgent-block">';
+  html += '<div class="clc-board-header"><div><div class="clc-board-title">VIỆC CẦN XỬ LÝ NGAY</div><div class="clc-board-sub">Ưu tiên: Quá hạn · Red · Blocked · CEO · Đến hạn</div></div>';
+  html += '<span class="clc-section-count">'+urgent.length+' việc</span></div>';
+  if (urgent.length === 0) {
+    html += '<div class="clc-empty" style="padding:16px"><p>Không có việc cấp bách. Tốt!</p></div>';
+  } else {
+    html += '<div class="clc-urgent-list">';
+    urgent.forEach(function(a){
+      var st = clcGetDisplayStatus(a);
+      var pic = picMap[a.picId] || {};
+      var cs = caseMap[a.caseId] || {};
+      var pl = a.needCeoDecision ? 'CEO' : st==='Quá hạn'?'OVD':st==='Có vướng mắc'?'BLK':'DSN';
+      var pc = a.needCeoDecision ? 'clc-chip-blue' : st==='Quá hạn'?'clc-chip-red':'clc-chip-yellow';
+      var stCls = st==='Quá hạn'?'clc-chip-red':st==='Có vướng mắc'?'clc-chip-yellow':a.needCeoDecision?'clc-chip-blue':'clc-chip-gray';
+      var ragDot = '<span class="clc-rag clc-rag-'+(a.rag||'Y')+'"></span>';
+      html += '<div class="clc-urgent-row" onclick="clcOpenActionDetail(\''+safeForJs(a.actionId)+'\')">' +
+        '<span class="clc-chip '+pc+'" style="min-width:36px;text-align:center;flex-shrink:0">'+pl+'</span>' +
+        ragDot +
+        '<div class="clc-urgent-content"><div class="clc-urgent-action">'+safe(a.title)+'</div>' +
+        '<div class="clc-urgent-meta">'+safe(a.caseId)+(cs.title?' — '+safe(cs.title.substring(0,28)):'')+'</div></div>' +
+        '<span class="clc-urgent-pic">'+safe(pic.picName||a.picId)+'</span>' +
+        '<span class="'+(clcIsOverdue(a)?'clc-overdue-text':clcIsDueSoon(a,3)?'clc-duesoon-urgent':'')+'">'+safe(a.deadline||'—')+'</span>' +
+        '<span class="clc-chip '+stCls+'">'+safe(st)+'</span>' +
+        (a.blocker?'<span class="clc-persist-badge" title="'+safe(a.blocker)+'">Vướng</span>':'') +
+        '<button class="clc-btn" style="font-size:11px;padding:3px 8px;flex-shrink:0" onclick="event.stopPropagation();clcOpenActionDetail(\''+safeForJs(a.actionId)+'\')">Chi tiết</button>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function clcRenderActionBoard(data) {
+  var all = clcSortByPriority(clcGetAllActions(data));
+  var picMap = {}; (data.pics||[]).forEach(function(p){ picMap[p.picId]=p; });
+  var caseMap = {}; (data.cases||[]).forEach(function(c){ caseMap[c.caseId]=c; });
+
+  var fPic    = (document.getElementById('clc-ab-f-pic')    ||{}).value||'';
+  var fDept   = (document.getElementById('clc-ab-f-dept')   ||{}).value||'';
+  var fStatus = (document.getElementById('clc-ab-f-status') ||{}).value||'';
+  var fRag    = (document.getElementById('clc-ab-f-rag')    ||{}).value||'';
+  var fType   = (document.getElementById('clc-ab-f-type')   ||{}).value||'';
+  var fSearch = ((document.getElementById('clc-ab-search')  ||{}).value||'').toLowerCase();
+
+  var rows = all.filter(function(a){
+    var st = clcGetDisplayStatus(a);
+    if (clcKpiFilter==='open'     && st==='Đã xác minh') return false;
+    if (clcKpiFilter==='overdue'  && !clcIsOverdue(a)) return false;
+    if (clcKpiFilter==='duesoon'  && !clcIsDueSoon(a,7)) return false;
+    if (clcKpiFilter==='blocked'  && !(a.blocker||st==='Có vướng mắc')) return false;
+    if (clcKpiFilter==='noresult' && (a.actualResult||a.verified)) return false;
+    if (clcKpiFilter==='noevid'   && (a.evidenceUrl||a.verified||a.progress<=50)) return false;
+    if (clcKpiFilter==='pending'  && st!=='Chờ xác nhận'&&st!=='Hoàn thành chờ xác minh') return false;
+    if (clcKpiFilter==='ceo'      && !a.needCeoDecision) return false;
+    if (fPic    && a.picId!==fPic) return false;
+    if (fDept   && (a.dept||(picMap[a.picId]||{}).department||'')!==fDept) return false;
+    if (fStatus && clcGetDisplayStatus(a)!==fStatus) return false;
+    if (fRag    && a.rag!==fRag) return false;
+    if (fType   && a._kind!==fType) return false;
+    if (fSearch) { var h=(a.actionId+' '+a.title+' '+a.caseId+' '+(a.picId||'')).toLowerCase(); if(h.indexOf(fSearch)<0) return false; }
+    return true;
+  });
+
+  var depts=[]; var picIds=[];
+  all.forEach(function(a){
+    var d=a.dept||(picMap[a.picId]||{}).department||''; if(d&&depts.indexOf(d)<0) depts.push(d);
+    if(a.picId&&picIds.indexOf(a.picId)<0) picIds.push(a.picId);
+  });
+
+  var filterBanner = clcKpiFilter
+    ? '<div class="clc-filter-active-banner">Đang lọc: <b>'+clcKpiFilterLabel(clcKpiFilter)+'</b> <button class="clc-btn" style="font-size:10px;padding:2px 8px;margin-left:8px" onclick="clcApplyKpiFilter(\'\')">Xóa</button></div>'
+    : '';
+
+  var html = '<div class="clc-action-board-wrap">';
+  html += '<div class="clc-board-header"><div><div class="clc-board-title">KẾ HOẠCH HÀNH ĐỘNG CLC</div>' +
+    '<div class="clc-board-sub">Theo dõi Owner · Deadline · Output · Kết quả · Evidence</div></div>' +
+    '<span class="clc-section-count">'+rows.length+' / '+all.length+'</span></div>';
+  html += filterBanner;
+
+  html += '<div class="clc-filter-bar">';
+  html += '<input type="text" id="clc-ab-search" placeholder="Tìm Action / Case / PIC..." value="'+safe(fSearch)+'" oninput="clcAbFilter()" style="min-width:190px">';
+  html += '<select id="clc-ab-f-pic" onchange="clcAbFilter()"><option value="">Tất cả PIC</option>';
+  picIds.forEach(function(pid){ var p=picMap[pid]||{}; html+='<option value="'+safe(pid)+'"'+(fPic===pid?' selected':'')+'>'+safe(p.picName||pid)+'</option>'; });
+  html += '</select>';
+  html += '<select id="clc-ab-f-dept" onchange="clcAbFilter()"><option value="">Tất cả bộ phận</option>';
+  depts.forEach(function(d){ html+='<option value="'+safe(d)+'"'+(fDept===d?' selected':'')+'>'+safe(d)+'</option>'; });
+  html += '</select>';
+  html += '<select id="clc-ab-f-status" onchange="clcAbFilter()"><option value="">Tất cả trạng thái</option>';
+  ['Quá hạn','Có vướng mắc','Đang thực hiện','Chưa bắt đầu','Chờ xác nhận','Hoàn thành chờ xác minh','Đã xác minh'].forEach(function(s){
+    html+='<option value="'+s+'"'+(fStatus===s?' selected':'')+'>'+s+'</option>';
+  });
+  html += '</select>';
+  html += '<select id="clc-ab-f-rag" onchange="clcAbFilter()"><option value="">Tất cả RAG</option><option value="R"'+(fRag==='R'?' selected':'')+'>R — Đỏ</option><option value="Y"'+(fRag==='Y'?' selected':'')+'>Y — Vàng</option><option value="G"'+(fRag==='G'?' selected':'')+'>G — Xanh</option></select>';
+  html += '<select id="clc-ab-f-type" onchange="clcAbFilter()"><option value="">Tất cả loại</option><option value="corrective"'+(fType==='corrective'?' selected':'')+'>Khắc phục</option><option value="preventive"'+(fType==='preventive'?' selected':'')+'>Phòng ngừa</option></select>';
+  html += '<button class="clc-btn" onclick="clcAbClearFilters()">Xóa lọc</button>';
   html += '</div>';
 
-  /* CEO Alerts */
-  if (alerts.length > 0) {
-    html += '<div class="clc-section"><div class="clc-section-title">⚠️ CẢNH BÁO CEO <span class="clc-section-count">' + alerts.length + '</span></div>';
-    html += '<div class="clc-alert-grid">';
-    alerts.forEach(function(a) {
-      html += '<div class="clc-alert-card ' + a.level + '"><div class="clc-alert-icon">' + a.icon + '</div>' +
-        '<div><div class="clc-alert-title">' + safe(a.title) + '</div><div class="clc-alert-body">' + safe(a.body) + '</div></div></div>';
-    });
-    html += '</div></div>';
+  html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr>' +
+    '<th>Mã</th><th>Hành động</th><th>Case</th><th>PIC</th><th>Deadline</th>' +
+    '<th>Đầu ra</th><th>Tiến độ</th><th>Trạng thái</th><th>Kết quả</th><th>Evidence</th><th>RAG</th>' +
+    '</tr></thead><tbody>';
+
+  if (rows.length === 0) {
+    html += '<tr><td colspan="11" style="text-align:center;padding:28px;color:var(--los-text-mute);font-size:12px">Không có hành động phù hợp.</td></tr>';
   }
 
-  /* PIC Ranking */
-  html += clcRenderPicRanking(pics, cas, commitments, week);
+  rows.forEach(function(a){
+    var pic = picMap[a.picId]||{};
+    var cs  = caseMap[a.caseId]||{};
+    var st  = clcGetDisplayStatus(a);
+    var stMap = {'Quá hạn':'clc-chip-red','Có vướng mắc':'clc-chip-yellow','Đang thực hiện':'clc-chip-gray','Chưa bắt đầu':'clc-chip-gray','Chờ xác nhận':'clc-chip-yellow','Hoàn thành chờ xác minh':'clc-chip-yellow','Đã xác minh':'clc-chip-green'};
+    var stCls = stMap[st]||'clc-chip-gray';
+    var ragCls = {'G':'clc-chip-green','Y':'clc-chip-yellow','R':'clc-chip-red'}[a.rag]||'clc-chip-gray';
+    var pct = a.progress||0;
+    var pfill = pct<50?'danger':pct<75?'warn':'';
+    var missing = clcActionMissingFields(a);
+    var vague = clcIsVagueAction(a);
+    var carry = a.carryForward ? ' <span class="clc-carry-badge" title="Quá hạn +' + (a.overdueDays||'') + ' ng">↩</span>' : '';
+    var ceoB = a.needCeoDecision ? ' <span class="clc-chip clc-chip-blue" style="font-size:9px">CEO</span>' : '';
+    var blkB = a.blocker ? ' <span class="clc-persist-badge" title="'+safe(a.blocker)+'">!</span>' : '';
+    var typeB = '<span class="clc-chip '+(a._kind==='corrective'?'clc-chip-blue':'clc-chip-green')+'" style="font-size:9px">'+(a._kind==='corrective'?'KP':'PN')+'</span>';
+    var titleCell = '<button class="clc-name-btn" onclick="event.stopPropagation();clcOpenActionDetail(\''+safeForJs(a.actionId)+'\')">'+safe(a.title)+'</button>'+carry+ceoB+blkB;
+    if (missing.length) titleCell += '<br>'+missing.map(function(m){ return '<span class="clc-chip clc-chip-red" style="font-size:9px;margin-right:2px">'+safe(m)+'</span>'; }).join('');
+    if (vague) titleCell += '<br><span class="clc-chip clc-chip-yellow" style="font-size:9px">Action chưa đủ rõ</span>';
+    var dl = a.deadline||'—';
+    var dlCls = clcIsOverdue(a)?'clc-overdue-text':clcIsDueSoon(a,3)?'clc-duesoon-urgent':clcIsDueSoon(a,7)?'clc-duesoon-text':'';
+    var dlCell = dlCls ? '<span class="'+dlCls+'">'+safe(dl)+'</span>' : safe(dl);
+    var outCell = a.expectedOutput
+      ? '<span style="font-size:11px" title="'+safe(a.expectedOutput)+'">'+safe(a.expectedOutput.substring(0,28))+(a.expectedOutput.length>28?'…':'')+'</span>'
+      : '<span class="clc-chip clc-chip-red" style="font-size:9px">Chưa có</span>';
+    var resCell = a.actualResult
+      ? '<span style="font-size:11px">'+safe(a.actualResult.substring(0,28))+(a.actualResult.length>28?'…':'')+'</span>'
+      : '<span style="color:var(--los-text-mute);font-size:11px">—</span>';
+    var evidCell = a.evidenceUrl
+      ? '<a href="'+safeForJs(a.evidenceUrl)+'" target="_blank" style="color:var(--los-info);font-size:11px" onclick="event.stopPropagation()">Xem</a>'
+      : '<span style="color:var(--los-text-mute);font-size:11px">—</span>';
+    html += '<tr onclick="clcOpenActionDetail(\''+safeForJs(a.actionId)+'\')" style="cursor:pointer">' +
+      '<td>'+typeB+'<br><span style="font-size:10px;color:var(--los-text-mute)">'+safe(a.actionId)+'</span></td>' +
+      '<td style="max-width:200px">'+titleCell+'</td>' +
+      '<td><button class="clc-name-btn" onclick="event.stopPropagation();clcOpenCaseDetail(\''+safeForJs(a.caseId)+'\')" style="font-size:11px">'+safe(a.caseId)+'</button>'+(cs.daysOpen>=90?'<br><span class="clc-persist-badge">+90ng</span>':'')+'</td>' +
+      '<td><button class="clc-name-btn" onclick="event.stopPropagation();clcOpenPicScorecard(\''+safeForJs(a.picId)+'\')">'+safe(pic.picName||a.picId)+'</button><br><span style="font-size:10px;color:var(--los-text-mute)">'+safe(a.dept||(pic.department||''))+'</span></td>' +
+      '<td style="white-space:nowrap">'+dlCell+'</td>' +
+      '<td>'+outCell+'</td>' +
+      '<td><div class="clc-pbar"><div class="clc-pbar-track"><div class="clc-pbar-fill '+pfill+'" style="width:'+pct+'%"></div></div><span class="clc-pbar-pct">'+pct+'%</span></div></td>' +
+      '<td><span class="clc-chip '+stCls+'">'+safe(st)+'</span></td>' +
+      '<td>'+resCell+'</td>' +
+      '<td>'+evidCell+'</td>' +
+      '<td><span class="clc-chip '+ragCls+'">'+(a.rag||'—')+'</span></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  return html;
+}
 
-  /* Persistent Issues */
-  var issues = getPersistentClcPicIssues(pics, reviews, commitments, cas);
-  if (issues.length > 0) {
-    html += '<div class="clc-section"><div class="clc-section-title">🔴 CẦN HÀNH ĐỘNG TUẦN NÀY <span class="clc-section-count">' + issues.length + '</span></div>';
-    html += '<div class="clc-table-wrap"><div style="border-radius:10px;border:1px solid var(--los-border);overflow:hidden"><table class="clc-table"><thead><tr>' +
-      '<th>PIC</th><th>Vấn đề chính</th><th>Căn cứ</th><th>Cần thay đổi</th><th>Mức</th>' +
-      '</tr></thead><tbody>';
-    issues.forEach(function(issue) {
-      var recs = generateClcPicRecommendation(issue.pic, reviews, commitments, cas);
-      var escLabel = ['','Theo dõi','Focused Dev','Cần Review'][issue.escalation] || 'Cần Review';
-      var escCls = ['','clc-chip-gray','clc-chip-yellow','clc-chip-red'][issue.escalation] || 'clc-chip-red';
+function clcRenderPicAttention(data) {
+  var pics = data.pics||[];
+  var all = clcGetAllActions(data);
+  var commitments = data.commitments||[];
+  var picScores = pics.map(function(p){
+    var pa = all.filter(function(a){ return a.picId===p.picId; });
+    var ovd = pa.filter(clcIsOverdue).length;
+    var blk = pa.filter(function(a){ return a.blocker; }).length;
+    var ovdC = commitments.filter(function(c){ return c.picId===p.picId&&c.overdueDays>0; }).length;
+    return { pic:p, score:ovd*3+blk*2+ovdC*2+(p.persistentIssue?3:0), ovd:ovd, blk:blk };
+  });
+  var needSupport = picScores.filter(function(x){ return x.score>0; }).sort(function(a,b){ return b.score-a.score; }).slice(0,3);
+  var goodPics = picScores.filter(function(x){ return x.ovd===0&&x.blk===0; }).sort(function(a,b){ return calcPicKpiScore(b.pic,clcCurrentWeek)-calcPicKpiScore(a.pic,clcCurrentWeek); }).slice(0,3);
+  var html = '<div class="clc-pic-attention-row">';
+  html += '<div class="clc-pic-attention-card warning"><div class="clc-pac-title">PIC CẦN ƯU TIÊN HỖ TRỢ</div>';
+  if (!needSupport.length) html += '<div style="font-size:12px;color:var(--los-text-mute);padding:8px 0">Không có PIC nào cần hỗ trợ ngay</div>';
+  needSupport.forEach(function(x){
+    html += '<div class="clc-pac-row"><button class="clc-name-btn" onclick="clcOpenPicScorecard(\''+safeForJs(x.pic.picId)+'\')">'+safe(x.pic.picName)+'</button>' +
+      '<span style="font-size:10px;color:var(--los-text-mute)">'+safe(x.pic.department)+'</span>' +
+      (x.ovd>0?'<span class="clc-chip clc-chip-red" style="font-size:9px">'+x.ovd+' OVD</span>':'') +
+      (x.blk>0?'<span class="clc-chip clc-chip-yellow" style="font-size:9px">BLK</span>':'') +
+      '</div>';
+  });
+  html += '</div>';
+  html += '<div class="clc-pic-attention-card success"><div class="clc-pac-title">PIC ĐÓNG VIỆC TỐT TUẦN NÀY</div>';
+  if (!goodPics.length) html += '<div style="font-size:12px;color:var(--los-text-mute);padding:8px 0">Chưa có dữ liệu</div>';
+  goodPics.forEach(function(x){
+    var sc = calcPicKpiScore(x.pic, clcCurrentWeek);
+    var done = all.filter(function(a){ return a.picId===x.pic.picId&&clcGetDisplayStatus(a)==='Đã xác minh'; }).length;
+    html += '<div class="clc-pac-row"><button class="clc-name-btn" onclick="clcOpenPicScorecard(\''+safeForJs(x.pic.picId)+'\')">'+safe(x.pic.picName)+'</button>' +
+      '<span style="font-size:10px;color:var(--los-text-mute)">'+safe(x.pic.department)+'</span>' +
+      '<span class="clc-chip clc-chip-green" style="font-size:9px">'+sc+' đ</span>' +
+      (done>0?'<span class="clc-chip clc-chip-green" style="font-size:9px">'+done+' xong</span>':'') +
+      '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function clcRenderClcSupporting(data) {
+  var cases = data.cases||[];
+  var totalV = cases.reduce(function(s,c){ return s+(c.value||0); }, 0);
+  var above90 = cases.filter(function(c){ return c.daysOpen>=90; }).length;
+  var above60 = cases.filter(function(c){ return c.daysOpen>=60; }).length;
+  var newWeek = cases.filter(function(c){ return c.daysOpen<=7; }).length;
+  var ceoC = cases.filter(function(c){ return c.needCeoDecision; }).length;
+  var html = '<div class="clc-supporting-block">';
+  html += '<div class="clc-board-header"><div class="clc-board-title">THÔNG TIN CLC</div>' +
+    '<button class="clc-btn" style="font-size:11px;padding:4px 10px" onclick="clcSwitchView(\'case-list\',document.querySelector(\'[data-view=case-list]\'))">Xem tất cả Case</button></div>';
+  html += '<div class="clc-supporting-grid">';
+  var sItems = [
+    {num:cases.length, lbl:'Tổng Case CLC', v:''},
+    {num:clcFmtValue(totalV), lbl:'Tổng giá trị (VND)', v:'danger'},
+    {num:above90, lbl:'>90 ngày', v:above90>0?'danger':''},
+    {num:above60, lbl:'>60 ngày', v:above60>0?'warning':''},
+    {num:newWeek, lbl:'Mới tuần này', v:''},
+    {num:ceoC, lbl:'Cần CEO chốt', v:ceoC>0?'danger':''}
+  ];
+  sItems.forEach(function(s){
+    html += '<div class="clc-sup-item'+(s.v?' '+s.v:'')+'"><div class="clc-sup-num">'+s.num+'</div><div class="clc-sup-lbl">'+safe(s.lbl)+'</div></div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+/* ── Tab 2: DANH SÁCH CLC ── */
+function clcRenderCaseList(data) {
+  var el = document.getElementById('clc-view-case-list');
+  if (!el) return;
+  var cases = data.cases||[];
+  var all = clcGetAllActions(data);
+  var picMap = {}; (data.pics||[]).forEach(function(p){ picMap[p.picId]=p; });
+  var html = '<div class="clc-section"><div class="clc-section-title">DANH SÁCH CLC <span class="clc-section-count">'+cases.length+' case</span></div>';
+  html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr>' +
+    '<th>Case</th><th>Vấn đề</th><th>Giá trị</th><th>Tuổi tồn</th><th>Root Cause</th>' +
+    '<th>PIC</th><th>Action mở</th><th>Deadline gần nhất</th><th>Trạng thái</th><th>Flag</th>' +
+    '</tr></thead><tbody>';
+  cases.slice().sort(function(a,b){ return (b.daysOpen||0)-(a.daysOpen||0); }).forEach(function(c){
+    var pic = picMap[c.picId]||{};
+    var cA = all.filter(function(a){ return a.caseId===c.caseId; });
+    var openA = cA.filter(function(a){ return clcGetDisplayStatus(a)!=='Đã xác minh'; }).length;
+    var nearDL = cA.filter(function(a){ return a.deadline; }).map(function(a){ return a.deadline; }).sort()[0]||'—';
+    var ageCls = c.daysOpen>=90?'clc-chip-red':c.daysOpen>=60?'clc-chip-yellow':'clc-chip-gray';
+    var stCls = c.status==='Đã xử lý'?'clc-chip-green':c.status==='Mới phát sinh'?'clc-chip-blue':'clc-chip-yellow';
+    var flags = [];
+    if (c.needCeoDecision) flags.push('<span class="clc-chip clc-chip-blue" style="font-size:9px">CEO</span>');
+    if (c.repeatCase) flags.push('<span class="clc-chip clc-chip-red" style="font-size:9px">Tái diễn</span>');
+    if (!cA.some(function(a){ return a.type==='preventive'; })) flags.push('<span class="clc-chip clc-chip-yellow" style="font-size:9px">Thiếu PA</span>');
+    html += '<tr onclick="clcOpenCaseDetail(\''+safeForJs(c.caseId)+'\')" style="cursor:pointer">' +
+      '<td><button class="clc-name-btn" onclick="event.stopPropagation();clcOpenCaseDetail(\''+safeForJs(c.caseId)+'\')">'+safe(c.caseId)+'</button></td>' +
+      '<td style="max-width:180px;font-size:12px">'+safe(c.title)+'</td>' +
+      '<td style="font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;color:var(--los-danger)">'+clcFmtValue(c.value)+'</td>' +
+      '<td><span class="clc-chip '+ageCls+'">'+safe(String(c.daysOpen||0))+'ng</span></td>' +
+      '<td style="max-width:160px;font-size:11px;color:var(--los-text-sec)">'+safe(c.rootCause||'—')+'</td>' +
+      '<td><button class="clc-name-btn" onclick="event.stopPropagation();clcOpenPicScorecard(\''+safeForJs(c.picId)+'\')" style="font-size:11px">'+safe(pic.picName||c.picId)+'</button></td>' +
+      '<td style="text-align:center">'+openA+'</td>' +
+      '<td style="font-size:11px">'+safe(nearDL)+'</td>' +
+      '<td><span class="clc-chip '+stCls+'">'+safe(c.status)+'</span></td>' +
+      '<td>'+(flags.join(' ')||'—')+'</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  el.innerHTML = html;
+}
+
+/* ── Tab 3: THEO DÕI PIC ── */
+function clcRenderPicTracking(data) {
+  var el = document.getElementById('clc-view-pic-tracking');
+  if (!el) return;
+  var pics = data.pics||[];
+  var all = clcGetAllActions(data);
+  var commitments = data.commitments||[];
+  var html = '<div class="clc-section"><div class="clc-section-title">THEO DÕI PIC <span class="clc-section-count">'+pics.length+'</span></div>';
+  html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr>' +
+    '<th>PIC</th><th>Bộ phận</th><th>Việc mở</th><th>Quá hạn</th><th>Đến hạn 7ng</th>' +
+    '<th>Blocked</th><th>Chờ xác nhận</th><th>Đã đóng</th><th>Giá trị CLC</th><th>KPI Tuần</th>' +
+    '</tr></thead><tbody>';
+  pics.forEach(function(pic){
+    var pa = all.filter(function(a){ return a.picId===pic.picId; });
+    var openA = pa.filter(function(a){ return clcGetDisplayStatus(a)!=='Đã xác minh'; }).length;
+    var ovdA  = pa.filter(clcIsOverdue).length;
+    var dsnA  = pa.filter(function(a){ return clcIsDueSoon(a,7); }).length;
+    var blkA  = pa.filter(function(a){ return a.blocker; }).length;
+    var pendA = pa.filter(function(a){ var st=clcGetDisplayStatus(a); return st==='Chờ xác nhận'||st==='Hoàn thành chờ xác minh'; }).length;
+    var doneA = pa.filter(function(a){ return clcGetDisplayStatus(a)==='Đã xác minh'; }).length;
+    var picV  = (data.cases||[]).filter(function(c){ return c.picId===pic.picId; }).reduce(function(s,c){ return s+(c.value||0); },0);
+    var sc    = calcPicKpiScore(pic, clcCurrentWeek);
+    var scCls = sc>=80?'clc-chip-green':sc>=60?'clc-chip-yellow':'clc-chip-red';
+    var pBadge = pic.persistentIssue ? '<span class="clc-persist-badge">Tái diễn</span>' : '';
+    html += '<tr>' +
+      '<td><button class="clc-name-btn" onclick="clcOpenPicScorecard(\''+safeForJs(pic.picId)+'\')">'+safe(pic.picName)+'</button>'+pBadge+'</td>' +
+      '<td style="font-size:11px">'+safe(pic.department)+'</td>' +
+      '<td style="text-align:center">'+openA+'</td>' +
+      '<td style="text-align:center"><span '+(ovdA>0?'style="color:var(--los-danger);font-weight:700"':'')+'>'+ovdA+'</span></td>' +
+      '<td style="text-align:center"><span '+(dsnA>0?'style="color:var(--los-warning);font-weight:700"':'')+'>'+dsnA+'</span></td>' +
+      '<td style="text-align:center"><span '+(blkA>0?'style="color:var(--los-warning);font-weight:700"':'')+'>'+blkA+'</span></td>' +
+      '<td style="text-align:center">'+pendA+'</td>' +
+      '<td style="text-align:center;color:var(--los-success);font-weight:700">'+doneA+'</td>' +
+      '<td style="font-variant-numeric:tabular-nums;font-size:11px">'+clcFmtValue(picV)+'</td>' +
+      '<td style="text-align:center"><span class="clc-chip '+scCls+'">'+sc+'</span></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  el.innerHTML = html;
+}
+
+/* ── Tab 4: REVIEW TUẦN (updated) ── */
+function clcRenderWeeklyReview(data) {
+  var el = document.getElementById('clc-view-weekly');
+  if (!el) return;
+  var reviews = data.weeklyReviews||[];
+  var pics = data.pics||[];
+  var cases = data.cases||[];
+  var all = clcGetAllActions(data);
+  var commitments = data.commitments||[];
+  var picMap = {}; pics.forEach(function(p){ picMap[p.picId]=p; });
+  var isDemo = isClcDemoMode();
+
+  /* A. Tổng quan tuần */
+  var openCases = cases.filter(function(c){ return c.status!=='Đã xử lý'; }).length;
+  var newCases = cases.filter(function(c){ return c.daysOpen<=7; }).length;
+  var resolvedCases = cases.filter(function(c){ return c.status==='Đã xử lý'; }).length;
+  var totalV = cases.reduce(function(s,c){ return s+(c.value||0); },0);
+  var closedA = all.filter(function(a){ return clcGetDisplayStatus(a)==='Đã xác minh'; }).length;
+  var overdueA = all.filter(clcIsOverdue).length;
+  var repeatI = cases.filter(function(c){ return c.repeatCase; }).length;
+  var ceoD = cases.filter(function(c){ return c.needCeoDecision; }).length;
+  var liberated = (data.cases||[]).filter(function(c){ return c.status==='Đã xử lý'; }).reduce(function(s,c){ return s+(c.value||0); },0);
+
+  var html = '<div class="clc-week-selector">';
+  html += '<span style="font-size:12px;font-weight:700;color:var(--los-text-sec)">Kỳ đánh giá:</span>';
+  html += '<select id="clc-w-month" onchange="clcWeekChange()"><option value="2026-10">Tháng 10/2026</option></select>';
+  html += '<select id="clc-w-week" onchange="clcWeekChange()">';
+  [1,2,3,4].forEach(function(w){ html+='<option value="'+w+'"'+(w===clcCurrentWeek?' selected':'')+'>Tuần '+w+'</option>'; });
+  html += '</select>';
+  if (isDemo) html += '<span class="clc-demo-badge">Minh họa</span>';
+  html += '</div>';
+
+  /* Section A */
+  html += '<div class="clc-section"><div class="clc-section-title">A. TỔNG QUAN TUẦN '+clcCurrentWeek+' — THÁNG 10/2026</div>';
+  html += '<div class="clc-kpi-row" style="flex-wrap:wrap">';
+  var wKpis = [
+    {num:openCases,lbl:'Case đang mở',v:''},
+    {num:newCases,lbl:'CLC mới tuần này',v:newCases>0?'warning':''},
+    {num:resolvedCases,lbl:'CLC xử lý xong',v:'hl'},
+    {num:clcFmtValue(liberated),lbl:'Giá trị giải phóng',v:'hl'},
+    {num:closedA,lbl:'Action đóng tuần này',v:'hl'},
+    {num:overdueA,lbl:'Action quá hạn',v:overdueA>0?'danger':''},
+    {num:repeatI,lbl:'Tái diễn',v:repeatI>0?'danger':''},
+    {num:ceoD,lbl:'CEO cần chốt',v:ceoD>0?'danger':''}
+  ];
+  wKpis.forEach(function(k){
+    html += '<div class="clc-kpi-card'+(k.v?' '+k.v:'')+'" style="min-width:110px">' +
+      '<div class="clc-kpi-num">'+k.num+'</div><div class="clc-kpi-lbl">'+safe(k.lbl)+'</div></div>';
+  });
+  html += '</div></div>';
+
+  /* Section B — Việc chuyển tiếp */
+  var carries = commitments.filter(function(c){ return c.overdueDays>0&&c.status!=='Đã xác minh'; });
+  html += '<div class="clc-section"><div class="clc-section-title">B. VIỆC CHUYỂN TIẾP (Carry-Forward) <span class="clc-section-count">'+carries.length+'</span></div>';
+  if (carries.length === 0) {
+    html += '<div class="clc-empty" style="padding:16px"><p>Không có việc carry-forward. Tốt!</p></div>';
+  } else {
+    html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr><th>PIC</th><th>Việc</th><th>Case</th><th>Deadline gốc</th><th>Quá hạn</th><th>Lý do/Kết quả hiện tại</th></tr></thead><tbody>';
+    carries.forEach(function(c){
       html += '<tr>' +
-        '<td><button class="clc-name-btn" onclick="clcOpenPicScorecard(\'' + safeForJs(issue.pic.picId) + '\')">' + safe(issue.pic.picName) + '</button>' +
-        '<br><span style="font-size:10px;color:var(--los-text-mute)">' + safe(issue.pic.department) + '</span></td>' +
-        '<td>' + safe(issue.reasons[0] || '—') + '</td>' +
-        '<td style="max-width:160px;font-size:11px">' + issue.reasons.map(safe).join('<br>') + '</td>' +
-        '<td style="max-width:200px;font-size:11px">' + (recs[0] ? safe(recs[0]) : '—') + '</td>' +
-        '<td><span class="clc-chip ' + escCls + '">Mức ' + issue.escalation + ': ' + safe(escLabel) + '</span></td>' +
+        '<td><button class="clc-name-btn" onclick="clcOpenPicScorecard(\''+safeForJs(c.picId)+'\')">'+safe(c.picName)+'</button></td>' +
+        '<td style="max-width:200px;font-size:12px">'+safe(c.commitmentText.substring(0,60))+'…</td>' +
+        '<td style="font-size:11px">'+safe(c.caseId)+'</td>' +
+        '<td style="font-size:11px">'+safe(c.originalDeadline||c.deadline)+'</td>' +
+        '<td><span class="clc-chip clc-chip-red">+'+c.overdueDays+' ngày</span></td>' +
+        '<td style="font-size:11px">'+safe(c.actualResult||'Chưa cập nhật')+'</td>' +
         '</tr>';
     });
-    html += '</tbody></table></div></div></div>';
+    html += '</tbody></table></div>';
   }
+  html += '</div>';
 
-  /* Báo cáo cam kết PIC block */
-  html += clcRenderExecSummary(data);
+  /* Section C — Việc tuần này per PIC */
+  html += '<div class="clc-section"><div class="clc-section-title">C. VIỆC TUẦN NÀY THEO PIC</div>';
+  html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr>' +
+    '<th>PIC</th><th>Cam kết tuần tới</th><th>Điểm tuần</th><th>Nhận xét</th>' +
+    '</tr></thead><tbody>';
+  pics.forEach(function(pic){
+    var rev = reviews.find(function(r){ return r.picId===pic.picId; })||{};
+    var sc = calcPicKpiScore(pic, clcCurrentWeek);
+    var scCls = sc>=80?'clc-chip-green':sc>=60?'clc-chip-yellow':'clc-chip-red';
+    html += '<tr>' +
+      '<td><button class="clc-name-btn" onclick="clcOpenPicScorecard(\''+safeForJs(pic.picId)+'\')">'+safe(pic.picName)+'</button></td>' +
+      '<td style="font-size:12px">'+safe(rev.nextWeekCommitment||'Chưa cập nhật')+'</td>' +
+      '<td style="text-align:center"><span class="clc-chip '+scCls+'">'+sc+'</span></td>' +
+      '<td style="font-size:11px;color:var(--los-text-sec)">'+safe(rev.reviewNote||'—')+'</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  /* Section D — CEO cần chốt */
+  var ceoCases = cases.filter(function(c){ return c.needCeoDecision; });
+  var ceoActions = all.filter(function(a){ return a.needCeoDecision; });
+  if (ceoCases.length + ceoActions.length > 0) {
+    html += '<div class="clc-section"><div class="clc-section-title">D. CEO CẦN CHỐT <span class="clc-section-count">'+(ceoCases.length+ceoActions.length)+'</span></div>';
+    ceoCases.forEach(function(c){
+      html += '<div class="clc-commit-card overdue"><div class="clc-commit-hdr"><span style="font-weight:700;color:var(--los-primary)">Case '+safe(c.caseId)+'</span><span class="clc-chip clc-chip-blue">CEO Decision</span></div>' +
+        '<div class="clc-commit-body">'+safe(c.title)+'</div>' +
+        '<div class="clc-commit-footer"><span>Root cause: '+safe(c.rootCause||'—')+'</span></div></div>';
+    });
+    ceoActions.forEach(function(a){
+      html += '<div class="clc-commit-card overdue"><div class="clc-commit-hdr"><span style="font-weight:700;color:var(--los-primary)">'+safe(a.actionId)+'</span><span class="clc-chip clc-chip-blue">Cần CEO phê duyệt</span></div>' +
+        '<div class="clc-commit-body">'+safe(a.title)+'</div>' +
+        '<div class="clc-commit-footer"><span>Vướng mắc: '+safe(a.blocker||'—')+'</span><span>Deadline: '+safe(a.deadline||'—')+'</span></div></div>';
+    });
+    html += '</div>';
+  }
 
   el.innerHTML = html;
 }
+
+function clcWeekChange() {
+  var w = parseInt((document.getElementById('clc-w-week')||{}).value||4);
+  clcCurrentWeek = w;
+  if (clcCache) { clcRenderWeeklyReview(clcCache); clcRenderActionCenter(clcCache); clcRenderPicTracking(clcCache); }
+}
+
+/* ── KPI helpers (kept for PIC Scorecard) ── */
+function clcRenderOverview(data) {}
 
 function clcKpiCard(num, lbl, sub, variant) {
   var cls = variant ? ' clc-kpi-card--' + variant : '';
@@ -14741,298 +15379,6 @@ function clcRenderExecSummary(data) {
   return html;
 }
 
-/* ── Action Tracker render ── */
-function clcRenderActionTracker(data) {
-  var el = document.getElementById('clc-view-actions');
-  if (!el) return;
-  var cas = data.correctiveActions || [];
-  var pas = data.preventiveActions || [];
-  var all = cas.map(function(a) { return Object.assign({}, a, {_kind:'corrective'}); })
-            .concat(pas.map(function(a) { return Object.assign({}, a, {_kind:'preventive'}); }));
-  var picMap = {};
-  (data.pics || []).forEach(function(p) { picMap[p.picId] = p; });
-
-  var html = '<div class="clc-filter-bar">';
-  html += '<select id="clc-f-action-type" onchange="clcRenderActionTracker(clcCache)"><option value="">Tất cả loại</option><option value="corrective">Khắc phục</option><option value="preventive">Phòng ngừa</option></select>';
-  html += '<select id="clc-f-action-rag" onchange="clcRenderActionTracker(clcCache)"><option value="">Tất cả RAG</option><option value="R">Đỏ</option><option value="Y">Vàng</option><option value="G">Xanh</option></select>';
-  html += '<button class="clc-btn" onclick="clcClearActionFilters()">✕ Xóa lọc</button>';
-  html += '</div>';
-
-  /* Apply filters */
-  var fType = (document.getElementById('clc-f-action-type') || {}).value || '';
-  var fRag  = (document.getElementById('clc-f-action-rag')  || {}).value || '';
-  var rows = all.filter(function(a) {
-    if (fType && a._kind !== fType) return false;
-    if (fRag  && a.rag !== fRag)   return false;
-    return true;
-  });
-
-  html += '<div class="clc-card"><div class="clc-card-header">' +
-    '<span class="clc-card-title">Hành động Khắc phục & Phòng ngừa</span>' +
-    '<span class="clc-section-count">' + rows.length + ' hành động</span></div>';
-  html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr>' +
-    '<th>Loại</th><th>Case</th><th>Hành động</th><th>PIC</th>' +
-    '<th>Deadline</th><th>Tiến độ</th><th>Bằng chứng</th><th>Xác minh</th><th>RAG</th>' +
-    '</tr></thead><tbody>';
-
-  rows.forEach(function(a) {
-    var pic = picMap[a.picId] || {};
-    var ragCls = { G: 'clc-chip-green', Y: 'clc-chip-yellow', R: 'clc-chip-red' }[a.rag] || 'clc-chip-gray';
-    var pct = a.progress || 0;
-    var pbarFill = pct < 50 ? 'danger' : pct < 75 ? 'warn' : '';
-    var deadlineDisplay = a.deadline || '—';
-    var carryBadge = a.carryForward ? '<span class="clc-carry-badge" title="Quá hạn ' + (a.overdueDays||'') + ' ngày">↩ carry</span>' : '';
-    var evidBadge = a.evidenceUrl ? '<a href="' + safeForJs(a.evidenceUrl) + '" target="_blank" style="color:var(--los-info);font-size:11px">📎 Xem</a>' : '<span style="color:var(--los-text-mute);font-size:11px">Chưa có</span>';
-    var verBadge = a.verificationStatus || '—';
-    var verCls = verBadge === 'Đã xác minh' ? 'clc-chip-green' : verBadge === 'Chưa có bằng chứng' ? 'clc-chip-red' : 'clc-chip-yellow';
-    html += '<tr onclick="clcOpenActionDetail(\'' + safeForJs(a.actionId) + '\')" style="cursor:pointer">' +
-      '<td><span class="clc-chip ' + (a._kind === 'corrective' ? 'clc-chip-blue' : 'clc-chip-green') + '">' + (a._kind === 'corrective' ? 'Khắc phục' : 'Phòng ngừa') + '</span></td>' +
-      '<td><span style="font-size:11px">' + safe(a.caseId) + '</span></td>' +
-      '<td style="max-width:220px"><button class="clc-name-btn" onclick="event.stopPropagation();clcOpenActionDetail(\'' + safeForJs(a.actionId) + '\')">' + safe(a.title) + '</button>' + carryBadge + '</td>' +
-      '<td><button class="clc-name-btn" onclick="event.stopPropagation();clcOpenPicScorecard(\'' + safeForJs(a.picId) + '\')">' + safe(pic.picName || a.picId) + '</button></td>' +
-      '<td><span class="' + (a.carryForward ? 'clc-chip clc-chip-red' : '') + '">' + safe(deadlineDisplay) + '</span></td>' +
-      '<td><div class="clc-pbar"><div class="clc-pbar-track"><div class="clc-pbar-fill ' + pbarFill + '" style="width:' + pct + '%"></div></div><span class="clc-pbar-pct">' + pct + '%</span></div></td>' +
-      '<td>' + evidBadge + '</td>' +
-      '<td><span class="clc-chip ' + verCls + '">' + safe(verBadge) + '</span></td>' +
-      '<td><span class="clc-chip ' + ragCls + '">' + (a.rag || '—') + '</span></td>' +
-      '</tr>';
-  });
-  if (rows.length === 0) html += '<tr><td colspan="9" class="clc-empty" style="text-align:center;padding:24px">Không có hành động phù hợp.</td></tr>';
-  html += '</tbody></table></div></div>';
-  el.innerHTML = html;
-}
-
-function clcClearActionFilters() {
-  var t = document.getElementById('clc-f-action-type'); if (t) t.value = '';
-  var r = document.getElementById('clc-f-action-rag');  if (r) r.value = '';
-  if (clcCache) clcRenderActionTracker(clcCache);
-}
-
-/* ── Commitments render ── */
-function clcRenderCommitments(data) {
-  var el = document.getElementById('clc-view-commitments');
-  if (!el) return;
-  var commitments = data.commitments || [];
-  var picMap = {};
-  (data.pics || []).forEach(function(p) { picMap[p.picId] = p; });
-  var isDemo = isClcDemoMode();
-
-  var html = '<div class="clc-section"><div class="clc-section-title">🔐 CAM KẾT PIC <span class="clc-section-count">' + commitments.length + '</span>';
-  if (isDemo) html += ' <span class="clc-demo-badge">Minh họa</span>';
-  html += '</div>';
-  html += '<p style="font-size:11px;color:var(--los-text-sec);margin:0 0 14px">Cam kết PIC được gắn với từng Case/Action. PIC xác nhận điện tử (Cấp 1) hoặc upload file biên bản ký (Cấp 2).</p>';
-
-  commitments.forEach(function(c) {
-    var pic = picMap[c.picId] || {};
-    var isOverdue = c.overdueDays > 0 && c.status !== 'Đã xác minh';
-    var isSigned = c.signed;
-    var hasFile  = !!c.signatureEvidenceUrl;
-    var sigDisplay = isSigned
-      ? '<span class="clc-sig-confirmed">✓ Đã xác nhận — ' + safe(c.signedBy || '') + ' (' + safe(c.signedDate || '') + ')</span>'
-      : '<span class="clc-sig-pending">⚠ Chưa xác nhận</span>';
-    if (hasFile) sigDisplay += ' <span class="clc-sig-file"><a href="' + safeForJs(c.signatureEvidenceUrl) + '" target="_blank">📎 File cam kết</a></span>';
-
-    var statusCls = c.status === 'Quá hạn' ? 'clc-chip-red' : c.status === 'Đã xác minh' ? 'clc-chip-green' : c.status === 'Hoàn thành chờ xác minh' ? 'clc-chip-yellow' : 'clc-chip-gray';
-
-    html += '<div class="clc-commit-card ' + (isOverdue ? 'overdue' : isSigned ? 'signed' : '') + '">';
-    html += '<div class="clc-commit-hdr">' +
-      '<button class="clc-name-btn" onclick="clcOpenPicScorecard(\'' + safeForJs(c.picId) + '\')">' + safe(c.picName || pic.picName || '—') + '</button>' +
-      '<span style="font-size:10px;color:var(--los-text-mute)">' + safe(c.department || pic.department || '—') + '</span>' +
-      '<span class="clc-chip ' + statusCls + '">' + safe(c.status) + '</span>' +
-      (isOverdue ? '<span class="clc-persist-badge">+' + c.overdueDays + ' ngày</span>' : '') +
-      '<span style="font-size:10px;color:var(--los-text-mute);margin-left:auto">Case: ' + safe(c.caseId) + ' · Action: ' + safe(c.actionId) + '</span>' +
-      '</div>';
-    html += '<div class="clc-commit-body">"' + safe(c.commitmentText) + '"</div>';
-    html += '<div class="clc-commit-footer">' +
-      '<span>📅 Deadline: <b>' + safe(c.deadline) + '</b>' + (c.carryForwardFrom ? ' (gốc: ' + safe(c.originalDeadline) + ')' : '') + '</span>' +
-      '<span>📋 Đầu ra: ' + safe(c.expectedOutput) + '</span>' +
-      '</div>';
-    html += '<div style="margin-top:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">' + sigDisplay;
-    if (!isSigned && isDemo) {
-      html += '<button class="clc-btn" style="font-size:11px;padding:4px 10px" onclick="clcConfirmCommitmentDemo(\'' + safeForJs(c.commitmentId) + '\')">✅ Xác nhận cam kết (Demo)</button>';
-    }
-    if (c.evidenceUrl) {
-      html += '<a href="' + safeForJs(c.evidenceUrl) + '" target="_blank" style="font-size:11px;color:var(--los-info)">📎 Bằng chứng</a>';
-    }
-    html += '</div>';
-    if (c.actualResult) {
-      html += '<div style="margin-top:8px;font-size:11px;color:var(--los-text-body);background:var(--los-surface-2);border-radius:4px;padding:6px 10px"><b>Kết quả thực tế:</b> ' + safe(c.actualResult) + '</div>';
-    }
-    html += '</div>';
-  });
-
-  if (commitments.length === 0) html += '<div class="clc-empty"><div class="clc-empty-icon">🔐</div><p>Chưa có cam kết nào.</p></div>';
-  html += '</div>';
-  el.innerHTML = html;
-}
-
-function clcConfirmCommitmentDemo(commitmentId) {
-  var c = (CLC_DEMO_DATA.commitments || []).find(function(x) { return x.commitmentId === commitmentId; });
-  if (!c) return;
-  showToast('Demo: Cam kết ' + commitmentId + ' đã được xác nhận điện tử. (Không ghi dữ liệu thật)', 'success');
-  c.signed = true; c.signedBy = 'Demo User'; c.signedDate = new Date().toISOString().slice(0,10);
-  c.status = 'Đã cam kết';
-  clcRenderCommitments(CLC_DEMO_DATA);
-}
-
-/* ── Weekly PIC Review render ── */
-function clcRenderWeeklyReview(data) {
-  var el = document.getElementById('clc-view-weekly');
-  if (!el) return;
-  var reviews = data.weeklyReviews || [];
-  var pics = data.pics || [];
-  var commitments = data.commitments || [];
-  var cas = data.correctiveActions || [];
-  var picMap = {};
-  pics.forEach(function(p) { picMap[p.picId] = p; });
-  var isDemo = isClcDemoMode();
-
-  var html = '<div class="clc-week-selector">';
-  html += '<span style="font-size:12px;font-weight:700;color:var(--los-text-sec)">Kỳ đánh giá:</span>';
-  html += '<select id="clc-w-month" onchange="clcWeekChange()"><option value="2026-10">Tháng 10/2026</option></select>';
-  html += '<select id="clc-w-week" onchange="clcWeekChange()">';
-  [1,2,3,4].forEach(function(w) {
-    html += '<option value="' + w + '"' + (w === clcCurrentWeek ? ' selected' : '') + '>Tuần ' + w + '</option>';
-  });
-  html += '</select>';
-  if (isDemo) html += '<span class="clc-demo-badge">Minh họa</span>';
-  html += '</div>';
-
-  /* PIC score table */
-  html += '<div class="clc-card"><div class="clc-card-header"><span class="clc-card-title">ĐÁNH GIÁ PIC THEO TUẦN</span></div>';
-  html += '<div class="clc-table-wrap"><table class="clc-table"><thead><tr>' +
-    '<th>PIC</th><th>Bộ phận</th><th>KPI Tháng Target</th>' +
-    '<th>W1</th><th>W2</th><th>W3</th><th>W4</th>' +
-    '<th>MTD</th><th>Action đúng hạn</th><th>Action OVD</th><th>Cam kết HT</th><th>Cam kết OVD</th>' +
-    '<th>Repeat</th><th>Tuần này</th><th>Xu hướng</th><th>Đánh giá</th>' +
-    '</tr></thead><tbody>';
-
-  pics.forEach(function(pic) {
-    var rev = reviews.find(function(r) { return r.picId === pic.picId; }) || {};
-    var scores = pic.weeklyScores || [null,null,null,null];
-    var mtd = calcPicMtdScore(pic, clcCurrentWeek);
-    var weekScore = calcPicKpiScore(pic, clcCurrentWeek);
-    var overdueC = commitments.filter(function(c) { return c.picId === pic.picId && c.overdueDays > 0 && c.status !== 'Đã xác minh'; }).length;
-    var completedC = commitments.filter(function(c) { return c.picId === pic.picId && (c.status === 'Đã xác minh' || c.status === 'Hoàn thành chờ xác minh'); }).length;
-    var overdueA = cas.filter(function(a) { return a.picId === pic.picId && a.carryForward; }).length;
-    var onTimeA = cas.filter(function(a) { return a.picId === pic.picId && !a.carryForward && a.progress >= 100; }).length;
-    var repeat = pic.persistentIssue ? 'Có' : '—';
-    var statusLabel = weekScore >= 80 ? 'Đạt' : weekScore >= 60 ? 'Cần cải thiện' : weekScore >= 45 ? 'Cần hỗ trợ' : 'Cần Review';
-    var statusCls = weekScore >= 80 ? 'clc-chip-green' : weekScore >= 60 ? 'clc-chip-yellow' : weekScore >= 45 ? 'clc-chip-red' : 'clc-chip-red';
-    var trendIcon = pic.trend === 'up' ? '<span class="clc-rank-trend-up">↑</span>' : pic.trend === 'down' ? '<span class="clc-rank-trend-down">↓</span>' : '→';
-    var persistBadge = pic.persistentIssue ? '<span class="clc-persist-badge">⚠</span>' : '';
-
-    html += '<tr>' +
-      '<td><button class="clc-name-btn" onclick="clcOpenPicScorecard(\'' + safeForJs(pic.picId) + '\')">' + safe(pic.picName) + '</button>' + persistBadge + '</td>' +
-      '<td>' + safe(pic.department) + '</td>' +
-      '<td style="text-align:center">' + (rev.kpiMonthlyTarget || '—') + '</td>';
-
-    [0,1,2,3].forEach(function(wi) {
-      var s = scores[wi];
-      var dot = s !== null && s !== undefined
-        ? '<span class="clc-score-dot ' + (s >= 80 ? 'hit' : s >= 60 ? 'near' : 'miss') + '">' + s + '</span>'
-        : '<span class="clc-score-dot na">—</span>';
-      html += '<td style="text-align:center">' + dot + '</td>';
-    });
-
-    html += '<td style="text-align:center;font-weight:700;color:var(--los-primary)">' + mtd + '</td>' +
-      '<td style="text-align:center">' + onTimeA + '</td>' +
-      '<td style="text-align:center;color:' + (overdueA > 0 ? 'var(--los-danger)' : 'inherit') + '">' + overdueA + '</td>' +
-      '<td style="text-align:center">' + completedC + '</td>' +
-      '<td style="text-align:center;color:' + (overdueC > 0 ? 'var(--los-danger)' : 'inherit') + '">' + overdueC + '</td>' +
-      '<td style="text-align:center">' + repeat + '</td>' +
-      '<td style="text-align:center"><span class="clc-chip ' + statusCls + '">' + weekScore + '</span></td>' +
-      '<td style="text-align:center">' + trendIcon + '</td>' +
-      '<td><span class="clc-chip ' + statusCls + '">' + safe(statusLabel) + '</span></td>' +
-      '</tr>';
-  });
-  html += '</tbody></table></div></div>';
-
-  /* Weekly Commitment Carry-forward section */
-  html += '<div class="clc-section" style="margin-top:20px"><div class="clc-section-title">🔄 CAM KẾT TUẦN — CARRY FORWARD</div>';
-  var carries = (data.commitments || []).filter(function(c) { return c.overdueDays > 0 && c.status !== 'Đã xác minh'; });
-  if (carries.length > 0) {
-    carries.forEach(function(c) {
-      html += '<div class="clc-commit-card overdue" style="margin-bottom:8px">' +
-        '<div class="clc-commit-hdr"><button class="clc-name-btn" onclick="clcOpenPicScorecard(\'' + safeForJs(c.picId) + '\')">' + safe(c.picName) + '</button>' +
-        '<span class="clc-carry-badge">Carry-forward</span>' +
-        '<span class="clc-persist-badge">+' + c.overdueDays + ' ngày</span>' +
-        '<span style="margin-left:auto;font-size:10px;color:var(--los-text-mute)">Deadline gốc: ' + safe(c.originalDeadline || c.deadline) + '</span></div>' +
-        '<div class="clc-commit-body">' + safe(c.commitmentText) + '</div>' +
-        '<div class="clc-commit-footer"><span>Kết quả: ' + safe(c.actualResult || 'Chưa cập nhật') + '</span></div>' +
-        '</div>';
-    });
-  } else {
-    html += '<div class="clc-empty"><div class="clc-empty-icon">✅</div><p>Không có cam kết carry-forward tuần này.</p></div>';
-  }
-  html += '</div>';
-
-  el.innerHTML = html;
-}
-
-function clcWeekChange() {
-  var w = parseInt((document.getElementById('clc-w-week') || {}).value || 4);
-  clcCurrentWeek = w;
-  if (clcCache) { clcRenderWeeklyReview(clcCache); clcRenderOverview(clcCache); }
-}
-
-/* ── KPI Month render ── */
-function clcRenderKpiMonth(data) {
-  var el = document.getElementById('clc-view-kpi');
-  if (!el) return;
-  var pics = data.pics || [];
-  var cfg = CLC_KPI_CONFIG;
-  var isDemo = isClcDemoMode();
-
-  var html = '<div class="clc-section"><div class="clc-section-title">📊 KPI THÁNG — THEO DÕI THEO TUẦN';
-  if (isDemo) html += ' <span class="clc-demo-badge">Minh họa</span>';
-  html += '</div>';
-  html += '<p style="font-size:11px;color:var(--los-text-mute);margin:0 0 14px">' + safe(cfg.disclaimer) + '</p>';
-
-  pics.forEach(function(pic) {
-    var weeklyScore = calcPicKpiScore(pic, clcCurrentWeek);
-    var mtd = calcPicMtdScore(pic, 4);
-    html += '<div class="clc-card" style="margin-bottom:16px">';
-    html += '<div class="clc-card-header"><span class="clc-card-title"><button class="clc-name-btn" onclick="clcOpenPicScorecard(\'' + safeForJs(pic.picId) + '\')">' + safe(pic.picName) + '</button> — ' + safe(pic.department) + ' / ' + safe(pic.factory) + '</span>';
-    html += '<div style="display:flex;gap:6px;align-items:center">' +
-      '<span class="clc-chip ' + (weeklyScore >= 80 ? 'clc-chip-green' : weeklyScore >= 60 ? 'clc-chip-yellow' : 'clc-chip-red') + '">Tuần ' + clcCurrentWeek + ': ' + weeklyScore + '</span>' +
-      '<span class="clc-chip ' + (mtd >= 80 ? 'clc-chip-green' : mtd >= 60 ? 'clc-chip-yellow' : 'clc-chip-red') + '">MTD: ' + mtd + '</span>' +
-      '</div></div>';
-    html += '<div class="clc-card-body"><div class="clc-table-wrap"><table class="clc-kpi-matrix"><thead><tr>' +
-      '<th>KPI</th><th>Trọng số</th><th>Target tháng</th><th>W1</th><th>W2</th><th>W3</th><th>W4</th><th>MTD</th><th>Gap</th>' +
-      '</tr></thead><tbody>';
-
-    ['k1','k2','k3','k4','k5'].forEach(function(k) {
-      var tgt = cfg.targets[k];
-      var weekly = pic.kpiWeekly[k];
-      var mtdK = Math.round(weekly.reduce(function(s,v){return s+v;},0) / weekly.length);
-      var gap = mtdK - tgt;
-      html += '<tr><td>' + safe(cfg.labels[k]) + '</td>' +
-        '<td style="text-align:center">' + cfg.weights[k] + '%</td>' +
-        '<td style="text-align:center">' + tgt + '%</td>';
-      weekly.forEach(function(v, wi) {
-        var cls = v >= tgt ? 'clc-kpi-cell-hit' : v >= tgt * 0.8 ? 'clc-kpi-cell-near' : 'clc-kpi-cell-miss';
-        html += '<td class="' + cls + '">' + v + '%</td>';
-      });
-      var gapCls = gap >= 0 ? 'clc-kpi-cell-hit' : gap >= -tgt * 0.2 ? 'clc-kpi-cell-near' : 'clc-kpi-cell-miss';
-      html += '<td class="' + (mtdK >= tgt ? 'clc-kpi-cell-hit' : 'clc-kpi-cell-miss') + '">' + mtdK + '%</td>' +
-        '<td class="' + gapCls + '">' + (gap >= 0 ? '+' : '') + gap + '%</td></tr>';
-    });
-
-    /* MTD total row */
-    var totalMtd = calcPicMtdScore(pic, 4);
-    html += '<tr class="mtd-row"><td><b>Điểm tổng hợp (weighted)</b></td><td style="text-align:center">100%</td><td style="text-align:center">80</td>';
-    [1,2,3,4].forEach(function(w) {
-      var s = calcPicKpiScore(pic, w);
-      html += '<td>' + s + '</td>';
-    });
-    html += '<td><b>' + totalMtd + '</b></td><td class="' + (totalMtd >= 80 ? 'clc-kpi-cell-hit' : 'clc-kpi-cell-miss') + '"><b>' + (totalMtd >= 80 ? '+' : '') + (totalMtd - 80) + '</b></td></tr>';
-
-    html += '</tbody></table></div></div></div>';
-  });
-  el.innerHTML = html;
-}
-
 /* ── PIC Scorecard Drawer ── */
 function clcOpenPicScorecard(picId) {
   var data = isClcDemoMode() ? CLC_DEMO_DATA : clcCache;
@@ -15120,45 +15466,121 @@ function clcClosePicScorecard() {
   document.getElementById('clc-sc-drawer').classList.remove('open');
 }
 
-/* ── Action Detail Drawer ── */
+/* ── Action Detail Drawer (8 sections) ── */
 function clcOpenActionDetail(actionId) {
   var data = isClcDemoMode() ? CLC_DEMO_DATA : clcCache;
   if (!data) return;
   var all = (data.correctiveActions||[]).concat(data.preventiveActions||[]);
   var a = all.find(function(x){ return x.actionId === actionId; });
   if (!a) return;
-  var picMap = {};
-  (data.pics||[]).forEach(function(p){ picMap[p.picId] = p; });
-  var pic = picMap[a.picId] || {};
+  var picMap = {}; (data.pics||[]).forEach(function(p){ picMap[p.picId]=p; });
+  var caseMap = {}; (data.cases||[]).forEach(function(c){ caseMap[c.caseId]=c; });
+  var pic = picMap[a.picId]||{};
+  var coOwner = a.coOwnerId ? (picMap[a.coOwnerId]||{}) : null;
+  var cs = caseMap[a.caseId]||{};
+  var st = clcGetDisplayStatus(a);
+  var missing = clcActionMissingFields(a);
+  var vague = clcIsVagueAction(a);
+  var ragCls = {'G':'clc-chip-green','Y':'clc-chip-yellow','R':'clc-chip-red'}[a.rag]||'clc-chip-gray';
+  var stCls = {'Quá hạn':'clc-chip-red','Có vướng mắc':'clc-chip-yellow','Đã xác minh':'clc-chip-green','Chờ xác nhận':'clc-chip-yellow','Hoàn thành chờ xác minh':'clc-chip-yellow'}[st]||'clc-chip-gray';
 
-  var html = '<div class="clc-card" style="margin-bottom:12px"><div class="clc-card-body">';
-  var rows = [
-    ['Loại', a.type === 'corrective' ? '<span class="clc-chip clc-chip-blue">Khắc phục</span>' : '<span class="clc-chip clc-chip-green">Phòng ngừa</span>'],
-    ['Phân loại hành động', safe(a.actionType || '—')],
-    ['Case', safe(a.caseId)],
-    ['PIC', safe(pic.picName || a.picId) + ' — ' + safe(pic.department || '')],
-    ['Root Cause', safe(a.rootCause || '—')],
-    ['Deadline', safe(a.deadline || '—') + (a.carryForward ? ' <span class="clc-carry-badge">Quá hạn +' + (a.overdueDays||'') + 'ng</span>' : '')],
-    ['Đầu ra bắt buộc', safe(a.expectedOutput || '—')],
-    ['Giá trị trước', safe(a.beforeValue || '—')],
-    ['Kết quả hiện tại', safe(a.currentResult || a.afterValue || '—')],
-    ['Tiến độ', (a.progress||0) + '%'],
-    ['Bằng chứng', a.evidenceUrl ? '<a href="'+safeForJs(a.evidenceUrl)+'" target="_blank">📎 Xem</a>' : 'Chưa có'],
-    ['Xác minh', safe(a.verificationStatus || '—')],
-    ['RAG', '<span class="clc-chip '+({'G':'clc-chip-green','Y':'clc-chip-yellow','R':'clc-chip-red'}[a.rag]||'clc-chip-gray')+'">'+(a.rag||'—')+'</span>']
-  ];
-  if (a.type === 'preventive') {
-    rows.push(['Process Point', safe(a.processPoint || '—')]);
-    rows.push(['Đo lường', safe(a.measurementPeriod || '—')]);
-    rows.push(['Hiệu quả', safe(a.effectiveness || '—')]);
-    rows.push(['Tái diễn', a.repeatOccurrence ? '<span class="clc-chip clc-chip-red">Có</span>' : '<span class="clc-chip clc-chip-green">Không</span>']);
+  function row(lbl, val) {
+    return '<div class="clc-ad-row"><span class="clc-ad-label">'+lbl+'</span><span class="clc-ad-val">'+val+'</span></div>';
   }
-  rows.forEach(function(r) {
-    html += '<div style="display:flex;gap:8px;margin-bottom:6px;font-size:12px"><span style="min-width:160px;color:var(--los-text-sec);font-weight:600">' + r[0] + '</span><span>' + r[1] + '</span></div>';
-  });
-  html += '</div></div>';
+  function section(title, body) {
+    return '<div class="clc-ad-section"><div class="clc-ad-section-title">'+title+'</div>'+body+'</div>';
+  }
 
-  document.getElementById('clc-ad-title').textContent = a.title || actionId;
+  var html = '';
+
+  /* Status bar at top */
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 22px;background:var(--los-surface-2);border-bottom:1px solid var(--los-border)">';
+  html += '<span class="clc-chip '+(a._kind==='corrective'?'clc-chip-blue':'clc-chip-green')+'">'+(a._kind==='corrective'?'Khắc phục':'Phòng ngừa')+'</span>';
+  html += '<span class="clc-chip '+stCls+'">'+safe(st)+'</span>';
+  html += '<span class="clc-chip '+ragCls+'">'+(a.rag||'—')+'</span>';
+  if (a.needCeoDecision) html += '<span class="clc-chip clc-chip-blue">Cần CEO chốt</span>';
+  if (a.carryForward) html += '<span class="clc-carry-badge">Carry-forward +' + (a.overdueDays||'') + 'ng</span>';
+  if (missing.length) missing.forEach(function(m){ html += '<span class="clc-chip clc-chip-red" style="font-size:9px">'+safe(m)+'</span>'; });
+  if (vague) html += '<span class="clc-chip clc-chip-yellow" style="font-size:9px">Action chưa đủ rõ</span>';
+  html += '</div>';
+
+  html += '<div style="padding:18px 22px">';
+
+  /* A. Thông tin */
+  html += section('A. THÔNG TIN',
+    row('Action ID', safe(a.actionId)) +
+    row('Case', '<button class="clc-name-btn" onclick="clcCloseActionDetail();clcOpenCaseDetail(\''+safeForJs(a.caseId)+'\')">'+safe(a.caseId)+'</button>' + (cs.title?' — <span style="font-size:11px;color:var(--los-text-sec)">'+safe(cs.title)+'</span>':'')) +
+    row('Vấn đề', safe(a.title)) +
+    row('Root Cause', safe(a.rootCause||cs.rootCause||'—')) +
+    row('Loại hành động', '<span class="clc-chip '+(a._kind==='corrective'?'clc-chip-blue':'clc-chip-green')+'">'+safe(a.actionType||'—')+'</span>')
+  );
+
+  /* B. Trách nhiệm */
+  html += section('B. TRÁCH NHIỆM',
+    row('PIC', '<button class="clc-name-btn" onclick="clcCloseActionDetail();clcOpenPicScorecard(\''+safeForJs(a.picId)+'\')">'+safe(pic.picName||a.picId)+'</button>' + (pic.department?' — '+safe(pic.department):'')) +
+    row('Co-owner', coOwner ? '<button class="clc-name-btn" onclick="clcCloseActionDetail();clcOpenPicScorecard(\''+safeForJs(a.coOwnerId)+'\')">'+safe(coOwner.picName)+'</button>' : '—') +
+    row('Bộ phận / Nhà máy', safe(a.dept||pic.department||'—') + ' / ' + safe(a.factory||pic.factory||'—')) +
+    row('Ngày giao', safe(a.startDate||'—')) +
+    row('Deadline', safe(a.deadline||'—') + (clcIsOverdue(a)?'<span class="clc-chip clc-chip-red" style="margin-left:6px;font-size:9px">Quá hạn</span>':clcIsDueSoon(a,3)?'<span class="clc-chip clc-chip-yellow" style="margin-left:6px;font-size:9px">Gần đến hạn</span>':''))
+  );
+
+  /* C. Output & Tiêu chí */
+  html += section('C. ĐẦU RA & TIÊU CHÍ',
+    row('Đầu ra yêu cầu', safe(a.expectedOutput||'<span class="clc-chip clc-chip-red" style="font-size:9px">Chưa điền</span>')) +
+    row('Tiêu chí hoàn thành', safe(a.completionCriteria||'<span class="clc-chip clc-chip-red" style="font-size:9px">Chưa điền</span>')) +
+    row('KPI Target', safe(a.kpiTarget||'—'))
+  );
+
+  /* D. Kết quả */
+  var pct = a.progress||0;
+  html += section('D. KẾT QUẢ',
+    row('Tiến độ', '<div class="clc-pbar" style="display:inline-flex"><div class="clc-pbar-track" style="width:120px"><div class="clc-pbar-fill '+(pct<50?'danger':pct<75?'warn':'')+'" style="width:'+pct+'%"></div></div><span class="clc-pbar-pct">'+pct+'%</span></div>') +
+    row('Before', safe(a.beforeValue||'—')) +
+    row('Kết quả thực tế', safe(a.currentResult||a.afterValue||a.actualResult||'—')) +
+    (a.type==='preventive'?row('Sau khi áp dụng', safe(a.afterValue||'—')):'')
+  );
+
+  /* E. Evidence */
+  html += section('E. BẰNG CHỨNG',
+    row('Link / File', a.evidenceUrl ? '<a href="'+safeForJs(a.evidenceUrl)+'" target="_blank" style="color:var(--los-info)">Xem bằng chứng</a>' : '<span style="color:var(--los-text-mute)">Chưa có</span>') +
+    (a.blocker ? row('Vướng mắc', '<span style="color:var(--los-warning);font-weight:600">'+safe(a.blocker)+'</span>') : '')
+  );
+
+  /* F. Xác minh */
+  html += section('F. XÁC MINH',
+    row('Trạng thái xác minh', safe(a.verificationStatus||'—')) +
+    row('Verified', a.verified ? '<span class="clc-chip clc-chip-green">Đã xác minh</span>' : '<span class="clc-chip clc-chip-gray">Chưa xác minh</span>') +
+    row('Verified by', safe(a.verifiedBy||'—')) +
+    row('Verified date', safe(a.verifiedDate||'—'))
+  );
+
+  /* G. Phòng ngừa (for preventive actions) */
+  if (a.type === 'preventive') {
+    html += section('G. PHÒNG NGỪA',
+      row('Process Point', safe(a.processPoint||'—')) +
+      row('Baseline', safe(a.baseline||'—')) +
+      row('Target', safe(a.target||'—')) +
+      row('Hiệu quả', safe(a.effectiveness||'—')) +
+      row('Tái diễn', a.repeatOccurrence ? '<span class="clc-chip clc-chip-red">Có tái diễn</span>' : '<span class="clc-chip clc-chip-green">Không</span>') +
+      row('Chu kỳ đo lường', safe(a.measurementPeriod||'—'))
+    );
+  }
+
+  /* Close rule warning */
+  if (!a.actualResult || !a.verified) {
+    var closeReasons = [];
+    if (!a.actualResult) closeReasons.push('Chưa có kết quả thực tế');
+    if (!a.evidenceUrl) closeReasons.push('Chưa có bằng chứng');
+    if (!a.verified) closeReasons.push('Chưa xác minh');
+    html += '<div style="background:var(--los-warning-bg);border:1px solid var(--los-warning-bd);border-radius:8px;padding:12px 14px;margin-top:16px">' +
+      '<div style="font-size:11px;font-weight:700;color:var(--los-warning);margin-bottom:6px">Để đóng Action cần:</div>' +
+      closeReasons.map(function(r){ return '<div style="font-size:11px;color:var(--los-text-sec)">• '+r+'</div>'; }).join('') +
+      '</div>';
+  }
+
+  html += '</div>';
+
+  document.getElementById('clc-ad-title').textContent = a.title||actionId;
   document.getElementById('clc-ad-body').innerHTML = html;
   document.getElementById('clc-ad-overlay').classList.add('open');
   document.getElementById('clc-ad-drawer').classList.add('open');
@@ -15167,6 +15589,63 @@ function clcOpenActionDetail(actionId) {
 function clcCloseActionDetail() {
   document.getElementById('clc-ad-overlay').classList.remove('open');
   document.getElementById('clc-ad-drawer').classList.remove('open');
+}
+
+/* ── Case Detail Drawer ── */
+function clcOpenCaseDetail(caseId) {
+  var data = isClcDemoMode() ? CLC_DEMO_DATA : clcCache;
+  if (!data) return;
+  var cs = (data.cases||[]).find(function(c){ return c.caseId===caseId; });
+  if (!cs) return;
+  var picMap = {}; (data.pics||[]).forEach(function(p){ picMap[p.picId]=p; });
+  var all = clcGetAllActions(data);
+  var caseActions = all.filter(function(a){ return a.caseId===caseId; });
+  var pic = picMap[cs.picId]||{};
+  var hasPA = caseActions.some(function(a){ return a.type==='preventive'; });
+
+  var ageCls = cs.daysOpen>=90?'clc-chip-red':cs.daysOpen>=60?'clc-chip-yellow':'clc-chip-gray';
+  var html = '';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 22px;background:var(--los-surface-2);border-bottom:1px solid var(--los-border)">';
+  html += '<span class="clc-chip '+ageCls+'">'+safe(String(cs.daysOpen||0))+' ngày</span>';
+  html += '<span class="clc-chip '+(cs.status==='Đã xử lý'?'clc-chip-green':'clc-chip-yellow')+'">'+safe(cs.status)+'</span>';
+  if (cs.needCeoDecision) html += '<span class="clc-chip clc-chip-blue">Cần CEO chốt</span>';
+  if (cs.repeatCase) html += '<span class="clc-chip clc-chip-red">Tái diễn</span>';
+  if (!hasPA) html += '<span class="clc-chip clc-chip-yellow" style="font-size:9px">Chưa có Preventive Action</span>';
+  html += '</div>';
+  html += '<div style="padding:18px 22px">';
+  html += '<div class="clc-ad-section"><div class="clc-ad-section-title">THÔNG TIN CASE</div>';
+  [['Case ID', safe(cs.caseId)], ['Vấn đề', safe(cs.title)], ['Giá trị', '<span style="font-weight:700;color:var(--los-danger)">'+clcFmtValue(cs.value)+' VND</span>'],
+   ['Nhà máy / Bộ phận', safe(cs.factory||'—')+' / '+safe(cs.dept||'—')], ['Tuổi tồn', cs.daysOpen+' ngày'],
+   ['Root Cause', safe(cs.rootCause||'—')], ['PIC', '<button class="clc-name-btn" onclick="clcCloseCaseDetail();clcOpenPicScorecard(\''+safeForJs(cs.picId)+'\')">'+safe(pic.picName||cs.picId)+'</button>']
+  ].forEach(function(r){
+    html += '<div class="clc-ad-row"><span class="clc-ad-label">'+r[0]+'</span><span class="clc-ad-val">'+r[1]+'</span></div>';
+  });
+  html += '</div>';
+
+  if (caseActions.length > 0) {
+    html += '<div class="clc-ad-section"><div class="clc-ad-section-title">HÀNH ĐỘNG LIÊN QUAN ('+caseActions.length+')</div>';
+    caseActions.forEach(function(a){
+      var st = clcGetDisplayStatus(a);
+      var stCls = {'Quá hạn':'clc-chip-red','Có vướng mắc':'clc-chip-yellow','Đã xác minh':'clc-chip-green','Chờ xác nhận':'clc-chip-yellow'}[st]||'clc-chip-gray';
+      html += '<div class="clc-action-card '+(a.type==='corrective'?'corrective':'preventive')+(clcIsOverdue(a)?' overdue':'')+'">'+
+        '<span class="clc-chip '+(a._kind==='corrective'?'clc-chip-blue':'clc-chip-green')+'" style="font-size:9px">'+(a._kind==='corrective'?'KP':'PN')+'</span>'+
+        '<div><div class="clc-action-title"><button class="clc-name-btn" onclick="clcCloseCaseDetail();clcOpenActionDetail(\''+safeForJs(a.actionId)+'\')">'+safe(a.title)+'</button></div>'+
+        '<div class="clc-action-meta">'+safe(a.actionId)+' · '+safe(picMap[a.picId]?picMap[a.picId].picName:a.picId)+' · DL: '+safe(a.deadline||'—')+' · '+(a.progress||0)+'%</div></div>'+
+        '<span class="clc-chip '+stCls+'">'+safe(st)+'</span></div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  document.getElementById('clc-cd-title').textContent = cs.caseId + ' — ' + (cs.title||'');
+  document.getElementById('clc-cd-body').innerHTML = html;
+  document.getElementById('clc-cd-overlay').classList.add('open');
+  document.getElementById('clc-cd-drawer').classList.add('open');
+}
+
+function clcCloseCaseDetail() {
+  document.getElementById('clc-cd-overlay').classList.remove('open');
+  document.getElementById('clc-cd-drawer').classList.remove('open');
 }
 
 /* ── Export / Print ── */
@@ -15428,49 +15907,45 @@ function clcPrintWeeklyReport() {
 </div>
 
 <!-- ===== MODULE: CLC — CHI PHÍ LỖI CHẤT LƯỢNG ===== -->
-<div class="module" id="module-clc" style="display:none">
+<div class="module" id="module-clc">
   <div class="clc-header-row">
     <div>
-      <h2 class="clc-header-title">📉 CLC Control Center</h2>
-      <p class="clc-header-sub">Chi phí Lỗi Chất lượng — Quản lý PDCA: Case → Root Cause → Action → Cam kết → Đánh giá</p>
+      <h2 class="clc-header-title">CLC CONTROL CENTER</h2>
+      <p class="clc-header-sub">Kiểm soát CLC qua hành động khắc phục, phòng ngừa và cam kết PIC</p>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <span id="clc-header-demo-badge" class="clc-demo-badge" style="display:none">Demo</span>
-      <button class="clc-btn" onclick="enableClcDemoMode()">👁 Xem Demo</button>
-      <button class="clc-btn" onclick="disableClcDemoMode()">🔄 Dữ liệu thật</button>
-      <button class="clc-btn clc-btn-primary" onclick="clcLoad()">↺ Tải lại</button>
+      <span id="clc-header-demo-badge" class="clc-demo-badge" style="display:none">Minh họa</span>
+      <button class="clc-btn" onclick="enableClcDemoMode()">Dữ liệu minh họa</button>
+      <button class="clc-btn" onclick="disableClcDemoMode()">Dữ liệu thật</button>
+      <button class="clc-btn clc-btn-primary" onclick="clcLoad()">Làm mới</button>
     </div>
   </div>
 
   <!-- Demo banner -->
   <div class="clc-demo-banner" id="clc-demo-banner" style="display:none">
-    <span>📊 Đang xem dữ liệu minh họa (demo) — không ảnh hưởng dữ liệu thật.</span>
+    <span>Đang xem dữ liệu minh họa — không ảnh hưởng dữ liệu thật.</span>
     <button class="clc-btn" style="font-size:11px;padding:4px 12px;border-color:#fff;color:#fff;background:transparent" onclick="disableClcDemoMode()">Chuyển sang dữ liệu thật</button>
   </div>
 
-  <!-- Subtab bar -->
+  <!-- Subtab bar — 4 tabs -->
   <div class="clc-subtab-bar">
-    <button class="clc-subtab active" onclick="clcSwitchView('overview', this)">🗂 Tổng quan</button>
-    <button class="clc-subtab" onclick="clcSwitchView('actions', this)">⚙️ Khắc phục &amp; Phòng ngừa</button>
-    <button class="clc-subtab" onclick="clcSwitchView('commitments', this)">🔐 Cam kết PIC</button>
-    <button class="clc-subtab" onclick="clcSwitchView('weekly', this)">📅 Đánh giá tuần</button>
-    <button class="clc-subtab" onclick="clcSwitchView('kpi', this)">📊 KPI Tháng</button>
+    <button class="clc-subtab active" data-view="action-center" onclick="clcSwitchView('action-center', this)">Trung tâm hành động</button>
+    <button class="clc-subtab" data-view="case-list" onclick="clcSwitchView('case-list', this)">Danh sách CLC</button>
+    <button class="clc-subtab" data-view="pic-tracking" onclick="clcSwitchView('pic-tracking', this)">Theo dõi PIC</button>
+    <button class="clc-subtab" data-view="weekly" onclick="clcSwitchView('weekly', this)">Review tuần</button>
   </div>
 
-  <!-- Views -->
-  <div class="clc-view active" id="clc-view-overview">
+  <!-- Views — 4 views -->
+  <div class="clc-view active" id="clc-view-action-center">
     <div class="clc-empty"><div class="clc-empty-icon">⏳</div><p>Đang tải...</p></div>
   </div>
-  <div class="clc-view" id="clc-view-actions">
+  <div class="clc-view" id="clc-view-case-list">
     <div class="clc-empty"><div class="clc-empty-icon">⏳</div><p>Đang tải...</p></div>
   </div>
-  <div class="clc-view" id="clc-view-commitments">
+  <div class="clc-view" id="clc-view-pic-tracking">
     <div class="clc-empty"><div class="clc-empty-icon">⏳</div><p>Đang tải...</p></div>
   </div>
   <div class="clc-view" id="clc-view-weekly">
-    <div class="clc-empty"><div class="clc-empty-icon">⏳</div><p>Đang tải...</p></div>
-  </div>
-  <div class="clc-view" id="clc-view-kpi">
     <div class="clc-empty"><div class="clc-empty-icon">⏳</div><p>Đang tải...</p></div>
   </div>
 </div>
@@ -15485,7 +15960,7 @@ function clcPrintWeeklyReport() {
   <div class="clc-drawer-body" id="clc-sc-body"></div>
 </div>
 
-<!-- CLC: Action Detail Drawer (small) -->
+<!-- CLC: Action Detail Drawer -->
 <div class="clc-drawer-overlay" id="clc-ad-overlay" onclick="clcCloseActionDetail()"></div>
 <div class="clc-drawer clc-drawer-sm" id="clc-ad-drawer">
   <div class="clc-drawer-hdr">
@@ -15493,6 +15968,16 @@ function clcPrintWeeklyReport() {
     <button class="clc-drawer-close" onclick="clcCloseActionDetail()">✕</button>
   </div>
   <div class="clc-drawer-body" id="clc-ad-body"></div>
+</div>
+
+<!-- CLC: Case Detail Drawer -->
+<div class="clc-drawer-overlay" id="clc-cd-overlay" onclick="clcCloseCaseDetail()"></div>
+<div class="clc-drawer clc-drawer-sm" id="clc-cd-drawer">
+  <div class="clc-drawer-hdr">
+    <h3 class="clc-drawer-title" id="clc-cd-title">Chi tiết Case CLC</h3>
+    <button class="clc-drawer-close" onclick="clcCloseCaseDetail()">✕</button>
+  </div>
+  <div class="clc-drawer-body" id="clc-cd-body"></div>
 </div>
 
 </body>
